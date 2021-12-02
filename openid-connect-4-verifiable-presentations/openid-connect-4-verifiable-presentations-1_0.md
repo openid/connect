@@ -83,6 +83,7 @@ An existing OpenID Connect may extends its service by maintaining credentials is
 An extisting OpenID Connect OP with a native user experience (PWA or native app) issues Verifiable Credentials and stores it on the user's device linked to a private key residing on this device under the user's control. For every authentication request, the native user experience first checks whether this request can be fulfilled using the locally stored credentials. If so, it generates a presentations signed with the user's keys in order to prevent replay of the credential. 
 
 This approach dramatically reduces latency and reduces load on the OP's servers. Moreover, the user can identity, authenticate, and authorize even in situations with unstable or without internet connectivity. 
+
 # Terminology
 
 Credential
@@ -117,6 +118,8 @@ This specification introduces the following representations to exchange verifiab
 
 * The new token type "VP Token" used as generic container for verifiable presentation objects in authentication and token responses in addition to ID Tokens (see (#vp_token)).
 * The JWT claim `verifiable_presentations` used as generic container to embed verifiable presentation objects into ID tokens or userinfo responses (see (#verifiable_presentations)).
+
+Note that when both ID Token and VP Token are returned, each has a different function. ID Token serves as an Authentication receipt that carries information regarding the Authentication Event of the End-user. VP Token serves as a proof of possession of a third party attested claims and carries claims about the user.
 
 Verifiers request verifiable presentations using the `claims` parameter as defined in (@!OpenID) and syntax as defined in DIF Presentation Exchange [@!DIF.PresentationExchange].
 
@@ -220,7 +223,9 @@ This specification defines new client metadata parameters according to [@!OpenID
 
 RPs indicate the suported formats using the new parameter `vp_formats`.
 
-* `vp_formats`: an object defining the formats, proof types and algorithms a RP supports. The is based on the definition of the `format` elememt in a `presentation_definition` as defined in [@!DIF.PresentationExchange] with the supported formats `jwt_vp` and `ldp_vp`.
+* `vp_formats`: REQUIRED. An object defining the formats, proof types and algorithms a RP supports. Valid values include `jwt_vp` and `ldp_vp`. When this parameter is used, the `format` property inside a `presentation_definition` object as defined in [@!DIF.PresentationExchange] MUST NOT be present inside the `claims` parameter in the request. The OP MUST ignore `format` property inside a `presentation_definition` object even if the RP includes it.
+
+Note that version 2.0.0 of [@!DIF.PresentationExchange] allows the RP to specify format of each requested credential using the `formats` property inside the `input_descriptor` object, in addition to communicating the supported presentation formats using the `vp_formats` parameter in the RP metadata.
 
 Here is an example for a RP registering with a Standard OP via dynamic client registration:
 
@@ -230,6 +235,14 @@ Here is an example for a RP registering with a SIOP (see [@SIOPv2]) with the `re
 
 <{{examples/client_metadata/client_siop_format.json}}
 
+## RP Metadata Error Response
+
+This extension defines the following error codes that MUST be returned when the OP does not support client metadata parameters:
+
+* `vp_formats_not_supported`: The OP does not support any of the VP formats supported by the RP such as those included in the `vp_formats` registration parameter.
+
+Error response must be made in the same manner as defined in [@!OpenID].
+
 ## OP Metadata
 
 This specification defines new server metadata parameters according to [@!OpenID-Discovery].
@@ -238,13 +251,15 @@ The OP publishes the formats it supports using the `vp_formats` metadata paramet
 
 # Security Considerations {#security_considerations}
 
+## Preventing Replay Attacks
+
 To prevent replay attacks, verifiable presentation container objects MUST be linked to `client_id` and if provided `nonce` from the Authentication Request. The `client_id` is used 
 to detect presentation of credentials to a different than the intended party. The `nonce` value binds the presentation to a certain authentication transaction and allows
 the verifier to detect injection of a presentation in the OpenID Connect flow, which is especially important in flows where the presentation is passed through the front channel. 
 
 The values are passed through unmodified from the Authentication Request to the verifiable presentations. 
 
-Note: These values MAY be represented in different ways (directly as claims or indirectly be incoporation in proof calculation) according to the selected proof format denated by the format claim in the verifiable presentation container.
+Note: These values MAY be represented in different ways (directly as claims or indirectly be incorporation in proof calculation) according to the selected proof format denated by the format claim in the verifiable presentation container.
 
 Here is a non-normative example for format=`jwt_vp` (only relevant part):
 
@@ -294,6 +309,14 @@ Here is a non-normative example for format=`ldp_vp` (only relevant part):
 ```
 
 In the example above, `nonce` is included as the `challenge` and `client_id` as the `domain` value in the proof of the verifiable presentation.
+
+### Presenter and Subject Binding 
+
+It is RECOMMENDED that there is a binding between presenter of the credential presenting it to the verifier and the subject of the credential to whom that credential has been issued to prevent replay of the credentials by unauthorized parties. 
+
+Note that binding mechanisms would vary depending on the format of the credential and crypto suites. Some of the available mechanisms are outlined in section 4.3.2 of [@!DIF.PresentationExchange].
+
+It is NOT RECOMMENDED for the Subject to delegate the presentation of the credential to a third party.
 
 #  Examples 
 
