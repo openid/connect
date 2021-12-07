@@ -1,0 +1,7 @@
+openid-connect-4-verifiable-presentations/*.html
+openid-connect-4-verifiable-presentations/*.xml
+openid-connect-4-verifiable-presentations/*.zip
+openid-connect-4-verifiable-presentations/tests/__pycache__/conftest.cpython-39-pytest-6.2.4.pyc
+openid-connect-4-verifiable-presentations/tests/__pycache__/test_schema_application.cpython-39-pytest-6.2.4.pyc
+openid-connect-self-issued-v2/openid-connect-self-issued-v2-1_0-04.zip
+openid-connect-self-issued-v2/openid-connect-self-issued-v2-1_0.html
