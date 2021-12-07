@@ -1,7 +1,8 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html lang="en"><head><title>Draft-01: OpenID Connect Claims Aggregation 1.0</title>
+<html lang="en"><head><title>Draft-02: OpenID Connect Claims Aggregation Draft 02</title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<meta name="description" content="OpenID Connect Claims Aggregation 1.0">
+<meta name="description" content="OpenID Connect Claims Aggregation Draft 02">
+<meta name="keywords" content="security, openid, w3c verifiable credential, did, privacy">
 <meta name="generator" content="xml2rfc v1.36 (http://xml2rfc.ietf.org/)">
 <style type='text/css'><!--
         body {
@@ -141,19 +142,25 @@
 <body>
 <table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
 <table summary="layout" width="66%" border="0" cellpadding="0" cellspacing="0"><tr><td><table summary="layout" width="100%" border="0" cellpadding="2" cellspacing="1">
-<tr><td class="header">Draft-01</td><td class="header">N. Sakimura</td></tr>
-<tr><td class="header">&nbsp;</td><td class="header">Nat Consulting</td></tr>
+<tr><td class="header">Draft-02</td><td class="header">N. Sakimura</td></tr>
+<tr><td class="header">&nbsp;</td><td class="header">NAT.Consulting</td></tr>
 <tr><td class="header">&nbsp;</td><td class="header">E. Jay</td></tr>
 <tr><td class="header">&nbsp;</td><td class="header">Illumila</td></tr>
-<tr><td class="header">&nbsp;</td><td class="header">August 26, 2020</td></tr>
+<tr><td class="header">&nbsp;</td><td class="header">T. Looker</td></tr>
+<tr><td class="header">&nbsp;</td><td class="header">MATTR Ltd</td></tr>
+<tr><td class="header">&nbsp;</td><td class="header">September 10, 2021</td></tr>
 </table></td></tr></table>
-<h1><br />OpenID Connect Claims Aggregation 1.0</h1>
+<h1><br />OpenID Connect Claims Aggregation Draft 02</h1>
 
+<h3>Abstract</h3>
+
+<p>OpenID Providers within OpenID Connect assume many roles, one of these is providing End-User claims to relying parties at the consent of the End-User such as their name or date of birth. OpenID Connect defines multiple models under which claims are provided and relied upon by a relying parties, including simple, aggregated and distributed claims. This document focuses on elaborating upon the aggregated model outlined in section 5.6.2 of OpenID Connect core by defining the full life-cycle of aggregated claims and the new roles of the entities involved in an aggregated claims model.
+</p>
 <h3>Warning</h3>
 
-<p>This document is not an OIDF International Standard. It is distributed for review and comment. It is subject to change without notice and may not be referred to as an International Standard.  
+<p>This document is not an OIDF International Standard. It is distributed for review and comment. It is subject to change without notice and may not be referred to as an International Standard.
 </p>
-<p>Recipients of this draft are invited to submit, with their comments, notification of any relevant patent rights of which they are aware and to provide supporting documentation.  
+<p>Recipients of this draft are invited to submit, with their comments, notification of any relevant patent rights of which they are aware and to provide supporting documentation.
 </p>
 <h3>Copyright notice &amp; license</h3>
 
@@ -167,11 +174,144 @@
 </p>
 <h3>Introduction</h3>
 
+<p>OpenID Connect is a selective claims disclosure mechanism. When a set of claims included in its response is about
+an entity authentication event, it works as an entity authentication federation mechanism, but it can deliver
+other claims selected by the subject as well.
+</p>
+<p>In the OpenID Connect specification, it is assumed that there are many sources of claims.
+Each claim is associated with its authoritative source so there naturally will be many authoritative sources.
+Claim sources can be corroborative, i.e., not authoritative, as well.
+In total, there will be many Claim Set sources in OpenID Connect Framework.
+These Claim sources are called Issuing Authorities in OpenID Connect.
+Issuing-Authority (IA) is just an Identity-Agent (IdA), but it does not provide the claims about the current authentication event
+and its associated subject identifier authoritatively. Note that Issuing-Authority can act as an Identity-Agent in other transactions.
+Whether it is called IdA or IA is depending on their role in a particular transaction.
+</p>
+<p>There are four main actors in the OpenID Connect aggregated claims model.
+</p>
 <p>
 </p>
-<h3>Notational conventions</h3>
+<ol class="text">
+<li>End-User (Subject)
+</li>
+<li>Issuing-Authority (IA) - Entity that is the issuer of claims about the End-User.
+</li>
+<li>Identity-Agent (IdA) that provides claims about the subject authentication event and provides signed claim sets obtained from other Issuing Authorities
+</li>
+<li>Claims-Consumer (CC) that verifies and relies upon the provided claims.
+</li>
+</ol><p>
 
-<p>The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in BCP 14 [RFC2119] [RFC8174] when, and only when, they appear in all capitals, as shown here.
+</p>
+<p>An IdA can provide an CC the claims by value or by reference.
+</p>
+<p>By value is the case where an IdA collects claims and their values
+from IAs and aggregate them in one package to provide to the CC.
+This model is called Aggregated Claims Model.
+</p>
+<p>By value is the case where the IdA does not collect and provide the value
+but just provide the reference and its access information to the CC.
+This model is called Distributed Claims Model.
+</p>
+<p>In either case, there has to be strong binding between the subject
+in the claim sets provided by IAs and the subject in the ID Token provided by the IdA.
+Conceptually, it can be done through Subject value correlation or
+through the correlation of signing key materials.
+Regardless of the methods, there has to be this binding.
+Otherwise, the provided claims cannot be trusted to be linked to the authenticated subject.
+</p>
+<p>This document defines how to do this binding even in the case of ephemeral subject identifier
+in which case the <tt>sub</tt> value of the ID Token will change every time the subject visits the CC.
+This allows anonymous attribute based authentication where an CC cannot link two visits
+by the subject without using other facilities.
+</p>
+<p>By supporting the case of ephemeral subject identifier, pairwise pseudonymous identifier
+and omni-directional identifier cases are also covered.
+</p>
+<p>Another feature that this document provides is the way to avoid multiple consent screen
+per CC authorization request. If OpenID Connect Core spec is used to build Aggregated Claims Model
+naively, it may result in many consent screens per CC request.
+For example, if four IAs and one IdA is involved in the request, then, there may be five consent screens.
+This is too onerous. This document defines a mechanism to consolidate it into one consent screen.
+This is done through one &quot;IdA User Setup Phase&quot; per IA that the IdA obtains the consent
+from the subject to obtain claims from the IA for the purpose of creating aggregated and distributed
+claims response for future CC requests in which IdA will collect a new consent from the subject.
+</p>
+<p>The mechanism used for this is to obtain an access token and a refresh token that corresponds
+to a suitably wide scope for the purpose. While the claims at the time of an CC request can be
+obtained from the UserInfo endpoint, this document defines a new endpoint called claims endpoint.
+It is almost the same as the UserInfo endpoint, but there are a few important differences:
+</p>
+<p>
+</p>
+<ol class="text">
+<li>It allows collection minimization by supporting claims parameter.
+</li>
+<li>It allows an identifier to correlate the claims it is returning and the ID Token the IdA provides.
+</li>
+<li>It includes the <tt>iss</tt> claim. (Userinfo Endpoint does not)
+</li>
+<li>It returns signed response.
+</li>
+<li>It allows multiple schema types for its response. (e.g, JWT and W3C Verifiable Credentials formats)
+</li>
+</ol><p>
+
+</p>
+<p>Note that while Userinfo Endpoint was conceived to support multiple response types,
+e.g., support for SCIM schema,
+the exact method was not specified at the time of the publication.
+</p>
+<p>This new Claims Endpoint allows the specification of the response schema and media type,
+e.g., OIDC JWT, OIDC4IDA JWT, W3C Verifiable Claims in JWT and JSON-LD, SCIM 2.0 in JWT, etc.
+It is done so in an extensible manner (using registry tbd).
+</p>
+<p>This implies that there will be an impact to the authentication and claims request that an CC makes.
+It may optionally want to specify its preferred format for the Claim Sets to be received.
+Therefore, this document also defines a new parameter to express its preference.
+</p>
+<p>There are four phases defined in this document.
+</p>
+<p>
+</p>
+<ol class="text">
+<li>IA Discovery Phase: IdA discovers IA metadata.
+</li>
+<li>IdA Registration Phase: IdA registers to IA as an CC.
+</li>
+<li>Setup Phase: IdA obtains the access and refresh tokens from IA by the permission of the subject.
+</li>
+<li>CC Phase:
+
+<ol class="text">
+<li>CC makes authentication and claims request,
+</li>
+<li>IdA fetches relevant claim sets from IAs,
+</li>
+<li>IdA respond to the CC
+</li>
+<li>the CC verifies the response.
+</li>
+</ol>
+</li>
+</ol><p>
+
+</p>
+<p>Note that distributed claims model is out of scope of this document.
+</p>
+<p>Intended reader of this document is the developer and systems architect who builds attributes and claims base systems.
+</p>
+<h3>Requirements Notation and Conventions</h3>
+
+<p>The key words &quot;MUST&quot;, &quot;MUST NOT&quot;, &quot;REQUIRED&quot;, &quot;SHALL&quot;, &quot;SHALL NOT&quot;,
+&quot;SHOULD&quot;, &quot;SHOULD NOT&quot;, &quot;RECOMMENDED&quot;, &quot;NOT RECOMMENDED&quot;, &quot;MAY&quot;, and
+&quot;OPTIONAL&quot; in this document are to be interpreted as described in BCP
+14 [RFC2119] [RFC8174] when, and only when, they appear in all
+capitals, as shown here.
+</p>
+<p>In the .txt version of this document, values are quoted to indicate that they are to be taken literally. When using these values in protocol messages, the quotes MUST NOT be used as part of the value. In the HTML version of this document, values to be taken literally are indicated by the use of this fixed-width font.
+</p>
+<p>All uses of JSON Web Signature (JWS) JWS and JSON Web Encryption (JWE) JWE data structures in this specification utilize the JWS Compact Serialization or the JWE Compact Serialization; the JWS JSON Serialization and the JWE JSON Serialization are not used.
 </p><a name="toc"></a><br /><hr />
 <h3>Table of Contents</h3>
 <p class="toc">
@@ -183,38 +323,70 @@ Normative references<br />
 Terms and definitions<br />
 <a href="#symbols-and-abbreviated-terms">4.</a>&nbsp;
 Symbols and abbreviated terms<br />
-<a href="#openid-connect-claims-aggregation">5.</a>&nbsp;
-OpenID Connect Claims Aggregation<br />
-&nbsp;&nbsp;&nbsp;&nbsp;<a href="#introduction">5.1.</a>&nbsp;
-Introduction<br />
-&nbsp;&nbsp;&nbsp;&nbsp;<a href="#discovery">5.2.</a>&nbsp;
-Discovery<br />
-&nbsp;&nbsp;&nbsp;&nbsp;<a href="#registration">5.3.</a>&nbsp;
-Registration<br />
-&nbsp;&nbsp;&nbsp;&nbsp;<a href="#authentication-request">5.4.</a>&nbsp;
-Authentication Request<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#requesting-claims-using-scope-values">5.4.1.</a>&nbsp;
-Requesting Claims Using Scope Values<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#requesting-claims-using-the-claims-parameter">5.4.2.</a>&nbsp;
-Requesting Claims Using the 'claims&quot; Parameter<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#requesting-claims-using-request-object">5.4.3.</a>&nbsp;
-Requesting Claims Using Request Object<br />
-&nbsp;&nbsp;&nbsp;&nbsp;<a href="#token-endpoint">5.5.</a>&nbsp;
-Token Endpoint<br />
-&nbsp;&nbsp;&nbsp;&nbsp;<a href="#claims-endpoint">5.6.</a>&nbsp;
+<a href="#actors">5.</a>&nbsp;
+Actors<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#subject-user">5.1.</a>&nbsp;
+Subject (User)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#claims-consumer-cc">5.2.</a>&nbsp;
+Claims-Consumer (CC)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#issuing-authority-ia">5.3.</a>&nbsp;
+Issuing-Authority (IA)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#claims-endpoint">5.3.1.</a>&nbsp;
 Claims Endpoint<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#claims-endpoint-request">5.6.1.</a>&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#identity-agent-ida">5.4.</a>&nbsp;
+Identity-Agent (IdA)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#c-token">5.4.1.</a>&nbsp;
+c_token<br />
+<a href="#discovery-phase">6.</a>&nbsp;
+Discovery Phase<br />
+<a href="#registration-phase">7.</a>&nbsp;
+Registration Phase<br />
+<a href="#setup-phase">8.</a>&nbsp;
+Setup Phase<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#overview">8.1.</a>&nbsp;
+Overview<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#authorization-request">8.2.</a>&nbsp;
+Authorization request<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#token-endpoint-response">8.3.</a>&nbsp;
+Token Endpoint Response<br />
+<a href="#delivery-phase-cc-phase">9.</a>&nbsp;
+Delivery Phase (CC Phase)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#overview-1">9.1.</a>&nbsp;
+Overview<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#claims-request-by-cc-to-ida">9.2.</a>&nbsp;
+Claims Request by CC to IdA<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#cc-authentication-and-the-request-verification">9.3.</a>&nbsp;
+CC authentication and the request verification<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#subject-granting">9.4.</a>&nbsp;
+Subject Granting<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#claims-collection">9.5.</a>&nbsp;
+Claims Collection<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#claims-endpoint-request">9.5.1.</a>&nbsp;
 Claims Endpoint Request<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#claims-endpoint-response">5.6.2.</a>&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#signed-claimset-request-using-a-decentralized-identifier">9.5.2.</a>&nbsp;
+Signed Claimset Request using a Decentralized Identifier<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#claims-endpoint-response">9.5.3.</a>&nbsp;
 Claims Endpoint Response<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#claims-endpoint-error-response">5.6.3.</a>&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#claimset-in-oidc-jws-format">9.5.3.1.</a>&nbsp;
+Claimset in OIDC JWS format<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#claimset-in-w3c-vc-format">9.5.3.2.</a>&nbsp;
+Claimset in W3C VC format<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#claims-endpoint-error-response">9.5.4.</a>&nbsp;
 Claims Endpoint Error Response<br />
-&nbsp;&nbsp;&nbsp;&nbsp;<a href="#aggregate-claims-response">5.7.</a>&nbsp;
-Aggregate Claims Response<br />
-&nbsp;&nbsp;&nbsp;&nbsp;<a href="#aggregate-claims-response-validation">5.8.</a>&nbsp;
-Aggregate Claims Response Validation<br />
-<a href="#authors">6.</a>&nbsp;
-Authors<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#claims-endpoint-verification">9.5.5.</a>&nbsp;
+Claims Endpoint Verification<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#claims-delivery">9.6.</a>&nbsp;
+Claims Delivery<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#claims-verification">9.7.</a>&nbsp;
+Claims Verification<br />
+<a href="#security-considerations">10.</a>&nbsp;
+Security Considerations<br />
+<a href="#privacy-considerations">11.</a>&nbsp;
+Privacy Considerations<br />
+<a href="#references">12.</a>&nbsp;
+References<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#normative-references-1">12.1.</a>&nbsp;
+Normative references<br />
 <a href="#rfc.authors">&#167;</a>&nbsp;
 Authors' Addresses<br />
 </p>
@@ -225,360 +397,1045 @@ Authors' Addresses<br />
 <a name="rfc.section.1"></a><h3>1.&nbsp;
 Scope</h3>
 
-<p>This document specifies the methods for an application to: * perform discovery for a Claims Provider; * register a client to a Claims Provider; * obtain claims from the Claims Provider; and * returned aggregated claims from Claims Providers to requesting clients.  
+<p>This document specifies the methods for
+</p>
+<p>
+</p>
+<ul class="text">
+<li>an Identity-Agent acting as a client of Issuing-Authority to perform discovery for an Issuing-Authority Metadata;
+</li>
+<li>the Identity-Agent to perform client registration to the Issuing-Authority;
+</li>
+<li>the Identity-Agent to obtain claims from the Issuing-Authority;
+</li>
+<li>a Claims-Consumer to ask for verified claims to the Identity-Agent;<br />
+
+
+</li>
+<li>the Identity-Agent to return obtained claims from Issuing-Authority to the Claims-Consumer; and
+</li>
+<li>the Claims-Consumer to verify the claims.
+</li>
+</ul><p>
+
 </p>
 <a name="normative-references"></a><br /><hr />
 <table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
 <a name="rfc.section.2"></a><h3>2.&nbsp;
 Normative references</h3>
 
-<p>The following referenced documents are indispensable for the application of this document. For dated references, only the edition cited applied. For undated references, the latest edition of the referenced document (including any amendments) applies.  
-</p>
-<p>[BCP14] - Key words for use in RFCs to Indicate Requirement Levels [BCP14]: https://tools.ietf.org/html/bcp14 
-</p>
-<p>[RFC6749] - The OAuth 2.0 Authorization Framework [RFC6749]: https://tools.ietf.org/html/rfc6749 
-</p>
-<p>[RFC6750] - The OAuth 2.0 Authorization Framework: Bearer Token Usage [RFC6750]: https://tools.ietf.org/html/rfc6750 
-</p>
-<p>[RFC7636] - # Proof Key for Code Exchange by OAuth Public Clients [RFC7636]: https://tools.ietf.org/html/rfc76360 
-</p>
-<p>[BCP212] - OAuth 2.0 for Native Apps [BCP212]: https://tools.ietf.org/html/bcp212 
-</p>
-<p>[RFC6819] - OAuth 2.0 Threat Model and Security Considerations [RFC6819]: https://tools.ietf.org/html/rfc6819 
-</p>
-<p>[BCP195] - Recommendations for Secure Use of Transport Layer Security (TLS) and Datagram Transport Layer Security (DTLS) [BCP195]: https://tools.ietf.org/html/bcp195 
-</p>
-<p>[OIDC] - OpenID Connect Core 1.0 incorporating errata set 1 [OIDC]: https://openid.net/specs/openid-connect-core-1_0.html 
-</p>
-<p>[OpenID.Discovery] - OpenID Connect Discovery 1.0 [OpenID.Discovery]: https://openid.net/specs/openid-connect-discovery-1_0.html 
-</p>
-<p>[OpenID.Registration] - OpenID Connect Registration 1.0 [OpenID.Registration]: http://openid.net/specs/openid-connect-registration-1_0.html 
-</p>
-<p>[OpenID.IDA] - OpenID Connect for Identity Assurance 1.0 [OpenID.IDA]:https://openid.net/specs/openid-connect-4-identity-assurance-1_0-ID1.html 
-</p>
-<p>[MTLS] - OAuth 2.0 Mutual TLS Client Authentication and Certificate Bound Access Tokens [MTLS]: https://tools.ietf.org/html/draft-ietf-oauth-mtls 
-</p>
-<p>[JWT] - JSON Web Token [JWT]: http://tools.ietf.org/html/draft-ietf-oauth-json-web-token 
-</p>
-<p>[JWS] - JSON Web Signature [JWS]: http://tools.ietf.org/html/draft-ietf-jose-json-web-signature 
-</p>
-<p>[JWE] - JSON Web Encryption [JWE]: http://tools.ietf.org/html/draft-ietf-jose-json-web-encryption 
-</p>
-<p>[JWA] - JSON Web Algorithms [JWA]: http://tools.ietf.org/html/draft-ietf-jose-json-web-algorithms 
+<p>The following referenced documents are indispensable for the application of this document. For dated references, only the edition cited applied. For undated references, the latest edition of the referenced document (including any amendments) applies.
 </p>
 <a name="terms-and-definitions"></a><br /><hr />
 <table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
 <a name="rfc.section.3"></a><h3>3.&nbsp;
 Terms and definitions</h3>
 
-<p>For the purpose of this document, the terms defined in [RFC6749], [RFC6750], [RFC7636], [OpenID Connect Core][OIDC] apply.  
+<p>For the purpose of this document, the terms defined in <a href='https://tools.ietf.org/html/rfc6749'>RFC6749</a>, <a href='https://tools.ietf.org/html/rfc6750'>RFC6750</a>, <a href='https://tools.ietf.org/html/rfc76360'>RFC7636</a>, <a href='https://openid.net/specs/openid-connect-core-1_0.html'>OpenID Connect Core</a> apply. In addition, following terms are defined as a shorthand for the definition text that follows.
+</p>
+<p><strong>3.1</strong><br />
+
+<strong>Issuing-Authority</strong><br />
+
+party that issues attested claims
+</p>
+<p><strong>3.2</strong><br />
+
+<strong>Claims-Consumer</strong><br />
+
+party that verifies and consumes the provided claim sets
+</p>
+<p><strong>3.3</strong><br />
+
+<strong>Identity-Agent</strong><br />
+
+party that acts as an RP to Issuing-Authorities and OP to Claims-Consumers
+</p>
+<p>Note to entry: A Digital Identity Wallet is a type of IdA.
 </p>
 <a name="symbols-and-abbreviated-terms"></a><br /><hr />
 <table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
 <a name="rfc.section.4"></a><h3>4.&nbsp;
 Symbols and abbreviated terms</h3>
 
-<p><strong>HTTP</strong> - Hyper Text Transfer Protocol 
+<p><strong>IA</strong> – Issuing-Authority
 </p>
-<p><strong>TLS</strong> - Transport Layer Security 
+<p><strong>IdA</strong> – Identity-Agent
 </p>
-<a name="openid-connect-claims-aggregation"></a><br /><hr />
+<p><strong>CC</strong> – Claims-Consumer
+</p>
+<p><strong>DID</strong> - Decentralized Identifier
+</p>
+<p><strong>HTTP</strong> - Hyper Text Transfer Protocol
+</p>
+<p><strong>TLS</strong> - Transport Layer Security
+</p>
+<p><strong>VC</strong> - W3C Verifiable Credential
+</p>
+<p><strong>VP</strong> - W3C Verifiable Presentation
+</p>
+<p><strong>W3C</strong> - World Wide Web Consortium
+</p>
+<a name="actors"></a><br /><hr />
 <table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
 <a name="rfc.section.5"></a><h3>5.&nbsp;
-OpenID Connect Claims Aggregation</h3>
+Actors</h3>
 
-<a name="introduction"></a><br /><hr />
+<p>In this document, there are four main actors.
+</p>
+<p>
+</p>
+<ol class="text">
+<li>Subject (User)
+</li>
+<li>Issuing-Authority (IA)
+</li>
+<li>Identity-Agent (IdA)
+</li>
+<li>Claims-Consumer(CC)<br />
+
+
+</li>
+</ol><p>
+
+</p>
+<p>They are topologically connected as in the following diagram.
+</p><br /><hr class="insert" />
+<div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>                +---------+
+    +-----------| Subject |--------+
+    | grants    +---------+        |
+    v                |             |
++------+             | instructs   | allows
+|  IA  |----+        |             |
++------+    |        v             v
+   .        |    +-------+     +------+
+   .        |----|  IdA  |-----|  CC  |
+   .        |    +-------+     +------+
++------+    |
+|  IA  |----+
++------+
+
+</pre></div><table border="0" cellpadding="0" cellspacing="2" align="center"><tr><td align="center"><font face="monaco, MS Sans Serif" size="1"><b>&nbsp;Relationships among actors
+&nbsp;</b></font><br /></td></tr></table><hr class="insert" />
+
+<a name="subject-user"></a><br /><hr />
 <table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
 <a name="rfc.section.5.1"></a><h3>5.1.&nbsp;
-Introduction</h3>
+Subject (User)</h3>
 
-<p>Personal information can be stored in various places : locally or at various online claims providers. Commonly, different claims providers will store different types of personal information (e.g., a medical Claims Provider will store medical information and a school will store students' education history at the school). The decentralization of these various pieces of information makes it onerous for a person to share their information with other service providers.  
+<p>Subject is the entity that grants access to the claims at IAs and the IdA.
+In this system, the Subject grants IA to provide IdA the Claims for
+the purpose of providing those claims with other claims to potentially
+unspecified CCs under the Subject's direction.
 </p>
-<p>OpenID Connect Claims Aggregation provides a way for an OpenID Connect Provider to provide aggregated claims from Claims Providers to OpenID Connect clients. This enables a more user-centric way for users to share their information from an OpenID Provider which gathers all their information in a centralized location. The OpenID Provider acts as a Relying Party to Claims Providers by registering as a client and then making OpenID authentication requests for the necessary user information.  The authentication requests goes through the normal OpenID request flow of obtaining user authentication and authorization for the requested claims. The OpenID Provider then makes a request for an access token that can be used at the Aggregate Claims Endpoint to fetch the requested claims that are then returned as aggregate claims to the requesting Relying Party client.  
+<p>This request from the IdA to the IA is sent by the Subject's instruction.
+The Subject also allows IdA to potentially store the obtained claims.
 </p>
-<a name="discovery"></a><br /><hr />
+<p>The Subject also allows CC to make a claims request to the IdA,
+typically for the Subject to receive some services from the CC.
+</p>
+<a name="claims-consumer-cc"></a><br /><hr />
 <table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
 <a name="rfc.section.5.2"></a><h3>5.2.&nbsp;
-Discovery</h3>
+Claims-Consumer (CC)</h3>
 
-<p>This specification assumes that the Relying Party has already obtained configuration information about the OpenID Claims Provider, including its Authorization Endpoint and Token Endpoint locations. This information is obtained via Discovery, as described in OpenID Connect Discovery 1.0 [OpenID.Discovery], or may be obtained via other mechanisms.  
+<p>CC is an actor that typically provides some service to the Subject.
+To perform the service, the CC obtains some claims about the Subject from IdA.
+The basis for the processing of the Subject's claims by the CC can be
+performance of contract, consent, and other lawful basis.
 </p>
-<p>OpenID Connect Claims Aggregation adds the following OpenID Provider Metadata to the OpenID Connect Discovery 1.0 [OpenID.Discovery] response when aggregatable claims are supported by a Claims Provider : 
-</p>
-<p></p>
-<ul class="text">
-<li><em>claims_endpoint</em> 
-<ul class="text">
-<li><strong>Required</strong>. Claims Endpoint. URL at the Claims Provider that provides signed claims.  
-</li>
-</ul> 
-</li>
-<li><em>claims_signing_alg_values_supported</em> 
-<ul class="text">
-<li><strong>Optional</strong>. JSON array containing a list of the JWS [JWS] signing algorithms (alg values) JWA [JWA] supported by the Claims Endpoint to encode the Claims in a JWT [JWT]. The value <em>none</em> MUST NOT be included.  
-</li>
-</ul> 
-</li>
-<li><em>claims_encryption_alg_values_supported</em> 
-<ul class="text">
-<li><strong>Optional</strong>. JSON array containing a list of the JWE [JWE] encryption algorithms (alg values) JWA [JWA] supported by the Claims Endpoint to encode the Claims in a JWT [JWT].  
-</li>
-</ul> 
-</li>
-<li><em>claims_encryption_enc_values_supported</em> 
-<ul class="text">
-<li><strong>Optional</strong>. JSON array containing a list of the JWE [JWE] encryption algorithms (enc values) JWA [JWA] supported by the Claims Endpoint to encode the Claims in a JWT [JWT].  
-</li>
-</ul> 
-</li>
-</ul>
-
-<p>Additionally, the following OP Metadata MUST contain the following parameters: - <em>claim_types_supported</em>. The JSON array MUST contain the values <em>normal</em>, and <em>distributed</em> (client only). - <em>claims_supported</em>. A JSON array containing a list of the Claim Names of the Claims that the OpenID Provider MAY be able to supply values for. - <em>claims_parameter_supported</em>. The value MUST be <em>true</em> to support the <em>claims</em> request parameter. - <em>request_parameter_supported</em>. The value MUST be <em>true</em> to support the <em>request</em> request parameter. - <em>request_uri_parameter_supported</em>. The value MUST be <em>true</em> to support the <em>request_uri</em> request parameter.  
-</p>
-<p>If the OpenID Provider supports OpenID Connect for Identity Assurance 1.0 [OpenID.IDA], the supported OpenID Connect for Identity Assurance 1.0 [OpenID.IDA] supported features MUST be published as specified in section 7 of OpenID Connect for Identity Assurance 1.0 [OpenID.IDA].  
-</p>
-<a name="registration"></a><br /><hr />
+<a name="issuing-authority-ia"></a><br /><hr />
 <table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
 <a name="rfc.section.5.3"></a><h3>5.3.&nbsp;
-Registration</h3>
+Issuing-Authority (IA)</h3>
 
-<p>This specification assumes that the Relying Party has already obtained sufficient credentials and provided information needed to use the OpenID Claims Provider. This is normally done via Dynamic Registration, as described in <a href='https://openid.net/specs/openid-connect-core-1_0.html#OpenID.Registration'>OpenID Connect Dynamic Client Registration 1.0</a> [OpenID.Registration], or may be obtained via other mechanisms.  
-</p>
-<p>OpenID Connect Claims Aggregation adds the following Client Metadata to the OpenID Connect Dynamic Client Registration : 
-</p>
-<p></p>
-<ul class="text">
-<li><em>claims_signed_response_alg</em> 
-<ul class="text">
-<li><strong>Required</strong>. JWS <em>alg</em> algorithm JWA [JWA] REQUIRED for signing Claims Responses. The value <em>none</em> MUST NOT be used. If this is specified, the response will be JWT [JWT] serialized, and signed using JWS. The default, if omitted, is <em>RS256</em>.  
-</li>
-</ul> 
-</li>
-<li><em>claims_encrypted_response_alg</em> 
-<ul class="text">
-<li><strong>Optional</strong>. JWE <em>alg</em> algorithm JWA [JWA] REQUIRED for encrypting Claims responses to the client. If both signing and encryption are requested, the response will be signed then encrypted, with the result being a Nested JWT, as defined in JWT [JWT]. The default, if omitted, is that no encryption is performed.  
-</li>
-</ul> 
-</li>
-<li><em>claims_encrypted_response_enc</em> 
-<ul class="text">
-<li><strong>Optional</strong>. JWE <em>enc</em> algorithm JWA [JWA] REQUIRED for encrypting Claims responses. If <em>claims_encrypted_response_enc</em> is specified, the default for this value is <em>A128CBC-HS256</em>. When <em>claims_encrypted_response_enc</em> is included, <em>claims_encrypted_response_alg</em> MUST also be provided.  
-</li>
-</ul> 
-</li>
-</ul>
+<p>IA, Issuing-Authority, is a role assumed by an Identity-Agent
+that supports signed claims according to this document.<br />
 
-<p>Authentication requests to the Claims Provider's Authorization Endpoint should be signed or signed and encrypted. In order to support a more diverse set of claims, requests for claims should be made using Request Objects which are signed or signed and encrypted by registering the appropriate values for the following Client Metadata registration parameters: 
+Specifically, it supports an extension to bind the
+authentication response that CCs received from the IdA
+to the claim sets that it provides.
 </p>
-<p></p>
-<ul class="text">
-<li><em>request_object_signing_alg</em> 
+<p>The provision for the Issuing-Authority are as follows:
+</p>
+<p>
+</p>
+<ol class="text">
+<li>It MUST implement Claims Endpoint.
 </li>
-<li><em>request_object_encryption_alg</em> 
+<li>It MUST support the issuance of Access Tokens and Refresh Tokens for the Claims Endpoint.
 </li>
-<li><em>request_object_encryption_enc</em> 
+<li>It MUST support the Discovery Metadata extension defined by this document.
 </li>
-</ul>
-
-<a name="authentication-request"></a><br /><hr />
-<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
-<a name="rfc.section.5.4"></a><h3>5.4.&nbsp;
-Authentication Request</h3>
-
-<p>Authentication requests to Claims Providers are made using the OpenID Connect Code Authorization Flow as described in 3.1 of OpenID Connect 1.0 [OIDC] along with PKCE [RFC7636].  
-</p>
-<p>Requests for specific claims MUST be made using <em>scope</em> values, <em>claims</em> values, or and/or Request Objects in the Authentication Request.  
-</p>
-<p>Since claims from Claims Providers are returned as aggregated claims, only signed or signed and encrypted responses from the Claims Endpoint can be returned as aggregated claims by the OpenID Provider.  
-</p>
-<p>The OpenID Provider should request a refresh token in the Authentication request to the Claims Provider to facilitate ease of retrieving individual claims from the Claim Provider's Claims Endpoint.  
-</p>
-<a name="requesting-claims-using-scope-values"></a><br /><hr />
-<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
-<a name="rfc.section.5.4.1"></a><h3>5.4.1.&nbsp;
-Requesting Claims Using Scope Values</h3>
-
-<p>OpenID Connect Claims Aggregation supports the use of <em>scope</em> values in the Authentication Request to retrieve claims from the Claims Endpoint as specified in 5.4 of OpenID Connect 1.0 [OIDC].  
-</p>
-<a name="requesting-claims-using-the-claims-parameter"></a><br /><hr />
-<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
-<a name="rfc.section.5.4.2"></a><h3>5.4.2.&nbsp;
-Requesting Claims Using the 'claims&quot; Parameter</h3>
-
-<p>OpenID Connect Claims Aggregation supports the use of <em>claims</em> parameter to retrieve claims from the Claims Endpoint as specified in 5.5 of OpenID Connect 1.0 [OIDC].  
-</p>
-<p>To support additional claims and provide claims assurance, OpenID Claims Aggregation supports OpenID Connect for Identity Assurance 1.0 [OpenID.IDA] for the Claims request JSON object and defines the following new Claims in addition to the Claims defined in the OpenID Connect specification OpenID Connect 1.0 [OIDC]: 
-</p>
-<p></p>
-<ul class="text">
-<li><strong>uid</strong> <em>string</em> The value is the base64url encoded representation of the thumbprint of the Client's public key for signing. This thumbprint value is computed as the SHA-256 hash of the octets of the UTF-8 representation of a JWK constructed containing only the REQUIRED members to represent the key, with the member names sorted into lexicographic order, and with no white space or line breaks.  For instance, when the kty value is RSA, the member names e, kty, and n are the ones present in the constructed JWK used in the thumbprint computation and appear in that order; when the kty value is EC, the member names crv, kty, x, and y are present in that order. Note that this thumbprint calculation is the same as that defined in the JWK Thumbprint <a href='https://openid.net/specs/openid-connect-core-1_0.html#JWK.Thumbprint'>[JWK.Thumbprint]</a> specification.  
+<li>It MUST support the registration of the IdAs with extensions defined in this document.
 </li>
-<li><strong>cp_sub</strong> <em>string</em> The Claim Providers <em>sub</em> identifier for the authenticated user.  
+<li>It SHOULD support the registration of the IdAs through Dynamic Registration.
 </li>
-</ul>
+</ol><p>
 
-<p>In addition, OpenID Connect Claims Aggregation defines the following top-level member to the Claims request JSON object: 
-</p>
-<p></p>
-<ul class="text">
-<li><em>c_token</em> 
-<ul class="text">
-<li><strong>Optional</strong>. Requests that the listed individual Claims be returned from the Claims Endpoint. If present, the listed Claims are being requested to be added to any Claims that are being requested using scope values. If not present, the Claims being requested from the Claims Endpoint are only those requested using scope values. This top-level member is a JSON object with the names of the individual Claims being requested as the member names and the values are defined as in 5.5.1 of OpenID Connect 1.0 [OIDC].  
-</li>
-</ul> 
-</li>
-</ul>
-
-<p>OpenID Claims Aggregation supports the requesting of additional claims and verified claims defined in OpenID Connect for Identity Assurance 1.0 [OpenID.IDA] for the <em>c_token</em> member of the Claims request JSON object.  
-</p>
-<p>When the <em>c_token</em> member is used, the request MUST also use a <em>response_type</em> value that results in an Access Token being issued to the Client for use at the claims endpoint.  
-</p>
-<a name="requesting-claims-using-request-object"></a><br /><hr />
-<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
-<a name="rfc.section.5.4.3"></a><h3>5.4.3.&nbsp;
-Requesting Claims Using Request Object</h3>
-
-<p>OpenID Connect Claims Aggregation is a superset of OpenID Connect 1.0 [OIDC]; it fully supports requesting claims via Request Objects as specified in 6 of OpenID Connect 1.0 [OIDC] in conjunction with the additional <em>c_token</em> member as defined in 5.3.2 of this specification.  
-</p>
-<a name="token-endpoint"></a><br /><hr />
-<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
-<a name="rfc.section.5.5"></a><h3>5.5.&nbsp;
-Token Endpoint</h3>
-
-<p>The OpenID Provider acting as Relying Party to the Claims Provider makes a request to the Claims Provider's Token Endpoint to retrieve an access token as described in 3.1.3 of OpenID Connect 1.0 [OIDC].  
-</p>
-<p>The Token Endpoint request should limit the scope if less information is desired than the initial Authentication request.  
 </p>
 <a name="claims-endpoint"></a><br /><hr />
 <table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
-<a name="rfc.section.5.6"></a><h3>5.6.&nbsp;
+<a name="rfc.section.5.3.1"></a><h3>5.3.1.&nbsp;
 Claims Endpoint</h3>
 
-<p>The Claims Endpoint is an OAuth 2.0 Protected Resource that returns Claims about the authenticated End-User. To obtain the requested Claims about the End-User, the Client makes a request to the Claims Endpoint using an Access Token obtained through OpenID Connect Authentication. These Claims are normally represented by a JSON object that contains a collection of name and value pairs for the Claims.  
+<p>The Claims Endpoint is an OAuth 2.0 Protected Resource that returns Claims about the authenticated Subject.
+To obtain the requested Claims about the Subject,
+the IdA acting as a Client makes a request to the Claims Endpoint of the IA using an Access Token obtained through OpenID Connect Authentication.
+These Claims can be represented in variety of format as requested.
 </p>
-<p>Communication with the Claims Endpoint MUST utilize TLS. See <a href='https://openid.net/specs/openid-connect-core-1_0.html#TLSRequirements'>Section 16.17</a> for more information on using TLS.  
+<p>This document defines the following request parameters for the Claims Endpoint request:
 </p>
-<p>The Claims Endpoint MUST support the use of the HTTP GET and HTTP POST methods defined in <a href='https://openid.net/specs/openid-connect-core-1_0.html#RFC2616'>RFC 2616</a> [RFC2616].  
+<p>
 </p>
-<p>The Claims Endpoint MUST accept Access Tokens as <a href='https://openid.net/specs/openid-connect-core-1_0.html#RFC6750'>OAuth 2.0 Bearer Token Usage</a> [RFC6750].  
+<ul class="text">
+<li><em>uid</em>  String value which identifies the end-user at the Client. The value is described in 5.3.2 of this specification. If this parameter is not supplied, the <em>uid</em> claims value MUST be supplied in the <em>claims</em> parameter.
+</li>
+<li><em>claims</em>  This parameter is used to request that specific Claims be returned. This is a JSON object with only the <em>c_token</em> top-level member defined in 5.3.2 of this specification. The <em>c_token</em> member requests that the listed individual Claims be returned from the Claims Endpoint. The requested claims MUST only be a subset of the claims bounded to the Access Token as requested in the Authentication Request's <em>scope</em>, <em>claims</em>, or <em>request</em> or <em>request_uri</em> parameters. The <em>c_token</em> member MUST contain the <em>uid</em> claim value if the <em>uid</em> request parameter is not supplied.
+</li>
+<li><em>aud</em>  JSON object containing a string array of client identifiers that will be added as additional <em>aud</em>  (audience) claims for the resulting JWT response from this endpoint. (Editor's NOTE: This point needs more discussion.)
+</li>
+</ul><p>
+
 </p>
-<p>The Claims Endpoint SHOULD support the use of <a href='https://openid.net/specs/openid-connect-core-1_0.html#CORS'>Cross Origin Resource Sharing (CORS)</a> [CORS] and or other methods as appropriate to enable Java Script Clients to access the endpoint.  
+<p>** Editor's NOTE ** Is there a way to specify the CCs that are registered to the IdA?
+</p>
+<p>The provision for the Claims Endpoint are as follows:
+</p>
+<p>
+</p>
+<ol class="text">
+<li>It MUST implement <tt>uid</tt>, <tt>claims</tt>, and <tt>aud</tt> as defined above.
+</li>
+<li>It MUST implement OIDC4IDA response encoded in JWS signed JWT as its response.
+</li>
+<li>It SHOULD support W3C Verified Credentials in JWT or JSON-LD representation as its response.
+</li>
+<li>It MAY support other response format as advertised in the Discovery response.
+</li>
+<li>It MUST enforce TLS for request and response. See  <a href='https://openid.net/specs/openid-connect-core-1_0.html#TLSRequirements'>Section 16.17</a>  for more information on using TLS.
+</li>
+<li>It MUST support the use of the HTTP  GET  and HTTP  POST  methods defined in  <a href='https://openid.net/specs/openid-connect-core-1_0.html#RFC2616'>RFC 2616</a>  [RFC2616].
+</li>
+<li>It MUST accept Access Tokens as  <a href='https://openid.net/specs/openid-connect-core-1_0.html#RFC6750'>OAuth 2.0 Bearer Token Usage</a>  <a href='https://tools.ietf.org/html/rfc6750'>RFC6750</a>.
+</li>
+<li>It SHOULD support the use of  <a href='https://openid.net/specs/openid-connect-core-1_0.html#CORS'>Cross Origin Resource Sharing (CORS)</a>  [CORS] and or other methods as appropriate to enable JavaScript Clients to access the endpoint.
+</li>
+</ol><p>
+
+</p>
+<p>** EDITOR'S NOTE ** I guess there are other provisions. The above probably needs to be tweaked as well.
+</p>
+<a name="identity-agent-ida"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.5.4"></a><h3>5.4.&nbsp;
+Identity-Agent (IdA)</h3>
+
+<p>IdA is an entity that acts as an Identity-Agent to the CC.
+Also, IdA acts as a Claims-Consumer to IAs.
+</p>
+<p>The provision for the IdA is as follows:
+</p>
+<p>
+</p>
+<ol class="text">
+<li>It MUST support OpenID Connect Aggregated Claims as an Identity-Agent.
+</li>
+<li>It MUST act as an OpenID Connect Claims-Consumer to IAs to fetch claims from IAs according to instructions given by the Subject.
+</li>
+<li>As an Identity-Agent, IdA MUST implement mandatory to implement extensions that this document defines.
+</li>
+<li>It MAY store the signed claims obtained from IAs with appropriate safeguarding controls.
+</li>
+<li>To the authenticated Subject, it MUST provide a user interface to show what claims about the subject it stores.
+</li>
+<li>It MUST NOT provide claims to CCs without the Subject's permission.
+</li>
+<li>It MUST implement <tt>c_token</tt> authentication request parameter as a mechanism to request claims to IAs.
+</li>
+</ol><p>
+
+</p>
+<p>** EDITOR'S NOTE ** I guess there are other provisions.
+</p>
+<a name="c-token"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.5.4.1"></a><h3>5.4.1.&nbsp;
+c_token</h3>
+
+<p><tt>c_token</tt> Authorization Request parameter lists individual Claims
+that the IdA asks the IA to be returned from the Claims Endpoint.
+This top-level member is a JSON object with the names of the individual Claims being requested
+as the member names, and the values are defined as in 5.5.1 of OpenID Connect 1.0 <a href='https://openid.net/specs/openid-connect-core-1_0.html'>OIDC</a>.
+</p>
+<a name="discovery-phase"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.6"></a><h3>6.&nbsp;
+Discovery Phase</h3>
+
+<p>Before registering itself as an OAuth Client to an IA, the IdA needs to obtain
+configuration information from the IA,
+including its Authorization Endpoint and Token Endpoint locations.
+</p>
+<p>This information is obtained via Discovery, as described in OpenID Connect Discovery 1.0 <a href='https://openid.net/specs/openid-connect-discovery-1_0.html'>OpenID.Discovery</a>, or may be obtained via other mechanisms.
+</p>
+<p>This document adds the following Identity-Agent Metadata to the OpenID Connect Discovery 1.0 <a href='https://openid.net/specs/openid-connect-discovery-1_0.html'>OpenID.Discovery</a> response:
+</p>
+<p>
+</p>
+<ul class="text">
+<li><tt>claims_endpoint</tt> <strong>Required</strong>. Claims Endpoint. URL at the Issuing-Authority that provides signed claims.
+</li>
+<li><tt>claims_signing_alg_values_supported</tt> <strong>Optional</strong>. JSON array containing a list of the  JWS <a href='http://tools.ietf.org/html/draft-ietf-jose-json-web-signature'>JWS</a> signing algorithms (alg values) JWA <a href='http://tools.ietf.org/html/draft-ietf-jose-json-web-algorithms'>JWA</a> supported by the Claims Endpoint to encode the Claims in a  JWT <a href='http://tools.ietf.org/html/draft-ietf-oauth-json-web-token'>JWT</a>. The value <em>none</em> MUST NOT be included.
+</li>
+<li><tt>claims_encryption_alg_values_supported</tt> <strong>Optional</strong>. JSON array containing a list of the  JWE <a href='http://tools.ietf.org/html/draft-ietf-jose-json-web-encryption'>JWE</a> encryption algorithms (alg values) JWA <a href='http://tools.ietf.org/html/draft-ietf-jose-json-web-algorithms'>JWA</a> supported by the Claims Endpoint to encode the Claims in a JWT <a href='http://tools.ietf.org/html/draft-ietf-oauth-json-web-token'>JWT</a>.
+</li>
+<li><tt>claims_encryption_enc_values_supported</tt> <strong>Optional</strong>. JSON array containing a list of the  JWE <a href='http://tools.ietf.org/html/draft-ietf-jose-json-web-encryption'>JWE</a> encryption algorithms (enc values) JWA <a href='http://tools.ietf.org/html/draft-ietf-jose-json-web-algorithms'>JWA</a> supported by the Claims Endpoint to encode the Claims in a JWT <a href='http://tools.ietf.org/html/draft-ietf-oauth-json-web-token'>JWT</a>.
+</li>
+</ul><p>
+
+</p>
+<p>Additionally, the following optional OpenID Connect Discovery 1.0 <a href='https://openid.net/specs/openid-connect-discovery-1_0.html'>OpenID.Discovery</a> parameters are now required in the Issuing-Authority Metadata:
+</p>
+<p>
+</p>
+<blockquote class="text"><dl>
+<dt>claim_types_supported</dt>
+<dd>
+The JSON array MUST contain the values <em>normal</em>, <em>distributed</em>, ... .
+</dd>
+<dt>claims_supported</dt>
+<dd>
+A JSON array containing a list of the Claim Names of the Claims that the Identity-Agent MAY be able to supply values for.
+</dd>
+<dt>claims_parameter_supported</dt>
+<dd>
+The value MUST be <em>true</em> to support the <em>claims</em> request parameter.
+</dd>
+<dt>request_parameter_supported</dt>
+<dd>
+The value MUST be <em>true</em> to support the <em>request</em> request parameter.
+</dd>
+<dt>request_uri_parameter_supported</dt>
+<dd>
+The value MUST be <em>true</em> to support the <em>request_uri</em> request parameter.
+</dd>
+<dt>claimset_supported</dt>
+<dd>
+Boolean value indicating that the Issuing-Authority supports the claimset flows.
+</dd>
+<dt>claimset_formats_supported</dt>
+<dd>
+A JSON array of strings identifying the resulting format of the claimset issued at the end of the flow.
+</dd>
+<dt>claimset_claims_supported</dt>
+<dd>
+A JSON array of strings identifying the claim names supported within an issued claimset.
+</dd>
+<dt>claimset_name</dt>
+<dd>
+A human-readable string to identify the name of the claimset offered by the provider.
+</dd>
+<dt>dids_supported</dt>
+<dd>
+Boolean value indicating that the OpenID provider supports the resolution of <a href='https://w3c.github.io/did-core/'>decentralized identifiers</a>.
+</dd>
+<dt>did_methods_supported</dt>
+<dd>
+A JSON array of strings representing <a href='https://w3c-ccg.github.io/did-method-registry/'>Decentralized Identifier Methods</a> that the OpenID provider supports resolution of.
+</dd>
+</dl></blockquote><p>
+
+</p>
+<p>If the IA supports OpenID Connect for Identity Assurance 1.0 <a href='https://openid.net/specs/openid-connect-4-identity-assurance-1_0-ID1.html'>OpenID.IDA</a>,
+the supported OpenID Connect for Identity Assurance 1.0 <a href='https://openid.net/specs/openid-connect-4-identity-assurance-1_0-ID1.html'>OpenID.IDA</a> features MUST be published
+as specified in section 7 of OpenID Connect for Identity Assurance 1.0 <a href='https://openid.net/specs/openid-connect-4-identity-assurance-1_0-ID1.html'>OpenID.IDA</a>.
+</p>
+<p>If the IA supports W3C Verifiable Credentials, the IA MUST advertise it with the following metadata:
+</p>
+<p>** Editors Note: Tobias, could you fill in here? **
+</p>
+<p>The following is a non-normative example of the relevant entries in the openid-configuration metadata for an OpenID Provider supporting the claimset issuance flow
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>{
+  "dids_supported": true,
+  "did_methods_supported": [
+    "did:ion:",
+    "did:elem:",
+    "did:sov:"
+  ],
+  "claimset_supported": true,
+  "claimset_endpoint": "https://server.example.com/credential",
+  "claimset_formats_supported": [
+    "w3cvc-jsonld",
+    "jwt"
+  ],
+  "claimset_claims_supported": [
+    "given_name",
+    "last_name",
+    "https://www.w3.org/2018/credentials/examples/v1/degree"
+  ],
+  "claimset_name": "University Credential"
+}
+</pre></div>
+<p>If the IA supports mDL format, the IA MUST advertise it with the following metadata:
+</p>
+<p>** Editors Note: Tony or Kristina, could you fill in here? **
+</p>
+<p>If the IA supports SCIM format, the IA MUST advertise it with the following metadata:
+</p>
+<p>** Editors Note: SCIM experts, could you fill in here? **
+</p>
+<a name="registration-phase"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.7"></a><h3>7.&nbsp;
+Registration Phase</h3>
+
+<p>Before starting to make requests to an IA, the IdA MUST register itself to the IA.
+The registration SHOULD be performed
+via Dynamic Registration, as described in OpenID Connect Dynamic Client Registration 1.0.
+</p>
+<p>This document adds the following Client Metadata to the OpenID Connect Dynamic Client Registration :
+</p>
+<p><tt>claims_signed_response_alg</tt> <strong>Required</strong>. JWS <tt>alg</tt> algorithm JWA <a href='http://tools.ietf.org/html/draft-ietf-jose-json-web-algorithms'>JWA</a> REQUIRED for signing Claims Responses. The value <em>none</em> MUST NOT be used. If this is specified, the response will be JWT <a href='http://tools.ietf.org/html/draft-ietf-oauth-json-web-token'>JWT</a> serialized, and signed using JWS. The default, if omitted, is <tt>RS256</tt>.
+</p>
+<p><tt>claims_encrypted_response_alg</tt> <strong>Optional</strong>. JWE <tt>alg</tt> algorithm JWA <a href='http://tools.ietf.org/html/draft-ietf-jose-json-web-algorithms'>JWA</a> REQUIRED for encrypting Claims responses to the client. If both signing and encryption are requested, the response will be signed then encrypted, with the result being a Nested JWT, as defined in JWT <a href='http://tools.ietf.org/html/draft-ietf-oauth-json-web-token'>JWT</a>. The default, if omitted, is that no encryption is performed.
+</p>
+<p><tt>claims_encrypted_response_enc</tt> <strong>Optional</strong>. JWE <tt>enc</tt> algorithm JWA <a href='http://tools.ietf.org/html/draft-ietf-jose-json-web-algorithms'>JWA</a> REQUIRED for encrypting Claims responses. If <tt>claims_encrypted_response_enc</tt> is specified, the default for this value is <tt>A128CBC-HS256</tt>. When <tt>claims_encrypted_response_enc</tt> is included, <tt>claims_encrypted_response_alg</tt> MUST also be provided.
+</p>
+<p>Authentication requests to the Issuing-Authority's Authorization Endpoint should be signed or signed and encrypted. In order to support a more diverse set of claims, requests for claims should be made using  Request Objects which are signed or signed and encrypted by registering the appropriate values for the following Client Metadata registration parameters:
+</p>
+<p>
+</p>
+<ul class="text">
+<li><tt>request_object_signing_alg</tt>
+</li>
+<li><tt>request_object_encryption_alg</tt>
+</li>
+<li><tt>request_object_encryption_enc</tt>
+</li>
+</ul><p>
+
+</p>
+<a name="setup-phase"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.8"></a><h3>8.&nbsp;
+Setup Phase</h3>
+
+<a name="overview"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.8.1"></a><h3>8.1.&nbsp;
+Overview</h3>
+
+<p>In this phase, the IdA obtains an access token (and optionally refresh token)
+that is bound to the current user so that the IdA can obtain the claims about the current user
+from the IA subsequently without taking the user to the IA and show them the consent dialogue for every CC requests.
+</p>
+<p>
+</p>
+<ol class="text">
+<li>This has to be done at least once for each IA that a user of an IdA who wishes to use the facility this document explains.
+</li>
+<li>To obtain the grant, the IdA MUST use OpenID Connect Authentication Request.
+</li>
+</ol><p>
+
+</p>
+<p>** Editor's NOTE:** Originally, it had: The Claims to be granted MUST be specified with <tt>c_token</tt> parameter.
+</p>
+<a name="authorization-request"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.8.2"></a><h3>8.2.&nbsp;
+Authorization request</h3>
+
+<p>A Signed Claim Set Request uses the OpenID and OAuth2.0 request parameters as outlined
+in section <a href='https://openid.net/specs/openid-connect-core-1_0.html#AuthRequest'>3.1.2.1</a> of
+OpenID Connect core, except for the following additional constraints.
+</p>
+<p>
+</p>
+<blockquote class="text"><dl>
+<dt>claimset_format</dt>
+<dd>
+REQUIRED. Determines the format of the signed claim set returned at the end of the flow, values supported by the IA are advertised in their openid-configuration metadata, under the <tt>claimset_formats_supported</tt> attribute.
+</dd>
+<dt>sub_jwk</dt>
+<dd>
+OPTIONAL. Used when making a Signed Claimset Request, defines the key material the IdA is requesting the claim set to be bound to the key responsible for signing the request object. The value is a JSON Object that is a valid <a href='https://tools.ietf.org/html/rfc7517'>JWK</a>.
+</dd>
+</dl></blockquote><p>
+
+</p>
+<p>** Editors Note: ** DISCUSS the following paragraph. the parameter <tt>did</tt> should be sent in the claims collection phase rather than here?
+</p>
+<p>
+</p>
+<blockquote class="text"><dl>
+<dt>did</dt>
+<dd>
+OPTIONAL. Defines the relationship between the key material the IdA is requesting the claimset to be bound to and a <a href='https://w3c.github.io/did-core/'>decentralized identifier</a>. Processing of this value requires the IA to support the resolution of <a href='https://w3c.github.io/did-core/'>decentralized identifiers</a> which is advertised in their openid-configuration metadata, under the <tt>dids_supported</tt> attribute. The value of this field MUST be a valid <a href='https://w3c.github.io/did-core/'>decentralized identifier</a>.
+</dd>
+</dl></blockquote><p>
+
+</p>
+<p>** Editors Note: ** DISCUSS the following paragraph. Normal client authentication should be a primary choice instead?
+</p>
+<p>Public private key pairs are used by a requesting IdA to establish a means of binding to the resulting signed claim set.
+An IdA making a Claims Request to an IA MUST prove control over this binding mechanism during the request,
+this is accomplished through the extended usage of a <a href='https://openid.net/specs/openid-connect-core-1_0.html#SignedRequestObject'>signed request</a> defined in OpenID Connect Core.
+</p>
+<p>The IA MUST show a dialogue to the Subject explaining that the IdA will be
+getting signed claims set from this IA as appropriate to provide claims to CCs as directed
+by the Subject.
+</p>
+<p>The dialogue MUST provide the link to the <tt>policy_url</tt> provided by the IdA during its registration.
+</p>
+<p>The actual act of granting MUST involve active user interaction.
+</p>
+<p>The grant that is to be obtained in this phase SHOULD be sufficiently large so that it will reduce the
+number of times that IdA needs to take the Subject to the IA to obtain additional grants.
+</p>
+<a name="token-endpoint-response"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.8.3"></a><h3>8.3.&nbsp;
+Token Endpoint Response</h3>
+
+<p>Successful and Error Authentication Response are in the same manner
+as <a href='https://openid.net/specs/openid-connect-core-1_0.html'>OpenID Connect Core 1.0</a>
+with the <tt>code</tt> parameter always being returned with the Authorization Code Flow. ** DISCUSS **
+</p>
+<p>On Request to the Token Endpoint the <tt>grant_type</tt> value MUST be <tt>authorization_code</tt> inline with the Authorization Code Flow and the <tt>code</tt> value included as a parameter.
+</p>
+<p>The following is a non-normative example of a response from the token endpoint, whereby the <tt>access_token</tt> authorizes the Claimset Holder to request a <tt>credential</tt> from the claimset endpoint.
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>{
+  "access_token": "eyJhbGciOiJSUzI1NiIsInR5cCI6Ikp..sHQ",
+  "token_type": "bearer",
+  "expires_in": 86400,
+  "id_token": "eyJodHRwOi8vbWF0dHIvdGVuYW50L..3Mz"
+}
+</pre></div>
+<a name="delivery-phase-cc-phase"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.9"></a><h3>9.&nbsp;
+Delivery Phase (CC Phase)</h3>
+
+<a name="overview-1"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.9.1"></a><h3>9.1.&nbsp;
+Overview</h3>
+
+<p>In Delivery Phase, the claims are delivered to CC.
+To do so, it typically goes through the following steps:
+</p>
+<p>
+</p>
+<ol class="text">
+<li>(Claims Request) An CC makes an OpenID Connect Authentication Request with extension parameters defined in this document to the IdA.
+</li>
+<li>(Request Verification) The IdA verifies if the request is valid.
+</li>
+<li>(Subject Granting) The IdA shows dialogue to the Authenticated Subject if it grants the access to the claims and obtains grant from the Subject.
+</li>
+<li>(Claims Collection) The IdA accesses relevant Claims Endpoints with Access Tokens to collect signed claims.
+</li>
+<li>(Claims Delivery) The IdA delivers the collected claims through ID Token, UserInfo endpoint, and/or Claims Endpoint if it supports.
+</li>
+<li>(Claims Verification) The CC verifies the received response.
+</li>
+</ol><p>
+
+</p>
+<p>Claims Collection MAY be done out of sync. That is, the signed claim sets can be obtained before the CC requests.
+This is typically the case when claims are provided through the W3C Verifiable Credentials container.
+</p>
+<a name="claims-request-by-cc-to-ida"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.9.2"></a><h3>9.2.&nbsp;
+Claims Request by CC to IdA</h3>
+
+<p>For an CC to request claims according to this document, the CC
+</p>
+<p>
+</p>
+<ol class="text">
+<li>MUST use the OpenID Connect Authentication Request with extension parameters defined in this document to the IdA; and
+</li>
+<li>MAY use Pushed Authorization Request.
+</li>
+</ol><p>
+
+</p>
+<a name="cc-authentication-and-the-request-verification"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.9.3"></a><h3>9.3.&nbsp;
+CC authentication and the request verification</h3>
+
+<p>Upon receipt of the request, the IdA
+</p>
+<p>
+</p>
+<ol class="text">
+<li>MUST verify that the request is not tampered and is from a valid registered CC if the request is signed; and
+</li>
+<li>MUST at least verify that the client<em>id is valid and make sure
+that the authorization code that it is going to return will be bound to this client</em>id if the request is not signed.
+</li>
+</ol><p>
+
+</p>
+<p>NOTE: CC MUST be authenticated at one point or another before completion of the transaction.
+</p>
+<a name="subject-granting"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.9.4"></a><h3>9.4.&nbsp;
+Subject Granting</h3>
+
+<p>After verifying the request, the IdA
+</p>
+<p>
+</p>
+<ol class="text">
+<li>MUST authenticate the Subject if it has not yet been;
+</li>
+<li>MUST show the Subject what is being requested from the CC;
+</li>
+<li>MUST show the Subject the link to the CC provided policy_url; and
+</li>
+<li>MUST obtain grant from the Subject through explicit action.
+</li>
+</ol><p>
+
+</p>
+<a name="claims-collection"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.9.5"></a><h3>9.5.&nbsp;
+Claims Collection</h3>
+
+<p>The IdA collects the required claims from relevant Claims Endpoints.
+This process can be performed before the CC's request,
+in which case IdA stores the obtained signed claim set for a later day use.
+</p>
+<p>The Claims Endpoint is an OAuth 2.0 Protected Resource that when called,
+returns Claims about the authenticated Subject in the form of a signed claim set.
+To obtain a claim set on behalf of the Subject, the IdA makes a request to the Claims Endpoint using
+an Access Token obtained through OpenID Connect Authentication stated above.
+</p>
+<p>Communication with the Credential Endpoint MUST utilize TLS. See Section TBD for more information on using TLS.
+</p>
+<p>The Claims Endpoint MUST support the use of HTTP POST methods defined in RFC 2616 [RFC2616].
+</p>
+<p>The Claims Endpoint SHOULD support the use of Cross Origin Resource Sharing (CORS) [CORS] and or other methods as appropriate to enable JavaScript Clients to access the endpoint.
+</p>
+<p>The Claims Endpoint MUST support either MTLS or DPOP.
 </p>
 <a name="claims-endpoint-request"></a><br /><hr />
 <table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
-<a name="rfc.section.5.6.1"></a><h3>5.6.1.&nbsp;
+<a name="rfc.section.9.5.1"></a><h3>9.5.1.&nbsp;
 Claims Endpoint Request</h3>
 
-<p>Using the access token retrieved from the Claims Provider's Token Endpoint, the OpenID Provider acting as Relying Party to the Claims Provider, makes a request to the Claims Provider's Claims Endpoint for the requested claims as described in 5.3.1 of OpenID Connect 1.0 [OIDC].  
+<p>For claims collection, the IdA
 </p>
-<p>The Client sends the Claims Request using either HTTP GET or HTTP POST. If using the HTTP GET method, the request parameters are serialized using URI Query String Serialization, per <a href='https://openid.net/specs/openid-connect-core-1_0.html#QuerySerialization'>Section 13.1</a>. If using the HTTP POST method, the request parameters are serialized using Form Serialization, per <a href='https://openid.net/specs/openid-connect-core-1_0.html#FormSerialization'>Section 13.2</a>. The Access Token obtained from an OpenID Connect Authentication Request MUST be sent as a Bearer Token, per Section 2 of <a href='https://openid.net/specs/openid-connect-core-1_0.html#RFC6750'>OAuth 2.0 Bearer Token Usage</a> [RFC6750].  
+<p>
 </p>
-<p>It is RECOMMENDED that the request use the HTTP GET method and the Access Token be sent using the Authorization header field.  
-</p>
-<p>This specification defines the following request parameters for the Claims Endpoint request: 
-</p>
-<p></p>
-<ul class="text">
-<li><em>uid</em> <strong>Optional</strong> String value which identifies the end-user at the Client. The value is described in 5.3.2 of this specification. If this parameter is not supplied, the <em>uid</em> claims value MUST be supplied in the <em>claims</em> parameter.  
+<ol class="text">
+<li>MUST send OAuth protected resource request to the Claims Endpoint using previously obtained Access Token;
 </li>
-<li><em>claims</em> <strong>Optional</strong>. This parameter is used to request that specific Claims be returned. This is a JSON object with only the <em>c_token</em> top-level member defined in 5.3.2 of this specification. The <em>c_token</em> member requests that the listed individual Claims be returned from the Claims Endpoint. The requested claims MUST only be a subset of the claims bounded to the Access Token as requested in the Authentication Request's <em>scope</em>, <em>claims</em>, or <em>request</em> or <em>request_uri</em> parameters. The <em>c_token</em> member MUST contain the <em>uid</em> claim value if the <em>uid</em> request parameter is not supplied.  
+<li>MUST send <tt>claims</tt> parameter to minimize the collected claims to what is necessary;
 </li>
-<li><em>aud</em> <strong>Required???</strong> JSON object containing a string array of client identifiers that will be added as additional <em>aud</em> (audience) claims for the resulting JWT response from this endpoint.  
+<li>MUST send <tt>uid</tt> parameter if binding between the claim set and the response to the CC is sought; and
 </li>
-</ul>
+<li>SHOULD send <tt>aud</tt> parameter.
+</li>
+</ol><p>
 
-<p>The following is a non-normative example of a Aggregation Request: 
-</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
-  GET /c_token?claims={"aggregation":{"uid":"id8837395937","email":{"essential":true},"email_verified":{"essential":true}}}&amp;aud={["client1234"}
-  HTTP/1.1
-  Host: server.example.com
-  Authorization: Bearer SlAV32hkKG
+</p>
+<p>Additionally,
+</p>
+<p>
+</p>
+<ol class="text">
+<li>The OAuth protected resource request SHOULD be protected by MTLS.
+</li>
+<li>It is RECOMMENDED that the request use the HTTP POST method, and the Access Token be sent using the Authorization header field.
+</li>
+</ol><p>
+
+</p>
+<p>The following is a non-normative example of a Claims Endpoint Request:
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>      POST /claims HTTP/1.1
+      HTTP/1.1
+      Host: server.example.com
+      Authorization: Bearer SlAV32hkKG
+      claims={"uid":"id8837395937","email":{"essential":true},"email_verified":{"essential":true}}&amp;aud={["client1234"]}
+</pre></div>
+<p>** Editor's Note ** An alternative way.
+</p>
+<p>A non-normative example of a Signed Credential request.
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>      POST /claims HTTP/1.1
+      Host: https://issuer.example.com
+      Authorization: Bearer &lt;access-token&gt;
+      Content-Type: application/json
+{
+  "request": &lt;signed-jwt-request-obj&gt;
+}
+</pre></div>
+<p>where the decoded payload of the request parameter is as follows:
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>{
+  "aud": "https://issuer.example.com",
+  "iss": "https://wallet.example.com",
+  "sub": "urn:uuid:dc000c79-6aa3-45f2-9527-43747d5962a5",
+  "sub_jwk" : {
+    "crv":"secp256k1",
+    "kid":"YkDpvGNsch2lFBf6p8u3",
+    "kty":"EC",
+    "x":"7KEKZa5xJPh7WVqHJyUpb2MgEe3nA8Rk7eUlXsmBl-M",
+    "y":"3zIgl_ml4RhapyEm5J7lvU-4f5jiBvZr4KgxUjEhl9o"
+  },
+  "claimset_format": "w3cvc-jwt",
+  "nonce": "43747d5962a5",
+  "iat": 1591069056,
+  "exp": 1591069556
+}
+</pre></div>
+<p>The process will be repeated to as many Claims Endpoints as necessary.
+</p>
+<a name="signed-claimset-request-using-a-decentralized-identifier"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.9.5.2"></a><h3>9.5.2.&nbsp;
+Signed Claimset Request using a Decentralized Identifier</h3>
+
+<p><strong>Usage of Decentralized Identifiers</strong>
+</p>
+<p>TODO improve this section
+</p>
+<p><a href='https://w3c.github.io/did-core/'>Decentralized identifiers</a> are a resolvable identifier to a set of statements about the <a href='https://w3c.github.io/did-core/#dfn-did-subjects'>did subject</a> including a set of cryptographic material (e.g. public keys). Using this cryptographic material, a <a href='https://w3c.github.io/did-core/'>decentralized identifier</a> can be used as an authenticatable identifier in a claimset, rather than using a public key directly.
+</p>
+<p>An IdA submitting a signed Claim Set Request can request,
+that the resulting claim set be bound to the IdA through the usage of <a href='https://w3c.github.io/did-core/'>decentralized identifiers</a> by using the <tt>did</tt> field.
+</p>
+<p>An IdA prior to submitting a claim set request SHOULD validate that the IA supports the resolution of decentralized identifiers
+by retrieving their openid-configuration metadata to check if an attribute of <tt>dids_supported</tt> has a value of <tt>true</tt>.
+</p>
+<p>The IdA SHOULD also validate that the IA supports the <a href='https://w3c-ccg.github.io/did-method-registry/'>did method</a>
+to be used in the request by retrieving their openid-configuration metadata to check if an attribute of <tt>did_methods_supported</tt> contains the required did method.
+</p>
+<p>An IA processing a claim set request featuring a <a href='https://w3c.github.io/did-core/'>decentralized identifier</a> MUST follow the following additional steps to validate the request.
+</p>
+<p>
+</p>
+<ol class="text">
+<li>Validate the value in the <tt>did</tt> field is a valid <a href='https://w3c.github.io/did-core/'>decentralized identifier</a>.
+</li>
+<li>Resolve the <tt>did</tt> value to a <a href='https://w3c.github.io/did-core/#dfn-did-documents'>did document</a>.
+</li>
+<li>Validate that the key in the <tt>sub_jwk</tt> field of the request is referenced in the <a href='https://w3c.github.io/did-core/#authentication'>authentication</a> section of the <a href='https://w3c.github.io/did-core/#dfn-did-documents'>DID Document</a>.
+</li>
+</ol><p>
+
+</p>
+<p>If any of the steps fail then the IA MUST respond to the request with the Error Response parameter,
+<a href='https://openid.net/specs/openid-connect-core-1_0.html#AuthError'>section 3.1.2.6.</a> with Error code: <tt>invalid_did</tt>.
+</p>
+<p>The following is a non-normative example of requesting the issuance of a claimset that uses a decentralized identifier.
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>{
+  "response_type": "code",
+  "client_id": "IAicV0pt9co5nn9D1tUKDCoPQq8BFlGH",
+  "sub_jwk" : {
+    "crv":"secp256k1",
+    "kid":"YkDpvGNsch2lFBf6p8u3",
+    "kty":"EC",
+    "x":"7KEKZa5xJPh7WVqHJyUpb2MgEe3nA8Rk7eUlXsmBl-M",
+    "y":"3zIgl_ml4RhapyEm5J7lvU-4f5jiBvZr4KgxUjEhl9o"
+  },
+  "did": "did:example:1234",
+  "redirect_uri": "https://Client.example.com/callback",
+  "claimset_format": "w3cvc-jsonld"
+}
 </pre></div>
 <a name="claims-endpoint-response"></a><br /><hr />
 <table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
-<a name="rfc.section.5.6.2"></a><h3>5.6.2.&nbsp;
+<a name="rfc.section.9.5.3"></a><h3>9.5.3.&nbsp;
 Claims Endpoint Response</h3>
 
-<p>The Claims Endpoint Claims MUST return signed or signed and encrypted response as was requested during Client Registration.  The Claims defined in <a href='https://openid.net/specs/openid-connect-core-1_0.html#StandardClaims'>Section 5.1</a> can be returned, as can additional Claims not specified there.  
+<p>Upon receipt of the request, the Claims Endpoint Response is returned in the top level member of the
+JSON payload named <tt>claimset</tt>,
+of which the format is indicated by another top level member<tt>format</tt>.
 </p>
-<p>For privacy reasons, OpenID Providers MAY elect to not return values for some requested Claims.  
+<p>format : REQUIRED. The proof format the claimset was returned in. For example <tt>oidc-jws</tt> or <tt>w3cvc-jsonld</tt> or <tt>w3cvc-jwt</tt>.
+claimset : REQUIRED. A cryptographically verifiable proof in the defined proof <tt>format</tt>. Most commonly a Linked Data Proof or a JWS.
 </p>
-<p>If a Claim is not returned, that Claim Name SHOULD be omitted from the JSON object representing the Claims; it SHOULD NOT be present with a null or empty string value.  
+<p>The following is a non-normative example:
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>{
+  "format": "w3cvc-jsonld",
+  "claimset": &lt;claimset&gt;
+}
+</pre></div>
+<a name="claimset-in-oidc-jws-format"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.9.5.3.1"></a><h3>9.5.3.1.&nbsp;
+Claimset in OIDC JWS format</h3>
+
+<p>If the claimset is provided as oidc-jws, the claimset
 </p>
-<p>The <em>uid</em> claim MUST always be returned in the Aggregation Response.  
+<p>
 </p>
-<p>Upon receipt of the Aggregation Request, the Claims Endpoint MUST return the JSON Serialization of the Aggregation Response as in <a href='https://openid.net/specs/openid-connect-core-1_0.html#JSONSerialization'>Section 13.3</a> in the HTTP response body unless a different format was specified during Registration OpenID Connect Registration 1.0 [OpenID.Registration]. The Claims Endpoint MUST return a content-type header to indicate which format is being returned.  The content-type of the HTTP response MUST be application/json if the response body is a text JSON object; the response body SHOULD be encoded using UTF-8.  
+<ol class="text">
+<li>MUST be signed or signed and encrypted;
+</li>
+<li>MUST NOT contain other claims than asked;
+</li>
+<li>MAY omit claims if not appropriate or available in which case the claim name MUST be omitted;
+</li>
+<li>MUST provide correct content-type of the HTTP response; and
+</li>
+<li>MUST contain <tt>aud</tt> claim with is value a subset of what was in the request;
+</li>
+<li>MUST contain iss that is set as the IA's Issuer Identifier URL;
+</li>
+<li>MUST contain <em>op_iss</em> claim whose value is the IdA's issuer identifier URL registered to the IA;
+</li>
+<li>MUST contain <em>sub</em> claim that is set to the <em>uid</em> claim value if it was in the request;
+</li>
+</ol><p>
+
 </p>
-<p>If the Aggregation Response is signed and/or encrypted, then the Claims are returned in a JWT and the content-type MUST be application/jwt. The response MAY be encrypted without also being signed. If both signing and encryption are requested, the response MUST be signed then encrypted, with the result being a Nested JWT, as defined in JWT [JWT]. The JWT returned from the Claims Endpoint SHOULD NOT have an expiration or if it does, it SHOULD have a suitable long term expiration period.  
+<p>NOTE: the combination of <em>op_iss</em> and <em>sub</em> is used to correlated to the IdA response to the CC later.
 </p>
-<p>If signed, the Aggregation Response SHOULD contain the Claims iss (issuer) and aud (audience) as members. The iss value SHOULD be the Claim Provider's Issuer Identifier URL. The aud value MUST be the RP's Client ID value in addition to any <em>aud</em> identifiers that were supplied in the request.  
+<p>The following is a non-normative example of such:
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>  To be provided.
+
+</pre></div>
+<a name="claimset-in-w3c-vc-format"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.9.5.3.2"></a><h3>9.5.3.2.&nbsp;
+Claimset in W3C VC format</h3>
+
+<p>Formats of the <tt>claimset</tt> can vary, examples include JSON-LD or JWT based Credentials,
+the IA SHOULD make their supported claimset formats available at their openid-configuration metadata endpoint.
 </p>
-<p>*<strong>Note:</strong> <a href='https://tools.ietf.org/html/draft-ietf-oauth-json-web-token-32#section-4.1.3'>https://tools.ietf.org/html/draft-ietf-oauth-json-web-token-32#section-4.1.3</a> The "aud" (audience) claim identifies the recipients that the JWT is intended for. Each principal intended to process the JWT MUST identify itself with a value in the audience claim.  If the principal processing the claim does not identify itself with a value in the "aud" claim when this claim is present, then the JWT MUST be rejected. This statement seems contradictory. a) Audience must identify itself b) Reject if present and does not identify 
-</p>
-<p>The following is a non-normative example of a Aggregation Response: The Claims Provider returns the requested claims as described in 5.3.2 of OpenID Connect 1.0 [OIDC].  
-</p>
+<p>The following is a non-normative example of a claim set issued as a <a href='https://www.w3.org/TR/vc-data-model/'>W3C Verifiable Credential 1.0</a> compliant format in JSON-LD.
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>{
+  "@context": [
+    "https://www.w3.org/2018/credentials/v1",
+    "https://www.w3.org/2018/credentials/examples/v1"
+  ],
+  "id": "http://example.gov/credentials/3732",
+  "type": ["VerifiableCredential", "UniversityDegreeCredential"],
+  "issuer": "did:key:z6MkjRagNiMu91DduvCvgEsqLZDVzrJzFrwahc4tXLt9DoHd",
+  "issuanceDate": "2020-03-10T04:24:12.164Z",
+  "credentialSubject": {
+    "id": "urn:uuid:dc000c79-6aa3-45f2-9527-43747d5962a5",
+    "jwk": {
+      "crv":"secp256k1",
+      "kid":"YkDpvGNsch2lFBf6p8u3",
+      "kty":"EC",
+      "x":"7KEKZa5xJPh7WVqHJyUpb2MgEe3nA8Rk7eUlXsmBl-M",
+      "y":"3zIgl_ml4RhapyEm5J7lvU-4f5jiBvZr4KgxUjEhl9o"
+    },
+    "givenName": "John",
+    "familyName": "Doe",
+    "degree": {
+      "type": "BachelorDegree",
+      "name": "Bachelor of Science and Arts"
+    }
+  },
+  "proof": {
+    "type": "Ed25519Signature2018",
+    "created": "2020-04-10T21:35:35Z",
+    "verificationMethod": "did:key:z6MkjRagNiMu91DduvCvgEsqLZDVzrJzFrwahc4tXLt9DoHd#z6MkjRagNiMu91DduvCvgEsqLZDVzrJzFrwahc4tXLt9DoHd",
+    "proofPurpose": "assertionMethod",
+    "jws": "eyJhbGciOiJFZERTQSIsImI2NCI6ZmFsc2UsImNyaXQiOlsiYjY0Il19..l9d0YHjcFAH2H4dB9xlWFZQLUpixVCWJk0eOt4CXQe1NXKWZwmhmn9OQp6YxX0a2LffegtYESTCJEoGVXLqWAA"
+  }
+}
+</pre></div>
+<p>The following is a non-normative example of a claims endpoint response for the request shown above.
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>{
+  "format": "w3cvc-jsonld",
+  "credential": {
+    "@context": [
+      "https://www.w3.org/2018/credentials/v1",
+      "https://www.w3.org/2018/credentials/examples/v1"
+    ],
+    "id": "http://example.gov/credentials/3732",
+    "type": ["VerifiableCredential", "UniversityDegreeCredential"],
+    "issuer": "https://issuer.edu",
+    "issuanceDate": "2020-03-10T04:24:12.164Z",
+    "credentialSubject": {
+      "id": "did:example:1234",
+      "degree": {
+        "type": "BachelorDegree",
+        "name": "Bachelor of Science and Arts"
+      }
+    },
+    "proof": {
+      "type": "Ed25519Signature2018",
+      "created": "2020-04-10T21:35:35Z",
+      "verificationMethod": "https://issuer.edu/keys/1",
+      "proofPurpose": "assertionMethod",
+      "jws": "eyJhbGciOiJFZERTQSIsImI2NCI6ZmFsc2UsImNyaXQiOlsiYjY0Il19..l9d0YHjcFAH2H4dB9xlWFZQLUpixVCWJk0eOt4CXQe1NXKWZwmhmn9OQp6YxX0a2LffegtYESTCJEoGVXLqWAA"
+    }
+  }
+}
+</pre></div>
+<p>The following is a non-normative example of a Claim Set issued as a <a href='https://tools.ietf.org/html/rfc7519'>JWT</a>
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>ewogICJhbGciOiAiRVMyNTYiLAogICJ0eXAiOiAiSldUIgp9.ewogICJpc3MiOiAiaXNzdWVyIjogImh0dHBzOi8vaXNzdWVyLmVkdSIsCiAgInN1YiI6ICJkaWQ6ZXhhbXBsZToxMjM0NTYiLAogICJpYXQiOiAxNTkxMDY5MDU2LAogICJleHAiOiAxNTkxMDY5NTU2LAogICJodHRwczovL3d3dy53My5vcmcvMjAxOC9jcmVkZW50aWFscy9leGFtcGxlcy92MS9kZWdyZWUiOiB7CiAgICAgImh0dHBzOi8vd3d3LnczLm9yZy8yMDE4L2NyZWRlbnRpYWxzL2V4YW1wbGVzL3YxL3R5cGUiOiAiQmFjaGVsb3JEZWdyZWUiLAogICAgICJodHRwczovL3d3dy53My5vcmcvMjAxOC9jcmVkZW50aWFscy9leGFtcGxlcy92MS9uYW1lIjogIkJhY2hlbG9yIG9mIFNjaWVuY2UgYW5kIEFydHMiCiAgfQp9.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+</pre></div>
+<p>And the decoded Claim Set of the JWT
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>{
+  "iss": "https://issuer.example.com",
+  "sub": "urn:uuid:dc000c79-6aa3-45f2-9527-43747d5962a5",
+  "sub_jwk" : {
+    "crv":"secp256k1",
+    "kid":"YkDpvGNsch2lFBf6p8u3",
+    "kty":"EC",
+    "x":"7KEKZa5xJPh7WVqHJyUpb2MgEe3nA8Rk7eUlXsmBl-M",
+    "y":"3zIgl_ml4RhapyEm5J7lvU-4f5jiBvZr4KgxUjEhl9o"
+  },
+  "iat": 1591069056,
+  "exp": 1591069556,
+  "https://www.w3.org/2018/credentials/examples/v1/degree": {
+    "https://www.w3.org/2018/credentials/examples/v1/type": "BachelorDegree",
+    "https://www.w3.org/2018/credentials/examples/v1/name": "Bachelor of Science and Arts"
+  }
+}
+</pre></div>
 <a name="claims-endpoint-error-response"></a><br /><hr />
 <table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
-<a name="rfc.section.5.6.3"></a><h3>5.6.3.&nbsp;
+<a name="rfc.section.9.5.4"></a><h3>9.5.4.&nbsp;
 Claims Endpoint Error Response</h3>
 
-<p>When an error condition occurs, the Claims Endpoint returns an Error Response as defined in Section 3 of <a href='https://openid.net/specs/openid-connect-core-1_0.html#RFC6750'>OAuth 2.0 Bearer Token Usage</a> [RFC6750]. (HTTP errors unrelated to RFC 6750 are returned to the User Agent using the appropriate HTTP status code.) 
+<p>When an error condition occurs, the Claims Endpoint returns an Error Response as defined in Section 3 of  <a href='https://openid.net/specs/openid-connect-core-1_0.html#RFC6750'>OAuth 2.0 Bearer Token Usage</a>  <a href='https://tools.ietf.org/html/rfc6750'>RFC6750</a>. (HTTP errors unrelated to RFC 6750 are returned to the User Agent using the appropriate HTTP status code.)
 </p>
-<p>The following is a non-normative example of a Aggregation Error Response: 
-</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
-HTTP/1.1 401 Unauthorized
-  WWW-Authenticate: error="invalid_token",
-    error_description="The Access Token expired"
+<p>The following is a non-normative example of a Claims Endpoint Error Response:
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>    HTTP/1.1 401 Unauthorized
+      WWW-Authenticate: error="invalid_token",
+        error_description="The Access Token expired"
 </pre></div>
-<a name="aggregate-claims-response"></a><br /><hr />
+<a name="claims-endpoint-verification"></a><br /><hr />
 <table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
-<a name="rfc.section.5.7"></a><h3>5.7.&nbsp;
-Aggregate Claims Response</h3>
+<a name="rfc.section.9.5.5"></a><h3>9.5.5.&nbsp;
+Claims Endpoint Verification</h3>
 
-<p>The OpenID Provider returning aggregate claims shall fetch the claims from the Claims Provider's Claims Endpoint. Claims Provider's Claims Endpoint responses must be signed or signed and encrypted.  
+<p>Upon receipt of the response, the IdA
 </p>
-<p>The Claims Provider's Claims Endpoint response is then returned as aggregate claims in the OpenID Provider's ID Token response or Claims Endpoint response as described in 5.6.2 of OpenID Connect 1.0 [OIDC].  
+<p>
 </p>
-<a name="aggregate-claims-response-validation"></a><br /><hr />
-<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
-<a name="rfc.section.5.8"></a><h3>5.8.&nbsp;
-Aggregate Claims Response Validation</h3>
-
-<p></p>
 <ol class="text">
-<li>If the Aggregate Claim is encrypted, decrypt it using the keys and algorithms that the Client specified during Registration that the OP was to use to encrypt the Claims Endpoint response. If encryption was negotiated with the OP at Registration time and the Aggregate Claims is not encrypted, the RP SHOULD reject it.  
+<li>MUST verify ...
 </li>
-<li>The value of the iss (issuer) Claim containing the Claims Provider's Issuer Identifier must be a value that the Client trusts.  
-</li>
-<li>The value of the uid MUST be the base64url encoded representation of the thumbprint of the Client's public signing key.  
-</li>
-<li>The Client MUST validate that the aud (audience) Claim contains its client_id value registered at the Issuer identified by the iss (issuer) Claim as an audience. The aud (audience) Claim MAY contain an array with more than one element. The Aggregate Claim MUST be rejected if the Aggregate Claim does not list the Client as a valid audience, or if it contains additional audiences not trusted by the Client.  
-</li>
-<li>The Client MUST validate the signature of the Aggregate Claim according to [JWS [JWS] using the algorithm specified in the JWT alg Header Parameter. The Client MUST use the keys provided by the Issuer of the Aggregate Claim.  
-</li>
-</ol>
+</ol><p>
 
-<p>Security Considerations 
 </p>
-<p>TBD 
-</p>
-<p>Privacy Considerations 
-</p>
-<p>TBD 
-</p>
-<a name="authors"></a><br /><hr />
+<a name="claims-delivery"></a><br /><hr />
 <table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
-<a name="rfc.section.6"></a><h3>6.&nbsp;
-Authors</h3>
+<a name="rfc.section.9.6"></a><h3>9.6.&nbsp;
+Claims Delivery</h3>
 
-<p></p>
-<ul class="text">
-<li>Edmund Jay, Illumila 
+<p>Once the necessary claim sets were collected,
+the IdA creates the Aggregated Claims response to be returned.
+</p>
+<p>The response can be returned as ID Token or Userinfo Response ( or Claims Endpoint Response).
+</p>
+<p>The aggregated claims response is constructed as follows:
+</p>
+<p>
+</p>
+<ol class="text">
+<li>The overall container format complies to what is described in 5.6.2 of OpenID Connect 1.0 <a href='https://openid.net/specs/openid-connect-core-1_0.html'>OIDC</a>.
 </li>
-<li>Nat Sakimura, NAT Consulting 
+<li>If the claim set was obtained as JWT, then it MUST be stored in the corresponding &quot;JWT&quot; member of the aggregated claims.
 </li>
-</ul>
+<li>If the claim set was obtained as W3C Verifiable Credential, then it MUST be stored in the corresponding &quot;verifiable_presentations&quot; member of the aggregated claims.
+</li>
+<li>If the claim set was obtained in other format, then ...
+</li>
+</ol><p>
 
+</p>
+<a name="claims-verification"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.9.7"></a><h3>9.7.&nbsp;
+Claims Verification</h3>
+
+<p>For Claims Verification,
+</p>
+<p>
+</p>
+<ol class="text">
+<li>the CC MUST verify the signature of the Aggregate Claim according to  <a href='http://tools.ietf.org/html/draft-ietf-jose-json-web-signature'>JWS</a> using the algorithm specified in the JWT  <em>alg</em>  Header Parameter the keys provided by the Issuer of the Aggregate Claim for the signature verification;
+</li>
+<li>the CC MUST extract the signed claims from JWT and other relevant members and verify according to their verification rule;
+</li>
+<li>the CC MUST verify that issuers of the signed claims in the aggregated claims are the ones it trusts;
+</li>
+<li>the CC MUST verify that <tt>op_iss</tt> and <tt>uid</tt> values in the signed claims match the <tt>iss</tt> and <tt>sub</tt> value of the response;
+</li>
+<li>the CC MUST verify that the  aud  (audience) Claim contains its  client_id  value registered at the Issuer identified by the  iss  (issuer) Claim as an audience;
+</li>
+<li>The CC MUST verify that the aud claim does not contain claim values not trusted by the CC; and
+</li>
+<li>The CC MUST reject the response if any of the verification above fails.
+</li>
+</ol><p>
+
+</p>
+<a name="security-considerations"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.10"></a><h3>10.&nbsp;
+Security Considerations</h3>
+
+<p>TBD
+</p>
+<a name="privacy-considerations"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.11"></a><h3>11.&nbsp;
+Privacy Considerations</h3>
+
+<p>TBD
+</p>
+<a name="references"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.12"></a><h3>12.&nbsp;
+References</h3>
+
+<a name="normative-references-1"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.12.1"></a><h3>12.1.&nbsp;
+Normative references</h3>
+
+<p>The following referenced documents are indispensable for the application of this document. For dated references, only the edition cited applied. For undated references, the latest edition of the referenced document (including any amendments) applies.
+</p>
+<p><a href='https://tools.ietf.org/html/bcp14'>BCP14</a> - Key words for use in RFCs to Indicate Requirement Levels
+</p>
+<p><a href='https://tools.ietf.org/html/rfc6749'>RFC6749</a> - The OAuth 2.0 Authorization Framework
+</p>
+<p><a href='https://tools.ietf.org/html/rfc6750'>RFC6750</a> - The OAuth 2.0 Authorization Framework: Bearer Token Usage
+</p>
+<p><a href='https://tools.ietf.org/html/rfc76360'>RFC7636</a> - # Proof Key for Code Exchange by OAuth Public Clients
+</p>
+<p><a href='https://tools.ietf.org/html/bcp212'>BCP212</a> - OAuth 2.0 for Native Apps
+</p>
+<p><a href='https://tools.ietf.org/html/rfc6819'>RFC6819</a> - OAuth 2.0 Threat Model and Security Considerations
+</p>
+<p><a href='https://tools.ietf.org/html/bcp195'>BCP195</a> - Recommendations for Secure Use of Transport Layer Security (TLS) and Datagram Transport Layer Security (DTLS)
+</p>
+<p><a href='https://openid.net/specs/openid-connect-core-1_0.html'>OIDC</a> - OpenID Connect Core 1.0 incorporating errata set 1
+</p>
+<p><a href='https://openid.net/specs/openid-connect-discovery-1_0.html'>OpenID.Discovery</a> - OpenID Connect Discovery 1.0
+</p>
+<p><a href='http://openid.net/specs/openid-connect-registration-1_0.html'>OpenID.Registration</a> - OpenID Connect Registration 1.0
+</p>
+<p><a href='https://openid.net/specs/openid-connect-4-identity-assurance-1_0-ID1.html'>OpenID.IDA</a> - OpenID Connect for Identity Assurance 1.0
+</p>
+<p><a href='https://tools.ietf.org/html/draft-ietf-oauth-mtls'>MTLS</a> - OAuth 2.0 Mutual TLS Client Authentication and Certificate Bound Access Tokens
+</p>
+<p><a href='http://tools.ietf.org/html/draft-ietf-oauth-json-web-token'>JWT</a> - JSON Web Token
+</p>
+<p><a href='http://tools.ietf.org/html/draft-ietf-jose-json-web-signature'>JWS</a> - JSON Web Signature
+</p>
+<p><a href='http://tools.ietf.org/html/draft-ietf-jose-json-web-encryption'>JWE</a> - JSON Web Encryption
+</p>
+<p><a href='http://tools.ietf.org/html/draft-ietf-jose-json-web-algorithms'>JWA</a> - JSON Web Algorithms
+</p>
 <a name="rfc.authors"></a><br /><hr />
 <table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
 <h3>Authors' Addresses</h3>
@@ -586,19 +1443,22 @@ Authors</h3>
 <tr><td class="author-text">&nbsp;</td>
 <td class="author-text">Nat Sakimura</td></tr>
 <tr><td class="author-text">&nbsp;</td>
-<td class="author-text">Nat Consulting</td></tr>
+<td class="author-text">NAT.Consulting</td></tr>
 <tr><td class="author" align="right">Email:&nbsp;</td>
 <td class="author-text"><a href="mailto:nat@nat.consulting">nat@nat.consulting</a></td></tr>
-<tr><td class="author" align="right">URI:&nbsp;</td>
-<td class="author-text"><a href="http://nat.sakimura.org/">http://nat.sakimura.org/</a></td></tr>
 <tr cellpadding="3"><td>&nbsp;</td><td>&nbsp;</td></tr>
 <tr><td class="author-text">&nbsp;</td>
 <td class="author-text">Edmund Jay</td></tr>
 <tr><td class="author-text">&nbsp;</td>
 <td class="author-text">Illumila</td></tr>
 <tr><td class="author" align="right">Email:&nbsp;</td>
-<td class="author-text"><a href="mailto:ejay@mgi1.com">ejay@mgi1.com</a></td></tr>
-<tr><td class="author" align="right">URI:&nbsp;</td>
-<td class="author-text"><a href="http://illumi.la/">http://illumi.la/</a></td></tr>
+<td class="author-text"><a href="mailto:ejay@illumi.la">ejay@illumi.la</a></td></tr>
+<tr cellpadding="3"><td>&nbsp;</td><td>&nbsp;</td></tr>
+<tr><td class="author-text">&nbsp;</td>
+<td class="author-text">Tobias Looker</td></tr>
+<tr><td class="author-text">&nbsp;</td>
+<td class="author-text">MATTR Ltd</td></tr>
+<tr><td class="author" align="right">Email:&nbsp;</td>
+<td class="author-text"><a href="mailto:tobias.looker@mattr.global">tobias.looker@mattr.global</a></td></tr>
 </table>
 </body></html>

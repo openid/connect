@@ -23,14 +23,14 @@
   <?rfc private="Draft" ?>
 
   <front>
-    <title abbrev="OIDC Prompt Create">Initiating User Registration via OpenID Connect - draft 03</title>
+    <title abbrev="OIDC Prompt Create">Initiating User Registration via OpenID Connect - draft 04</title>
 
-    <author fullname="George Fletcher" initials="G" surname="Fletcher">
+    <author fullname="George Fletcher" initials="GFF" surname="Fletcher">
       <organization>Verizon Media</organization>
       <address><email>gffletch@aol.com</email></address>
     </author>
 
-    <date day="10" month="April" year="2020" />
+    <date day="8" month="September" year="2021" />
 
     <workgroup>OpenID Connect Working Group</workgroup>
 
@@ -63,7 +63,7 @@
         the sign-up link on the form and select it before getting to the user's desired action.
       </t>
       <t>
-        This specification defines a new parameter value for the <spanx style="verb">prompt</spanx> parameter.
+        This specification defines a new value for the <spanx style="verb">prompt</spanx> parameter.
       </t>
     </section>
 
@@ -107,8 +107,8 @@
         A value of <spanx style="verb">create</spanx> indicates to the OpenID Provider that
         the client desires that the user be shown the account creation UX rather than the
         login flow. Care must be taken if combining this value with other <spanx style="verb">prompt</spanx> values.
-        Mututally exclusive conditions can arise so it is RECOMMENDED that <spanx style="verb">create</spanx>
-        not be present with any other values.
+        Mutually exclusive conditions can arise so it is RECOMMENDED that <spanx style="verb">create</spanx>
+        not be combined with any other values.
       </t>
       </list>
 
@@ -122,49 +122,30 @@
         chosen to be shown the account creation experience rather than the
         login experience. Whether the AS creates a brand new identity or helps
         the user authenticate an identity they already have is out of scope for
-        this specification. The behavior is the same for both the implicit flow
-        (Section 3.2 of <xref target="OpenID.Core">OpenID Connect Core 1.0</xref>),
-        and the authorization code flow (Section 3.1 of
-        <xref target="OpenID.Core">OpenID Connect Core 1.0</xref>).
+        this specification. The behavior is the same for all response types.
       </t>
       <t>
         For authorization requests sent as a JWTs, such as when using
-        <xref target="I-D.ietf-oauth-jwsreq">JWT Secured Authorization Request</xref>,
+        Section 6 of <xref target="OpenID.Core">OpenID Connect Core 1.0</xref>,
         the <spanx style="verb">prompt</spanx> claim value MUST be a space delimited set
-        of prompt values in keeping with Section 3.1.2.1 of <xref target="OpenID.Core">OpenID Connect Core 1.0</xref>.
+        of prompt values in keeping with Section 3.1.2.1 of OpenID Connect
+        Core 1.0.
       </t>
       <t>
-        How the OpenID Provider handles prompt values that it fails to parse is out of scope for this specification.
-
-        -or-
-
-        If the OpenID Provider fails to parse the provided value(s) it should ignore the
-        <spanx style="verb">prompt</spanx> parameter value and proceed as if the <spanx style="verb">prompt</spanx> parameter
-        was not specified.
+        If the OpenID Provider receives a prompt value that it does not support (not declared in the
+        <spanx style="verb">prompt_values_supported</spanx> metadata field) the OP SHOULD respond with
+        an HTTP 400 (Bad Request) status code and an error value of <spanx style="verb">invalid_request</spanx>.
+        It is RECOMMENDED that the OP return an error_description value identifying the invalid parameter value.
       </t>
-      <t>
-        An example of an authorization request where the client tells the OpenID Provider that it wants the user to
-        start from the account creation user experience is shown in <xref target="authz-endpoint-example-token"/> below
-        (extra line breaks and indentation are for display purposes only).
 
-<figure title="Implicit Flow Authorization Request" anchor="authz-endpoint-example-token">
-<artwork><![CDATA[
-  GET /as/authorization.oauth2?response_type=token
-     &client_id=example-client
-     &state=XzZaJlcwYew1u0QBrRv_Gw
-     &redirect_uri=https%3A%2F%2Fclient%2Eexample%2Eorg%2Fcb
-     &prompt=create
-     &scope=openid%20profile HTTP/1.1
-  Host: authorization-server.example.com
-]]></artwork>
-</figure>
-      </t>
       <t>
-          Below in <xref target="authz-endpoint-example-code"/> is an example of an authorization request
+          In <xref target="authz-endpoint-example-code"/> is an example of an authorization request
           using the <spanx style="verb">code</spanx> response type
-          where the the client tells the OpenID Provider that it wants the user to
+          where the client tells the OpenID Provider that it wants the user to
           start from the account creation user experience
           (extra line breaks and indentation are for display purposes only).
+      </t>
+      <t>
 
         <figure title="Code Flow Authorization Request" anchor="authz-endpoint-example-code">
           <artwork><![CDATA[
@@ -177,6 +158,39 @@
   Host: authorization-server.example.com
 ]]></artwork>
         </figure>
+      </t>
+
+    </section>
+
+    <section anchor="discovery" title="Discovery Metadata">
+      <t>
+         This specification extends the OpenID Connect Discovery Metadata
+         <xref target="OpenID.Discovery">Section 3</xref> and defines the following:
+
+         <list style="hanging">
+
+         <t hangText="prompt_values_supported">
+           <vspace/>
+           OPTIONAL. JSON array containing the list of prompt values that this
+           OP supports.
+         </t>
+         </list>
+      </t>
+      <t>
+        This metadata element is OPTIONAL in the context of the OpenID Provider
+        not supporting the <spanx style="verb">create</spanx> value. If omitted,
+        the Relying Party should assume that this specification is not
+        supported. The OpenID Provider MAY provide this metadata element even
+        if it doesn't support the <spanx style="verb">create</spanx> value.
+      </t>
+      <t>
+         Specific to this specification, a value of
+         <spanx style="verb">create</spanx> in the arrauy indicates to the Relying party
+         that this OpenID Provider supports this specification. If an OpenID
+         Provider supports this specification it MUST define this metadata
+         element in the openid-configuration file. Additionally, if this
+         metadata element is defined by the OpenID Provider, the OP must
+         also specify all other prompt values which it supports.
       </t>
     </section>
 
@@ -225,6 +239,28 @@
         </front>
       </reference>
 
+      <reference anchor="OpenID.Discovery">
+       <front>
+         <title>OpenID Connect Discovery 1.0</title>
+         <author fullname="Nat Sakimura" initials="N." surname="Sakimura">
+           <organization abbrev="NRI">Nomura Research Institute, Ltd.</organization>
+         </author>
+         <author fullname="John Bradley" initials="J." surname="Bradley">
+           <organization abbrev="Ping Identity">Ping Identity</organization>
+         </author>
+         <author fullname="Michael B. Jones" initials="M.B." surname="Jones">
+           <organization abbrev="Microsoft">Microsoft</organization>
+         </author>
+         <author fullname="Edmund Jay" initials="E." surname="Jay">
+           <organization abbrev="Illumila">Illumila</organization>
+         </author>
+
+         <date day="8" month="November" year="2014"/>
+       </front>
+
+       <format target="http://openid.net/specs/openid-connect-discovery-1_0.html" type="HTML" />
+      </reference>
+
     </references>
 
     <references title="Informative References">
@@ -240,50 +276,53 @@
         This specification was developed within OpenID connect
         Working Group of the OpenID Foundation.  Additionally, the following
         individuals contributed ideas, feedback, and wording
-        that helped shape this specification:</t>
-      <t>
-        William Dennis
+        that helped shape this specification:
+      <list style="symbols">
+        <t>Filip Skokan</t>
+        <t>Joseph Heenan</t>
+        <t>William Dennis</t>
+      </list>
       </t>
     </section>
 
     <section anchor="Notices" title="Notices">
       <t>Copyright (c) 2020 The OpenID Foundation.</t>
       <t>
-	The OpenID Foundation (OIDF) grants to any Contributor, developer, 
-	implementer, or other interested party a non-exclusive, royalty free, 
-	worldwide copyright license to reproduce, prepare derivative works from, 
-	distribute, perform and display, this Implementers Draft or 
-	Final Specification solely for the purposes of (i) developing 
-	specifications, and (ii) implementing Implementers Drafts and 
-	Final Specifications based on such documents, provided that attribution 
-	be made to the OIDF as the source of the material, but that such attribution 
+	The OpenID Foundation (OIDF) grants to any Contributor, developer,
+	implementer, or other interested party a non-exclusive, royalty free,
+	worldwide copyright license to reproduce, prepare derivative works from,
+	distribute, perform and display, this Implementers Draft or
+	Final Specification solely for the purposes of (i) developing
+	specifications, and (ii) implementing Implementers Drafts and
+	Final Specifications based on such documents, provided that attribution
+	be made to the OIDF as the source of the material, but that such attribution
 	does not indicate an endorsement by the OIDF.
       </t>
       <t>
-	The technology described in this specification was 
-	made available from contributions from various sources, 
-	including members of the OpenID Foundation and others.  
-	Although the OpenID Foundation has taken steps to help ensure 
-	that the technology is available for distribution, it takes 
-	no position regarding the validity or scope of any intellectual 
-	property or other rights that might be claimed to pertain to 
-	the implementation or use of the technology described in 
-	this specification or the extent to which any license under 
-	such rights might or might not be available; neither does it 
-	represent that it has made any independent effort to identify 
-	any such rights.  The OpenID Foundation and the contributors 
-	to this specification make no (and hereby expressly disclaim any) 
-	warranties (express, implied, or otherwise), including implied 
-	warranties of merchantability, non-infringement, fitness for 
-	a particular purpose, or title, related to this specification, 
-	and the entire risk as to implementing this specification is 
-	assumed by the implementer.  The OpenID Intellectual 
-	Property Rights policy requires contributors to offer 
-	a patent promise not to assert certain patent claims against 
-	other contributors and against implementers.  The OpenID Foundation invites 
-	any interested party to bring to its attention any copyrights, 
-	patents, patent applications, or other proprietary rights 
-	that may cover technology that may be required to practice 
+	The technology described in this specification was
+	made available from contributions from various sources,
+	including members of the OpenID Foundation and others.
+	Although the OpenID Foundation has taken steps to help ensure
+	that the technology is available for distribution, it takes
+	no position regarding the validity or scope of any intellectual
+	property or other rights that might be claimed to pertain to
+	the implementation or use of the technology described in
+	this specification or the extent to which any license under
+	such rights might or might not be available; neither does it
+	represent that it has made any independent effort to identify
+	any such rights.  The OpenID Foundation and the contributors
+	to this specification make no (and hereby expressly disclaim any)
+	warranties (express, implied, or otherwise), including implied
+	warranties of merchantability, non-infringement, fitness for
+	a particular purpose, or title, related to this specification,
+	and the entire risk as to implementing this specification is
+	assumed by the implementer.  The OpenID Intellectual
+	Property Rights policy requires contributors to offer
+	a patent promise not to assert certain patent claims against
+	other contributors and against implementers.  The OpenID Foundation invites
+	any interested party to bring to its attention any copyrights,
+	patents, patent applications, or other proprietary rights
+	that may cover technology that may be required to practice
 	this specification.
       </t>
     </section>
@@ -291,6 +330,18 @@
     <section anchor="History" title="Document History">
       <t>
         [[ To be removed from the final specification ]]
+      </t>
+
+      <t>
+	-04 - 2020-11-04
+        <list style="symbols">
+	  <t>
+	    Incorporated feedback from issued filed in bitbucket.
+      Also removed the 'implicit' flow example.
+      Updated text regarding what the OP should do if it does
+      not support a requested prompt value.
+	  </t>
+	</list>
       </t>
 
       <t>
