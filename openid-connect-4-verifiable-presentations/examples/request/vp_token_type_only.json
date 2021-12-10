@@ -8,12 +8,26 @@
             "input_descriptors": [
                 {
                     "id": "id card credential",
-                    "format":"jwt_vp",
-                    "schema": [
-                        {
-                            "uri": "https://www.w3.org/2018/credentials/examples/v1/IDCardCredential"
+                    "format": {
+                        "ldp_vc": {
+                            "proof_type": [
+                                "Ed25519Signature2018"
+                            ]
                         }
-                    ]
+                    },
+                    "constraints": {
+                        "fields": [
+                            {
+                                "path": [
+                                    "$.type"
+                                ],
+                                "filter": {
+                                    "type": "string",
+                                    "pattern": "IDCardCredential"
+                                }
+                            }
+                        ]
+                    }
                 }
             ]
         }
