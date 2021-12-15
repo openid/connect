@@ -32,20 +32,20 @@ organization="Microsoft"
 
 OpenID Connect defines mechanisms by which an End-User can leverage an OpenID Provider (OP) to release identity information (such as authentication and claims) to a Relying Party (RP) which can act on that information.
 
-This specification extends OpenID Connect with the concept of a Self-Issued OpenID Provider (Self-Issued OP), an OP which is within the End-User’s local control. End-Users can leverage Self-Issued OPs to authenticate themselves and present claims directly to the RPs. This allows users to interact with RPs directly, without relying on third-party providers or requiring the End-User to operate their own hosted OP infrastructure.
+This specification extends OpenID Connect with the concept of a Self-Issued OpenID Provider (Self-Issued OP), an OP which is within the End-Userâ€™s local control. End-Users can leverage Self-Issued OPs to authenticate themselves and present claims directly to the RPs. This allows users to interact with RPs directly, without relying on third-party providers or requiring the End-User to operate their own hosted OP infrastructure.
 
 {mainmatter}
 
 # Introduction
 
-This specification extends OpenID Connect with the concept of a _Self-Issued OpenID Provider_ (Self-Issued OP), an OpenID Provider (OP) which is within the End-User’s local control. End-Users can leverage Self-Issued OPs to authenticate themselves and present claims directly to Relying Parties (RPs). This allows users to interact with the RPs directly, without relying on third-party providers or requiring the End-User to operate their own hosted OP infrastructure.
+This specification extends OpenID Connect with the concept of a _Self-Issued OpenID Provider_ (Self-Issued OP), an OpenID Provider (OP) which is within the End-Userâ€™s local control. End-Users can leverage Self-Issued OPs to authenticate themselves and present claims directly to Relying Parties (RPs). This allows users to interact with the RPs directly, without relying on third-party providers or requiring the End-User to operate their own hosted OP infrastructure.
 
 An OP releases identity information such as End-User authentication in the form of an ID Token. An RP will typically trust an ID token based on the relationship between the RP and OP. 
 
 In the case of a hosted third-party provided OP, it is common for the OP to have a legal stake with the RPs and a reputation-based stake with both RPs and End-Users to provide correct information. In the case of a Self-Issued OP, the RPs' trust relationship is directly with the End-User.
 Note: Discuss trust OP-RP relationship in Self-Issued OP.
 
-Because a Self-Issued OP within the End-User’s local control does not have the legal, reputational trust of a traditional hosted OP, claims about the End-User (e.g., `birthdate`) included in a Self-Issued ID Token, are by default self-asserted and non-verifiable. Separate specifications such as [@!OIDC4VP] describe how Self-Issued OP can present cryptographically verifiable claims issued by the third-party sources.
+Because a Self-Issued OP within the End-Userâ€™s local control does not have the legal, reputational trust of a traditional hosted OP, claims about the End-User (e.g., `birthdate`) included in a Self-Issued ID Token, are by default self-asserted and non-verifiable. Separate specifications such as [@!OIDC4VP] describe how Self-Issued OP can present cryptographically verifiable claims issued by the third-party sources.
 
 The extensions defined in this specification provide the protocol changes needed to support Self-Issued OpenID Provider model. Aspects not defined in this specification are expected to follow [@!OpenID.Core].
 
@@ -55,7 +55,7 @@ This specification replaces [Self-Issued OpenID Connect Provider DID Profile v0.
 
 ## Resilience against Sudden or Planned Hosted OP Unavailability
 
-A hosted third-party provided OP's infrastructure may become unavailable or even destroyed due to natural disasters such as hurricanes, tsunamis and fires, or may be removed from service as a planned business decision. End-Users using Self-Issued OPs local to their environment, have lower chances to be simultaneously affected in such events.
+A hosted third-party provided OP's infrastructure may become unavailable or even destroyed due to natural disasters such as hurricanes, tsunamis and fires, or may be removed from service as a planned business decision. End-Users using Self-Issued OPs local to their environment, have lower chances of being simultaneously affected by such events.
 
 ## Authentication at the Edge
 
@@ -67,13 +67,13 @@ The RP can directly receive the issuer-signed claims about the End-User from the
 
 ## Sharing Credentials from Several Issuers in One Transaction
 
-When End-Users apply to open a banking account online, in most countries they are required to submit scanned versions of the required documents. These documents are usually issued by different authorities, and hard to be verified in a digital form. A Self-issued OP directly representing the user may have access to a greater set of such information as credentials, while a traditional OP may not have a business relationship which enables access to such a breadth of information. Self-Issued OPs could aggregate credentials from multiple sources, then release them within a single transaction to a relying party. The relying party can then verify the authenticity of the information to make the necessary business decisions.
+When End-Users apply to open a banking account online, in most countries, they are required to submit scanned versions of the required documents. These documents are usually issued by different authorities, and are hard to verify in a digital form. A Self-issued OP directly representing the user may have access to a greater set of such information as credentials, while a traditional OP may not have a business relationship which enables access to such a breadth of information. Self-Issued OPs could aggregate credentials from multiple sources, then release them within a single transaction to a relying party. The relying party can then verify the authenticity of the information to make the necessary business decisions.
 
 ## Aggregation of Multiple Personas under One Self-Issued OP
 
 End-Users often use several hosted OpenID Providers for different Relying Parties. Some of the reasons to do this is to separate a work-related persona from a personal persona or to prevent the RPs from correlating their activities by using the same OP. 
 
-The usage of multiple OPs can create friction later, as the End-User may return later having forgot which OP they used for the relying party. A single Self-Issued OP can be chosen by the End-User based on its capability to meet specific needs and privacy concerns.
+The usage of multiple OPs can create friction later, as the End-User may return later having forgotten which OP they used for the relying party. A single Self-Issued OP can be chosen by the End-User based on its capability to meet specific needs and privacy concerns.
 
 ## Identifier Portability
 
@@ -87,13 +87,13 @@ As a Self-Issued OP may be running locally as a native application, a browser ap
 
 This specification extends the OpenID Connect implicit flow in the following ways:
 
-* **Invocation of a Self-Issued OP**: mechanisms how the RP invokes/opens a Self-Issued OP.
+* **Invocation of a Self-Issued OP**: mechanisms for how the RP invokes/opens a Self-Issued OP.
 
-* **Static and Dynamic Self-Issued OP Discovery**: mechanisms how the RP discovers Self-issued OP's metadata such as authorization endpoint.
+* **Static and Dynamic Self-Issued OP Discovery**: mechanisms for how the RP discovers Self-issued OP's metadata such as authorization endpoint.
 
-* **RP Registration**: mechanisms how the RPs register metadata such as supported functionalities with the Self-Issued OP, such as registration parameter and RP Metadata Registration Methods.
+* **RP Registration**: mechanisms for how the RPs register metadata such as supported functionalities with the Self-Issued OP, registration parameters and RP Metadata Registration Methods.
 
-* **Self-Issued ID Token**: additional claims and processing requirements of Self-Issued ID Tokens
+* **Self-Issued ID Token**: defines additional claims and processing requirements of Self-Issued ID Tokens
 
 * **Self-Asserted Claims**: transporting claims in a Self-Issued ID Token that are not verifiable by the RP
 
@@ -109,9 +109,9 @@ The following are considered out of scope of this document.
 
 ### Presentation of Aggregated Credentials
 
-  A Self-Issued OP can present two types of claims - self-attested claims and cryptographically verifiable claims issued by the trusted third-party sources.
+  A Self-Issued OP can present two types of claims - self-attested claims and cryptographically verifiable claims issued by trusted third-party sources.
 
-  This specification relies on other specifications to define the methods to present claims from third-party issuers. One such example is [@!OIDC4VP], which describes the presentation of Verifiable Credentials with OpenID Connect.
+  This specification relies on other specifications to define the methods to present claims from third-party issuers, such as [@!OIDC4VP], which describes the presentation of Verifiable Credentials with OpenID Connect.
   
 # Terms and Definitions
 
@@ -157,8 +157,8 @@ Figure: Self-Issued OP Protocol Flow
 
 There are two models of Self-Issued OP flows:
 
-* Same-Device Self-Issued OP model: Self-Issued OP is on the same device on which the End-User’s user interactions are occurring. The RP might be a Web site on a different machine and still use the same-device Self-Issued OP flow for authentication.
-* Cross-device Self-Issued OP model: Self-Issued OP is on a different device than the one on which the End-User’s user interactions are occurring.
+* Same-Device Self-Issued OP model: Self-Issued OP is on the same device on which the End-Userâ€™s user interactions are occurring. The RP might be a Web site on a different machine and still use the same-device Self-Issued OP flow for authentication.
+* Cross-device Self-Issued OP model: Self-Issued OP is on a different device than the one on which the End-Userâ€™s user interactions are occurring.
 
 This section outlines how Self-Issued OP is used in cross-device scenarios, and its differences with the same device model. In contrast to same-device scenarios, neither RP nor Self-Issued OP can communicate to each other via HTTP redirects through a user agent. The flow is therefore modified as follows:
 
@@ -174,15 +174,15 @@ The request in Step 5 is not a form post request where the Self-Issued OP would 
 
 Just like in conventional OpenID Connect flows, Relying Party and Self-Issued OPs can exchange metadata prior to the transaction, either using [@!OpenID.Discovery] and [@!OpenID.Registration], or out-of-band mechanisms.
 
-However, in Self-Issued OP flows, such mechanisms may also be unavailable since Self-Issued OPs do not have API endpoints for that purpose. For those use-cases, this specification proposes alternative mechanisms, where Self-Issued OPs and Relying Parties are expected to obtain each other's metadata during individual requests.
+However, in Self-Issued OP flows, such mechanisms may be unavailable since Self-Issued OPs do not have API endpoints for that purpose. This specification proposes alternative mechanisms, where Self-Issued OPs and Relying Parties obtain each other's metadata during individual requests.
 
-If the RP is able to perform pre-discovery of the Self-Issued OPs, and knows the Self-Issued OP's Issuer Identifier, [@!OpenID.Discovery] or out-of-band mechanisms can be used to obtain a set of metadata including `authorization_endpoint` used to invoke a Self-Issued OP. Note that when the user is expected to scan the QR code using the Self-Issued OP application, the RP may formulate a request that only includes the request parameters without including `authorization_endpoint`.
+If the RP is able to perform pre-discovery of the Self-Issued OP, and knows the Self-Issued OP's Issuer Identifier, [@!OpenID.Discovery] or out-of-band mechanisms can be used to obtain a set of metadata including `authorization_endpoint` used to invoke a Self-Issued OP. Note that when the user is expected to scan the QR code using the Self-Issued OP application, the RP may formulate a request that only includes the request parameters without including `authorization_endpoint`.
 
 If the RP is unable to perform pre-discovery of the Self-Issued OPs, a set of static metadata to be used with `openid:` as an `authorization_endpoint` is defined in this specification.
 
 If the Self-Issued OP is able to perform pre-registration of the RP, `client_id` MUST equal to the client identifier the RP has pre-obtained using [@!OpenID.Registration] or out-of-band mechanisms, and `registration` nor `registration_uri` parameters MUST NOT be present in the Self-Issued OP Request. If the Self-Issued OP Request is signed, the public key for verification MUST be obtained during the pre-registration process.
 
-If the Self-Issued OP is unable to perform pre-registration of the RPs, mechanisms to obtain Relying Party metadata depend on whether the request is signed or not. When the request is not signed, metadata can be obtained from the registration parameter or using out-of-band mechanisms. When the request is signed, mechanism depends on the syntax of `client_id` and the resolution method used. If `client_id` is HTTPS URL, `client_id` is resolved to obtain all Relying Party metadata from an Entity Statement as defined in [@!OpenID.Federation], if `client_id` is a Decentralized Identifier, public key is obtained from a DID Doc as defined in [@!DID-Core] and the rest of the metadata is obtained from the registration parameter.
+If the Self-Issued OP is unable to perform pre-registration of the RPs, mechanisms to obtain Relying Party metadata depend on whether the request is signed or not. When the request is not signed, metadata can be obtained from the `registration` parameter or using out-of-band mechanisms. When the request is signed, the mechanism depends on the syntax of `client_id` and the resolution method used. If `client_id` is a HTTPS URL, `client_id` is resolved to obtain all Relying Party metadata from an Entity Statement as defined in [@!OpenID.Federation]. If `client_id` is a Decentralized Identifier, the public key is obtained from a DID Doc as defined in [@!DID-Core] and the rest of the metadata is obtained from the `registration` parameter.
 
 # Self-Issued OpenID Provider Invocation {#siop-invocation}
 
@@ -194,7 +194,7 @@ In the first scenario, the request is encoded in a QR code or a deep link, and t
 
 In the second scenario, the request includes the `authorization_endpoint` of a Self-Issued OP and will open a target application. In this scenario, there are two ways of how RP can obtain `authorization_endpoint` of the Self-Issued OP to construct a targeted request as defined in (#siop-discovery), either using the static set of Self-Issued OP metadata, or by pre-obtaining `authorization_endpoint`. Note that this flow would work both for the same-device Self-Issued OP flow and the cross-device Self-Issued OP flow.
 
-The following is a non-normative example of a request not intended for a specific `authorization_endpoint`, which must be scanned by the Self-Issued OP application manually opened by the End-user instead of an arbitrary camera application on a user-device. It is a request when the RP is pre-registered with the Self-Issued OP (line wraps within values are for display purposes only):
+The following is a non-normative example of a request with no specific `authorization_endpoint`, which must be scanned by the Self-Issued OP application manually opened by the End-user instead of an arbitrary camera application on a user-device. It is a request when the RP is pre-registered with the Self-Issued OP (line wraps within values are for display purposes only):
 
 ```
     response_type=id_token
@@ -208,7 +208,7 @@ The following is a non-normative example of a request not intended for a specifi
 
 RP can obtain `authorization_endpoint` of the Self-Issued OP to construct a request targeted to a particular application either by using the static set of Self-Issued OP metadata as defined in (#static-siop-discovery), or by pre-obtaining `authorization_endpoint` as defined in (#dynamic-siop-metadata).
 
-Value of the `iss` Claim in the ID Token serves as an indicator which Self-Issued OP Discovery Mechanism is used.
+The value of the `iss` Claim in the ID Token indicates which Self-Issued OP discovery mechanism was used.
 
 ## Static Self-Issued OpenID Provider Discovery Metadata {#static-siop-discovery}
 
@@ -537,7 +537,7 @@ The cross-device authentication request differs from the same-device variant as 
 * This specification introduces a new response mode `post` in accordance with [@!OAuth.Responses]. This response mode is used to request the Self-Issued OP to deliver the result of the authentication process to a certain endpoint using the HTTP `POST` method. The additional parameter `response_mode` is used to carry this value.
 * This endpoint to which the Self-Issued OP shall deliver the authentication result is conveyed in the standard parameter `redirect_uri`.
 
-Self-Issued OP is on a different device than the one on which the End-User’s user interactions are occurring.
+Self-Issued OP is on a different device than the one on which the End-Userâ€™s user interactions are occurring.
 
 The following is a non-normative example of a Self-Issued OP Request URL in a cross-device flow (#cross-device-siop):
 
@@ -689,7 +689,7 @@ The RP MUST perform all the check as defined in (#siop-id-token-validation).
 
 Additionally, the RP MUST check whether the `nonce` Claim value provided in the ID Token is known to the RP and was not used before in an authentication response.
 
-The following is a non-normative example of a base64url decoded Self-Issued ID Token body when the dynamic Self-Issued OP Discovery and Decentalized Identifier Subject Syntax type are used (with line wraps within values for display purposes only):
+The following is a non-normative example of a base64url decoded Self-Issued ID Token body when the dynamic Self-Issued OP Discovery and Decentralized Identifier Subject Syntax type are used (with line wraps within values for display purposes only):
 
 ```json
 {
