@@ -504,8 +504,8 @@
       "organization_name": {"value": "NTNU"},
       "grant_types_supported": {
         "subset_of": ["authorization_code", "implicit"]},
-      "scope": {
-        "subset_of": ["openid", "profile", "email", "phone"]}
+      "id_token_signed_response_alg": {
+        "subset_of": ["ES256", "ES384", "ES512"]}
     }
   },
   "constraints": {
@@ -1488,27 +1488,11 @@ The example above uses a <spanx style="verb">jwks_uri</spanx> element for that p
             </preamble>
             <artwork><![CDATA[
 {
-  "scope": {
-    "subset_of": [
-      "openid",
-      "eduperson",
-      "phone"
-    ],
-    "superset_of": [
-      "openid"
-    ],
-    "default": [
-      "openid",
-      "eduperson"
-    ]
-  },
   "id_token_signed_response_alg": {
-    "one_of": [
-      "ES256",
-      "ES384",
-      "ES512"
-    ]
-  },
+    "subset_of": ["ES256", "ES384", "ES512"],
+    "super_set_of: ["ES256"],
+    "default": ["ES256"]
+  }
   "contacts": {
     "add": "helpdesk@federation.example.org"
   },
@@ -1524,23 +1508,12 @@ The example above uses a <spanx style="verb">jwks_uri</spanx> element for that p
             </preamble>
             <artwork><![CDATA[
 {
-  "scope": {
-    "subset_of": [
-      "openid",
-      "eduperson",
-      "address"
-    ],
-    "default": [
-      "openid",
-      "eduperson"
-    ]
-  },
   "id_token_signed_response_alg": {
-    "one_of": [
+    "subset_of": [
       "ES256",
       "ES384"
     ],
-    "default": "ES256"
+    "default": ["ES256"]
   },
   "contacts": {
     "add": "helpdesk@org.example.org"
@@ -1554,25 +1527,13 @@ The example above uses a <spanx style="verb">jwks_uri</spanx> element for that p
             </preamble>
             <artwork><![CDATA[
 {
-  "scope": {
-    "subset_of": [
-      "openid",
-      "eduperson"
-    ],
-    "superset_of": [
-      "openid"
-    ],
-    "default": [
-      "openid",
-      "eduperson"
-    ]
-  },
   "id_token_signed_response_alg": {
-    "one_of": [
+    "subset_of": [
       "ES256",
       "ES384"
     ],
-    "default": "ES256"
+    "super_set_of: ["ES256"],
+    "default": ["ES256"]
   },
   "contacts": {
     "add": [
@@ -1638,16 +1599,6 @@ The example above uses a <spanx style="verb">jwks_uri</spanx> element for that p
           </preamble>
           <artwork><![CDATA[
 {
-  "scope": {
-    "superset_of": [
-      "openid",
-      "eduperson"
-    ],
-    "default": [
-      "openid",
-      "eduperson"
-    ]
-  },
   "response_types": {
     "subset_of": [
       "code",
@@ -1697,10 +1648,6 @@ The example above uses a <spanx style="verb">jwks_uri</spanx> element for that p
   "logo_uri": "https://example.com/logo_small.jpg",
   "policy_uri": "https://example.com/policy.html",
   "tos_uri": "https://example.com/tos.html",
-  "scope": [
-    "openid",
-    "eduperson"
-  ],
   "response_types": [
     "code"
   ],
@@ -5042,6 +4989,9 @@ Host: op.umu.se
       <t>
         -18
         <list style="symbols">
+          <t>
+            scope is not a registered RP metadata parameter. Removed!
+          </t>
           <t>
             Moved from a federation API to separate endpoints per operation.
 	  </t>
