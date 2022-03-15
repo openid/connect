@@ -23,7 +23,7 @@
 
   <front>
     <title abbrev="OpenID Connect Front-Channel Logout 1.0">OpenID Connect
-    Front-Channel Logout 1.0 - draft 04</title>
+    Front-Channel Logout 1.0 - draft 05</title>
 
     <author fullname="Michael B. Jones" initials="M.B." surname="Jones">
       <organization abbrev="Microsoft">Microsoft</organization>
@@ -33,7 +33,7 @@
       </address>
     </author>
 
-    <date day="7" month="August" year="2020" />
+    <date day="14" month="March" year="2022" />
 
     <workgroup>OpenID Connect Working Group</workgroup>
 
@@ -543,7 +543,7 @@
           </author>
 
 	  <author fullname="Chuck Mortimore" initials="C." surname="Mortimore">
-	    <organization abbrev="VISA (was at Salesforce)">VISA</organization>
+	    <organization abbrev="Stripe (was at Salesforce)">Stripe</organization>
 	  </author>
 
           <date day="8" month="November" year="2014"/>
@@ -618,7 +618,7 @@
 	    <organization abbrev="Microsoft">Microsoft</organization>
 	  </author>
 
-	  <date day="7" month="August" year="2020" />
+	  <date day="14" month="March" year="2022" />
 	</front>
       </reference>
 
@@ -646,7 +646,7 @@
 	    <organization abbrev="Yubico">Yubico</organization>
 	  </author>
 
-	  <date day="7" month="August" year="2020" />
+	  <date day="14" month="March" year="2022" />
 	</front>
       </reference>
 
@@ -662,7 +662,7 @@
             <organization abbrev="Yubico">Yubico</organization>
           </author>
 
-	  <date day="7" month="August" year="2020" />
+	  <date day="14" month="March" year="2022" />
 	</front>
       </reference>
 
@@ -738,7 +738,7 @@
     </section>
 
     <section anchor="Notices" title="Notices">
-      <t>Copyright (c) 2020 The OpenID Foundation.</t>
+      <t>Copyright (c) 2022 The OpenID Foundation.</t>
 
       <t>The OpenID Foundation (OIDF) grants to any Contributor, developer,
       implementer, or other interested party a non-exclusive, royalty free,
@@ -776,6 +776,15 @@
 
     <section anchor="History" title="Document History">
       <t>[[ To be removed from the final specification ]]</t>
+
+      <t>
+	-05
+        <list style="symbols">
+	  <t>
+	    Updated contributor affiliations.
+	  </t>
+	</list>
+      </t>
 
       <t>
 	-04
