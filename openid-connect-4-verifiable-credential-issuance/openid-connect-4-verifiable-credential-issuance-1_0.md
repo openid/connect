@@ -899,9 +899,22 @@ The deferred credential response uses the `format` and `credential` parameters a
 
 Some DID Methods do not require the End-User identified by a DID to also be a controller of a private key associated to a public key in a DID Document tied to that DID. In these cases, it is RECOMMENDED that in the Credential Request, the Client provides a signature using the private key tied to a DID in a `proof` claim, in addition to a `did` claim.
 
+# Implementation Considerations
+
+## Mandatory Claims
+
+When an issued credential contains mandatory and optional claims, where credential is not valid without all mandatory claims being present, it is Issuer's responsibility to make sure all mandatory claims are present, without the RP explicitly requesting all andatory claims.
+
+## Wallet Obtaining User Consent
+
+In some implementations, in addition to the Issuer obtaining the user for consent to issue the requested credentials, the RP may be obtaining the End-user's consent on behalf of the Issuer to issue a credential. 
+It is RECOMMENDED to make it clear to the End-user who is asking for which consent. Issuers are NOT RECOMMENDED to rely solely on the RP to obtain End-user's consent to issue a credential.
+
 # Privacy Considerations
 
-TBD
+## Untrustworthy Issuer 
+
+RPs should be aware that untrustworthy Issuers may issue a credential that includes more or less claims than requested by the RP. It is RECOMMENDED that the RPs display to the user every claim in a credential that is being or has been issued by the Issuer.
 
 {backmatter}
 
