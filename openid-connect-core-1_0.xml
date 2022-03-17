@@ -23,7 +23,7 @@
   <?rfc private="Draft" ?>
 
   <front>
-    <title abbrev="OpenID Connect Core 1.0">OpenID Connect Core 1.0 - draft 27 incorporating errata set 2</title>
+    <title abbrev="OpenID Connect Core 1.0">OpenID Connect Core 1.0 - draft 28 incorporating errata set 2</title>
 
     <author fullname="Nat Sakimura" initials="N." surname="Sakimura">
       <organization abbrev="NAT.Consulting (was at NRI)">NAT.Consulting</organization>
@@ -58,14 +58,14 @@
     </author>
 
     <author fullname="Chuck Mortimore" initials="C." surname="Mortimore">
-      <organization abbrev="VISA (was at Salesforce)">VISA</organization>
+      <organization abbrev="Stripe (was at Salesforce)">Stripe</organization>
       <address>
         <email>charliemortimore@gmail.com</email>
 	<uri>https://twitter.com/cmort</uri>
       </address>
     </author>
 
-    <date day="7" month="August" year="2020" />
+    <date day="14" month="March" year="2022" />
 
     <workgroup>OpenID Connect Working Group</workgroup>
 
@@ -8354,10 +8354,10 @@
 	  </author>
 
 	  <author fullname="Chuck Mortimore" initials="C." surname="Mortimore">
-	    <organization abbrev="VISA">VISA</organization>
+	    <organization abbrev="Stripe">Stripe</organization>
 	  </author>
 
-	  <date day="24" month="July" year="2020"/>
+	  <date day="14" month="March" year="2022" />
 	</front>
       </reference>
 
@@ -8382,10 +8382,10 @@
 	  </author>
 
 	  <author fullname="Chuck Mortimore" initials="C." surname="Mortimore">
-	    <organization abbrev="VISA">VISA</organization>
+	    <organization abbrev="Stripe">Stripe</organization>
 	  </author>
 
-	  <date day="24" month="July" year="2020"/>
+	  <date day="14" month="March" year="2022" />
 	</front>
       </reference>
 
@@ -8413,7 +8413,7 @@
 	    <organization abbrev="Yubico">Yubico</organization>
 	  </author>
 
-	  <date day="7" month="August" year="2020" />
+	  <date day="14" month="March" year="2022" />
 	</front>
       </reference>
 
@@ -8441,7 +8441,7 @@
 	    <organization abbrev="Microsoft">Microsoft</organization>
 	  </author>
 
-	  <date day="7" month="August" year="2020"/>
+	  <date day="14" month="March" year="2022" />
 	</front>
       </reference>
 
@@ -8453,7 +8453,7 @@
 	    <organization abbrev="Microsoft">Microsoft</organization>
 	  </author>
 
-	  <date day="7" month="August" year="2020" />
+	  <date day="14" month="March" year="2022" />
 	</front>
       </reference>
 
@@ -8469,7 +8469,7 @@
             <organization abbrev="Yubico">Yubico</organization>
           </author>
 
-	  <date day="7" month="August" year="2020" />
+	  <date day="14" month="March" year="2022" />
 	</front>
       </reference>
 
@@ -8999,7 +8999,7 @@
 	  <t>Breno de Medeiros (breno@google.com), Google</t>
 	  <t>Pamela Dingle (Pamela.Dingle@microsoft.com), Microsoft (was at Ping Identity)</t>
 	  <t>Vladimir Dzhuvinov (vladimir@connect2id.com), Connect2id (was at Nimbus Directory Services)</t>
-	  <t>George Fletcher (george.fletcher@corp.aol.com), AOL</t>
+	  <t>George Fletcher (gffletch@aol.com), Capital One (was at AOL)</t>
 	  <t>Roland Hedberg (roland@catalogix.se), Independent (was at University of Ume&aring;)</t>
 	  <t>Ryo Ito (ryo.ito@mixi.co.jp), mixi, Inc.</t>
 	  <t>Edmund Jay (ejay@mgi1.com), Illumila</t>
@@ -9007,8 +9007,8 @@
 	  <t>Torsten Lodderstedt (torsten@lodderstedt.net), yes.com (was at Deutsche Telekom)</t>
 	  <t>James Manger (James.H.Manger@team.telstra.com), Telstra</t>
 	  <t>Nov Matake (nov@matake.jp), Independent</t>
-	  <t>Chuck Mortimore (charliemortimore@gmail.com), VISA (was at Salesforce)</t>
-	  <t>Anthony Nadalin (tonynad@microsoft.com), Microsoft</t>
+	  <t>Chuck Mortimore (charliemortimore@gmail.com), Stripe (was at Salesforce)</t>
+	  <t>Anthony Nadalin (nadalin@prodigy.net), Independent (was at Microsoft)</t>
 	  <t>Hideki Nara (hdknr@ic-tact.co.jp), Tact Communications</t>
 	  <t>Axel Nennker (axel.nennker@telekom.de), Deutsche Telekom</t>
 	  <t>David Recordon (recordond@gmail.com), Independent (was at Facebook)</t>
@@ -9022,7 +9022,7 @@
     </section>
 
     <section anchor="Notices" title="Notices">
-      <t>Copyright (c) 2020 The OpenID Foundation.</t>
+      <t>Copyright (c) 2022 The OpenID Foundation.</t>
       <t>
 	The OpenID Foundation (OIDF) grants to any Contributor, developer, 
 	implementer, or other interested party a non-exclusive, royalty free, 
@@ -9065,6 +9065,15 @@
 
     <section anchor="History" title="Document History">
       <t>[[ To be removed from the approved errata ]]</t>
+
+      <t>
+	-28
+        <list style="symbols">
+	  <t>
+	    Updated contributor affiliations.
+	  </t>
+	</list>
+      </t>
 
       <t>
 	-27
