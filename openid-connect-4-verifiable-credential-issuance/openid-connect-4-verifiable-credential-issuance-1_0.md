@@ -805,17 +805,6 @@ Some DID Methods do not require the End-User identified by a DID to also be a co
 
 When a credential requested to be issued consists of mandatory and optional claims, defined by trust frameworks, other specifications, and other means, it is Issuer's responsibility to make sure all mandatory claims are present. without the RP explicitly requesting all andatory claims.
 
-## Wallet Obtaining User Consent
-
-In some implementations, in addition to the Issuer obtaining the user for consent to issue the requested credentials, the RP may be obtaining the End-user's consent on behalf of the Issuer to issue a credential. 
-It is RECOMMENDED to make it clear to the End-user who is asking for which consent. Issuers are NOT RECOMMENDED to rely solely on the RP to obtain End-user's consent to issue a credential.
-
-# Privacy Considerations
-
-## Untrustworthy Issuer 
-
-RPs should be aware that untrustworthy Issuers may issue a credential that includes more or less claims than requested by the RP. It is RECOMMENDED that the RPs display to the user every claim in a credential that is being or has been issued by the Issuer.
-
 {backmatter}
 
 <reference anchor="VC_DATA" target="https://www.w3.org/TR/vc-data-model">
