@@ -903,7 +903,7 @@ Some DID Methods do not require the End-User identified by a DID to also be a co
 
 ## Mandatory Claims
 
-When an issued credential contains mandatory and optional claims, where credential is not valid without all mandatory claims being present, it is Issuer's responsibility to make sure all mandatory claims are present, without the RP explicitly requesting all andatory claims.
+When a credential requested to be issued consists of mandatory and optional claims, defined by trust frameworks, other specifications, and other means, it is Issuer's responsibility to make sure all mandatory claims are present. without the RP explicitly requesting all andatory claims.
 
 ## Wallet Obtaining User Consent
 
