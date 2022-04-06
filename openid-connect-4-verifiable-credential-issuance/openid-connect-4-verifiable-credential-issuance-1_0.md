@@ -7,7 +7,7 @@ keyword = ["security", "openid", "ssi"]
 
 [seriesInfo]
 name = "Internet-Draft"
-value = "openid-connect-4-verifiable-credential-issuance-1_0-03"
+value = "openid-connect-4-verifiable-credential-issuance-1_0-04"
 status = "standard"
 
 [[author]]
@@ -26,19 +26,27 @@ organization="Microsoft"
     [author.address]
     email = "kristina.yasuda@microsoft.com"
 
+[[author]]
+initials="T."
+surname="Looker"
+fullname="Tobias Looker"
+organization="Mattr"
+    [author.address]
+    email = "tobias.looker@mattr.global"
+
 %%%
 
 .# Abstract
 
-This specification defines an extension of OpenID Connect to allow holders to request issuance of verifiable credentials in addition to the standard OpenID Connect assertions.
+This specification defines an extension of OpenID Connect to allow requesting issuance of verifiable credentials in addition to the standard OpenID Connect assertions.
 
 {mainmatter}
 
 # Introduction
 
-This specification extends OpenID Connect with support for issuance of verifiable credentials, e.g., in the form of W3C Verifiable Credentials. This allows existing OpenID Connect OPs to extend their service and become credential issuers. It also allows new applications built using Verifiable Credentials to utilize OpenID Connect as integration and interoperability layer between credential holders and issuers.
+This specification extends OpenID Connect with support for issuance of verifiable credentials, e.g., in the form of W3C Verifiable Credentials. This allows existing OpenID Connect OPs to extend their service and become credential issuers. It also allows new applications built using Verifiable Credentials to utilize OpenID Connect as integration and interoperability layer.
 
-OpenID Connect is an obvious choice for this use case since it already allows Relying Parties to request identity assertions. Verifiable Credentials are very similar in that they allow an Issuer to assert End-User claims. In contrast to the identity assertions, a verifiable credential follows a pre-defined schema (the credential type) and is bound to key material allowing the holder to prove the legitimate possession of the credential. This allows direct presentation of the credential without involvement of the credential issuer. This specification caters for those differences.
+OpenID Connect is an obvious choice for this use case since it already allows Relying Parties to request identity assertions. Verifiable Credentials are very similar in that they allow an Issuer to assert End-User claims. In contrast to the identity assertions, a verifiable credential follows a pre-defined schema (the credential type) and is bound to key material allowing the End-User to prove the legitimate possession of the credential. This allows direct presentation of the credential without involvement of the credential issuer. This specification caters for those differences.
 
 # Terminology
 
@@ -74,15 +82,11 @@ Note: Map the Issuer terminology to the OpenID Connect's OP term
 
 # Use Cases
 
-## Holder-Initiated Credential Issuance
+## End-User Initiated Credential Issuance
 
 A user comes across an app where she needs to present a credential, e.g., a bank identity credential. She starts the presentation flow at this app and is sent to her wallet (e.g., via Self-Issued OpenID Provider v2 and OpenID Connect for Verifiable Presentations). The wallet determines the desired credential type(s) from the request and notifies the user that there is currently no matching credential in the wallet. The wallet now offers the user a list of suitable issuers, which might be based on an issuer list curated by the wallet publisher. The user picks one of those issuers and is sent to the issuer's user experience (web site or app). There the user authenticates and is asked for consent to issue the required credential into her wallet. She consents and is sent back to the wallet, where she is informed that a credential was successfully created and stored in the wallet.
 
-## Holder-Initiated Credential Issuance (Credential Presentation as Prerequisites)
-
-A user comes across an app where she needs to present a credential, e.g., a university diploma. She starts the presentation flow at this app and is sent to her wallet (e.g., via Self-Issued OpenID Provider v2 and OpenID Connect for Verifiable Presentations). The wallet determines the desired credential type(s) from the request and notifies the user that there is currently no matching credential in the wallet. The wallet now offers the user a list of suitable issuers, which might be based on an issuer list curated by the wallet publisher. The user picks one of those issuers (her university) and is notified that the issuer requires an identity credential as prerequisite for issuance of the diploma. The wallet also offers to send the existing bank identity credential to the issuer for that purpose. The user confirms and is sent to the issuer's user experience (web site or app). The issuer evaluates the bank identity credential, looks up the user in its database, finds her diploma and offers to issue a verifiable credential. The user consents and is sent back to the wallet, where she is informed that a diploma verifiable credential was successfully created and stored in the wallet.
-
-## Holder-Initiated Credential Issuance (with On-Demand Credential Presentation)
+## End-User Initiated Credential Issuance (with On-Demand Credential Presentation)
 
 A user comes across an app where she needs to present a credential, e.g., a university diploma. She starts the presentation flow at this app and is sent to her wallet (e.g., via Self-Issued OpenID Provider v2 and OpenID Connect for Verifiable Presentations). The wallet determines the desired credential type(s) from the request and notifies the user that there is currently no matching credential in the wallet. The wallet now offers the user a list of suitable issuers, which might be based on an issuer list curated by the wallet publisher. The user picks one of those issuers (her university). The user confirms and is sent to the issuer's user experience (web site or app). The user logs in to the university, which determines that the respective user account is not verified yet. The user is offered to either use a video chat for identification or to fetch a suitable identity credential from her wallet. The user decides to fetch the necessary credential from her wallet and is sent back. In the wallet, she picks a suitable credential and authorizes transfer to the university. The wallet sends her back to the university. Based on the bank identity credential, the university verifies her identity and looks up her data in its database. The university finds her diploma and offers to issue a verifiable credential. The user consents and is sent back to the wallet, where she is informed that a diploma verifiable credential was successfully created and stored in the wallet.
 
@@ -108,7 +112,6 @@ This section describes the requirements this specification aims to fulfill beyon
 
 * Proof of possession of key material
   * Support all kinds of proofs (e.g., signatures, blinded proofs) but also issuance w/o proof
-  * Proofs must be protected against replay by using issuer provided nonce (see also https://datatracker.ietf.org/doc/html/draft-ietf-oauth-dpop#section-8    
   * The proof mechanisms shall be complementary to OAuth/OpenID Connect mechanisms for request signatures, client authentication, and PoP to allow for its parallel usage.
 * It shall be possible to request a single credential as well to request multiple credentials in the same request. Examples of the latter include: 
   * credentials containing different claims for the same user (micro/mono credentials) bound to the same key material
@@ -117,11 +120,11 @@ This section describes the requirements this specification aims to fulfill beyon
 * Support for deferred issuance of credentials
 * User authentication and identification
   * Issuer shall be able to dynamically obtain further data and be able to authenticate the user at their discretion
-  * Holder shall be able to pass existing credentials (as presentations) or identity assertions to the issuance flow
+  * Application used by the End-User shall be able to pass existing credentials (as presentations) or identity assertions to the issuance flow
     * Assisted flow (utilizing credential manifest)
     * Presentations/assertions must be protected against replay
 * It shall be possible to request standard OpenID Connect claims and credentials in the same flow (to implement wallet onboarding, see EBSI/ESSIF onboarding)
-* Support for Credential metadata (holder shall be able to determine the types of credentials an issuer is able to issue)
+* Support for Credential metadata (Application used by the End-User shall be able to determine the types of credentials an issuer is able to issue)
 * Ensure OP is authoritative for respective credential issuer (OP (OpenID Connect issuer URL) <-> Issuer ID (DID))
 * Incorporate/utilize existing specs
   * W3C VC HTTP API(?)
@@ -129,11 +132,10 @@ This section describes the requirements this specification aims to fulfill beyon
 
 # Overview 
 
-This specification defines following mechanisms to allow credential holders (acting as OpenID Connect Clients) to request credential issuers (acting as OpenID Connect OPs) to issue Verifiable Credentials via OpenID Connect:
+This specification defines following mechanisms to allow wallet applications used by the End-User (acting as OpenID Connect Clients) to request credential issuers (acting as OpenID Connect OPs) to issue Verifiable Credentials via OpenID Connect:
 
 * An optional mechanism to pre-obtain a Credential Manifest
 * An extended authorization request syntax that allows to request credential types to be issued
-* Replay prevention of the credentials optionally submitted by the End-User as an issuance input (`p_nonce`)
 * Ability to bind an issued credential to a proof submitted by the Client
 * A newly defined Credential Endpoint from which credentials can be issued one at a time
 * A mechanism that allows issuance of multiple credentials of same or different type  (`c_nonce`)
@@ -148,20 +150,13 @@ The following figure shows the overall flow.
 +--------------+   +-----------+                                         +-------------+
         |                |             interact                                 |  
         |---------------------------------------------------------------------->|
-        |                |          (0) initiate issuance                       |
+        |                |          (1) initiate issuance                       |
         |                |<-----------------------------------------------------|        
         |    interacts   |                                                      |
         |--------------->|                                                      |
-        |                |  (1) [opt] obtain credential manifest                |
+        |                |  (2) [opt] obtain credential manifest                |
         |                |----------------------------------------------------->|
         |                |              credential manifest                     |
-        |                |<-----------------------------------------------------|
-        |                |                                                      |
-      (2) [opt] User selects credentials                                        |          
-        |                |                                                      |
-        |                |  (3) [opt] request presentation nonce                |
-        |                |----------------------------------------------------->|
-        |                |      presentation nonce                              |
         |                |<-----------------------------------------------------|
         |                |                                                      |
         |                |  (4) authorization req (claims, [opt] input, etc. )  |
@@ -207,21 +202,16 @@ The starting point is an interaction of the user with her wallet. The user might
 * want to present a credential and found out there is no suitable credential present in her wallet or
 * have visited the web site of a Credential Issuer and wants to obtain a credential from that issuer. 
 
-(0) (OPTIONAL) The issuer sends a request to the wallet to initiate the issuance flow. This request contains information about the 
-credential(s) the holder wants to obtain from that issuer, e.g., in the form of credential manifest IDs or credential types, and 
+(1) (OPTIONAL) The issuer sends a request to the wallet to initiate the issuance flow. This request contains information about the 
+credential(s) the End-User wants to obtain from that issuer, e.g., in the form of credential manifest IDs or credential types, and 
 further data, e.g., hints about the user when the user is already logged in with the Issuer.
 
-(1) (OPTIONAL) obtain credential manifest (as defined in [@DIF.CredentialManifest]) from the issuer with an information of which Verifiable Credentials the Issuer can issue, and optionally what kind of input from the user the Issuer requires to issue that credential.
+(2) (OPTIONAL) obtain credential manifest (as defined in [@DIF.CredentialManifest]) from the issuer with an information of which Verifiable Credentials the Issuer can issue, and optionally what kind of input from the user the Issuer requires to issue that credential.
 
 Note: The wallet MAY also obtain the information about the credential issuer's capabilities using other means, which is out of scope of this specification. 
 
-(2) (OPTIONAL) If the issuer expects certain credentials to be presented in the issuance flow, it requests the user to select and confirm presentation of those credentials.
-
-(3) If the user has confirmed the presentation of certain credentials with the issuance request, the wallet prepares the process by obtaining a nonce from the issuer. This nonce will be used to prevent malicious wallets from being able to replay those presentations. 
-
 (4) In this step, the wallet sends an authorization request to the issuer. This request determines
-the types of verifiable credentials the wallet (on behalf of the user) wants to obtain. It MAY also
-include verifiable presentations if required by the issuer. 
+the types of verifiable credentials the wallet (on behalf of the user) wants to obtain.
 
 The wallet SHOULD use a pushed authorization request (see [@!RFC9126]) to first send the payload of 
 the authorization request to the issuer and subsequently use the `request_uri` returned by the issuer in the authorization
@@ -235,10 +225,7 @@ The issuer takes over user interface control at this point and interacts with th
 this step is at the discretion of the issuer.  
 
 (4.1)  The issuer will typically authenticate the user in the first step of this process. For this purpose,
-the issuer might
-
-* use a local or federated login, potentially informed by an `id_token_hint` (see [@OpenID.Core]) or
-* utilize, if present, verifiable presentations passed to the authorization request.
+the issuer might use a local or federated login, potentially informed by an `id_token_hint` (see [@OpenID.Core])
 
 (4.2) (OPTIONAL) The issuers MAY call back to the wallet to fetch verifiable credentials it needs as
 prerequisite to issuing the requested credentials. The decision of what credentials are requested may depend
@@ -274,31 +261,7 @@ that the issuance is not completed yet.
 
 Note: If the issuer just wants to offer the user to retrieve a pre-existing credential, it can
 encode the parameter set of step (6) in a suitable representation and allow the wallet to start 
-with step (6). One option would be to encode the data into a QR Code.  
-
-## Approaches to Present Input Credentials to an Issuer {#present_input_credentials}
-
-This draft intentionally supports two different approaches for presenting credentials to the credential issuer, 
-designated as "static" and "dynamic". 
-
-* "static": the wallet determines in the initial steps of the process based on metadata obtained from the issuer,
-which types of credentials are required to obtain credentials. If suitable credentials are available,
-the wallet creates verifiable presentations, which are then sent along with the authentication/authorization 
-request to the issuer. This approach is facilitated by the DIF Credential Manifest [@DIF.CredentialManifest]. It requires the 
-wallet to obtain cryptographic nonces, which need to be included into the verifiable presentations
-to prevent replay of those presentations. 
-* "dynamic": the wallet only requests credentials with the authorization request. The issuer determines what 
-credentials it might need as prerequisite to issue credentials while processing the authorization request. This
-approach is equivalent to an OP reaching out to a third-party identity provider to log the user in or to obtain
-further identity claims. The difference is that the claims source is dynamically determined since it is the 
-particular wallet of the user. The dynamic approach allows the issuer to only request the credentials absolutely 
-necessary since it can previously identify or even authenticate the user before requesting credentials. In best case,
-the issuer already has all necessary data in place and does not need to fetch any credential.
-
-The draft includes both approaches because there is no existing best practice. Given the lack of implementation
-experience, it seems to be better to leave implementers the choice. If the community, based on
-implementation experience, gravitates towards one or the other approach, the draft could
-be simplified by removing one of the options.
+with step (6). One option would be to encode the data into a QR Code.
 
 # Endpoints
 
@@ -309,15 +272,14 @@ This specification defines the new endpoints as well as additional parameters to
 There are the following new endpoints: 
 
 * Issuance Initiation Endpoint: An endpoint exposed by the wallet that allows an issuer to initiate the issuance flow
-* Nonce Endpoint: this endpoint provides the RP with a nonce it will include in verifiable presentations sent to the authorization endpoint
 * Credential Endpoint: this is the OAuth-protected API to issue verifiable credentials
 * Deferred Credential Endpoint: this endpoint is used for deferred issuance of verifiable credentials 
 
 The following endpoints are extended:
 
-* Client Metadata: new metadata parameter is added to allow a wallet (acting as OpenID Connect RP) to publish its issuance initiation endpoint.  
+* Client Metadata: new metadata parameter is added to allow a wallet (acting as OpenID Connect RP) to publish its issuance initiation endpoint.
 * Server Metadata: New metadata parameters are added to allow the RP to determine what types of verifiable credentials a particular OP is able to issue along with additional information about formats and prerequisites.
-* Authorization Endpoint: The `claims` parameter is extended to allow the RP to request authorization for issuance of one or more credentials. The authorization request is extended with parameters to convey verifiable presentations to the authorization process and further data to alternatively callback to the RP (acting as wallet) to request further verifiable credentials. These extensions can also be used via the Pushed Authorization Endpoint, which is recommended by this specification. 
+* Authorization Endpoint: The `claims` parameter is extended to allow the RP to request authorization for issuance of one or more credentials. These extension can also be used via the Pushed Authorization Endpoint, which is recommended by this specification. 
 * Token Endpoint: optional parameters are added to the token endpoint to provide the RP with a nonce to be used for proof of possession of key material in a subsequent request to the credential endpoint. 
 
 ## Client Metadata 
@@ -331,8 +293,6 @@ If the issuer is unable to perform discovery of the Issuance Initiation Endpoint
 ## Server Metadata
 
 The server metadata [@!OpenID.Discovery] is extended to allow the RP to obtain information about the verifiable credentials an OP supports. This extension uses [@DIF.CredentialManifest]. 
-
-Credential Manifest contains information about which type of VCs the Issuer can issue, and, optionally, what kind of input the Issuer requires from the Client in the request to issue that credential. This allows for a static approach of presenting input credentials to the Issuer as defined in (#present_input_credentials).
 
 This specification defines the following new Server Metadata parameter for this purpose:
 
@@ -415,82 +375,40 @@ The AS MUST ensure the release of any privacy-sensitive data is legally based (e
 
 The wallet is not supposed to create a response. UX control stays with the wallet after completion of the process. 
 
-## Nonce Endpoint
-
-The Nonce Endpoint provides the RP with a presentation nonce. 
-
-The Client MUST obtain a presentation nonce from the Issuer, when the Client needs to submit certain pre-obtained credentials to the Issuer to meet the requirements in one of the Issuer's Credential Manifests. The Client MUST bind credentials it is submitting to the received presentation nonce. This step is necessary to prevent submitted VCs from being replayed by a malicious Client.
-
-Communication with the Nonce Endpoint MUST utilize TLS. 
-
-### Presentation Nonce Request
-
-Clients MUST use the HTTP POST method to send the Presentation Nonce Request to the Nonce Server. The Request SHOULD NOT include any parameters.
-
-The rules for client authentication as defined in [@!RFC6749] for token endpoint requests, including the applicable authentication methods, apply for the Nonce endpoint as well. If applicable, the `token_endpoint_auth_method` client metadata parameter [@!OpenID.Registration] indicates the registered authentication method for the client to use when making direct requests to the authorization server, including requests to the Nonce endpoint. Similarly, the `token_endpoint_auth_methods_supported` authorization server metadata [@!OpenID.Discovery] parameter lists client authentication methods supported by the authorization server when accepting direct requests from clients, including requests to the PAR endpoint.
-
-Below is a non-normative example of a presentation nonce request using `client_secret_basic` Client Authentication:
-
-```
-  POST /nonce HTTP/1.1
-    Host: server.example.com
-    Content-Type: application/x-www-form-urlencoded
-    Authorization: Basic czZCaGRSa3F0MzpnWDFmQmF0M2JW
-```
-
-### Presentation Nonce Response
-
-After receiving and validating a valid Presentation Nonce Request from the Client, the Nonce Server returns a successful response that includes a presentation nonce. The response uses the application/json media type.
-
-The following parameter MUST be included in the response:
-
-* `p_nonce`: REQUIRED. presentation nonce that the Client MUST include in the presentations when submitting input credentials in the Authorization Request.
-* `expires_in`: OPTIONAL. The lifetime of the nonce in seconds.
-
-Below is a non-normative example of a credential challenge response
-
-```
- HTTP/1.1 200 OK
-  Content-Type: application/json;charset=UTF-8
-  Cache-Control: no-store
-  Pragma: no-cache
-
-  {
-    "p_nonce": "fbe22300-57a6-4f08-ace0-9c5210e16c32",
-    "expires_in": "3600"
-  }
-```
-
 ## Authorization Endpoint
 
 The Authorization Endpoint is used in the same manner as defined in Section 3.1.2 of [@!OpenID.Core], with the exception of the differences specified in this section.
 
-In addition to the required basic Authorization Request, this section also defines
-
-* how pushed authorization requests can be used to protect the authorization request payload and when the requests become large, and
-* an optional dynamic credential presentation request that may be used by the Issuer to dynamically request additional credentials after receiving an Authorization Request (see also (#present_input_credentials)).
+In addition to the required basic Authorization Request, this section also defines how pushed authorization requests can be used to protect the authorization request payload and when the requests become large
  
-### Authorization Request
+### Credential Authorization Request {#credential-request}
 
-Authentication Requests are made as defined in Section 3.1.2.1 of [@!OpenID.Core], except that it MUST include the `claims` parameter defined in section 5.5 of [@!OpenID.Core] with a new top-level element `credentials`.
+A credential authorization request builds upon the OpenID Connect Authentication request defined in section 3.1.2.1 of OpenID Connect core, which request that the End-User be authenticated by the Authorization Server but also granted access to the credential endpoint as defined in (#credential-endpoint).
 
-* `credentials`: JSON array containing one or more objects specifying credentials the Client is requesting to be issued. It MAY optionally contain references to verifiable presentations provided as prerequisite for credential issuance.
+There are two possible ways to make a credential authorization request, one makes use of the claims request parameter as defined by section 5.5 of [@!OpenID.Core] with a new top level element called `credentials`. The other is through the use of scopes as defined in (#credential-request-using-type-specific-scope).
 
-The following claims are used in each object in the `credentials` property:
+A non-normative example of a credential authorization request using the claims request object syntax.
+
+```
+HTTP/1.1 302 Found
+Location: https://server.example.com/authorize?
+  response_type=code
+  &scope=openid
+  &client_id=s6BhdRkqt3
+  &state=af0ifjsldkj
+  &claims=%7B%22credential%...%2dp_vc%22%7D%7D%5D%7D%7D
+  &redirect_uri=https%3A%2F%2Fclient.example.org%2Fcb
+```
+
+A credential authorization request that features the claims request parameter MUST decoded to contain the new top-level element of `credentials` defined by this specification, the value of this `credentials` element MUST be a JSON object that conforms to the following structure.
+
+* `credentials`: JSON array containing one or more objects specifying credentials the Client is requesting to be issued.
+
+The following elements are used in each object in the `credentials` property:
 
 * `type`: CONDITIONAL. A JSON string denoting the type of the requested credential. MUST be present if `manifest_id` is not present.
 * `manifest_id`: CONDITIONAL. JSON String referring to a credential manifest published by the credential issuer. MUST be present if `type` is not present.
 * `format`: OPTIONAL. A JSON string representing a format in which the credential is requested to be issued. Valid values defined by this specification are `jwt_vc` and `ldp_vc`. Profiles of this specification MAY define additional format values.
-
-This specification defines the following additional parameters:
-
-* `vp_token`: OPTIONAL. A parameter defined in [@OIDC4VP] used to convey required verifiable presentations. The verifiable presentations passed in this parameter MUST be bound to a `p_nonce` generated by the respective issuer from the Nonce Endpoint. 
-* `presentation_submission`: OPTIONAL. JSON object as defined in [@DIF.CredentialManifest]. This object refers to verifiable presentations required for the respective credential according to the Credential Manifest and provided in an authorization request. All entries in the `descriptor_map` refer to verifiable presentations provided in the `vp_token` authorization request parameter.
-* `wallet_issuer`: OPTIONAL. JSON String containing the wallet's OpenID Connect Issuer URL. The Issuer will use the discovery process as defined in [@SIOPv2] to determine the wallet's capabilities and endpoints. RECOMMENDED in Dynamic Credential Request.
-* `user_hint`: OPTIONAL. JSON String containing an opaque user hint the wallet MAY use in sub-sequent callbacks to optimize the user's experience. RECOMMENDED in Dynamic Credential Request.
-* `op_state`: OPTIONAL. String value identifying a certain processing context at the credential issuer. A value for this parameter is typically passed in an issuance initation request from the issuer to the wallet (see ((#issuance_initiation_request)). This request parameter is used to pass the `op_state` value back to the credential issuer. 
-
-Note: When processing the authorization request, the issuer MUST take into account that the `op_state` is not guaranteed to originate from this issuer. It could have been injected by an attacker. 
 
 Below is a non-normative example of an authorization request:
 ```
@@ -519,11 +437,47 @@ Below is a non-normative example of a `claims` parameter with `type` claims:
 }
 ```
 
-Note: `type` and `format` are used when the Client has not pre-obtained a Credential Manifest. `manifest_id` and `presentation_submission` are used when the Client has pre-obtained a Credential Manifest. These two approaches MAY be combined in one request.
+Note: `type` and `format` are used when the Client has not pre-obtained a Credential Manifest. `manifest_id` is used when the Client has pre-obtained a Credential Manifest. These two approaches MAY be combined in one request.
 
 Note: Passing the `format` to the authorization request is informational and allows the credential issuer to refuse early in case it does not support the requested format/credential combination. The client MAY request issuance of credentials in other formats as well later in the process at the credential endpoint.
 
 Note: The `credential_application` element defined in [@DIF.CredentialManifest] is not required by this specification.
+
+#### Credential Authorization Request using Type Specific Scope {#credential-request-using-type-specific-scope}
+
+An alternative credential request syntax to that defined in (#credential-request) involves using an OAuth2 scope following the syntax defined below.
+
+```
+openid_credential:<credential-type>
+```
+
+The value of `<credential-type>` indicates the type of credential being requested, providers who do not understand the value of this scope in a request MUST ignore it entirely. The presence of a scope following this syntax in the request MUST be interpreted by the provider as a request for access to the credential endpoint as defined in (#credential-endpoint) for the specific credential type. Multiple occurrences of this scope MAY be present in a single request whereby each occurrence MUST be interpreted individually.
+
+A non-normative example of a credential request scoped to a specific credential type.
+
+```
+HTTP/1.1 302 Found
+Location: https://server.example.com/authorize?
+  response_type=code
+  &scope=openid%20openid_credential:healthCard
+  &client_id=s6BhdRkqt3
+  &state=af0ifjsldkj
+  &redirect_uri=https%3A%2F%2Fclient.example.org%2Fcb
+```
+
+If both the `claims` request object with `credentials` top-level element and an instance of a `openid_credential:<credential-type>` scope are present in a single request the provider MUST interpret these individually. However, if both the scopes are requesting the same credential type then the provider MUST follow the request as given by the `claims` request object.
+
+#### Additional Request Parameters
+
+This specification defines the following additional request parameters that can be supplied in any credential authorization request:
+
+* `vp_token`: OPTIONAL. A parameter defined in [@OIDC4VP] used to convey required verifiable presentations. The verifiable presentations passed in this parameter MUST be bound to a `p_nonce` generated by the respective issuer from the Nonce Endpoint. 
+* `presentation_submission`: OPTIONAL. JSON object as defined in [@DIF.CredentialManifest]. This object refers to verifiable presentations required for the respective credential according to the Credential Manifest and provided in an authorization request. All entries in the `descriptor_map` refer to verifiable presentations provided in the `vp_token` authorization request parameter.
+* `wallet_issuer`: OPTIONAL. JSON String containing the wallet's OpenID Connect Issuer URL. The Issuer will use the discovery process as defined in [@SIOPv2] to determine the wallet's capabilities and endpoints. RECOMMENDED in Dynamic Credential Request.
+* `user_hint`: OPTIONAL. JSON String containing an opaque user hint the wallet MAY use in sub-sequent callbacks to optimize the user's experience. RECOMMENDED in Dynamic Credential Request.
+* `op_state`: OPTIONAL. String value identifying a certain processing context at the credential issuer. A value for this parameter is typically passed in an issuance initation request from the issuer to the wallet (see ((#issuance_initiation_request)). This request parameter is used to pass the `op_state` value back to the credential issuer. 
+
+Note: When processing the authorization request, the issuer MUST take into account that the `op_state` is not guaranteed to originate from this issuer. It could have been injected by an attacker. 
 
 #### Obtaining Credentials required in Credential Manifest
 
@@ -551,25 +505,14 @@ POST /op/par HTTP/1.1
     &vp_token=...
 ```
 
-Below is a non-normative example of a `claims` parameter with `manifest_id` and `presentation_submission`:
+Below is a non-normative example of a `claims` parameter with `manifest_id`:
 
 ```json=
 {
    "credentials":[
       {
          "manifest_id":"WA-DL-CLASS-A",
-         "format":"ldp_vc",
-         "presentation_submission":{
-            "id":"a30e3b91-fb77-4d22-95fa-871689c322e2",
-            "definition_id":"32f54163-7166-48f1-93d8-ff217bdb0653",
-            "descriptor_map":[
-               {
-                  "id":"input_1",
-                  "format":"jwt_vc",
-                  "path":"$.verifiableCredential[0]"
-               }
-            ]
-         }
+         "format":"ldp_vc"
       }
    ]
 }
@@ -577,7 +520,9 @@ Below is a non-normative example of a `claims` parameter with `manifest_id` and 
 
 #### Dynamic Credential Request
 
-This step is OPTIONAL. After receiving an Authorization Request from the Client, the Issuer MAY use this step to obtain additional credentials from the End-User. The Issuer MUST utilize [@OIDC4VP] and [@SIOPv2] to dynamically request additional credentials.
+This step is OPTIONAL. After receiving an Authorization Request from the Client, the Issuer MAY use this step to obtain additional credentials from the End-User. 
+
+The Issuer MUST utilize [@OIDC4VP] and [@SIOPv2] to dynamically request additional credentials. From a protocol perspective, the Issuer acts now as a verifier and sends a presentation request to the wallet. The Client MUST have these credentials obtained prior to initiating a transaction with this Issuer. 
 
 This provides the benefit of the Issuer being able to adhere to the principle of data minimization, for example by including only minimum requirements in the Credential Manifest knowing that it can supplement additional information if needed.
 
@@ -687,6 +632,19 @@ The client can request issuance of a credential of a certain type multiple times
 
 If the access token is valid for requesting issuance of multiple credentials, it is at the client's discretion to decide the order in which to request issuance of multiple credentials requested in the Authorization Request.
 
+### Binding the Issued Credential to the identifier of the End-User possessing that Credential {#credential-binding}
+
+Issued credential SHOULD be cryptographically bound to the identifier of the End-User who possesses the credential. Cryptographic binding allows the Verifier to verify during presentation that the End-User presenting a credential is the same End-User to whom it was issued. For non-cryptographic type of binding and credentials issued without any binding, see Implementations Considerations sections {#claim-based-binding} and {#no-binding}. 
+
+Note that claims in the credential are usually about the End-User who possesses it, but can be about the other entity.
+
+For cryptographic binding, the Client has the following options to provide cryptographic binding material for a requested credential as defined in {#credential_request}:
+
+1. Provide proof of control alongside key material (`proof` that includes `sub_jwk` or `did`)
+1. Provide only proof of control without the key material (`proof` that does not include `sub_jwk` or `did`)
+
+For more details, see {#did-binding} in the Security Considerations Section.
+
 ### Credential Request {#credential_request}
 
 A Client makes a Credential Request by sending a HTTP POST request to the Credential Endpoint with the following parameters:
@@ -694,34 +652,50 @@ A Client makes a Credential Request by sending a HTTP POST request to the Creden
 * `type`: REQUIRED. Type of credential being requested. It corresponds to a `schema` property in a Credential Manifest obtained in a setup phase.
 * `format`: OPTIONAL. Format of the credential to be issued. If not present, the issuer will determine the credential 
 format based on the client's format default.
-* `sub_jwk`: OPTIONAL. The key material the new credential shall be bound to. MUST NOT be present if `did` is present.
-* `did`: OPTIONAL. The DID the credential shall be bound to. `sub_jwk` and `did` are mutually exclusive. MUST NOT be present if `sub_jwk` is present.
 * `proof` OPTIONAL. JSON Object containing proof of possession of the key material the issued credential shall be 
-bound to. The Client MAY provide this claim in addition to a `did` claim. At the minimum, the following parameters MUST be included. The `proof` structure depends on the proof type and other parameters MAY be included.
+bound to. The `proof` object MUST contain the following `proof_type` element which determines its structure:
 
-  * `type`: REQUIRED. JSON String denoting the proof type.
-  * `verificationMethod` REQUIRED. Cryptographically resolvable identifier referencing a public key to verify the End-User's control over the associated private key. The base URI of this identifier MUST match the DID given in `did` parameter. It MAY contain relative path components, query parameters, and fragment identifiers.
-  * `jws` CONDITIONAL. A signature performed by a key that can be obtained by an identifier in verificationMethod.
+  * `proof_type`: REQUIRED. JSON String denoting the proof type. 
 
-The `proof` element MUST incorporate a fresh nonce value generated by the credential issuer and the credential issuer's identifier (audience) to allow the credential issuer to detect replay. The way that data is incorporated depends on the proof type. In a Linked Data proof, for example, the nonce is included as the `challenge` element in the proof object and the issuer (the intended audience) is included as the `domain` element.
+This specification defines the following values for `proof_type`:
 
-The Client has three options to provide binding material for a requested credential:
+* `jwt`: objects of this type contain a single `jwt` element with a signed JWT as proof of possession. The JWT MUST contain the following elements:
+    * `kid`: CONDITIONAL. JWT header containing the key ID. If the credential shall be bound to a DID, the `kid` refers to a DID URL which identifies a particular key in the DID Document that the credential shall be bound to.
+    * `jwk`: CONDITIONAL. JWT header containing the key material the new credential shall be bound to. MUST NOT be present if `kid` is present.
+    * `iss`: REQUIRED. MUST contain the client_id of the sender
+    * `aud`: REQUIRED. MUST contain the issuer URL of credential issuer
+    * `iat`: REQUIRED. MUST contain the instant when the proof was created
+    * `nonce`: REQUIRED. MUST contain a fresh nonce as provided by the issuer
 
-1. provide `sub_jwk`
-1. provide `did`
-1. provide `proof` in addition to a `did`. When it is recommended to add `proof`, see Security Considerations section.
+The `proof` element MUST incorporate a fresh nonce value generated by the credential issuer and the credential issuer's identifier (audience) to allow the credential issuer to detect replay. The way that data is incorporated depends on the proof type. In a JWT, for example, the nonce is conveyd in the `nonce` claims whereas the audience is conveyed in the `aud` claim. In a Linked Data proof, for example, the nonce is included as the `challenge` element in the proof object and the issuer (the intended audience) is included as the `domain` element.
 
-Below is a non-normative example of a `proof` parameter:
+The Issuer MUST validate that the `proof` is actually signed by a key identified in `kid` parameter.
+
+Below is a non-normative example of a `proof` parameter (line breaks for display purposes only):
 
 ```json
 {
-  "type": "RsaSignature2018",
-  "created": "2018-09-14T21:19:10Z",
-  "proofPurpose": "authentication",
-  "verificationMethod": "did:example:ebfeb1f712ebc6f1c276e12ec21/keys/1",
-  "challenge": "2H4dB9xl-FZQL-pixV-WJk0eOt4CXQ-1NXKW",
-  "domain": "https://issuer.example.com",
-  "jws": "eyJhbGciOiJFZERTQSIsImI2NCI6ZmFsc2UsImNyaXQiOlsiYjY0Il19..l9d0YHjcFAH2H4dB9xlWFZQLUpixVCWJk0eOt4CXQe1NXKWZwmhmn9OQp6YxX0a2LffegtYESTCJEoGVXLqWAA",
+  "proof_type": "jwt",
+  "jwt": "eyJraWQiOiJkaWQ6ZXhhbXBsZTplYmZlYjFmNzEyZWJjNmYxYzI3NmUxMmVjMjEva2V5cy8
+  xIiwiYWxnIjoiRVMyNTYiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJzNkJoZFJrcXQzIiwiYXVkIjoiaHR
+  0cHM6Ly9zZXJ2ZXIuZXhhbXBsZS5jb20iLCJpYXQiOiIyMDE4LTA5LTE0VDIxOjE5OjEwWiIsIm5vbm
+  NlIjoidFppZ25zbkZicCJ9.ewdkIkPV50iOeBUqMXCC_aZKPxgihac0aW9EkL1nOzM"
+}
+```
+
+where the JWT looks like this:
+
+```json
+{
+  "alg": "ES256",
+  "typ": "JWT",
+  "kid":"did:example:ebfeb1f712ebc6f1c276e12ec21/keys/1"
+}.
+{
+  "iss": "s6BhdRkqt3",
+  "aud": "https://server.example.com",
+  "iat": "2018-09-14T21:19:10Z",
+  "nonce": "tZignsnFbp"
 }
 ```
 
@@ -827,9 +801,21 @@ The deferred credential response uses the `format` and `credential` parameters a
 
 # Security Considerations
 
-## Proving Control of a DID Presented as Binding Material
+# Implementation Considerations
 
-Some DID Methods do not require the End-User identified by a DID to also be a controller of a private key associated to a public key in a DID Document tied to that DID. In these cases, it is RECOMMENDED that in the Credential Request, the Client provides a signature using the private key tied to a DID in a `proof` claim, in addition to a `did` claim.
+## Claim-based Binding of the Credential to the End-User possessing the credential {#claim-based-binding}
+
+Credential not cryptographically bound to the identifier of the End-User possessing it (see (#credential-binding)), should be bound to the End-User possessing the credential based on the claims included in that credential. 
+
+In claim-based binding, no cryptographic binding material is provided. Instead, the issued credential includes user claims that can be used by the Verifier to verify possession of the credential by requesting presentation of existing forms of physical or digial identification that includes the same claims (e.g., a driver's license or other ID cards in person, or an online ID verification service).
+
+## Binding of the Credential without Cryptographic Binding nor Claim-based Binding {#no-binding}
+
+Some Issuers might choose issuing bearer credentials without either cryptographic binding nor claim-based binding, because they are meant to be presented without proof of possession.
+
+One such use-case is low assurance credentials such as coupons or tickets. 
+
+Another use-case is when the Issuer uses cryptographic schemes that can provide binding to the End-User possessing that credential without explicit cryptographic material being supplied by the application used by that End-User. For example, in the case of the BBS Signature Scheme, the issued credential itself is a secret and only derivation of a credential is presented to the Verifier. Effectively, credential is bound to the Issuer's signature on the credential, which becomes a shared secret transferred from the Issuer to the End-User.
 
 # Privacy Considerations
 
@@ -994,7 +980,7 @@ TBD
 
 # Acknowledgements {#Acknowledgements}
 
-We would like to thank John Bradley, Alen Horvat, Michael B. Jones, and David Waite for their valuable contributions to this specification.
+We would like to thank David Chadwick, John Bradley, Alen Horvat, Michael B. Jones, and David Waite for their valuable contributions to this specification.
 
 # Notices
 
@@ -1007,6 +993,12 @@ The technology described in this specification was made available from contribut
 # Document History
 
    [[ To be removed from the final specification ]]
+
+   -04
+
+   * added support for requesting credential authorization with scopes 
+   * removed support to pass VPs in the authorization request
+   * reworked "proof" parameter definition and added "jwt" proof type
 
    -03
 

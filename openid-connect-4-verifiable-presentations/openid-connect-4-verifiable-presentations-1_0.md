@@ -7,7 +7,7 @@ keyword = ["security", "openid", "ssi"]
 
 [seriesInfo]
 name = "Internet-Draft"
-value = "openid-connect-4-verifiable-presentations-1_0-08"
+value = "openid-connect-4-verifiable-presentations-1_0-09"
 status = "standard"
 
 [[author]]
@@ -111,7 +111,7 @@ This specification introduces a new token type, "VP Token", used as a generic co
 
 Note that when both ID Token and VP Token are returned, each has a different function. The ID Token serves as an Authentication receipt that carries information regarding the Authentication Event of the End-user. The VP Token provides proof of possession of a third-party attested claims and carries claims about the user.
 
-Verifiers request verifiable presentations using the `claims` parameter as defined in (@!OpenID) and syntax as defined in DIF Presentation Exchange [@!DIF.PresentationExchange].
+Verifiers request verifiable presentations using the `claims` parameter as defined in (@!OpenID), using the syntax defined in DIF Presentation Exchange [@!DIF.PresentationExchange].
 
 # vp_token {#vp_token}
 
@@ -121,13 +121,17 @@ This specification defines the following parameter `vp_token` that is used to re
 
 ## Request {#vp_token_request}
 
-A VP Token is requested by adding a new top-level element `vp_token` to the `claims` parameter. This element contains a `presentation_definition` element as defined in Section 4 of [@!DIF.PresentationExchange].
+A VP Token is requested by adding a new top-level element `vp_token` to the `claims` parameter. By default, this element contains a `presentation_definition` element, but can also refer to a presentation definition via an URI as defined below.
+
+NOTE: RPs MUST send a `nonce` parameter complying with the security considerations given in [@!OpenID.Core], Section 15.5.2., with every Authentication Request as a basis for replay detection. See (#preventing-replay).
+
+### Presentation definition
+
+This element contains a `presentation_definition` as defined in Section 4 of [@!DIF.PresentationExchange].
 
 Please note this draft defines a profile of [@!DIF.PresentationExchange] as follows: 
 
 * The `format` element in the `presentation_definition` that represents supported presentation formats, proof types, and algorithms is not supported. Those are determined using new RP and OP metadata (see (#metadata)). 
-
-RPs MUST send a `nonce` parameter complying with the security considerations given in [@!OpenID.Core], Section 15.5.2., with every Authentication Request as a basis for replay detection. See (#preventing-replay).
 
 The request syntax is illustrated in the following example:
 
@@ -142,6 +146,30 @@ The following example shows how the RP can request selective disclosure or certa
 RPs can also ask for alternative credentials being presented, which is shown in the next example:
 
 <{{examples/request/vp_token_alternative_credentials.json}}
+
+### Passing a presentation definition by value
+
+This is achieved by adding the `presentation_definition` element to the `vp_token` parameter. Support for `presentation_definition` is REQUIRED. It MUST be present if `presentation_definition_uri` is not present.
+
+For example
+
+	"vp_token": {
+    "presentation_definition": {.... } 
+  } 
+
+
+### Passing a presentation definition by reference
+
+This is achieved by adding the `presentation_definition_uri` element to the `vp_token` parameter. Support for `presentation_definition_uri` is CONDITIONAL. It MUST be present if `presentation_definition` is not present.
+
+`presentation_definition_uri` is used to the retrieve the `presentation_definition` from the resource at the specified URL, rather than being passed by value. 
+
+For example
+
+	"vp_token": {
+    "presentation_definition_uri": "https://host/path?ref=<string reference to presentation definition>"
+  }
+
 
 ## Response {#vp_token_response}
 
@@ -183,6 +211,7 @@ with a matching `_vp_token` in the corresponding `id_token`.
 
 Note: Authentication event information is conveyed via the ID Token while it is up to the RP to determine what (additional) claims are allocated to `id_token` and `vp_token`, respectively, via the `claims` parameter.
 
+
 # Metadata {#metadata}
 
 This specification introduces additional metadata to enable RP and OP to determine the verifiable presentation and verifiable credential formats, proof types and algorithms to be used in a protocol exchange. 
@@ -191,13 +220,15 @@ This specification introduces additional metadata to enable RP and OP to determi
 
 This specification defines new client metadata parameters according to [@!OpenID.Registration].
 
-RPs indicate the supported formats using the new parameter `vp_formats`.
+### VP Formats
 
-* `vp_formats`: REQUIRED. An object defining the formats, proof types and algorithms of verifiable presentation and verifiable credential that a RP supports. Valid values include `jwt_vp`, `ldp_vp`, `jwt_vc` and `ldp_vc`. Other formats may be supported. 
+RPs indicate the supported VP formats using the new parameter `vp_formats`.
 
-The `format` property inside a `presentation_definition` object as defined in [@!DIF.PresentationExchange] MAY be used to specify concrete format in which the RP is requesting verifiable presentations to be presented. The OP MUST ignore `format` property inside a `presentation_definition` object if that `format` was not included in the `vp_formats` property of the client metadata.
+* `vp_formats`: REQUIRED. An object defining the formats, proof types and algorithms of verifiable presentations and verifiable credentials that a RP supports. Valid values include `jwt_vp`, `ldp_vp`, `jwt_vc` and `ldp_vc`. Other formats may be supported. 
 
-Note that version 2.0.0 of [@!DIF.PresentationExchange] allows the RP to specify format of each requested credential using the `formats` property inside the `input_descriptor` object, in addition to communicating the supported presentation formats using the `vp_formats` parameter in the RP metadata.
+The `format` property inside a `presentation_definition` object as defined in [@!DIF.PresentationExchange] MAY be used to specify the concrete format in which the RP is requesting verifiable presentations to be presented. The OP MUST ignore the `format` property inside a `presentation_definition` object if that `format` was not included in the `vp_formats` property of the client metadata.
+
+Note that version 2.0.0 of [@!DIF.PresentationExchange] allows the RP to specify the format of each requested credential using the `formats` property inside the `input_descriptor` object, in addition to communicating the supported presentation formats using the `vp_formats` parameter in the RP metadata.
 
 Here is an example for an RP registering with a Standard OP via dynamic client registration:
 
@@ -206,6 +237,12 @@ Here is an example for an RP registering with a Standard OP via dynamic client r
 Here is an example for an RP registering with a SIOP (see [@SIOPv2]) with the `registration` request parameter:
 
 <{{examples/client_metadata/client_siop_format.json}}
+
+### Presentation Definition Transfer
+
+RPs indicate their support for transferring presentation definitions by value and/or by reference, by using the following parameters:
+
+* `presentation_definition_uri`: OPTIONAL. Boolean value specifying whether the RP supports the transfer of `presentation_definition` by reference, with true indicating support. If omitted, the default value is true. 
 
 ## RP Metadata Error Response
 
@@ -222,6 +259,44 @@ This extension defines the following error codes that MUST be returned when the 
 This specification defines new server metadata parameters according to [@!OpenID-Discovery].
 
 The OP publishes the formats it supports using the `vp_formats_supported` metadata parameter as defined above in its "openid-configuration". 
+
+# Implementation Considerations
+
+## Support for Federations/Trust Schemes
+
+Often RPs will want to request verifiable credentials from an issuer who is a member of a federation or trust scheme, rather than from a specific issuer, for example, a "BSc Chemistry Degree" credential from a US University rather than from a specifically named university.
+
+In order to facilitate this, federations will need to determine how an issuer can indicate in a verifiable credential that they are a member of one or more federations/trust schemes. Once this is done, the RP will be able to create a `presentation_definition` that includes this filtering criteria. This will enable the wallet to select all the verifiable credentials that match this criteria and then by some means (for example, by asking the user) determine which matching verifiable credential to return to the RP. Upon receiving this verifiable credential, the RP will be able to call its federation API to determine if the issuer is indeed a member of the federation/trust scheme that it says it is.
+
+Indicating the federations/trust schemes that an issuer is a member of may be achieved by defining a `termsOfUse` property [@!VC_DATA].
+
+Note. [@!VC_DATA] describes terms of use as "can be utilized by an issuer ... to communicate the terms under which a verifiable credential ... was issued."
+
+The following terms of use may be defined:
+
+```json
+{
+   "termsOfUse":[
+      {
+         "type":"<uri that identifies this type of terms of use>",
+         "federations":[
+            "<list of federations/trust schemes the issuer asserts it is a member of>"
+         ]
+      }
+   ]
+}
+```
+
+Federations that conform to those specified in [@!OpenID.Federation] are identified by the `type` `urn:ietf:params:oauth:federation`. Individual federations are identified by the entity id of the trust anchor. If the federation decides to use trust marks as signs of whether an entity belongs to a federation or not then the federation is identified by the `type` `urn:ietf:params:oauth:federation_trust_mark` and individual federations are identified by the entity id of the trust mark issuer.
+
+Trust schemes that conform to the TRAIN [@!TRAIN] trust scheme are identified by the `type` `https://train.trust-scheme.de/info`. Individual federations are identified by their DNS names.
+
+An example `claims` parameter containing a `presentation_definition` that filters VCs based on their federation memberships is given below.
+
+<{{examples/request/vp_token_federation.json}}
+
+This example will chose a VC that has been issued by a university that is a member of the `ukuniversities.ac.uk` federation and that uses the TRAIN terms of use specification for asserting federation memberships.
+
 
 # Security Considerations {#security_considerations}
 
@@ -291,6 +366,12 @@ This requirement holds true even if those verifiable presentations are embedded 
 Note: Some of the available mechanisms are outlined in Section 4.3.2 of [@!DIF.PresentationExchange].
 
 It is NOT RECOMMENDED for the Subject to delegate the presentation of the credential to a third party.
+
+## Fetching Presentation Definitions by Reference
+
+The protocol for the `presentation_definition_uri` MUST be https.
+
+In many instances the referenced server will be operated by a known federation or other trusted operator, and the URL's domain name will already be widely known. OPs (including SIOPs) using this URI can mitigate request forgeries by having a pre-configured set of trusted domain names and only fetching presentation_definitions from these sources. In addition, the presentation definitions could be signed by a trusted authority, such as the ICO or federation operator.
 
 #  Examples 
 
@@ -522,6 +603,23 @@ Note: in accordance with (#security_considerations) the verifiable presentation'
         </front>
 </reference>
 
+<reference anchor="TRAIN" target="https://oid2022.compute.dtu.dk/index.html">
+        <front>
+          <title>A novel approach to establish trust in verifiable credential
+issuers in Self-Sovereign Identity ecosystems using TRAIN</title>	  
+           <author fullname="Isaac Henderson Johnson Jeyakumar">
+            <organization>University of Stuttgart</organization>
+          </author>
+          <author fullname="David W Chadwick">
+            <organization>Crossword Cybersecurity</organization>
+          </author>
+          <author fullname="Michael Kubach">
+            <organization>Fraunhofer IAO</organization>
+          </author>
+   <date day="8" month="July" year="2022"/>
+        </front>
+</reference>
+
 <reference anchor="OpenID-Discovery" target="https://openid.net/specs/openid-connect-discovery-1_0.html">
   <front>
     <title>OpenID Connect Discovery 1.0 incorporating errata set 1</title>
@@ -557,13 +655,35 @@ Note: in accordance with (#security_considerations) the verifiable presentation'
         </front>
  </reference>
 
+<reference anchor="OpenID.Federation" target="https://openid.net/specs/openid-connect-federation-1_0.html">
+        <front>
+          <title>OpenID Connect Federation 1.0 - draft 17></title>
+		  <author fullname="R. Hedberg, Ed.">
+            <organization>Independent</organization>
+          </author>
+          <author fullname="Michael B. Jones">
+            <organization>Microsoft</organization>
+          </author>
+          <author fullname="A. Solberg">
+            <organization>Uninett</organization>
+          </author>
+          <author fullname="S. Gulliksson">
+            <organization>Schibsted</organization>
+          </author>
+          <author fullname="John Bradley">
+            <organization>Yubico</organization>
+          </author>
+          <date day="9" month="Sept" year="2021"/>
+        </front>
+ </reference>
+
 # IANA Considerations
 
 TBD
 
 # Acknowledgements {#Acknowledgements}
 
-We would like to thank Daniel Fett, Fabian Hauck, Alen Horvat, Edmund Jay, Ronald Koenig, and Michael B. Jones for their valuable feedback and contributions that helped to evolve this specification.
+We would like to thank David Chadwick, Daniel Fett, Fabian Hauck, Alen Horvat, Edmund Jay, Ronald Koenig, and Michael B. Jones for their valuable feedback and contributions that helped to evolve this specification.
 
 # Notices
 
@@ -576,11 +696,20 @@ The technology described in this specification was made available from contribut
 # Document History
 
    [[ To be removed from the final specification ]]
+  
+   -09
+
+   * added support for passing presentation_definition by reference
+   * added description how to requset credential issued by a member of a federation
+
+   -08
+
+   * reflected editorial comments received during pre-implementer's draft review period
 
    -07
 
-   - added text on other credential formats
-   - fixed inconsistency in security consideration regarding nonce
+   * added text on other credential formats
+   * fixed inconsistency in security consideration regarding nonce
 
    -06
 

@@ -24,7 +24,7 @@
 
   <front>
     <title abbrev="OpenID Connect Registration 1.0">OpenID Connect
-    Dynamic Client Registration 1.0 - draft 32 incorporating errata set 2</title>
+    Dynamic Client Registration 1.0 - draft 33 incorporating errata set 2</title>
 
     <author fullname="Nat Sakimura" initials="N." surname="Sakimura">
       <organization abbrev="NAT.Consulting (was at NRI)">NAT.Consulting</organization>
@@ -50,7 +50,7 @@
       </address>
     </author>
 
-    <date day="24" month="July" year="2020" />
+    <date day="14" month="March" year="2022" />
 
     <workgroup>OpenID Connect Working Group</workgroup>
 
@@ -1852,7 +1852,7 @@
           </author>
 
 	  <author fullname="Chuck Mortimore" initials="C." surname="Mortimore">
-	    <organization abbrev="VISA (was at Salesforce)">VISA</organization>
+	    <organization abbrev="Stripe (was at Salesforce)">Stripe</organization>
 	  </author>
 
           <date day="8" month="November" year="2014"/>
@@ -2038,7 +2038,7 @@
 	    <organization abbrev="Yubico">Yubico</organization>
 	  </author>
 
-	  <date day="24" month="July" year="2020" />
+	  <date day="14" month="March" year="2022" />
 	</front>
       </reference>
 
@@ -2056,7 +2056,7 @@
           <t>John Bradley (ve7jtb@ve7jtb.com), Yubico (was at Ping Identity)</t>
 	  <t>Brian Campbell (bcampbell@pingidentity.com), Ping Identity</t>
 	  <t>Vladimir Dzhuvinov (vladimir@connect2id.com), Connect2id (was at Nimbus Directory Services)</t>
-	  <t>George Fletcher (george.fletcher@corp.aol.com), AOL</t>
+	  <t>George Fletcher (gffletch@aol.com), Capital One (was at AOL)</t>
 	  <t>Roland Hedberg (roland@catalogix.se), Independent (was at University of Ume&aring;)</t>
           <t>Edmund Jay (ejay@mgi1.com), Illumila</t>
           <t>Michael B. Jones (mbj@microsoft.com), Microsoft</t>
@@ -2069,7 +2069,7 @@
     </section>
 
     <section anchor="Notices" title="Notices">
-      <t>Copyright (c) 2020 The OpenID Foundation.</t>
+      <t>Copyright (c) 2022 The OpenID Foundation.</t>
       <t>
 	The OpenID Foundation (OIDF) grants to any Contributor, developer, 
 	implementer, or other interested party a non-exclusive, royalty free, 
@@ -2112,6 +2112,15 @@
 
     <section anchor="History" title="Document History">
       <t>[[ To be removed from the approved errata ]]</t>
+
+      <t>
+	-33
+        <list style="symbols">
+	  <t>
+	    Updated contributor affiliations.
+	  </t>
+	</list>
+      </t>
 
       <t>
 	-32
