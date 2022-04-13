@@ -368,7 +368,7 @@
       </section>
     </section>
 
-    <section anchor="Validation and Error Handling" title="ValidationAndErrorHandling">
+    <section anchor="ValidationAndErrorHandling" title="Validation and Error Handling">
 
       <t>
 	If any of the validation procedures defined in this specification fail, any operations requiring
