@@ -41,7 +41,7 @@
       </address>
     </author>
 
-    <date day="14" month="March" year="2022" />
+    <date day="13" month="April" year="2022" />
 
     <workgroup>OpenID Connect Working Group</workgroup>
 
@@ -394,6 +394,13 @@
 	  as specified in Section 5.3 of <xref target="JWT"/>.
 	</t>
 	<t>
+	  It is RECOMMENDED that Logout Tokens be explicitly typed.
+	  This is accomplished by including a <spanx style="verb">typ</spanx> (type) Header Parameter
+	  with a value of <spanx style="verb">logout+jwt</spanx> in the Logout Token.
+	  See <xref target="CrossJWT"/> for a discussion of the security and interoperability considerations
+	  of using explicit typing.
+	</t>
+	<t>
 	  NOTE: The Logout Token is compatible with
 	  the Security Event Token (SET) <xref target="RFC8417"/> specification.
 	</t>
@@ -596,6 +603,36 @@
 	preferably at most two minutes in the future,
 	to prevent captured Logout Tokens from being replayable.
       </t>
+
+      <section title="Cross-JWT Confusion" anchor="CrossJWT">
+	<t>
+	  As described in Section 2.8 of <xref target="RFC8725"/>,
+	  attackers may attempt to use a JWT issued for one purpose in a context that it was not intended for.
+	  The mitigations described for these attacks can be applied to Logout Tokens.
+	</t>
+	<t>
+	  One way that an attacker might attempt to repurpose a Logout Token
+	  is to try to use it as an ID Token.
+	  As described in <xref target="LogoutToken"/>,
+	  inclusion of a <spanx style="verb">nonce</spanx> Claim in a Logout Token
+	  is prohibited to prevent its misuse as an ID Token.
+	</t>
+	<t>
+	  Another way to prevent cross-JWT confusion is to use explicit typing,
+	  as described in Section 3.11 of <xref target="RFC8725"/>.
+	  One would explicitly type a Logout Token by including a
+	  <spanx style="verb">typ</spanx> (type) Header Parameter with a value of
+	  <spanx style="verb">logout+jwt</spanx>
+	  (which is registered in <xref target="MediaContents"/>.
+	  Including an explicit type in issued Logout Tokens is a best practice.
+	  Note however, that requiring explicitly typed Logout Tokens
+	  will break most existing deployments,
+	  as existing OPs and RPs are already commonly using untyped Logout Tokens.
+	  However, requiring explicit typing would be a good idea
+	  for new deployment profiles where compatibility with existing deployments
+	  is not a consideration.
+	</t>
+      </section>
     </section>
 
     <section anchor="IANA" title="IANA Considerations">
@@ -700,6 +737,86 @@
 	</section>
 	<?rfc subcompact="no"?>
 
+      </section>
+
+      <section title="Media Type Registration" anchor="MediaReg">
+	<section title="Registry Contents" anchor="MediaContents">
+	  <t>
+	    This section registers the
+	    <spanx style="verb">application/logout+jwt</spanx>
+	    media type <xref target="RFC2046"/> in the IANA "Media Types"
+	    registry <xref target="IANA.MediaTypes"/> in the manner
+	    described in <xref target="RFC6838"/>, which can be used to
+	    indicate that the content is a Logout Token.
+	  </t>
+	  <t> <?rfc subcompact="yes"?>
+	  <list style="symbols">
+	    <t>
+	      Type name: application
+	    </t>
+	    <t>
+	      Subtype name: logout+jwt
+	    </t>
+	    <t>
+	      Required parameters: n/a
+	    </t>
+	    <t>
+	      Optional parameters: n/a
+	    </t>
+	    <t>
+	      Encoding considerations: binary;
+	      A Logout Token is a JWT;
+	      JWT values are encoded as a
+	      series of base64url-encoded values (some of which may be the
+	      empty string) separated by period ('.') characters.
+	    </t>
+	    <t>
+	      Security considerations: See <xref target="CrossJWT"/> of this specification
+	    </t>
+	    <t>
+	      Interoperability considerations: n/a
+	    </t>
+	    <t>
+	      Published specification: <xref target="LogoutToken"/> of this specification
+	    </t>
+	    <t>
+	      Applications that use this media type:
+	      Applications that use Logout Tokens to achieve back-channel logout
+	    </t>
+	    <t>
+	      Fragment identifier considerations: n/a
+	    </t>
+	    <t>
+	      Additional information:<list style="empty">
+	      <t>Magic number(s): n/a</t>
+	      <t>File extension(s): n/a</t>
+	      <t>Macintosh file type code(s): n/a </t></list>
+	      <vspace/>
+	    </t>
+	    <t>
+	      Person &amp; email address to contact for further information:
+	      <vspace/>
+	      OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net
+	    </t>
+	    <t>
+	      Intended usage: COMMON
+	    </t>
+	    <t>
+	      Restrictions on usage: none
+	    </t>
+	    <t>
+	      Author: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net
+	    </t>
+	    <t>
+	      Change controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net
+	    </t>
+	    <t>
+	      Provisional registration? No
+	    </t>
+	  </list>
+	  </t>
+	</section>
+	<?rfc subcompact="no"?>
       </section>
 
     </section>
@@ -907,12 +1024,25 @@
         </front>
       </reference>
 
+      <reference anchor="IANA.MediaTypes" target="http://www.iana.org/assignments/media-types">
+	<front>
+	  <title>Media Types</title>
+	  <author>
+	    <organization>IANA</organization>
+	  </author>
+	  <date/>
+	</front>
+      </reference>
+
     </references>
 
     <references title="Informative References">
+      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.2046"?>
+      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.6838"?>
       <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.7591"?>
       <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.8414"?>
       <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.8417"?>
+      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.8725"?>
     </references>
 
     <section anchor="Acknowledgements" title="Acknowledgements">
@@ -981,6 +1111,11 @@
       <t>
 	-07
         <list style="symbols">
+	  <t>
+	    Fixed #1468 - Support explicit typing of Logout Tokens.
+	    The nature of the support is intentionally parallel to
+	    the way that explicit typing of Request Objects is supported in RFC 9101.
+	  </t>
 	  <t>
 	    Updated contributor affiliations.
 	  </t>
