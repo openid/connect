@@ -46,7 +46,7 @@ In the case of a hosted third-party provided OP, it is common for the OP to have
 
 In traditional OpenID Connect, the ID token is signed by the third-party provided OP, identified by the `iss` claim. The RP uses this identifier to obtain the key material to validate the ID token's signature. This signature ensures the data is attested by the third-party provided OP the RP trusts for that purpose and it also is an attestation of what third-party provided service created the ID token (since both are the same entity). 
 
-In the Self-Issued OP case, the ID token is self-signed with a private key under the user's control, identified by the `sub` claim. The RP uses this identifier to obtain the key material to validate the ID token's signature. Unlike traditional OpenID Connect, this signature can no longer be used to cryptographically validate the software or service that created the ID token. Self-issued ID token can be detected when the `iss` value is set to the user identifier conveyed in the `sub` Claim, because from a conceptual perspective, the issuer of the ID Token is the user. This also aligns SIOP with the way self-signed certificates and W3C Verifiable Presentations handle subject and issuer of such certificates and self-signed assertions, respectively.  
+In the Self-Issued OP case, the ID token is self-signed with a private key under the user's control, identified by the `sub` claim. The RP uses this identifier to obtain the key material to validate the ID token's signature. Unlike traditional OpenID Connect, this signature can no longer be used to cryptographically validate the software or service that created the ID token. The RP may use the new `op_attestation` element for that purpose. Self-issued ID token can be detected when the `iss` value is set to the user identifier conveyed in the `sub` Claim, because from a conceptual perspective, the issuer of the ID Token is the user. This also aligns SIOP with the way self-signed certificates and W3C Verifiable Presentations handle subject and issuer of such certificates and self-signed assertions, respectively. 
 
 Note: Discuss trust OP-RP relationship in Self-Issued OP.
 
@@ -659,8 +659,16 @@ This extension defines the following claims to be included in the ID token for u
     * REQUIRED. Subject identifier value. When Subject Syntax Type is JWK Thumbprint, the value is the base64url encoded representation of the thumbprint of the key in the `sub_jwk` Claim. When Subject Syntax Type is Decentralized Identifier, the value is a Decentralized Identifier. The thumbprint value of JWK Thumbprint Subject Syntax Type is computed as the SHA-256 hash of the octets of the UTF-8 representation of a JWK constructed containing only the REQUIRED members to represent the key, with the member names sorted into lexicographic order, and with no white space or line breaks. For instance, when the `kty` value is `RSA`, the member names `e`, `kty`, and `n` are the ones present in the constructed JWK used in the thumbprint computation and appear in that order; when the `kty` value is `EC`, the member names `crv`, `kty`, `x`, and `y` are present in that order. Note that this thumbprint calculation is the same as that defined in the JWK Thumbprint [@!RFC7638] specification.
 * `sub_jwk`
     * OPTIONAL. A JSON object that is a public key used to check the signature of an ID Token when Subject Syntax Type is JWK Thumbprint. The key is a bare key in JWK [@!RFC7517] format (not an X.509 certificate value). MUST NOT be present when Subject Syntax Type other than JWK Thumbprint is used.
+* `op_attestation`
+    * OPTIONAL. A JWT signed by the OP that produced the ID token on behalf of the End-user. It contains the following claims:
+      * `iss`: Identifier for the OP that created the ID token on behalf of the End-user. The `iss` value is a case sensitive URL using the https scheme that contains scheme, host, and optionally, port number and path components and no query or fragment components. In case of Dynamic SIOP Discovery, the value of `iss` MUST match the `iss` claim in the OpenID Configuration. 
+      * `nonce`: String value used to associate a Client session with an ID Token, and to mitigate replay attacks. This `nonce` value MUST match the `nonce` value of the enclosing ID token.  
+* `op_identifier`
+    * OPTIONAL. Identifier for the OP that created the ID token on behalf of the End-user. The `op_identifier` value is a case sensitive URL using the https scheme that contains scheme, host, and optionally, port number and path components and no query or fragment components. In case of Dynamic SIOP Discovery, the value of `op_identifier` MUST match the `iss` claim in the OpenID Configuration. 
 
 Note that the use of the `sub_jwk` Claim is NOT RECOMMENDED when the OP is not Self-Issued.
+
+Note that the `op_identifier` is self declared. 
 
 Whether the Self-Issued OP is a mobile application or a Web application, the response is the same as the normal Implicit Flow response with the following refinements. Since it is an Implicit Flow response, the response parameters will be returned in the URL fragment component, unless a different Response Mode was specified.
 
@@ -687,7 +695,19 @@ The following is a non-normative example of a base64url decoded Self-Issued ID T
     t-bFTWhAI4vMQFh6WeZu0fM4lFd2NcRwr3XPksINHaQ-G_xBniIqbw0Ls1jF44-cs
     FCur-kEgU8awapJzKnqDKgw",
     "e": "AQAB"
-  }
+  },
+  "op_attestation": "eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IjEy
+  MzQ1Njc4In0.eyJpc3MiOiJodHRwczovL3dhbGxldC5leGFtcGxlLmNvbSIsIm5vbmN
+  lIjoibi0wUzZfV3pBMk1qIn0.p6Wcu1QN3fftSrDZJoUXix5LdMtUyKliK8o8O2By0C
+  CsSSWrEwO4dJU4Fqe9QPwCJOb4SR7EjPCItjnqnkk6UQ"
+}
+```
+with the following decoded `op_attestation`:
+
+```json
+{
+  "iss": "https://wallet.example.com",
+  "nonce": "n-0S6_WzA2Mj"
 }
 ```
 
@@ -704,6 +724,7 @@ To validate the ID Token received, the RP MUST do the following:
 1. The current time MUST be before the time represented by the `exp` Claim (possibly allowing for some small leeway to account for clock skew).
  The `iat` Claim can be used to reject tokens that were issued too far away from the current time, limiting the amount of time that nonces need to be stored to prevent attacks. The acceptable range is RP-specific.
 1. The RP MUST validate that a `nonce` Claim is present and is the same value as the one that was sent in the Authentication Request. The Client MUST check the `nonce` value for replay attacks. The precise method for detecting replay attacks is RP specific.
+1. The RP MAY validate the signature of the `op_attestation`. It obtains the OP's keys from the JWK URI published in the OP's OpenID Configuration and uses the key identified in the `kid` JWT header claim to validate the signature. The RP MUST also check that the `nonce` in the `op_attestation` is the same as the `nonce` claim in the enclosing ID token. 
 
 ## Cross-Device Self-Issued ID Token Validation
 
