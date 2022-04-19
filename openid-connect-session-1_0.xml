@@ -66,7 +66,7 @@
       </address>
     </author>
 
-    <date day="14" month="March" year="2022" />
+    <date day="11" month="April" year="2022" />
 
     <workgroup>OpenID Connect Working Group</workgroup>
 
@@ -401,8 +401,8 @@
 
   function receiveMessage(e){ // e.data has client_id and session_state
 
-    var client_id = e.data.split(' ')[0];
-    var session_state = e.data.split(' ')[1];
+    var client_id = e.data.substr(0, e.data.lastIndexOf(' '));
+    var session_state = e.data.substr(e.data.lastIndexOf(' ') + 1);
     var salt = session_state.split('.')[1];
 
     // if message is syntactically invalid
@@ -879,6 +879,9 @@
       <t>
 	-31
         <list style="symbols">
+	  <t>
+	    Fixed #1202 - Corrected example OP iframe JavaScript splitting client_id and session_state.
+	  </t>
 	  <t>
 	    Updated contributor affiliations.
 	  </t>
