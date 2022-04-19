@@ -66,7 +66,7 @@
       </address>
     </author>
 
-    <date day="11" month="April" year="2022" />
+    <date day="18" month="April" year="2022" />
 
     <workgroup>OpenID Connect Working Group</workgroup>
 
@@ -213,15 +213,17 @@
 	  <t hangText="post_logout_redirect_uri">
 	    <vspace/>
 	    OPTIONAL.
-	    URL to which the RP is requesting that
+	    URI to which the RP is requesting that
 	    the End-User's User Agent be redirected
 	    after a logout has been performed.
-	    This URL SHOULD use the <spanx style="verb">https</spanx> scheme
+	    This URI SHOULD use the <spanx style="verb">https</spanx> scheme
 	    and MAY contain port, path, and query parameter components;
 	    however, it MAY use the <spanx style="verb">http</spanx> scheme,
 	    provided that the Client Type is <spanx style="verb">confidential</spanx>,
 	    as defined in Section 2.1 of <xref target="RFC6749">OAuth 2.0</xref>, and
 	    provided the OP allows the use of <spanx style="verb">http</spanx> RP URIs.
+	    The URI MAY use an alternate scheme,
+	    such as one that is intended to identify a callback into a native application.
 	    The value MUST have been previously registered with the OP,
 	    either using the <spanx style="verb">post_logout_redirect_uris</spanx>
 	    Registration parameter or via another mechanism.
@@ -753,10 +755,13 @@
 	    Fixed #1032 - Added the <spanx style="verb">client_id</spanx> parameter at the Logout Endpoint.
 	  </t>
 	  <t>
-	    Updated contributor affiliations.
+	    Fixed #1338 - Allow <spanx style="verb">post_logout_redirect_uri</spanx> to use an alternate scheme.
 	  </t>
 	  <t>
 	    Fixed #1183, #1184, and #1216 - Described error handling.
+	  </t>
+	  <t>
+	    Updated contributor affiliations.
 	  </t>
 	</list>
       </t>
