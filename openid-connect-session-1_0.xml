@@ -30,7 +30,7 @@
       <organization>Google</organization>
       <address>
         <email>breno@google.com</email>
-	<uri>http://stackoverflow.com/users/311376/breno</uri>
+	<uri>https://stackoverflow.com/users/311376/breno</uri>
       </address>
     </author>
 
@@ -38,7 +38,7 @@
       <organization>Microsoft</organization>
       <address>
         <email>Naveen.Agarwal@microsoft.com</email>
-	<uri>http://www.linkedin.com/in/nvnagr</uri>
+	<uri>https://www.linkedin.com/in/nvnagr</uri>
       </address>
     </author>
 
@@ -46,7 +46,7 @@
       <organization abbrev="NAT.Consulting">NAT.Consulting</organization>
       <address>
         <email>nat@nat.consulting</email>
-	<uri>http://nat.sakimura.org/</uri>
+	<uri>https://nat.sakimura.org/</uri>
       </address>
     </author>
 
@@ -62,11 +62,11 @@
       <organization abbrev="Microsoft">Microsoft</organization>
       <address>
         <email>mbj@microsoft.com</email>
-	<uri>http://self-issued.info/</uri>
+	<uri>https://self-issued.info/</uri>
       </address>
     </author>
 
-    <date day="14" month="March" year="2022" />
+    <date day="18" month="April" year="2022" />
 
     <workgroup>OpenID Connect Working Group</workgroup>
 
@@ -401,8 +401,8 @@
 
   function receiveMessage(e){ // e.data has client_id and session_state
 
-    var client_id = e.data.split(' ')[0];
-    var session_state = e.data.split(' ')[1];
+    var client_id = e.data.substr(0, e.data.lastIndexOf(' '));
+    var session_state = e.data.substr(e.data.lastIndexOf(' ') + 1);
     var salt = session_state.split('.')[1];
 
     // if message is syntactically invalid
@@ -683,7 +683,7 @@
       <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.7159"?>
       <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.7230"?>
 
-      <reference anchor="OpenID.Core" target="http://openid.net/specs/openid-connect-core-1_0.html">
+      <reference anchor="OpenID.Core" target="https://openid.net/specs/openid-connect-core-1_0.html">
         <front>
           <title>OpenID Connect Core 1.0</title>
 
@@ -711,7 +711,7 @@
         </front>
       </reference>
 
-      <reference anchor="OpenID.Discovery" target="http://openid.net/specs/openid-connect-discovery-1_0.html">
+      <reference anchor="OpenID.Discovery" target="https://openid.net/specs/openid-connect-discovery-1_0.html">
         <front>
           <title>OpenID Connect Discovery 1.0</title>
 
@@ -735,7 +735,7 @@
         </front>
       </reference>
 
-      <reference anchor="OpenID.RPInitiated" target="http://openid.net/specs/openid-connect-rpinitiated-1_0.html">
+      <reference anchor="OpenID.RPInitiated" target="https://openid.net/specs/openid-connect-rpinitiated-1_0.html">
 	<front>
 	  <title>OpenID Connect RP-Initiated Logout 1.0</title>
 
@@ -759,11 +759,11 @@
 	    <organization abbrev="Yubico">Yubico</organization>
 	  </author>
 
-	  <date day="14" month="March" year="2022" />
+	  <date day="18" month="April" year="2022" />
 	</front>
       </reference>
 
-      <reference anchor="OpenID.FrontChannel" target="http://openid.net/specs/openid-connect-frontchannel-1_0.html">
+      <reference anchor="OpenID.FrontChannel" target="https://openid.net/specs/openid-connect-frontchannel-1_0.html">
 	<front>
 	  <title>OpenID Connect Front-Channel Logout 1.0</title>
 
@@ -771,11 +771,11 @@
 	    <organization abbrev="Microsoft">Microsoft</organization>
 	  </author>
 
-	  <date day="14" month="March" year="2022" />
+	  <date day="18" month="April" year="2022" />
 	</front>
       </reference>
 
-      <reference anchor="OpenID.BackChannel" target="http://openid.net/specs/openid-connect-backchannel-1_0.html">
+      <reference anchor="OpenID.BackChannel" target="https://openid.net/specs/openid-connect-backchannel-1_0.html">
 	<front>
 	  <title>OpenID Connect Back-Channel Logout 1.0</title>
 
@@ -787,11 +787,11 @@
             <organization abbrev="Yubico">Yubico</organization>
           </author>
 
-	  <date day="14" month="March" year="2022" />
+	  <date day="18" month="April" year="2022" />
 	</front>
       </reference>
 
-      <reference anchor="IANA.OAuth.Parameters" target="http://www.iana.org/assignments/oauth-parameters">
+      <reference anchor="IANA.OAuth.Parameters" target="https://www.iana.org/assignments/oauth-parameters">
         <front>
           <title>OAuth Parameters</title>
           <author>
@@ -880,7 +880,13 @@
 	-31
         <list style="symbols">
 	  <t>
+	    Fixed #1202 - Corrected example OP iframe JavaScript splitting client_id and session_state.
+	  </t>
+	  <t>
 	    Updated contributor affiliations.
+	  </t>
+	  <t>
+	    Updated many spec URLs from http to https.
 	  </t>
 	</list>
       </t>

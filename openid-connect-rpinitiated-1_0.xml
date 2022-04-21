@@ -30,7 +30,7 @@
       <organization abbrev="Microsoft">Microsoft</organization>
       <address>
         <email>mbj@microsoft.com</email>
-	<uri>http://self-issued.info/</uri>
+	<uri>https://self-issued.info/</uri>
       </address>
     </author>
 
@@ -38,7 +38,7 @@
       <organization>Google</organization>
       <address>
         <email>breno@google.com</email>
-	<uri>http://stackoverflow.com/users/311376/breno</uri>
+	<uri>https://stackoverflow.com/users/311376/breno</uri>
       </address>
     </author>
 
@@ -46,7 +46,7 @@
       <organization>Microsoft</organization>
       <address>
         <email>Naveen.Agarwal@microsoft.com</email>
-	<uri>http://www.linkedin.com/in/nvnagr</uri>
+	<uri>https://www.linkedin.com/in/nvnagr</uri>
       </address>
     </author>
 
@@ -54,7 +54,7 @@
       <organization abbrev="NAT.Consulting">NAT.Consulting</organization>
       <address>
         <email>nat@nat.consulting</email>
-	<uri>http://nat.sakimura.org/</uri>
+	<uri>https://nat.sakimura.org/</uri>
       </address>
     </author>
 
@@ -66,7 +66,7 @@
       </address>
     </author>
 
-    <date day="14" month="March" year="2022" />
+    <date day="18" month="April" year="2022" />
 
     <workgroup>OpenID Connect Working Group</workgroup>
 
@@ -184,22 +184,50 @@
 	    This is used as an indication of the identity of the
 	    End-User that the RP is requesting be logged out by the OP.
 	  </t>
+	  <t hangText="logout_hint">
+	    <vspace/>
+	    OPTIONAL.
+	    Hint to the Authorization Server about the End-User that is logging out.
+	    The value and meaning of this parameter is left up to the OP's discretion.
+	    For instance, the value might contain an email address, phone number, username,
+	    or session identifier pertaining to the RP's session with the OP for the End-User.
+	    (This parameter is intended to be analogous to the <spanx style="verb">login_hint</spanx>
+	    parameter defined in Section 3.1.2.1 of <xref target="OpenID.Core">OpenID Connect Core 1.0</xref>
+	    that is used in Authentication Requests;
+	    whereas, <spanx style="verb">logout_hint</spanx> is used in RP-Initiated Logout Requests.)
+	  </t>
+	  <t hangText="client_id">
+	    <vspace/>
+	    OPTIONAL.
+	    OAuth 2.0 Client Identifier valid at the Authorization Server. When both
+	    <spanx style="verb">client_id</spanx> and <spanx style="verb">id_token_hint</spanx>
+	    are present,
+	    the OP MUST verify that the Client Identifier matches the one used when issuing the
+	    ID Token. The most common use case for this parameter is to specify the Client Identifier
+	    when <spanx style="verb">post_logout_redirect_uri</spanx> is used but
+	    <spanx style="verb">id_token_hint</spanx> is not. Another use is for
+	    symmetrically encrypted ID Tokens used as <spanx style="verb">id_token_hint</spanx> values
+	    that require the Client Identifier
+	    to be specified by other means, so that the ID Tokens can be decrypted by the OP.
+	  </t>
 	  <t hangText="post_logout_redirect_uri">
 	    <vspace/>
 	    OPTIONAL.
-	    URL to which the RP is requesting that
+	    URI to which the RP is requesting that
 	    the End-User's User Agent be redirected
 	    after a logout has been performed.
-	    This URL SHOULD use the <spanx style="verb">https</spanx> scheme
+	    This URI SHOULD use the <spanx style="verb">https</spanx> scheme
 	    and MAY contain port, path, and query parameter components;
 	    however, it MAY use the <spanx style="verb">http</spanx> scheme,
 	    provided that the Client Type is <spanx style="verb">confidential</spanx>,
 	    as defined in Section 2.1 of <xref target="RFC6749">OAuth 2.0</xref>, and
 	    provided the OP allows the use of <spanx style="verb">http</spanx> RP URIs.
+	    The URI MAY use an alternate scheme,
+	    such as one that is intended to identify a callback into a native application.
 	    The value MUST have been previously registered with the OP,
 	    either using the <spanx style="verb">post_logout_redirect_uris</spanx>
 	    Registration parameter or via another mechanism.
-	    An <spanx style="verb">id_token_hint</spanx> is also REQUIRED when this parameter is included.
+	    An <spanx style="verb">id_token_hint</spanx> is also RECOMMENDED when this parameter is included.
 	  </t>
 	  <t hangText="state">
 	    <vspace/>
@@ -257,6 +285,10 @@
       <t>
 	At the Logout Endpoint, the OP SHOULD ask the End-User whether
 	to log out of the OP as well.
+	Furthermore, the OP MUST ask the End-User this question
+	if an <spanx style="verb">id_token_hint</spanx> was not provided
+	or if the supplied ID Token does not belong to the current OP session with the RP
+	and/or currently logged in End-User.
 	If the End-User says "yes", then the OP MUST log out the End-User.
       </t>
       <t>
@@ -325,9 +357,10 @@
 	the <spanx style="verb">post_logout_redirect_uri</spanx> parameter
 	value sent by the initiating RP.
 	An <spanx style="verb">id_token_hint</spanx> carring an ID Token for the RP
-	is also REQUIRED when requesting post-logout redirection;
+	is also RECOMMENDED when requesting post-logout redirection;
 	if it is not supplied with <spanx style="verb">post_logout_redirect_uri</spanx>,
-	the OP MUST NOT perform post-logout redirection.
+	the OP MUST NOT perform post-logout redirection
+	unless the OP has other means of confirming the legitimacy of the post-logout redirection target.
 	The OP also MUST NOT perform post-logout redirection if the
 	<spanx style="verb">post_logout_redirect_uri</spanx> value supplied does not exactly match
 	one of the previously registered <spanx style="verb">post_logout_redirect_uris</spanx> values.
@@ -368,12 +401,31 @@
       </section>
     </section>
 
-    <section anchor="Validation" title="Validation">
+    <section anchor="ValidationAndErrorHandling" title="Validation and Error Handling">
 
       <t>
 	If any of the validation procedures defined in this specification fail, any operations requiring
 	the information that failed to correctly validate MUST be aborted and
 	the information that failed to validate MUST NOT be used.
+      </t>
+      <t>
+	As described in <xref target="RedirectionAfterLogout"/>,
+	when the OP detects errors in the RP-Initiated Logout request,
+	the OP MUST not perform post-logout redirection to an RP.
+	Beyond that, the OP has discretion on what information to display to the End-User
+	in the resulting page at the OP
+	and what actions to enable the End-User to perform next.
+	It MAY display an error message.
+	It MAY ask the End-User whether to log out of the OP.
+      </t>
+      <t>
+	Note that giving the End-User the opportunity to log out may have security benefits,
+	especially in kiosk scenarios.
+	The End-User initiating a logout action at the RP may expect to be completely logged out,
+	including from the OP.
+	Not giving the End-User the opportunity to log out at the OP
+	and leaving the End-User logged in would likely violate the End-User's security expectations
+	about being completely logged out.
       </t>
 
     </section>
@@ -392,11 +444,9 @@
 
     <section anchor="Security" title="Security Considerations">
       <t>
-	The <spanx style="verb">id_token_hint</spanx> parameter to a logout request
-	can be used to determine which RP initiated the logout request.
 	Logout requests without a valid <spanx style="verb">id_token_hint</spanx> value
 	are a potential means of denial of service; therefore,
-	OPs may want to require explicit user confirmation before acting upon them.
+	OPs should obtain explicit confirmation from the End-User before acting upon them.
       </t>
     </section>
 
@@ -481,7 +531,7 @@
       <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.7230"?>
       <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.7231"?>
 
-      <reference anchor="OpenID.Core" target="http://openid.net/specs/openid-connect-core-1_0.html">
+      <reference anchor="OpenID.Core" target="https://openid.net/specs/openid-connect-core-1_0.html">
         <front>
           <title>OpenID Connect Core 1.0</title>
 
@@ -509,7 +559,7 @@
         </front>
       </reference>
 
-      <reference anchor="OpenID.Discovery" target="http://openid.net/specs/openid-connect-discovery-1_0.html">
+      <reference anchor="OpenID.Discovery" target="https://openid.net/specs/openid-connect-discovery-1_0.html">
         <front>
           <title>OpenID Connect Discovery 1.0</title>
 
@@ -533,7 +583,7 @@
         </front>
       </reference>
 
-      <reference anchor="OpenID.Registration" target="http://openid.net/specs/openid-connect-registration-1_0.html">
+      <reference anchor="OpenID.Registration" target="https://openid.net/specs/openid-connect-registration-1_0.html">
         <front>
           <title>OpenID Connect Dynamic Client Registration 1.0</title>
 
@@ -553,7 +603,7 @@
         </front>
       </reference>
 
-      <reference anchor="OpenID.Session" target="http://openid.net/specs/openid-connect-session-1_0.html">
+      <reference anchor="OpenID.Session" target="https://openid.net/specs/openid-connect-session-1_0.html">
 	<front>
 	  <title>OpenID Connect Session Management 1.0</title>
 
@@ -577,11 +627,11 @@
 	    <organization abbrev="Microsoft">Microsoft</organization>
 	  </author>
 
-	  <date day="14" month="March" year="2022" />
+	  <date day="18" month="April" year="2022" />
 	</front>
       </reference>
 
-      <reference anchor="OpenID.FrontChannel" target="http://openid.net/specs/openid-connect-frontchannel-1_0.html">
+      <reference anchor="OpenID.FrontChannel" target="https://openid.net/specs/openid-connect-frontchannel-1_0.html">
 	<front>
 	  <title>OpenID Connect Front-Channel Logout 1.0</title>
 
@@ -589,11 +639,11 @@
 	    <organization abbrev="Microsoft">Microsoft</organization>
 	  </author>
 
-	  <date day="14" month="March" year="2022" />
+	  <date day="18" month="April" year="2022" />
 	</front>
       </reference>
 
-      <reference anchor="OpenID.BackChannel" target="http://openid.net/specs/openid-connect-backchannel-1_0.html">
+      <reference anchor="OpenID.BackChannel" target="https://openid.net/specs/openid-connect-backchannel-1_0.html">
 	<front>
 	  <title>OpenID Connect Back-Channel Logout 1.0</title>
 
@@ -605,11 +655,11 @@
             <organization abbrev="Yubico">Yubico</organization>
           </author>
 
-	  <date day="14" month="March" year="2022" />
+	  <date day="18" month="April" year="2022" />
 	</front>
       </reference>
 
-      <reference anchor="IANA.OAuth.Parameters" target="http://www.iana.org/assignments/oauth-parameters">
+      <reference anchor="IANA.OAuth.Parameters" target="https://www.iana.org/assignments/oauth-parameters">
         <front>
           <title>OAuth Parameters</title>
           <author>
@@ -699,7 +749,22 @@
 	-02
         <list style="symbols">
 	  <t>
+	    Fixed #1182 - Added the <spanx style="verb">logout_hint</spanx> parameter at the Logout Endpoint.
+	  </t>
+	  <t>
+	    Fixed #1032 - Added the <spanx style="verb">client_id</spanx> parameter at the Logout Endpoint.
+	  </t>
+	  <t>
+	    Fixed #1338 - Allow <spanx style="verb">post_logout_redirect_uri</spanx> to use an alternate scheme.
+	  </t>
+	  <t>
+	    Fixed #1183, #1184, and #1216 - Described error handling.
+	  </t>
+	  <t>
 	    Updated contributor affiliations.
+	  </t>
+	  <t>
+	    Updated many spec URLs from http to https.
 	  </t>
 	</list>
       </t>

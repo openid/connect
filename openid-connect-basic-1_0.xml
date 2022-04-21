@@ -30,7 +30,7 @@
       <organization abbrev="NAT.Consulting">NAT.Consulting</organization>
       <address>
         <email>nat@nat.consulting</email>
-	<uri>http://nat.sakimura.org/</uri>
+	<uri>https://nat.sakimura.org/</uri>
       </address>
     </author>
 
@@ -46,7 +46,7 @@
       <organization abbrev="Microsoft">Microsoft</organization>
       <address>
         <email>mbj@microsoft.com</email>
-	<uri>http://self-issued.info/</uri>
+	<uri>https://self-issued.info/</uri>
       </address>
     </author>
 
@@ -54,7 +54,7 @@
       <organization abbrev="Google">Google</organization>
       <address>
         <email>breno@google.com</email>
-	<uri>http://stackoverflow.com/users/311376/breno</uri>
+	<uri>https://stackoverflow.com/users/311376/breno</uri>
       </address>
     </author>
 
@@ -66,7 +66,7 @@
       </address>
     </author>
 
-    <date day="14" month="March" year="2022" />
+    <date day="18" month="April" year="2022" />
 
     <workgroup>OpenID Connect Working Group</workgroup>
 
@@ -2313,7 +2313,7 @@
         </front>
       </reference>
 
-      <reference anchor="OpenID.Core" target="http://openid.net/specs/openid-connect-core-1_0.html">
+      <reference anchor="OpenID.Core" target="https://openid.net/specs/openid-connect-core-1_0.html">
         <front>
           <title>OpenID Connect Core 1.0</title>
 
@@ -2341,7 +2341,7 @@
         </front>
       </reference>
 
-      <reference anchor="OpenID.Discovery" target="http://openid.net/specs/openid-connect-discovery-1_0.html">
+      <reference anchor="OpenID.Discovery" target="https://openid.net/specs/openid-connect-discovery-1_0.html">
         <front>
           <title>OpenID Connect Discovery 1.0</title>
 
@@ -2365,7 +2365,7 @@
         </front>
       </reference>
 
-      <reference anchor="OpenID.Registration" target="http://openid.net/specs/openid-connect-registration-1_0.html">
+      <reference anchor="OpenID.Registration" target="https://openid.net/specs/openid-connect-registration-1_0.html">
         <front>
           <title>OpenID Connect Dynamic Client Registration 1.0</title>
 
@@ -2385,7 +2385,7 @@
         </front>
       </reference>
 
-      <reference anchor="JWT" target="http://tools.ietf.org/html/rfc7519">
+      <reference anchor="JWT" target="https://tools.ietf.org/html/rfc7519">
         <front>
           <title>JSON Web Token (JWT)</title>
 
@@ -2408,7 +2408,7 @@
 	<seriesInfo name="DOI" value="10.17487/RFC7519"/>
       </reference>
 
-      <reference anchor="JWS" target="http://tools.ietf.org/html/rfc7515">
+      <reference anchor="JWS" target="https://tools.ietf.org/html/rfc7515">
         <front>
           <title>JSON Web Signature (JWS)</title>
 
@@ -2431,7 +2431,7 @@
 	<seriesInfo name="DOI" value="10.17487/RFC7515"/>
       </reference>
 
-      <reference anchor="IANA.Language" target="http://www.iana.org/assignments/language-subtag-registry">
+      <reference anchor="IANA.Language" target="https://www.iana.org/assignments/language-subtag-registry">
         <front>
           <title>Language Subtag Registry</title>
           <author>
@@ -2441,7 +2441,7 @@
         </front>
       </reference>
 
-      <reference anchor="RFC20" target="http://www.rfc-editor.org/info/rfc20">
+      <reference anchor="RFC20" target="https://www.rfc-editor.org/info/rfc20">
 	<front>
 	  <title>ASCII format for Network Interchange</title>
 	  <author fullname="Vint Cerf" surname="Cerf" initials="V.">
@@ -2473,7 +2473,7 @@
     </references>
     <references title="Informative References">
 
-      <reference anchor="OpenID.Implicit" target="http://openid.net/specs/openid-connect-implicit-1_0.html">
+      <reference anchor="OpenID.Implicit" target="https://openid.net/specs/openid-connect-implicit-1_0.html">
         <front>
           <title>OpenID Connect Implicit Client Implementer's Guide 1.0</title>
 
@@ -2497,7 +2497,7 @@
             <organization abbrev="Stripe (was at Salesforce)">Stripe</organization>
           </author>
 
-	  <date day="14" month="March" year="2022" />
+	  <date day="18" month="April" year="2022" />
         </front>
       </reference>
 
@@ -2588,6 +2588,9 @@
         <list style="symbols">
 	  <t>
 	    Updated contributor affiliations.
+	  </t>
+	  <t>
+	    Updated many spec URLs from http to https.
 	  </t>
 	</list>
       </t>

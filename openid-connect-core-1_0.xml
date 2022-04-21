@@ -29,7 +29,7 @@
       <organization abbrev="NAT.Consulting (was at NRI)">NAT.Consulting</organization>
       <address>
         <email>nat@nat.consulting</email>
-	<uri>http://nat.sakimura.org/</uri>
+	<uri>https://nat.sakimura.org/</uri>
       </address>
     </author>
 
@@ -45,7 +45,7 @@
       <organization abbrev="Microsoft">Microsoft</organization>
       <address>
         <email>mbj@microsoft.com</email>
-	<uri>http://self-issued.info/</uri>
+	<uri>https://self-issued.info/</uri>
       </address>
     </author>
 
@@ -53,7 +53,7 @@
       <organization abbrev="Google">Google</organization>
       <address>
         <email>breno@google.com</email>
-	<uri>http://stackoverflow.com/users/311376/breno</uri>
+	<uri>https://stackoverflow.com/users/311376/breno</uri>
       </address>
     </author>
 
@@ -65,7 +65,7 @@
       </address>
     </author>
 
-    <date day="14" month="March" year="2022" />
+    <date day="18" month="April" year="2022" />
 
     <workgroup>OpenID Connect Working Group</workgroup>
 
@@ -7960,7 +7960,7 @@
 	<seriesInfo name="Unicode Standard Annex" value="15" />
       </reference>
 
-      <reference anchor="OpenID.Discovery" target="http://openid.net/specs/openid-connect-discovery-1_0.html">
+      <reference anchor="OpenID.Discovery" target="https://openid.net/specs/openid-connect-discovery-1_0.html">
 	<front>
 	  <title>OpenID Connect Discovery 1.0</title>
 
@@ -7984,7 +7984,7 @@
 	</front>
       </reference>
 
-      <reference anchor="OpenID.Registration" target="http://openid.net/specs/openid-connect-registration-1_0.html">
+      <reference anchor="OpenID.Registration" target="https://openid.net/specs/openid-connect-registration-1_0.html">
 	<front>
 	  <title>OpenID Connect Dynamic Client Registration 1.0</title>
 
@@ -8004,7 +8004,7 @@
 	</front>
       </reference>
 
-      <reference anchor="JWT" target="http://tools.ietf.org/html/rfc7519">
+      <reference anchor="JWT" target="https://tools.ietf.org/html/rfc7519">
 	<front>
 	  <title>JSON Web Token (JWT)</title>
 
@@ -8027,7 +8027,7 @@
 	<seriesInfo name="DOI" value="10.17487/RFC7519"/>
       </reference>
 
-      <reference anchor="JWS" target="http://tools.ietf.org/html/rfc7515">
+      <reference anchor="JWS" target="https://tools.ietf.org/html/rfc7515">
 	<front>
 	  <title>JSON Web Signature (JWS)</title>
 
@@ -8050,7 +8050,7 @@
 	<seriesInfo name="DOI" value="10.17487/RFC7515"/>
       </reference>
 
-      <reference anchor="JWE" target="http://tools.ietf.org/html/rfc7516">
+      <reference anchor="JWE" target="https://tools.ietf.org/html/rfc7516">
 	<front>
 	  <title>JSON Web Encryption (JWE)</title>
 
@@ -8073,7 +8073,7 @@
 	<seriesInfo name="DOI" value="10.17487/RFC7516"/>
       </reference>
 
-      <reference anchor="JWK" target="http://tools.ietf.org/html/rfc7517">
+      <reference anchor="JWK" target="https://tools.ietf.org/html/rfc7517">
 	<front>
 	  <title>JSON Web Key (JWK)</title>
 
@@ -8088,7 +8088,7 @@
 	<seriesInfo name="DOI" value="10.17487/RFC7517"/>
       </reference>
 
-      <reference anchor="JWA" target="http://tools.ietf.org/html/rfc7518">
+      <reference anchor="JWA" target="https://tools.ietf.org/html/rfc7518">
 	<front>
 	  <title>JSON Web Algorithms (JWA)</title>
 
@@ -8103,7 +8103,7 @@
 	<seriesInfo name="DOI" value="10.17487/RFC7518"/>
       </reference>
 
-      <reference anchor="OAuth.JWT" target="http://tools.ietf.org/html/rfc7523">
+      <reference anchor="OAuth.JWT" target="https://tools.ietf.org/html/rfc7523">
 	<front>
 	  <title abbrev="OAuth JWT Assertion Profiles">JSON Web Token (JWT) Profile for OAuth 2.0 Client Authentication and Authorization Grants</title>
 
@@ -8126,7 +8126,7 @@
 	<seriesInfo name="DOI" value="10.17487/RFC7523"/>
       </reference>
 
-      <reference anchor="OAuth.Assertions" target="http://tools.ietf.org/html/rfc7521">
+      <reference anchor="OAuth.Assertions" target="https://tools.ietf.org/html/rfc7521">
 	<front>
 	  <title abbrev="OAuth Assertion Framework">Assertion Framework for OAuth 2.0 Client Authentication and Authorization Grants</title>
 
@@ -8235,7 +8235,7 @@
 	</front>
       </reference>
 
-      <reference anchor="OAuth.Responses" target="http://openid.net/specs/oauth-v2-multiple-response-types-1_0.html">
+      <reference anchor="OAuth.Responses" target="https://openid.net/specs/oauth-v2-multiple-response-types-1_0.html">
         <front>
 	  <title>OAuth 2.0 Multiple Response Type Encoding Practices</title>
 
@@ -8259,7 +8259,7 @@
         </front>
       </reference>
 
-      <reference anchor="IANA.Language" target="http://www.iana.org/assignments/language-subtag-registry">
+      <reference anchor="IANA.Language" target="https://www.iana.org/assignments/language-subtag-registry">
         <front>
           <title>Language Subtag Registry</title>
           <author>
@@ -8279,7 +8279,7 @@
         </front>
       </reference>
 
-      <reference anchor="IANA.JWT.Claims" target="http://www.iana.org/assignments/jwt">
+      <reference anchor="IANA.JWT.Claims" target="https://www.iana.org/assignments/jwt">
         <front>
           <title>JSON Web Token Claims</title>
           <author>
@@ -8289,7 +8289,7 @@
         </front>
       </reference>
 
-      <reference anchor="IANA.OAuth.Parameters" target="http://www.iana.org/assignments/oauth-parameters">
+      <reference anchor="IANA.OAuth.Parameters" target="https://www.iana.org/assignments/oauth-parameters">
         <front>
           <title>OAuth Parameters</title>
           <author>
@@ -8299,7 +8299,7 @@
         </front>
       </reference>
 
-      <reference anchor="RFC20" target="http://www.rfc-editor.org/info/rfc20">
+      <reference anchor="RFC20" target="https://www.rfc-editor.org/info/rfc20">
 	<front>
 	  <title>ASCII format for Network Interchange</title>
 	  <author fullname="Vint Cerf" surname="Cerf" initials="V.">
@@ -8333,7 +8333,7 @@
 
       <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.4949"?>
 
-      <reference anchor="OpenID.Basic" target="http://openid.net/specs/openid-connect-basic-1_0.html">
+      <reference anchor="OpenID.Basic" target="https://openid.net/specs/openid-connect-basic-1_0.html">
 	<front>
 	  <title>OpenID Connect Basic Client Implementer's Guide 1.0</title>
 
@@ -8357,11 +8357,11 @@
 	    <organization abbrev="Stripe">Stripe</organization>
 	  </author>
 
-	  <date day="14" month="March" year="2022" />
+	  <date day="18" month="April" year="2022" />
 	</front>
       </reference>
 
-      <reference anchor="OpenID.Implicit" target="http://openid.net/specs/openid-connect-implicit-1_0.html">
+      <reference anchor="OpenID.Implicit" target="https://openid.net/specs/openid-connect-implicit-1_0.html">
 	<front>
 	  <title>OpenID Connect Implicit Client Implementer's Guide 1.0</title>
 
@@ -8385,11 +8385,11 @@
 	    <organization abbrev="Stripe">Stripe</organization>
 	  </author>
 
-	  <date day="14" month="March" year="2022" />
+	  <date day="18" month="April" year="2022" />
 	</front>
       </reference>
 
-      <reference anchor="OpenID.RPInitiated" target="http://openid.net/specs/openid-connect-rpinitiated-1_0.html">
+      <reference anchor="OpenID.RPInitiated" target="https://openid.net/specs/openid-connect-rpinitiated-1_0.html">
 	<front>
 	  <title>OpenID Connect Session Management 1.0</title>
 
@@ -8413,11 +8413,11 @@
 	    <organization abbrev="Yubico">Yubico</organization>
 	  </author>
 
-	  <date day="14" month="March" year="2022" />
+	  <date day="18" month="April" year="2022" />
 	</front>
       </reference>
 
-      <reference anchor="OpenID.Session" target="http://openid.net/specs/openid-connect-session-1_0.html">
+      <reference anchor="OpenID.Session" target="https://openid.net/specs/openid-connect-session-1_0.html">
 	<front>
 	  <title>OpenID Connect Session Management 1.0</title>
 
@@ -8441,11 +8441,11 @@
 	    <organization abbrev="Microsoft">Microsoft</organization>
 	  </author>
 
-	  <date day="14" month="March" year="2022" />
+	  <date day="18" month="April" year="2022" />
 	</front>
       </reference>
 
-      <reference anchor="OpenID.FrontChannel" target="http://openid.net/specs/openid-connect-frontchannel-1_0.html">
+      <reference anchor="OpenID.FrontChannel" target="https://openid.net/specs/openid-connect-frontchannel-1_0.html">
 	<front>
 	  <title>OpenID Connect Front-Channel Logout 1.0</title>
 
@@ -8453,11 +8453,11 @@
 	    <organization abbrev="Microsoft">Microsoft</organization>
 	  </author>
 
-	  <date day="14" month="March" year="2022" />
+	  <date day="18" month="April" year="2022" />
 	</front>
       </reference>
 
-      <reference anchor="OpenID.BackChannel" target="http://openid.net/specs/openid-connect-backchannel-1_0.html">
+      <reference anchor="OpenID.BackChannel" target="https://openid.net/specs/openid-connect-backchannel-1_0.html">
 	<front>
 	  <title>OpenID Connect Back-Channel Logout 1.0</title>
 
@@ -8469,11 +8469,11 @@
             <organization abbrev="Yubico">Yubico</organization>
           </author>
 
-	  <date day="14" month="March" year="2022" />
+	  <date day="18" month="April" year="2022" />
 	</front>
       </reference>
 
-      <reference anchor="OAuth.Post" target="http://openid.net/specs/oauth-v2-form-post-response-mode-1_0.html">
+      <reference anchor="OAuth.Post" target="https://openid.net/specs/oauth-v2-form-post-response-mode-1_0.html">
         <front>
 	  <title>OAuth 2.0 Form Post Response Mode</title>
 
@@ -8489,7 +8489,7 @@
         </front>
       </reference>
 
-      <reference anchor="OpenID.2.0" target="http://openid.net/specs/openid-authentication-2_0.html">
+      <reference anchor="OpenID.2.0" target="https://openid.net/specs/openid-authentication-2_0.html">
 	<front>
 	  <title>OpenID Authentication 2.0</title>
 
@@ -8501,7 +8501,7 @@
 	</front>
       </reference>
 
-      <reference anchor="OpenID.PAPE" target="http://openid.net/specs/openid-provider-authentication-policy-extension-1_0.html">
+      <reference anchor="OpenID.PAPE" target="https://openid.net/specs/openid-provider-authentication-policy-extension-1_0.html">
 	<front>
 	  <title abbrev="OpenID Provider Auth Policy Extension">OpenID Provider
 	  Authentication Policy Extension 1.0</title>
@@ -8573,7 +8573,7 @@
 	</front>
       </reference>
 
-      <reference anchor="X.1252" target="http://www.itu.int/rec/dologin_pub.asp?lang=e&amp;id=T-REC-X.1252-201004-I!!PDF-E&amp;type=items">
+      <reference anchor="X.1252" target="https://www.itu.int/SG-CP/example_docs/ITU-T-REC/ITU-T-REC_E.pdf">
         <front>
           <title>ITU-T Recommendation X.1252 -- Cyberspace security -- Identity management
 	  -- Baseline identity management terms and definitions</title>
@@ -8587,7 +8587,7 @@
         <seriesInfo name="ITU-T" value="X.1252" />
       </reference>
 
-      <reference anchor="JWK.Thumbprint" target="http://tools.ietf.org/html/rfc7638">
+      <reference anchor="JWK.Thumbprint" target="https://tools.ietf.org/html/rfc7638">
 	<front>
 	  <title>JSON Web Key (JWK) Thumbprint</title>
 
@@ -8595,7 +8595,7 @@
 	    <organization>Microsoft</organization>
 	    <address>
 	      <email>mbj@microsoft.com</email>
-	      <uri>http://self-issued.info/</uri>
+	      <uri>https://self-issued.info/</uri>
 	    </address>
 	  </author>
 
@@ -8603,7 +8603,7 @@
 	    <organization abbrev="NRI">Nomura Research Institute</organization>
 	    <address>
 	      <email>n-sakimura@nri.co.jp</email>
-	      <uri>http://nat.sakimura.org/</uri>
+	      <uri>https://nat.sakimura.org/</uri>
 	    </address>
 	  </author>
 
@@ -9071,6 +9071,9 @@
         <list style="symbols">
 	  <t>
 	    Updated contributor affiliations.
+	  </t>
+	  <t>
+	    Updated many spec URLs from http to https.
 	  </t>
 	</list>
       </t>
