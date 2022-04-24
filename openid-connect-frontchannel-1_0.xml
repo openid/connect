@@ -23,7 +23,7 @@
 
   <front>
     <title abbrev="OpenID Connect Front-Channel Logout 1.0">OpenID Connect
-    Front-Channel Logout 1.0 - draft 05</title>
+    Front-Channel Logout 1.0 - draft 06</title>
 
     <author fullname="Michael B. Jones" initials="M.B." surname="Jones">
       <organization abbrev="Microsoft">Microsoft</organization>
@@ -33,7 +33,7 @@
       </address>
     </author>
 
-    <date day="18" month="April" year="2022" />
+    <date day="23" month="April" year="2022" />
 
     <workgroup>OpenID Connect Working Group</workgroup>
 
@@ -349,7 +349,7 @@
 	</t>
 	<figure><artwork><![CDATA[
   https://rp.example.org/frontchannel_logout
-    ?iss=https://server.example.com
+    ?iss=https%3A%2F%2Fserver.example.com
     &sid=08a5019c-17e1-4977-8f42-65a12843ea02
 ]]></artwork></figure>
       </section>
@@ -776,6 +776,15 @@
 
     <section anchor="History" title="Document History">
       <t>[[ To be removed from the final specification ]]</t>
+
+      <t>
+	-06
+        <list style="symbols">
+	  <t>
+	    Fixed #1481 - Corrected example Front-Channel Logout URL.
+	  </t>
+	</list>
+      </t>
 
       <t>
 	-05
