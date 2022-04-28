@@ -402,7 +402,8 @@
 	</t>
 	<t>
 	  NOTE: The Logout Token is compatible with
-	  the Security Event Token (SET) <xref target="RFC8417"/> specification.
+	  the Security Event Token (SET) <xref target="RFC8417"/> specification,
+	  but uses a more specific <spanx style="verb">typ</spanx> (type) value.
 	</t>
 	<figure>
 	  <preamble>
