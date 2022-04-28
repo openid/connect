@@ -41,7 +41,7 @@
       </address>
     </author>
 
-    <date day="23" month="April" year="2022" />
+    <date day="27" month="April" year="2022" />
 
     <workgroup>OpenID Connect Working Group</workgroup>
 
@@ -402,7 +402,8 @@
 	</t>
 	<t>
 	  NOTE: The Logout Token is compatible with
-	  the Security Event Token (SET) <xref target="RFC8417"/> specification.
+	  the Security Event Token (SET) <xref target="RFC8417"/> specification,
+	  but uses a more specific <spanx style="verb">typ</spanx> (type) value.
 	</t>
 	<figure>
 	  <preamble>
@@ -546,10 +547,6 @@
 	  to a session being logged out SHOULD be revoked.
 	  Refresh tokens issued with the <spanx style="verb">offline_access</spanx> property
 	  normally SHOULD NOT be revoked.
-	  NOTE:  An open issue for the specification is whether to define an additional optional parameter
-	  in the logout token, probably as a value in the event-specific parameters JSON object,
-	  that explicitly signals that <spanx style="verb">offline_access</spanx> refresh tokens
-	  are also to be revoked.
 	</t>
       </section>
 
@@ -1143,6 +1140,10 @@
 	  <t>
 	    Fixed #1484 - Described omission of the <spanx style="verb">application/</spanx>
 	    prefix in <spanx style="verb">typ</spanx> Header Parameter values.
+	  </t>
+	  <t>
+	    Fixed #1475 - Removed a note about possibly adding a mechanism to request revocation of
+	    <spanx style="verb">offline_access</spanx> refresh tokens.
 	  </t>
 	</list>
       </t>
