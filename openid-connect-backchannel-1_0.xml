@@ -41,7 +41,7 @@
       </address>
     </author>
 
-    <date day="27" month="April" year="2022" />
+    <date day="30" month="April" year="2022" />
 
     <workgroup>OpenID Connect Working Group</workgroup>
 
@@ -553,6 +553,9 @@
       <section anchor="BCResponse" title="Back-Channel Logout Response">
 	<t>
 	  If the logout succeeded, the RP MUST respond with HTTP 200 OK.
+	  However, note that some Web frameworks will substitute an HTTP 204 No Content response
+	  for an HTTP 200 OK when the HTTP body is empty.
+	  Therefore, OPs should be prepared to also process an HTTP 204 No Content response as a successful response.
 	  If the logout request was invalid, the RP MUST respond with HTTP 400 Bad Request.
 	  If the logout failed, the RP MUST respond with 501 Not Implemented.
 	  If the local logout succeeded but some downstream logouts have failed,
@@ -1144,6 +1147,10 @@
 	  <t>
 	    Fixed #1475 - Removed a note about possibly adding a mechanism to request revocation of
 	    <spanx style="verb">offline_access</spanx> refresh tokens.
+	  </t>
+	  <t>
+	    Fixed #1486 - Added a note about an HTTP 204 No Content response
+	    being substituted for an HTTP 200 OK response when the HTTP body is empty.
 	  </t>
 	</list>
       </t>
