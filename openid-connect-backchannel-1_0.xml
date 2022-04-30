@@ -41,7 +41,7 @@
       </address>
     </author>
 
-    <date day="27" month="April" year="2022" />
+    <date day="30" month="April" year="2022" />
 
     <workgroup>OpenID Connect Working Group</workgroup>
 
@@ -559,14 +559,13 @@
 	  the RP MUST respond with HTTP 504 Gateway Timeout.
 	</t>
 	<t>
-	  The RP's response SHOULD include <spanx style="verb">Cache-Control</spanx>
-	  directives keeping the response from being cached to prevent cached responses
+	  The RP's response SHOULD include a <spanx style="verb">Cache-Control</spanx>
+	  directive keeping the response from being cached to prevent cached responses
 	  from interfering with future logout requests.
-	  It is RECOMMENDED that these directives be used:
+	  It is RECOMMENDED that this directive be used:
 	</t>
 	<figure><artwork><![CDATA[
-  Cache-Control: no-cache, no-store
-  Pragma: no-cache
+  Cache-Control: no-store
 ]]></artwork></figure>
       </section>
 
@@ -1144,6 +1143,10 @@
 	  <t>
 	    Fixed #1475 - Removed a note about possibly adding a mechanism to request revocation of
 	    <spanx style="verb">offline_access</spanx> refresh tokens.
+	  </t>
+	  <t>
+	    Fixed #1483 - Removed Pragma: no-cache and Cache-Control: no-cache,
+	    leaving only Cache-Control: no-store.
 	  </t>
 	</list>
       </t>
