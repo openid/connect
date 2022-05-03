@@ -41,7 +41,7 @@
       </address>
     </author>
 
-    <date day="2" month="May" year="2022" />
+    <date day="3" month="May" year="2022" />
 
     <workgroup>OpenID Connect Working Group</workgroup>
 
@@ -476,15 +476,16 @@
 	    </t>
 	    <t>
 	      Validate the <spanx style="verb">alg</spanx> (algorithm)
-	      Header Parameter in the same way it is validated in ID Tokens, specifically,
-	      validate that the <spanx style="verb">alg</spanx> value is acceptable.
-	      Mandatory to Implement <spanx style="verb">alg</spanx> value is <spanx style="verb">RS256</spanx>.
-	      Like for ID Tokens, <spanx style="verb">RS256</spanx> is a Mandatory to Implement
-	      <spanx style="verb">alg</spanx> value, and so MUST always be accepted.
+	      Header Parameter in the same way it is validated for ID Tokens.
+	      Like ID Tokens, selection of the algorithm used is governed by
+	      the <spanx style="verb">id_token_signing_alg_values_supported</spanx> Discovery parameter
+	      and the <spanx style="verb">id_token_signed_response_alg</spanx> Registration parameter
+	      when they are used;
+	      otherwise, the value SHOULD be the default of <spanx style="verb">RS256</spanx>.
 	      The one additional validation requirement is that, unlike for ID Tokens when
 	      a <spanx style="verb">response_type</spanx> of <spanx style="verb">code</spanx> is used,
 	      an <spanx style="verb">alg</spanx> with the value <spanx style="verb">none</spanx>
-	      MUST NOT ever be used for Logout Tokens.
+	      MUST NOT be used for Logout Tokens.
 	    </t>
 	    <t>
 	      Validate the <spanx style="verb">iss</spanx>,
