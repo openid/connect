@@ -23,7 +23,7 @@
 
   <front>
     <title abbrev="OpenID Connect Front-Channel Logout 1.0">OpenID Connect
-    Front-Channel Logout 1.0 - draft 05</title>
+    Front-Channel Logout 1.0 - draft 06</title>
 
     <author fullname="Michael B. Jones" initials="M.B." surname="Jones">
       <organization abbrev="Microsoft">Microsoft</organization>
@@ -33,7 +33,7 @@
       </address>
     </author>
 
-    <date day="18" month="April" year="2022" />
+    <date day="2" month="May" year="2022" />
 
     <workgroup>OpenID Connect Working Group</workgroup>
 
@@ -194,14 +194,14 @@
 	and ignore the logout request if they do not.
       </t>
       <t>
-	The RP's response SHOULD include <spanx style="verb">Cache-Control</spanx>
-	directives keeping the response from being cached to prevent cached responses
+	The RP's response SHOULD include the <spanx style="verb">Cache-Control</spanx>
+	HTTP response header field with a <spanx style="verb">no-store</spanx> value,
+	keeping the response from being cached to prevent cached responses
 	from interfering with future logout requests.
-	It is RECOMMENDED that these directives be used:
+	An example of this is:
       </t>
       <figure><artwork><![CDATA[
-  Cache-Control: no-cache, no-store
-  Pragma: no-cache
+  Cache-Control: no-store
 ]]></artwork></figure>
       <t>
 	In the case that the RP is also an OP serving as an identity provider
@@ -349,7 +349,7 @@
 	</t>
 	<figure><artwork><![CDATA[
   https://rp.example.org/frontchannel_logout
-    ?iss=https://server.example.com
+    ?iss=https%3A%2F%2Fserver.example.com
     &sid=08a5019c-17e1-4977-8f42-65a12843ea02
 ]]></artwork></figure>
       </section>
@@ -726,6 +726,7 @@
         <list style="empty">
           <t>John Bradley (ve7jtb@ve7jtb.com), Yubico</t>
 	  <t>Brian Campbell (bcampbell@pingidentity.com), Ping Identity</t>
+	  <t>Andrii Deinega (andrii.deinega@gmail.com), GlobalLogic</t>
 	  <t>Jim des Rivieres (Jim_des_Rivieres@ca.ibm.com), IBM</t>
 	  <t>Vladimir Dzhuvinov (vladimir@connect2id.com), Connect2id</t>
 	  <t>Joseph Heenan (joseph@authlete.com), Authlete</t>
@@ -776,6 +777,19 @@
 
     <section anchor="History" title="Document History">
       <t>[[ To be removed from the final specification ]]</t>
+
+      <t>
+	-06
+        <list style="symbols">
+	  <t>
+	    Fixed #1481 - Corrected example Front-Channel Logout URL.
+	  </t>
+	  <t>
+	    Fixed #1483 - Removed Pragma: no-cache and Cache-Control: no-cache,
+	    leaving only Cache-Control: no-store.
+	  </t>
+	</list>
+      </t>
 
       <t>
 	-05

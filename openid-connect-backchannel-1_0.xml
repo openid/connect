@@ -23,7 +23,7 @@
 
   <front>
     <title abbrev="OpenID Connect Back-Channel Logout 1.0">OpenID Connect
-    Back-Channel Logout 1.0 - draft 07</title>
+    Back-Channel Logout 1.0 - draft 08</title>
 
     <author fullname="Michael B. Jones" initials="M.B." surname="Jones">
       <organization abbrev="Microsoft">Microsoft</organization>
@@ -41,7 +41,7 @@
       </address>
     </author>
 
-    <date day="18" month="April" year="2022" />
+    <date day="4" month="May" year="2022" />
 
     <workgroup>OpenID Connect Working Group</workgroup>
 
@@ -402,7 +402,8 @@
 	</t>
 	<t>
 	  NOTE: The Logout Token is compatible with
-	  the Security Event Token (SET) <xref target="RFC8417"/> specification.
+	  the Security Event Token (SET) <xref target="RFC8417"/> specification,
+	  but uses a more specific <spanx style="verb">typ</spanx> (type) value.
 	</t>
 	<figure>
 	  <preamble>
@@ -472,6 +473,17 @@
 	    <t>
 	      Validate the Logout Token signature in the same way that
 	      an ID Token signature is validated, with the following refinements.
+	    </t>
+	    <t>
+	      Validate the <spanx style="verb">alg</spanx> (algorithm)
+	      Header Parameter in the same way it is validated for ID Tokens.
+	      Like ID Tokens, selection of the algorithm used is governed by
+	      the <spanx style="verb">id_token_signing_alg_values_supported</spanx> Discovery parameter
+	      and the <spanx style="verb">id_token_signed_response_alg</spanx> Registration parameter
+	      when they are used;
+	      otherwise, the value SHOULD be the default of <spanx style="verb">RS256</spanx>.
+	      Additionally, an <spanx style="verb">alg</spanx> with the value
+	      <spanx style="verb">none</spanx> MUST NOT be used for Logout Tokens.
 	    </t>
 	    <t>
 	      Validate the <spanx style="verb">iss</spanx>,
@@ -546,30 +558,27 @@
 	  to a session being logged out SHOULD be revoked.
 	  Refresh tokens issued with the <spanx style="verb">offline_access</spanx> property
 	  normally SHOULD NOT be revoked.
-	  NOTE:  An open issue for the specification is whether to define an additional optional parameter
-	  in the logout token, probably as a value in the event-specific parameters JSON object,
-	  that explicitly signals that <spanx style="verb">offline_access</spanx> refresh tokens
-	  are also to be revoked.
 	</t>
       </section>
 
       <section anchor="BCResponse" title="Back-Channel Logout Response">
 	<t>
 	  If the logout succeeded, the RP MUST respond with HTTP 200 OK.
-	  If the logout request was invalid, the RP MUST respond with HTTP 400 Bad Request.
-	  If the logout failed, the RP MUST respond with 501 Not Implemented.
-	  If the local logout succeeded but some downstream logouts have failed,
-	  the RP MUST respond with HTTP 504 Gateway Timeout.
+	  However, note that some Web frameworks will substitute an HTTP 204 No Content response
+	  for an HTTP 200 OK when the HTTP body is empty.
+	  Therefore, OPs should be prepared to also process an HTTP 204 No Content response as a successful response.
+	  If the logout request was invalid or the logout failed,
+	  the RP MUST respond with HTTP 400 Bad Request.
 	</t>
 	<t>
-	  The RP's response SHOULD include <spanx style="verb">Cache-Control</spanx>
-	  directives keeping the response from being cached to prevent cached responses
+	  The RP's response SHOULD include the <spanx style="verb">Cache-Control</spanx>
+	  HTTP response header field with a <spanx style="verb">no-store</spanx> value,
+	  keeping the response from being cached to prevent cached responses
 	  from interfering with future logout requests.
-	  It is RECOMMENDED that these directives be used:
+	  An example of this is:
 	</t>
 	<figure><artwork><![CDATA[
-  Cache-Control: no-cache, no-store
-  Pragma: no-cache
+  Cache-Control: no-store
 ]]></artwork></figure>
       </section>
 
@@ -624,6 +633,11 @@
 	  <spanx style="verb">typ</spanx> (type) Header Parameter with a value of
 	  <spanx style="verb">logout+jwt</spanx>
 	  (which is registered in <xref target="MediaContents"/>.
+	  Note that the <spanx style="verb">application/</spanx> portion of the
+	  <spanx style="verb">application/logout+jwt</spanx> media type name is omitted
+	  when used as a <spanx style="verb">typ</spanx> Header Parameter value,
+	  as described in the <spanx style="verb">typ</spanx> definition
+	  in Section 4.1.9 <xref target="JWS"/>.
 	  Including an explicit type in issued Logout Tokens is a best practice.
 	  Note however, that requiring explicitly typed Logout Tokens
 	  will break most existing deployments,
@@ -1043,6 +1057,30 @@
       <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.8414"?>
       <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.8417"?>
       <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.8725"?>
+
+      <reference anchor="JWS" target="https://tools.ietf.org/html/rfc7515">
+	<front>
+	  <title>JSON Web Signature (JWS)</title>
+
+	  <author fullname="Michael B. Jones" initials="M.B." surname="Jones">
+	    <organization abbrev="Microsoft">Microsoft</organization>
+	  </author>
+
+	  <author fullname="John Bradley" initials="J." surname="Bradley">
+	    <organization abbrev="Ping Identity">Ping Identity</organization>
+	  </author>
+
+	  <author fullname="Nat Sakimura" initials="N." surname="Sakimura">
+	    <organization abbrev="NRI">Nomura Research Institute, Ltd.</organization>
+	  </author>
+
+	  <date month="May" year="2015" />
+	</front>
+
+	<seriesInfo name="RFC" value="7515"/>
+	<seriesInfo name="DOI" value="10.17487/RFC7515"/>
+      </reference>
+
     </references>
 
     <section anchor="Acknowledgements" title="Acknowledgements">
@@ -1054,6 +1092,7 @@
         <list style="empty">
           <t>John Bradley (ve7jtb@ve7jtb.com), Yubico</t>
 	  <t>Brian Campbell (bcampbell@pingidentity.com), Ping Identity</t>
+	  <t>Andrii Deinega (andrii.deinega@gmail.com), GlobalLogic</t>
 	  <t>Vladimir Dzhuvinov (vladimir@connect2id.com), Connect2id</t>
 	  <t>Pedro Felix (pmhsfelix@gmail.com), individual</t>
 	  <t>Joseph Heenan (joseph@authlete.com), Authlete</t>
@@ -1107,6 +1146,35 @@
 
     <section anchor="History" title="Document History">
       <t>[[ To be removed from the final specification ]]</t>
+
+      <t>
+	-08
+        <list style="symbols">
+	  <t>
+	    Fixed #1484 - Described omission of the <spanx style="verb">application/</spanx>
+	    prefix in <spanx style="verb">typ</spanx> Header Parameter values.
+	  </t>
+	  <t>
+	    Fixed #1475 - Removed a note about possibly adding a mechanism to request revocation of
+	    <spanx style="verb">offline_access</spanx> refresh tokens.
+	  </t>
+	  <t>
+	    Fixed #1483 - Removed Pragma: no-cache and Cache-Control: no-cache,
+	    leaving only Cache-Control: no-store.
+	  </t>
+	  <t>
+	    Fixed #1476 - Described <spanx style="verb">alg</spanx> Header Parameter validation for Logout Tokens.
+	  </t>
+	  <t>
+	    Fixed #1486 - Added a note about an HTTP 204 No Content response
+	    being substituted for an HTTP 200 OK response when the HTTP body is empty.
+	  </t>
+	  <t>
+	    Fixed #1487 - Simplified error handing to use HTTP 400 Bad Request for all error cases,
+	    removing the use of HTTP 501 Not Implemented and HTTP 504 Gateway Timeout.
+	  </t>
+	</list>
+      </t>
 
       <t>
 	-07

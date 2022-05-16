@@ -75,7 +75,7 @@
       </address>
     </author>
 
-    <date day="24" month="February" year="2022"/>
+    <date day="20" month="April" year="2022"/>
 
     <workgroup>OpenID Connect Working Group</workgroup>
 
@@ -165,23 +165,24 @@
               be identified in a context. All entities in an OpenID Connect
               federation MUST have a globally unique identifier.
             </t>
-            <t hangText="Entity identifier">
+            <t hangText="Entity Identifier">
               <vspace/>
               An URI that is globally unique and that is bound to one Entity.
             </t>
-            <t hangText="Entity statement">
+            <t hangText="Entity Statement">
               <vspace/>
-              An entity statement is
-              issued by an entity, which pertains to a subject entity. An entity
-              statement is always a signed JWT.
+	      Signed JWT that contains the information needed
+	      for an entity to participate in federation(s),
+	      including metadata about itself
+	      and policies that apply to other entities that it is authoritative for.
             </t>
-            <t hangText="Entity configuration">
+            <t hangText="Entity Configuration">
               <vspace/>
               An entity statement issued by an entity about itself. It contains
               the entities' signing keys and further data used to control the
               trust chain resolution process, such as authority hints.
             </t>
-            <t hangText="Intermediate entity">
+            <t hangText="Intermediate Entity">
               <vspace/>
               An entity that issues
               an entity statement that appears somewhere in between those
@@ -249,12 +250,15 @@
     <section title="Components" anchor="components">
       <section anchor="entity-statement" title="Entity Statement">
         <t>
-          An entity statement is
-          issued by an entity and concerns a subject entity and leaf entities
-          in a federation. An entity statement is always a signed JWT.
+          An entity statement contains the information needed for the entity
+	  that is the subject of the entity statement to participate in federation(s).
+	  An entity statement is always a signed JWT.
+	  The subject of the JWT is the entity itself.
+	  The issuer of the JWT is the party that issued the Entity Statement,
+	  which will often be the entity itself.
           All entities in a federation SHOULD be prepared to publish an entity
-          statement about themselves. If they are not able to do so themselves
-          someone else MUST do it for them.
+          statement about themselves. If they are not able to do so themselves,
+          another issuer MUST do it for them.
         </t>
         <t>
           An entity statement is composed of the following claims:
@@ -3719,17 +3723,17 @@ HTTP/1.1 302 Found
   <back>
 
     <references title="Normative References">
-      <?rfc include="https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.2119.xml"?>
-      <?rfc include="https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.3339.xml"?>
-      <?rfc include="https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.4732.xml"?>
-      <?rfc include="https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.5280.xml"?>
-      <?rfc include="https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.8615.xml"?>
-      <?rfc include="https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.7515.xml"?>
-      <?rfc include="https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.7517.xml"?>
-      <?rfc include="https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.7519.xml"?>
-      <?rfc include="https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.7591.xml"?>
-      <?rfc include="https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.8414.xml"?>
-      <?rfc include="https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.8705.xml"?>
+      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.2119.xml"?>
+      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.3339.xml"?>
+      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.4732.xml"?>
+      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.5280.xml"?>
+      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.8615.xml"?>
+      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.7515.xml"?>
+      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.7517.xml"?>
+      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.7519.xml"?>
+      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.7591.xml"?>
+      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.8414.xml"?>
+      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.8705.xml"?>
 
       <reference anchor="OpenID.Core"
                  target="http://openid.net/specs/openid-connect-core-1_0.html">
@@ -3839,9 +3843,9 @@ HTTP/1.1 302 Found
     </references>
 
     <references title="Informative References">
-      <?rfc include="https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.2046.xml"?>
-      <?rfc include="https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.6838.xml"?>
-      <?rfc include="https://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.8446.xml"?>
+      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.2046.xml"?>
+      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.6838.xml"?>
+      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.8446.xml"?>
 
       <reference anchor="IANA.OAuth.Parameters" target="http://www.iana.org/assignments/oauth-parameters">
         <front>
@@ -5081,6 +5085,10 @@ Host: op.umu.se
           <t>
             expanded section 8.1: included entity configurations.
           </t>
+	  <t>
+	    Fixed #1373 - More clearly defined the term Entity Statement,
+	    both in the Terminology section and in the Entity Statement section.
+	  </t>
         </list>
       </t>
       <t>
