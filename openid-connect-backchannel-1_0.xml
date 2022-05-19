@@ -41,7 +41,7 @@
       </address>
     </author>
 
-    <date day="4" month="May" year="2022" />
+    <date day="18" month="May" year="2022" />
 
     <workgroup>OpenID Connect Working Group</workgroup>
 
@@ -567,8 +567,16 @@
 	  However, note that some Web frameworks will substitute an HTTP 204 No Content response
 	  for an HTTP 200 OK when the HTTP body is empty.
 	  Therefore, OPs should be prepared to also process an HTTP 204 No Content response as a successful response.
+	</t>
+	<t>
 	  If the logout request was invalid or the logout failed,
 	  the RP MUST respond with HTTP 400 Bad Request.
+	  The response MAY include an HTTP body consisting of a JSON object with
+	  <spanx style="verb">error</spanx> and <spanx style="verb">error_description</spanx> values
+	  conveying the nature of the error that occured, which can assist with debugging.
+	  These error response values are used as specified in Section 4.1.2.1 of <xref target="RFC6749">OAuth 2.0</xref>.
+	  In particular, an <spanx style="verb">error</spanx> value of <spanx style="verb">invalid_request</spanx>
+	  MAY be used to indicate that there was a problem with the syntax of the logout request.
 	</t>
 	<t>
 	  The RP's response SHOULD include the <spanx style="verb">Cache-Control</spanx>
@@ -1172,6 +1180,10 @@
 	  <t>
 	    Fixed #1487 - Simplified error handing to use HTTP 400 Bad Request for all error cases,
 	    removing the use of HTTP 501 Not Implemented and HTTP 504 Gateway Timeout.
+	  </t>
+	  <t>
+	    Fixed #1491 - Added optional <spanx style="verb">error</spanx> and <spanx style="verb">error_description</spanx>
+	    values to error responses.
 	  </t>
 	</list>
       </t>
