@@ -41,7 +41,7 @@
       </address>
     </author>
 
-    <date day="23" month="May" year="2022" />
+    <date day="24" month="May" year="2022" />
 
     <workgroup>OpenID Connect Working Group</workgroup>
 
@@ -581,7 +581,7 @@
 	  and the <spanx style="verb">error_description</spanx> parameter is OPTIONAL.
 	  An <spanx style="verb">error</spanx> value of <spanx style="verb">invalid_request</spanx>
 	  MAY be used to indicate that there was a problem with the syntax of the logout request.
-	  Note that information conveyed in the response body is intended to help implementers debug deployments;
+	  Note that the information conveyed in the response body is intended to help debug deployments;
 	  it is not intended that implementations use different <spanx style="verb">error</spanx> values
 	  to trigger different runtime behaviors.
 	</t>
