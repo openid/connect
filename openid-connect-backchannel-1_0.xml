@@ -574,7 +574,7 @@
 	  The response MAY include an HTTP body consisting of a JSON object with
 	  <spanx style="verb">error</spanx> and <spanx style="verb">error_description</spanx> parameters
 	  conveying the nature of the error that occured, which can assist with debugging.
-	  These error response parameters are used as specified in Section 4.1.2.1 of <xref target="RFC6749">OAuth 2.0</xref>.
+	  These error response parameters are used as specified in Section 5.2 of <xref target="RFC6749">OAuth 2.0</xref>.
 	  Like in OAuth 2.0, the parameters are included in the entity-body of the HTTP response
 	  using the <spanx style="verb">application/json</spanx> media type.
 	  Also like in OAuth 2.0, the <spanx style="verb">error</spanx> parameter is REQUIRED when a response body is present
