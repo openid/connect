@@ -98,6 +98,15 @@ The user browses her university's home page, searching for a way to obtain a dig
 
 The user visits the administration office of her university to obtain a digital diploma. The university staff checks her student card and looks up her university diploma in the university's IT system. The office staff then starts the issuance process. The user is asked to scan a QR Code to retrieve the digital diploma. She scans the code with her smartphone, which automatically starts her wallet, where she is notified of the offer to create a digital diploma (the verifiable credential). She consents, which causes the wallet to obtain and store the verifiable credential.
 
+## Issuer-Initiated Credential Issuance (Cross-Device / Credential Retrieval with User Consent)
+
+The user either visits the administration office to authenticate with the issuer (as above) or logs into her account with the issuer. The office staff or the issuer's web site displays a QR code tailored specifically for this user, which the user scans into into her smartphone. This automatically starts her wallet, which authenticates to the issuer using data provided by the issuer in the QR code. The wallet is notified of the offer to create a digital diploma (the verifiable credential), and the wallet displays the contents of the offered credential to the user. The user may be allowed to deselect certain properties that she does not want to be in her credential e.g. her gender. When the user is happy with the selected set of properties, she consents, which causes the wallet to subsequently obtain and store the verifiable credential.
+
+## End-User Initiated Credential Refresh
+
+At a later point in time the user may wish to refresh a verifiable credential in her wallet (e.g. by providing a refresh button to the user). This might because the user wants previously de-selected properties to appear in her verifiable credential, or her verifiable credential has expired. The wallet reconnects to the issuer and authenticates/authorises to it, which allows the issuer to resend the offer to create a verifiable credential to the wallet, and the user goes through the consent phase again.
+
+
 ## Issuer-Initiated Credential Issuance (with information pre-submitted by the End-User)
 
 The user navigates to her university's webpage to obtain a digital diploma where she is asked to scan a QR Code to start the retrieval process. She scans the code with her smartphone, which automatically starts her wallet, where she is notified of the prerequisite to enter a PIN code for security reasons. This code was sent as a text message to her smartphone in the meantime. She enters the PIN and confirms the credential issuance, which causes the wallet to obtain and store the verifiable credential.
