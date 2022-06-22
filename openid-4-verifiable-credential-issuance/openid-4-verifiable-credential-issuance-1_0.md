@@ -106,6 +106,10 @@ The user navigates to her university's webpage to obtain a digital diploma where
 
 The user wants to obtain a digital criminal record certificate. She starts the journey in her wallet and is sent to the issuer service of the responsible government authority. She logs in with her eID and requests the issuance of the certificate. She is notified that the issuance of the certificate will take a couple of days due to necessary background checks by the authority. She confirms and is sent back to the wallet. The wallet shows a hint in the credential list indicating that issuance of the digital criminal record certificate is under way. A few days later, she receives a notification from her wallet app telling her that the certificate was successfully issued. She opens her wallet, where she is asked after startup whether she wants to download the certificate. She confirms and the new credential is retrieved and stored in her wallet.
 
+## End-User Initiated Credential Refresh
+
+At a later point in time the user may wish to refresh a verifiable credential in her wallet (e.g. by the wallet providing a refresh button to the user). This might because the user wants previously de-selected properties to appear in her verifiable credential, or her verifiable credential has expired. The wallet reconnects to the issuer and authenticates/authorises to it, which allows the issuer to resend the offer to create a verifiable credential to the wallet, and the user goes through the consent phase again.
+
 # Requirements
 
 This section describes the requirements this specification aims to fulfill beyond the use cases described above. 
@@ -184,13 +188,21 @@ The following figure shows the overall flow.
         |                |                                                      |
         |                |  (7) credential req (access_token, proofs, ...)      |
         |                |----------------------------------------------------->| 
-        |                |      credential req (credentials OR acceptance_token)|
+        |                |      credential res (credentials OR acceptance_token)|
         |                |<-----------------------------------------------------|   
         |                |                                                      |
         |                |  (8) [opt] poll_credentials (acceptance_token)       |
         |                |----------------------------------------------------->| 
         |                |      credentials OR not_ready_yet                    |
-        |                |<-----------------------------------------------------|          
+        |                |<-----------------------------------------------------| 
+        |                |                                                      |
+        |                |  (9) [opt] credential refresh (authn_token,...)      |
+        |                |----------------------------------------------------->| 
+        |                |      credential res (credentials OR acceptance_token)|
+        |                |<-----------------------------------------------------| 
+        |                |                                                      |
+        |                |                                                      |
+                  
 ~~~
 !---
 Figure: Overall Credential Issuance Flow
@@ -221,7 +233,7 @@ regarding the authorization request URL.
 Note: Signed and encrypted request objects would also ensure integrity and confidentiality. However, this approach would further
 increase the URL size, which might decrease robustness of the process. 
 
-The issuer takes over user interface control at this point and interacts with the user. The implementation of 
+The issuer may take over user interface control at this point and interacts with the user. The implementation of 
 this step is at the discretion of the issuer.  
 
 (4.1)  The issuer will typically authenticate the user in the first step of this process. For this purpose,
@@ -239,11 +251,11 @@ appropriate credentials and consents.
 
 (4.2.2) (CONDITIONAL) The wallet responds with one or more verifiable presentations to the issuer. 
 
-(4.3) The issuer asks the user for consent to issue the requested credentials. 
+(4.3) (OPTIONAL) The issuer asks the user for consent to issue the requested credentials. 
 
 (5) The issuer responds with an authorization code to the wallet. 
 
-(6) The wallet exchanges the authorization code for an Access Token and an ID Token.
+(6) The wallet exchanges the authorization code for an Access Token and optionally an ID Token.
 
 (7) This Access Token is used to request the issuance of the actual credentials. The types of credentials the 
 wallet can request is limited to the types approved in the authorization request in (5). The credential request 
@@ -252,12 +264,17 @@ proof of possession for the key material. This proof of possession uses the SHA-
 as cryptographic nonce. This ensures replay protection of the proofs. The format of key material and proof of
 possession depends upon the proof scheme and is expressed in a polymorphic manner at the protocol level.
 
-The Issuer will either directly respond with the credentials or issue an Acceptance Token, which 
+The Issuer may respond with a copy of the credentials and ask the user to consent to their contents, optionally allowing
+the user to deselect any properties they do not wish to be present. After user consent, the Issuer
+will either directly respond with the credentials or issue an Acceptance Token, which 
 is used by the wallet to poll for completion of the issuance process. 
 
 (8) (OPTIONAL) The wallet polls the issuer to obtain the credentials previously requested in 
 step (6). The issuer either responds with the credentials or HTTP status code "202" indicating 
 that the issuance is not completed yet. 
+
+(9) (OPTIONAL) At a later point in time e.g. when the credential has expired, or if the user decides they would like
+previously deselected properties to be present in their credential(s), the user may ask the wallet to refresh the existing credential(s). The wallet must have a token stored for communicating with the issuer. This could be a FIDO authentication key pair, or an OAuth Refresh Token, or a long lived Access Token. Either way, an Access Token must be obtained first. The issuer will respond as in (7) above.
 
 Note: If the issuer just wants to offer the user to retrieve a pre-existing credential, it can
 encode the parameter set of step (6) in a suitable representation and allow the wallet to start 
