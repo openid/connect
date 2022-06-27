@@ -7,7 +7,7 @@ keyword = ["security", "openid", "ssi"]
 
 [seriesInfo]
 name = "Internet-Draft"
-value = "openid-connect-self-issued-v2-1_0-09"
+value = "openid-connect-self-issued-v2-1_0-10"
 status = "standard"
 
 [[author]]
@@ -270,7 +270,6 @@ When the RP does not have the means to pre-obtain Self-Issued OP Discovery Metad
 ```json
 {
   "authorization_endpoint": "openid:",
-  "issuer": "https://self-issued.me/v2",
   "response_types_supported": [
     "id_token"
   ],
@@ -1127,7 +1126,11 @@ The technology described in this specification was made available from contribut
 # Document History
 
    [[ To be removed from the final specification ]]
-    
+
+   -10
+
+   * Updated referenced spec names from "OpenID Connect for Verifiable ..." to "OpenID for Verifiable ...".
+
    -09
 
    * updated definition of SIOP to be "an OP within the End-User’s control", not local control
@@ -1180,7 +1183,9 @@ The technology described in this specification was made available from contribut
    * Formatted Normative Reference Section to mmarkdown
 
    -02
+
    * Converted into mmarkdown
 
    -01
+   
    * Version proposed for working group adoption
