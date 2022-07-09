@@ -673,7 +673,7 @@ Location: https://client.example.net/cb?
 
 ## Token Endpoint
 
-The Token Endpoint issues an Access Token and, optionally, a Refresh Token and an ID Token in exchange for the authorization code that client obtained in a successful Credential Authorization Response. It is used in the same manner as defined in [@!RFC6749] and follows the recommendations given in [@!I-D.ietf-oauth-security-topics].
+The Token Endpoint issues an Access Token and, optionally, a Refresh Token and an ID Token in exchange for the authorization code that the client obtained in a successful Credential Authorization Response. The Access Token is used in the same manner as defined in [@!RFC6749] and follows the recommendations given in [@!I-D.ietf-oauth-security-topics]. 
 
 ### Token Request
 
@@ -700,6 +700,7 @@ In addition to the response parameters defined in [@!RFC6749], the AS MAY return
 
 * `c_nonce`: OPTIONAL. JSON string containing a nonce to be used to create a proof of possession of key material when requesting a credential (see (#credential_request)).
 * `c_nonce_expires_in`: OPTIONAL. JSON integer denoting the lifetime in seconds of the `c_nonce`.
+* `unsigned_creds` : OPTIONAL. JSON encoding of the unsigned credentials that the issuer is willing to issue. This allow the Client to display the contents of the credentials that are to be issued to the user, in order to allow the user to provide informed consent.
 
 Note: Subject Identifier in the ID Token is the End-User's identifier.
 
@@ -715,7 +716,22 @@ HTTP/1.1 200 OK
     "token_type": "bearer",
     "expires_in": 86400,
     "c_nonce": "tZignsnFbp",
-    "c_nonce_expires_in": 86400
+    "c_nonce_expires_in": 86400,
+    "unsigned_creds": [{
+		"id": "1",
+                 "@context": [
+			"https://www.w3.org/2018/credentials/v1",
+			"https://www.w3.org/2018/credentials/examples/v1"
+		],
+		"type": ["VerifiableCredential", "UniversityDegreeCredential"],
+		"credentialSubject": {
+			"prop2": "val2",
+			"degree": {
+				"type": "BachelorDegree,",
+				"name": "Bachelor of Science and Arts"
+			}
+		}
+    }]
   }
 ```
 
@@ -725,19 +741,20 @@ If the Token Request is invalid or unauthorized, the Authorization Server constr
 
 The following is a non-normative example Token Error Response:
 
-```json=
+```
 HTTP/1.1 400 Bad Request
 Content-Type: application/json
 Cache-Control: no-store
 Pragma: no-cache
+
 {
    "error": "invalid_request"
 }
 ```
 
-## Credential Endpoint
+### Credential Endpoint
 
-The Credential Endpoint issues a credential as approved by the End-User upon presentation of a valid Access Token representing this approval. 
+The Credential Endpoint issues a credential as approved by the End-User upon presentation of a valid Access Token, representing implicit approval, and optionally an unsigned credential, representing explicit approval. 
 
 Communication with the Credential Endpoint MUST utilize TLS. 
 
@@ -747,7 +764,7 @@ If the access token is valid for requesting issuance of multiple credentials, it
 
 ### Binding the Issued Credential to the identifier of the End-User possessing that Credential {#credential-binding}
 
-Issued credential SHOULD be cryptographically bound to the identifier of the End-User who possesses the credential. Cryptographic binding allows the Verifier to verify during presentation that the End-User presenting a credential is the same End-User to whom it was issued. For non-cryptographic type of binding and credentials issued without any binding, see Implementations Considerations sections (#claim-based-binding) and (#no-binding). 
+The issued credential SHOULD be cryptographically bound to the identifier of the End-User who possesses the credential. Cryptographic binding allows the Verifier to verify during presentation that the End-User presenting a credential is the same End-User to whom it was issued. For non-cryptographic type of binding and credentials issued without any binding, see the Implementations Considerations sections (#claim-based-binding) and (#no-binding). 
 
 Note that claims in the credential are usually about the End-User who possesses it, but can be about another entity.
 
@@ -761,12 +778,12 @@ For cryptographic binding, the Client has the following options to provide crypt
 A Client makes a Credential Request by sending a HTTP POST request to the Credential Endpoint with the following parameters:
 
 * `type`: REQUIRED. Type of a credential being requested. It corresponds to a `type` property in a Issuer metadata.
-* `format`: OPTIONAL. Format of the credential to be issued. If not present, the issuer will determine the credential 
-format based on the client's format default.
-* `proof` OPTIONAL. JSON Object containing proof of possession of the key material the issued credential shall be 
-bound to. The `proof` object MUST contain the following `proof_type` element which determines its structure:
+* `format`: OPTIONAL. Format of the credential to be issued. If not present, the issuer will determine the credential format based on the client's format default.
+* `credential`: OPTIONAL. JSON Object representing the credential that the client consents to being issued. If present its properties MUST be a subset of the properties in the matching unsigned credential returned with the access_token.
+* `proof`: OPTIONAL. JSON Object containing proof of possession of the key material the issued credential shall be bound to. The `proof` object MUST contain the following `proof_type` element which determines its structure:
 
-  * `proof_type`: REQUIRED. JSON String denoting the proof type. 
+
+   * `proof_type`: REQUIRED. JSON String denoting the proof type. 
 
 This specification defines the following values for `proof_type`:
 
@@ -841,6 +858,20 @@ type=https%3A%2F%2Fdid%2Eexample%2Eorg%2FhealthCard
 format=ldp%5Fvc
 did=did%3Aexample%3Aebfeb1f712ebc6f1c276e12ec21
 proof=%7B%22type%22:%22...-ace0-9c5210e16c32%22%7D
+"credential":{
+		"id": "1",
+                 "@context": [
+			"https://www.w3.org/2018/credentials/v1",
+			"https://www.w3.org/2018/credentials/examples/v1"
+		],
+		"type": ["VerifiableCredential", "UniversityDegreeCredential"],
+		"credentialSubject": {
+			"degree": {
+				"type": "BachelorDegree"
+			}
+		}
+	}
+}]
 ```
 
 ### Credential Response {#credential_response}
@@ -850,9 +881,9 @@ Credential Response can be Synchronous or Deferred. The Issuer may be able to im
 The following claims are used in the Credential Response:
 
 * `format`: REQUIRED. JSON string denoting the credential's format
-* `credential`: OPTIONAL. Contains issued credential. MUST be present when `acceptance_token` is not returned. MAY be a JSON string or a JSON object, depending on the credential format. See the table below for the format specific encoding requirements.
+* `credential`: OPTIONAL. Contains the issued credential. MUST be present when `acceptance_token` is not returned. MAY be a JSON string or a JSON object, depending on the credential format. See the table below for the format specific encoding requirements.
 * `acceptance_token`: OPTIONAL. A JSON string containing a token subsequently used to obtain a credential. MUST be present when `credential` is not returned.
-* `c_nonce`: OPTIONAL. JSON string containing a nonce to be used to create a proof of possession of key material when requesting a credential (see (#credential_request)).
+* `c_nonce`: OPTIONAL. JSON string containing a nonce to be used to create a proof of possession of key material when requesting another credential (see (#credential_request)).
 * `c_nonce_expires_in`: OPTIONAL. JSON integer denoting the lifetime in seconds of the `c_nonce`.
 
 
@@ -903,7 +934,31 @@ HTTP/1.1 200 OK
 
 Note: Consider using CIBA Ping/Push OR SSE Poll/Push. Another option would be the Client providing `client_notification_token` to the Issuer, so that the issuer sends a Credential response upon successfully receiving a Credential request and then no need for the client to bring an acceptance token, the Issuer will send the credential once it is issued in a response that includes `client_notification_token`. (consider SSE options)
 
-### Credential Issuer-Provided Nonce
+### Credential Error Response
+
+The following errors are defined:
+
+* invalid_request - the credential request was malformed
+* invalid_token - the access_token was invalid
+* unsupported_type - the requested type is not supported
+* unsupported_format - the requested format is not supported
+* invalid_credential - the requested credential did not match any of the credentials to be issued
+* invalid_or_missing_proof - see next section
+
+This is a non-normative example Credential Error Response:
+
+```
+HTTP/1.1 400 Bad Request
+Content-Type: application/json
+Cache-Control: no-store
+Pragma: no-cache
+
+{
+   "error": "invalid_request"
+}
+```
+
+#### Credential Issuer-Provided Nonce
 
 Upon receiving a Credential Request, the credential issuer MAY require the client to send a proof of possession of the key material it wants a credential to be bound to. This proof MUST incorporate a nonce generated by the credential issuer. The credential issuer will provide the client with a nonce in an error response to any credential request not including such a proof or including an invalid proof. 
 
@@ -924,7 +979,6 @@ HTTP/1.1 400 Bad Request
 }
 ```
 
-ToDo - 400 might not be a right answer.
 
 ## Deferred Credential Endpoint
 
