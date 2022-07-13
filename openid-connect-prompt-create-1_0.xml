@@ -185,7 +185,7 @@
       </t>
       <t>
          Specific to this specification, a value of
-         <spanx style="verb">create</spanx> in the arrauy indicates to the Relying party
+         <spanx style="verb">create</spanx> in the array indicates to the Relying party
          that this OpenID Provider supports this specification. If an OpenID
          Provider supports this specification it MUST define this metadata
          element in the openid-configuration file. Additionally, if this
