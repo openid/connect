@@ -206,7 +206,15 @@ Content-Type: application/json
 
 The response used to provide the VP Token to the client depends on the grant and response type used in the request.
 
-If only `vp_token` is used as the `response_type`, the VP Token is provided in the authorization response. 
+If only `vp_token` is used as the `response_type`, the VP Token is provided in the authorization response as shown in the following example.
+
+```
+  HTTP/1.1 302 Found
+  Location: https://client.example.org/cb#
+    presentation_submission=...
+    &vp_token=...
+```
+
 If the `id_token` is used as the `response_type` alongside `vp_token`, the VP Token is provided in the OpenID Connect authentication response along with the ID Token. 
 In all other cases, the VP Token is provided in the token response. 
 
