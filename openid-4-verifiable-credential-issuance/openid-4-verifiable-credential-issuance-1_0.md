@@ -120,7 +120,6 @@ This specification defines the following mechanisms to allow Wallet applications
 * An optional mechanism for the Issuer to initiate the issuance. See (#issuance_initiation_endpoint).
 * An extended Authorization Request that allows to request authorization to request issuance of Credentials of specific types. See (#credential-authz-request).
 * An optional ability to bind an issued Credential to a cryptographic key material. The Credential request therefore allows to convey a proof of posession for the key material. Multiple proof types are supported. See (#credential_request). 
-* A mechanism for the Deferred Credential Issuance. See (#deferred-credential-issuance).
 * A mechanism for the Issuer to publish metadata about the Credential it is capable of issuing. See (#server-metadata)
 * A mechanism that allows issuance of multiple Credentials of same or different type. See (#token-response) and (#credential-response).
 
@@ -185,7 +184,7 @@ Figure: Issuance using Authorization code flow
 
 (3) The Wallet sends a Credential Request to the Issuer's Credential Endpoint with the Access Token and proof of possession of the public key to which the the issued VC shall be bound. Upon successfully validating Access Token and proof, the Issuer returns a VC in the Credential Response if it is able to issue a Credential right away. This step is defined in (#credential-endpoint).
 
-If the Issuer requires more time to issue a Credential, the Issuer may returns an Acceptance Token to the Wallet with the information when the Wallet can start sending Deferred Credential Request to obtain an issued Credential as defined in (#deferred-credential-issuance).
+If the Issuer requires more time to issue a Credential, the Issuer may returns an Acceptance Token to the Wallet with the information when the Wallet can start sending Deferred Credential Request to obtain an issued Credential as defined in (#credential-endpoint).
 
 Note: this flow is based on OAuth 2.0 and the code grant type, but it can be used with other grant types as well. 
 
@@ -597,9 +596,9 @@ A Client makes a Credential Request by sending a HTTP POST request to the Creden
 * `format`: OPTIONAL. Format of the Credential to be issued. If not present, the issuer will determine the Credential 
 format based on the client's format default.
 * `proof` OPTIONAL. JSON Object containing proof of possession of the key material the issued Credential shall be 
-bound to. The `proof` object MUST contain the following `proof_type` element which determines its structure:
-
-  * `proof_type`: REQUIRED. JSON String denoting the proof type. 
+bound to. The `proof` object MUST contain a `proof_type` element of type JSON string which determines its structure.
+* `acceptance_token`: OPTIONAL. A JSON string containing a token used to refer to a previously lodged credential issuance request. The wallet sends this parameter to retrieve 
+the credential request with this previous credential issuance request. This parameter MUST NOT be present when `type` is present.
 
 This specification defines the following values for `proof_type`:
 
@@ -676,6 +675,17 @@ did=did%3Aexample%3Aebfeb1f712ebc6f1c276e12ec21
 proof=%7B%22type%22:%22...-ace0-9c5210e16c32%22%7D
 ```
 
+Below is a non-normative example of a deferred credential issuance request:
+
+```
+POST /credential_deferred HTTP/1.1
+Host: server.example.com
+Content-Type: application/x-www-form-urlencoded
+Authorization: BEARER czZCaGRSa3F0MzpnWDFmQmF0M2JW
+
+acceptance_token=8xLOxBtZp8
+```
+
 ## Credential Response {#credential-response}
 
 Credential Response can be Synchronous or Deferred. The Issuer may be able to immediately issue a requested Credential and send it to the Client. In other cases, the Issuer may not be able to immediately issue a requested Credential and would want to send a token to the Client to be used later to receive a Credential when it is ready.
@@ -685,6 +695,7 @@ The following claims are used in the Credential Response:
 * `format`: REQUIRED. JSON string denoting the Credential's format
 * `credential`: OPTIONAL. Contains issued Credential. MUST be present when `acceptance_token` is not returned. MAY be a JSON string or a JSON object, depending on the Credential format. See the table below for the format specific encoding requirements.
 * `acceptance_token`: OPTIONAL. A JSON string containing a token subsequently used to obtain a Credential. MUST be present when `credential` is not returned.
+* `interval`: OPTIONAL. The minimum amount of time in seconds that the client SHOULD wait between polling requests to the credential endpoint.  If no value is provided, clients MUST use 60 as the default.
 * `c_nonce`: OPTIONAL. JSON string containing a nonce to be used to create a proof of possession of key material when requesting a Credential (see (#credential_request)).
 * `c_nonce_expires_in`: OPTIONAL. JSON integer denoting the lifetime in seconds of the `c_nonce`.
 
@@ -728,8 +739,7 @@ HTTP/1.1 200 OK
 
 {
   "acceptance_token": "8xLOxBtZp8",
-  "c_nonce": "wlbQc6pCJp",
-  "c_nonce_expires_in": 86400  
+  "intervall": 86400
 }
 ```
 
@@ -757,26 +767,6 @@ HTTP/1.1 400 Bad Request
 ```
 
 ToDo - 400 might not be a right answer.
-
-# Deferred Credential Endpoint {#deferred-credential-issuance}
-
-This endpoint is used to issue a Credential previously requested at the Credential endpoint in case the Issuer was not able to immediately issue this Credential. 
-
-## Deferred Credential Request
-
-This is an HTTP POST request, which accepts an acceptance token as the only parameter. The acceptance token MUST be sent as access token in the HTTP header as shown in the following example.
-
-```
-POST /credential_deferred HTTP/1.1
-Host: server.example.com
-Content-Type: application/x-www-form-urlencoded
-Authorization: BEARER 8xLOxBtZp8
-
-```
-
-## Deferred Credential Response
-
-The deferred Credential Response uses the `format` and `credential` parameters as defined in (#credential-response). 
 
 # Metadata
 
@@ -1125,6 +1115,10 @@ The technology described in this specification was made available from contribut
 # Document History
 
    [[ To be removed from the final specification ]]
+
+   -08
+
+   * folded deferred credential issuance into credential endpoint
 
    -07
 
