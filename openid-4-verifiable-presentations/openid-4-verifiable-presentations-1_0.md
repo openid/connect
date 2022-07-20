@@ -994,6 +994,45 @@ The `id_token` content is shown in the following.
 
 Note: the `nonce` and `aud` are set to the `nonce` of the request and the client id of the verifier, respectively, in the same way as for the verifier presentations to prevent replay. 
 
+## LDP VCs with BBS Signature Scheme
+
+This section illustrates how a W3C Verifiable Credential signed mobile driving licence (mDL) credential expressed using a data model and data sets defined in [@ISO.18013-5] can be presented from the End-User's device directly to the RP using this specification.
+
+BBS signature is a ZKP-enabled cryptographic scheme and can be used with any credential formats that supports signing multiple payloads (such as LDP VCs and JWPs).
+
+In order to create a ZKP-enabled credential with BBS, the credential Issuer must have a supported key type (e.g. bls12381g2)
+
+The following is an LDP-based Verifiable Credential with BBS Signature:
+
+<{{examples/credentials/ldp_bbs_vc.json}}
+
+### Presentation Request
+
+The presentation request will be similar to the LDP VC: 
+
+<{{examples/request/request.txt}}
+
+The requirements regarding the credential to be presented are conveyed in the presentation_definition parameter. The content of the request is shown in the following example:
+
+<{{examples/request/pd_bbs_vc.json}}
+
+In the presentation_definition, the limit_disclosure constraint is set to true to selectively disclose a subset of claims from the requested credential.
+
+### Presentation Response
+
+The presentation response will look similar to the LDP VC example :
+
+<{{examples/response/response.txt}}
+
+The below example shows contents in a presentation_submission:
+
+<{{examples/response/ps_bbs_ldp.json}}
+
+The following is an example of VP token response using BBS Signature proofs:
+
+<{{examples/response/vp_token_bbs_ldp.json}}
+
+
 # IANA Considerations
 
 TBD
