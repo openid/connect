@@ -1,0 +1,21 @@
+{
+    "definition_id": "example_ldp_vc_with_BBS_signature",
+    "id": "example_ldp_vc_with_BBS_signature_presentation_submission",
+    "descriptor_map": [
+        {
+            "id": "id_credential_with_constraints",
+            "path": "$",
+            "format": "ldp_vp",
+            "path_nested": {
+                "id": "id_credential_with_constraints",
+                "format": "ldp_vc",
+                "path": "$.verifiableCredential[0].credentialSubject.given_name"
+            },
+            "path_nested": {
+                "id": "id_credential_with_constraints",
+                "format": "ldp_vc",
+                "path": "$.verifiableCredential[0].credentialSubject.family_name"
+            }
+        }
+    ]
+}

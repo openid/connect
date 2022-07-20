@@ -1,0 +1,39 @@
+{
+    "id": "example_ldp_vc_with_BBS_signature",
+    "input_descriptors": [
+        {
+            "id": "id_credential_with_constraints",
+            "format": {
+                "ldp_vc": {
+                    "proof_type": [
+                        "BbsBlsSignature2020"
+                    ]
+                }
+            },
+            "constraints": {
+                "limit_disclosure": "required",
+                "fields": [
+                    {
+                        "path": [
+                            "$.type"
+                        ],
+                        "filter": {
+                            "type": "string",
+                            "pattern": "IDCardCredential"
+                        }
+                    },
+                    {
+                        "path": [
+                            "$.credentialSubject.given_name"
+                        ]
+                    },
+                    {
+                        "path": [
+                            "$.credentialSubject.family_name"
+                        ]
+                    }
+                ]
+            }
+        }
+    ]
+}
