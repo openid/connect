@@ -818,7 +818,9 @@ This section defines the structure of the object that appears as the value to th
   * `description`: OPTIONAL. String value of a description of the Credential.
   * `background_color`: OPTIONAL. String value of a background color of the Credential represented as numerical color values defined in CSS Color Module Level 37 [@!CSS-Color].
   * `text_color`: OPTIONAL. String value of a text color of the Credential represented as numerical color values defined in CSS Color Module Level 37 [@!CSS-Color].
-
+* `credentialSchema`: OPTIONAL. Object describing the schema of the credential. It comprises two properties:
+   * `id` : REQUIRED. The URI where the schema definition file can be found
+   * `type`: REQUIRED. The type of schema contained in the schema file
 * `formats`: REQUIRED. A JSON object containing a list of key value pairs, where the key is a string identifying the format of the Credential. Below is a non-exhaustive list of valid key values defined by this specification:
   * Claim Format Designations defined in [@!DIF.PresentationExchange], such as `jwt_vc` and `ldp_vc`
   * `mdl_iso`: defined in this specification to express a mobile driving licence (mDL) Credential compliant to a data model and data sets defined in ISO/IEC 18013-5:2021 specification. 
