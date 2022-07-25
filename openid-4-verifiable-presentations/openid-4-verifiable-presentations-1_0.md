@@ -323,7 +323,7 @@ Table in Section 6.7.3. of [@!OpenID.VCI] might be superceded by a registry in t
 
 # Metadata {#metadata}
 
-This specification introduces additional metadata to enable Client and AS to determine the verifiable presentation and verifiable credential formats, proof types and algorithms to be used in a protocol exchange.
+This specification introduces additional metadata to enable Client and AS to determine the trust framework(s) being used, and the verifiable presentation and verifiable credential formats, proof types and algorithms to be used in a protocol exchange.
 
 ## Authorization Server Metadata {#as_metadata_parameters}
 
@@ -396,6 +396,41 @@ Usage of `client_metadata` or `client_metadata_uri` parameters with `client_id` 
 ### Client Metadata Parameters {#client_metadata_parameters}
 
 This specification defines new client metadata parameters according to [@!RFC7591].
+
+#### Trust Frameworks
+
+RPs indicate the trust frameworks that they support using the `trust_frameworks` parameter.
+
+* `trust_frameworks`: An object that contains the definitions of each trust framework that the RP supports.
+
+Each trust framework definition contains the following parameters:
+   * `type`: REQUIRED. A URI that unambiguously identifies a trust framework that the RP supports, for example, https://openid.net/specs/openid-connect-federation-1_0.html and https://train.trust-scheme.de/info
+   * `info`: OPTIONAL. A URL that provides a human readable description of the trust framework.
+   * `identifiers`: REQUIRED. A set of JSON strings, each string identifying one particular trust scheme or trust federation that the RP is a member of. The format of the JSON string is determined by the rules of the trust framework, for example, each trust scheme in TRAIN is identified by a DNS name, whilst each federation in OpenID Connect is identified by the id (URL) of a trust anchor.
+
+The following is an example of the metadata for an RP that is a member of two TRAIN trust schemes
+
+```
+{
+	“trust_frameworks": [{
+		"type": "https://train.trust-scheme.de/info",
+		"info": "https://dl.gi.de/bitstream/handle/20.500.12116/38702/proceedings-02.pdf",
+		“identifiers": ["example.tso.com", "ssi.company.uk"]
+	}]
+}
+```
+
+The following is an example of the metadata for an RP that is a member of the edugain OpenID Trust Federation
+
+```
+{
+	“trust_framework": [{
+		"type": "https://openid.net/specs/openid-connect-federation-1_0.html",
+		"info": "https://openid.net/specs/openid-connect-federation-1_0.html",
+		“identifiers": ["https://edugain.geant.org"]
+	}]
+}
+```
 
 #### vp_formats
 
