@@ -678,7 +678,7 @@ proof=%7B%22type%22:%22...-ace0-9c5210e16c32%22%7D
 Below is a non-normative example of a deferred credential issuance request:
 
 ```
-POST /credential_deferred HTTP/1.1
+POST /deferred HTTP/1.1
 Host: server.example.com
 Content-Type: application/x-www-form-urlencoded
 Authorization: BEARER czZCaGRSa3F0MzpnWDFmQmF0M2JW
@@ -739,7 +739,7 @@ HTTP/1.1 200 OK
 
 {
   "acceptance_token": "8xLOxBtZp8",
-  "intervall": 86400
+  "interval": 86400
 }
 ```
 
