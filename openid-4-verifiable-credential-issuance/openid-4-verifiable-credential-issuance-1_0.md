@@ -68,7 +68,7 @@ A verifiable presentation is a tamper-evident presentation encoded in such a way
 
 Deferred Credential Issuance
 
-Issuance of Credentials not directly in the response to a Credential issuance request, but following a period of time that can be used to perform certain offline business processes.
+Issuance of Credentials not directly in the response to a Credential issuance request, but following a period of time that can be used to perform certain offline business processes. See (#deferred-issuance)
 
 Wallet
 
@@ -120,7 +120,7 @@ This specification defines the following mechanisms to allow Wallet applications
 * An optional mechanism for the Issuer to initiate the issuance. See (#issuance_initiation_endpoint).
 * An extended Authorization Request that allows to request authorization to request issuance of Credentials of specific types. See (#credential-authz-request).
 * An optional ability to bind an issued Credential to a cryptographic key material. The Credential request therefore allows to convey a proof of posession for the key material. Multiple proof types are supported. See (#credential_request).
-* A mechanism for the Deferred Credential Issuance. See (#credential_request).
+* A mechanism for the Deferred Credential Issuance. See (#deferred-issuance).
 * A mechanism for the Issuer to publish metadata about the Credential it is capable of issuing. See (#server-metadata)
 * A mechanism that allows issuance of multiple Credentials of same or different type. See (#token-response) and (#credential-response).
 
@@ -533,7 +533,7 @@ In addition to the response parameters defined in [@!RFC6749], the AS MAY return
 * `c_nonce`: OPTIONAL. JSON string containing a nonce to be used to create a proof of possession of key material when requesting a Credential (see (#credential_request)).
 * `c_nonce_expires_in`: OPTIONAL. JSON integer denoting the lifetime in seconds of the `c_nonce`.
 * `authorization_pending`: OPTIONAL. JSON Boolean. In pre-authorized code flow, the Token Request is still pending as the issuer is waiting for the end user interaction to complete. The client SHOULD repeat the Token Request. Before each new request, the client MUST wait at least the number of seconds specified by the "interval" response parameter. ToDo: clarify boolean.
-* `interval`: OPTIONAL. The minimum amount of time in seconds that the client SHOULD wait between polling requests to the token endpoint in pre-authorized code flow.  If no value is provided, clients MUST use 5 as the default.
+* `interval`: OPTIONAL. The minimum amount of time in seconds that the client SHOULD wait before re-sending Token Request in pre-authorized code flow. If no value is provided, clients MUST use 5 as the default.
 
 Upon receiving `pre-authorized_code`, the issuer MAY decide to interact with the end-user in the course of the Token Request processing, which might take some time. In such a case, the issuer SHOULD respond with the error `authorization_pending` and the new return parameter `interval`.
 
@@ -595,10 +595,10 @@ For cryptographic binding, the Client has the following options to provide crypt
 
 A Client makes a Credential Request by sending a HTTP POST request to the Credential Endpoint with the following parameters:
 
-* `type`: CONDITIONAL. Type of a Credential being requested. It corresponds to a `type` property in a Issuer metadata.
-* `format`: OPTIONAL. Format of the Credential to be issued. If not present, the issuer will determine the Credential format based on the client's format default.
-* `proof` OPTIONAL. JSON Object containing proof of possession of the key material the issued Credential shall be bound to. The `proof` object MUST contain a `proof_type` element of type JSON string which determines its structure.
-* `acceptance_token`: CONDITIONAL. A JSON string containing a token used to refer to a previously lodged credential issuance request. The wallet sends this parameter to retrieve the credential request with this previous credential issuance request. This parameter MUST NOT be present when `type` is present.
+* `type`: CONDITIONAL. Type of a Credential being requested. It corresponds to a `type` property in a Issuer metadata. MUST NOT be present when `acceptance_token` is present.
+* `format`: OPTIONAL. Format of the Credential to be issued. If not present, the issuer will determine the Credential format based on the client's format default. MUST NOT be present when `acceptance_token` is present.
+* `proof` OPTIONAL. JSON Object containing proof of possession of the key material the issued Credential shall be bound to. The `proof` object MUST contain a `proof_type` element of type JSON string which determines its structure. MUST NOT be present when `acceptance_token` is present.
+* `acceptance_token`: CONDITIONAL. A JSON string containing a token used to refer to a previously lodged credential issuance request. The wallet sends this parameter to retrieve the credential request with this previous credential issuance request. MUST NOT be present when `type`, `format` and `proof` are present.
 
 This specification defines the following values for `proof_type`:
 
@@ -675,27 +675,16 @@ did=did%3Aexample%3Aebfeb1f712ebc6f1c276e12ec21
 proof=%7B%22type%22:%22...-ace0-9c5210e16c32%22%7D
 ```
 
-Below is a non-normative example of a deferred credential issuance request:
-
-```
-POST /deferred HTTP/1.1
-Host: server.example.com
-Content-Type: application/x-www-form-urlencoded
-Authorization: BEARER czZCaGRSa3F0MzpnWDFmQmF0M2JW
-
-acceptance_token=8xLOxBtZp8
-```
-
 ## Credential Response {#credential-response}
 
-Credential Response can be Synchronous or Deferred. The Issuer may be able to immediately issue a requested Credential and send it to the Client. In other cases, the Issuer may not be able to immediately issue a requested Credential and would want to send a token to the Client to be used later to receive a Credential when it is ready.
+Credential Response can be Just-in-time or Deferred. The Issuer may be able to immediately issue a requested Credential and send it to the Client. In other cases, the Issuer may not be able to immediately issue a requested Credential and would want to send a token to the Client to be used later to receive a Credential when it is ready.
 
 The following claims are used in the Credential Response:
 
 * `format`: REQUIRED. JSON string denoting the Credential's format
 * `credential`: OPTIONAL. Contains issued Credential. MUST be present when `acceptance_token` is not returned. MAY be a JSON string or a JSON object, depending on the Credential format. See the table below for the format specific encoding requirements.
 * `acceptance_token`: OPTIONAL. A JSON string containing a token subsequently used to obtain a Credential. MUST be present when `credential` is not returned.
-* `interval`: OPTIONAL. The minimum amount of time in seconds that the client SHOULD wait between polling requests to the credential endpoint.  If no value is provided, clients MUST use 60 as the default.
+* `interval`: OPTIONAL. The minimum amount of time in seconds that the client SHOULD wait before re-sendting Credential Request. If no value is provided, clients MUST use 60 as the default.
 * `c_nonce`: OPTIONAL. JSON string containing a nonce to be used to create a proof of possession of key material when requesting a Credential (see (#credential_request)).
 * `c_nonce_expires_in`: OPTIONAL. JSON integer denoting the lifetime in seconds of the `c_nonce`.
 
@@ -713,7 +702,7 @@ Credential formats expressed as binary formats MUST be base64url-encoded and ret
 
 Note that this table might be superceded by a registry in the future. Meanwhile, for interoperability, implementers MUST follow the requirements defined in the table above.
 
-Below is a non-normative example of a Credential Response in a synchronous flow:
+Below is a non-normative example of a Credential Response in a just-in-time flow:
 
 ```
 HTTP/1.1 200 OK
@@ -767,6 +756,25 @@ HTTP/1.1 400 Bad Request
 ```
 
 ToDo - 400 might not be a right answer.
+
+## Deferred Credential Issuance {#deferred-issuance}
+
+When the Issuer was not able to immediately issue a Credential in response to the first Credential Request, it returns `acceptance_token` and optionally `interval` in the Credential Response.
+
+The Wallet re-sends Credential Request with `acceptance_token` after the interval specified in the Credential Request.
+
+This process continues until Credential is returned in the Credential Request.
+
+Below is a non-normative example of a Credential Request in a deferred credential issuance:
+
+```
+POST /deferred HTTP/1.1
+Host: server.example.com
+Content-Type: application/x-www-form-urlencoded
+Authorization: BEARER czZCaGRSa3F0MzpnWDFmQmF0M2JW
+
+acceptance_token=8xLOxBtZp8
+```
 
 # Metadata
 
