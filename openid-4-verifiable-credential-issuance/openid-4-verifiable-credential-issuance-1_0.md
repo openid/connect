@@ -7,7 +7,7 @@ keyword = ["security", "openid", "ssi"]
 
 [seriesInfo]
 name = "Internet-Draft"
-value = "openid-4-verifiable-credential-issuance-1_0-07"
+value = "openid-4-verifiable-credential-issuance-1_0-08"
 status = "standard"
 
 [[author]]
@@ -119,7 +119,8 @@ This specification defines the following mechanisms to allow Wallet applications
 * A newly defined Credential Endpoint from which Credentials can be issued. See (#credential-endpoint).
 * An optional mechanism for the Issuer to initiate the issuance. See (#issuance_initiation_endpoint).
 * An extended Authorization Request that allows to request authorization to request issuance of Credentials of specific types. See (#credential-authz-request).
-* An optional ability to bind an issued Credential to a cryptographic key material. The Credential request therefore allows to convey a proof of posession for the key material. Multiple proof types are supported. See (#credential_request). 
+* An optional ability to bind an issued Credential to a cryptographic key material. The Credential request therefore allows to convey a proof of posession for the key material. Multiple proof types are supported. See (#credential_request).
+* A mechanism for the Deferred Credential Issuance. See (#credential_request).
 * A mechanism for the Issuer to publish metadata about the Credential it is capable of issuing. See (#server-metadata)
 * A mechanism that allows issuance of multiple Credentials of same or different type. See (#token-response) and (#credential-response).
 
@@ -184,7 +185,7 @@ Figure: Issuance using Authorization code flow
 
 (3) The Wallet sends a Credential Request to the Issuer's Credential Endpoint with the Access Token and proof of possession of the public key to which the the issued VC shall be bound. Upon successfully validating Access Token and proof, the Issuer returns a VC in the Credential Response if it is able to issue a Credential right away. This step is defined in (#credential-endpoint).
 
-If the Issuer requires more time to issue a Credential, the Issuer may returns an Acceptance Token to the Wallet with the information when the Wallet can start sending Deferred Credential Request to obtain an issued Credential as defined in (#credential-endpoint).
+If the Issuer requires more time to issue a Credential, the Issuer may return an Acceptance Token to the Wallet, so that the Wallet can re-send Credential Request to obtain an issued Credential later in time as defined in (#credential-endpoint).
 
 Note: this flow is based on OAuth 2.0 and the code grant type, but it can be used with other grant types as well. 
 
@@ -253,8 +254,7 @@ This specification defines new endpoints as well as additional parameters to exi
 Newly defined endpoints are the following: 
 
 * Issuance Initiation Endpoint: An endpoint exposed by the Wallet that allows an issuer to initiate the issuance flow.
-* Credential Endpoint: An OAuth 2.0-protected endpoint exposed by the Issuer and used to issue verifiable Credentials.
-* Deferred Credential Endpoint: this endpoint is used for deferred issuance of verifiable Credentials.
+* Credential Endpoint: An OAuth 2.0-protected endpoint exposed by the Issuer and used to issue verifiable credentials. Both just-in-time and deferred issuance are supported. 
 
 Existing OAuth 2.0 mechanisms are extended as following:
 
@@ -592,13 +592,10 @@ For cryptographic binding, the Client has the following options to provide crypt
 
 A Client makes a Credential Request by sending a HTTP POST request to the Credential Endpoint with the following parameters:
 
-* `type`: REQUIRED. Type of a Credential being requested. It corresponds to a `type` property in a Issuer metadata.
-* `format`: OPTIONAL. Format of the Credential to be issued. If not present, the issuer will determine the Credential 
-format based on the client's format default.
-* `proof` OPTIONAL. JSON Object containing proof of possession of the key material the issued Credential shall be 
-bound to. The `proof` object MUST contain a `proof_type` element of type JSON string which determines its structure.
-* `acceptance_token`: OPTIONAL. A JSON string containing a token used to refer to a previously lodged credential issuance request. The wallet sends this parameter to retrieve 
-the credential request with this previous credential issuance request. This parameter MUST NOT be present when `type` is present.
+* `type`: CONDITIONAL. Type of a Credential being requested. It corresponds to a `type` property in a Issuer metadata.
+* `format`: OPTIONAL. Format of the Credential to be issued. If not present, the issuer will determine the Credential format based on the client's format default.
+* `proof` OPTIONAL. JSON Object containing proof of possession of the key material the issued Credential shall be bound to. The `proof` object MUST contain a `proof_type` element of type JSON string which determines its structure.
+* `acceptance_token`: CONDITIONAL. A JSON string containing a token used to refer to a previously lodged credential issuance request. The wallet sends this parameter to retrieve the credential request with this previous credential issuance request. This parameter MUST NOT be present when `type` is present.
 
 This specification defines the following values for `proof_type`:
 
@@ -1118,6 +1115,7 @@ The technology described in this specification was made available from contribut
 
    -08
 
+   * removed namespacing to `openid_credential` the scopes used to request issuance of a particular credential type   
    * folded deferred credential issuance into credential endpoint
 
    -07
