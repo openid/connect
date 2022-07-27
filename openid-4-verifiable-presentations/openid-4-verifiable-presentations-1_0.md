@@ -401,14 +401,14 @@ This specification defines new client metadata parameters according to [@!RFC759
 
 RPs indicate the trust frameworks that they support using the `trust_frameworks` parameter.
 
-* `trust_frameworks`: An object that contains the definitions of each trust framework that the RP supports.
+* `trust_frameworks`: An object that contains the definitions of each trust framework that the RP supports. These are hints to the reader of the metadata informing it how to determine if the RP can be trusted. If the reader understands the trust framework type, then it knows how to determine if the RP is a member of the identified scheme by using the methods particular to the trust framework. If the reader does not understand the trust framework type, then it does not know how to determine if the RP can be trusted.
 
 Each trust framework definition contains the following parameters:
    * `type`: REQUIRED. A URI that unambiguously identifies a trust framework that the RP supports, for example, https://openid.net/specs/openid-connect-federation-1_0.html and https://train.trust-scheme.de/info
    * `info`: OPTIONAL. A URL that provides a human readable description of the trust framework.
-   * `identifiers`: REQUIRED. A set of JSON strings, each string identifying one particular trust scheme or trust federation that the RP is a member of. The format of the JSON string is determined by the rules of the trust framework, for example, each trust scheme in TRAIN is identified by a DNS name, whilst each federation in OpenID Connect is identified by the id (URL) of a trust anchor.
+   * `identifiers`: REQUIRED. A set of JSON strings, each string identifying one particular trust scheme or trust federation of the framework type that the RP is a member of. The format of the JSON string is determined by the rules of the trust framework, for example, each trust scheme in TRAIN is identified by a DNS name, whilst each federation in OpenID Connect is identified by the id (URL) of a trust anchor.
 
-The following is an example of the metadata for an RP that is a member of two TRAIN trust schemes
+The following is an example of the metadata for an RP that says it is a member of two TRAIN trust schemes
 
 ```
 {
@@ -420,7 +420,7 @@ The following is an example of the metadata for an RP that is a member of two TR
 }
 ```
 
-The following is an example of the metadata for an RP that is a member of the edugain OpenID Trust Federation
+The following is an example of the metadata for an RP that says it is a member of the edugain OpenID Trust Federation
 
 ```
 {
