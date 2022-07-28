@@ -116,7 +116,7 @@ Upon providing consent, the user is sent back to the Wallet. The Wallet informs 
 
 This specification defines the following mechanisms to allow Wallet applications used by the End-User to request Credential issuers to issue Verifiable Credentials via the Credential Endpoint:
 
-* A newly defined Credential Endpoint from which Credentials can be issued. See (#credential-endpoint).
+* A newly defined Credential Endpoint from which Credentials can be issued. See (#credential-endpoint). The mechanism also has a mechanism for the deferred dredential issuance. 
 * An optional mechanism for the Issuer to initiate the issuance. See (#issuance_initiation_endpoint).
 * An extended Authorization Request that allows to request authorization to request issuance of Credentials of specific types. See (#credential-authz-request).
 * An optional ability to bind an issued Credential to a cryptographic key material. The Credential request therefore allows to convey a proof of posession for the key material. Multiple proof types are supported. See (#credential_request).
