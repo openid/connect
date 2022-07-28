@@ -598,7 +598,7 @@ A Client makes a Credential Request by sending a HTTP POST request to the Creden
 * `type`: CONDITIONAL. Type of a Credential being requested. It corresponds to a `type` property in a Issuer metadata. MUST NOT be present when `acceptance_token` is present.
 * `format`: OPTIONAL. Format of the Credential to be issued. If not present, the issuer will determine the Credential format based on the client's format default. MUST NOT be present when `acceptance_token` is present.
 * `proof` OPTIONAL. JSON Object containing proof of possession of the key material the issued Credential shall be bound to. The `proof` object MUST contain a `proof_type` element of type JSON string which determines its structure. MUST NOT be present when `acceptance_token` is present.
-* `acceptance_token`: CONDITIONAL. A JSON string containing a token used to refer to a previously lodged credential issuance request. The wallet sends this parameter to retrieve the credential request with this previous credential issuance request. MUST NOT be present when `type`, `format` and `proof` are present.
+* `acceptance_token`: CONDITIONAL. An opaque string value referring to a previously lodged credential issuance request. The wallet sends this parameter to retrieve the credential requested with this previous credential issuance request. MUST NOT be present when `type`, `format` and `proof` are present.
 
 This specification defines the following values for `proof_type`:
 
@@ -683,7 +683,7 @@ The following claims are used in the Credential Response:
 
 * `format`: REQUIRED. JSON string denoting the Credential's format
 * `credential`: OPTIONAL. Contains issued Credential. MUST be present when `acceptance_token` is not returned. MAY be a JSON string or a JSON object, depending on the Credential format. See the table below for the format specific encoding requirements.
-* `acceptance_token`: OPTIONAL. A JSON string containing a token subsequently used to obtain a Credential. MUST be present when `credential` is not returned.
+* `acceptance_token`: CONDITIONAL. An opaque string value the issuer responds with in case it cannot directly issue the requested credential. This value is used in sub-sequent requests to obtain the respective credential. `acceptance_token` MUST be present when `credential` is not returned.
 * `interval`: OPTIONAL. The minimum amount of time in seconds that the client SHOULD wait before re-sendting Credential Request. If no value is provided, clients MUST use 60 as the default.
 * `c_nonce`: OPTIONAL. JSON string containing a nonce to be used to create a proof of possession of key material when requesting a Credential (see (#credential_request)).
 * `c_nonce_expires_in`: OPTIONAL. JSON integer denoting the lifetime in seconds of the `c_nonce`.
