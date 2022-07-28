@@ -572,7 +572,10 @@ Pragma: no-cache
 
 # Credential Endpoint {#credential-endpoint}
 
-The Credential Endpoint issues a Credential as approved by the End-User upon presentation of a valid Access Token representing this approval. 
+The Credential Endpoint issues a Credential as approved by the End-User upon presentation of a valid Access Token representing this approval. Such 
+
+If the issuer cannot directly issue the requested credential, it will respond with a so-called "acceptance token" that represents the still ongoing 
+issuance transaction. This acceptance token (together with a valid access token) can later be used to fetch the respective credential. 
 
 Communication with the Credential Endpoint MUST utilize TLS. 
 
