@@ -768,7 +768,7 @@ This process continues until Credential is returned in the Credential Request.
 Below is a non-normative example of a Credential Request in a deferred credential issuance:
 
 ```
-POST /deferred HTTP/1.1
+POST /credential HTTP/1.1
 Host: server.example.com
 Content-Type: application/x-www-form-urlencoded
 Authorization: BEARER czZCaGRSa3F0MzpnWDFmQmF0M2JW
