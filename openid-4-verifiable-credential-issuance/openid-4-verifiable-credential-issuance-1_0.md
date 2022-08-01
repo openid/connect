@@ -779,6 +779,53 @@ Authorization: BEARER 8xLOxBtZp8
 
 The deferred Credential Response uses the `format` and `credential` parameters as defined in (#credential-response). 
 
+# Credential Sharing Endpoint
+
+This endpoint is used by a Wallet of user A when it wants to obtain a `provisioning_code` that it can share with another user B, so that the Wallet of user B can contact the Issuer's Token Endpoint to receive a credential previously issued to user A.
+
+This enables user A to share a credential with user B.
+
+How user A communicates `provisioning_code` to the user B is out of scope of this specification. 
+
+## Credential Sharing Request
+
+Below is a non-normative example of a Credential Sharing Request:
+
+```
+POST /token HTTP/1.1
+  Host: server.example.com
+  Content-Type: application/x-www-form-urlencoded
+  Authorization: Basic czZCaGRSa3F0MzpnWDFmQmF0M2JW
+
+  type=openid_credential=
+  &credential_type=
+  &user_pin=493536
+```
+
+{
+   "type":"",
+   "":"https://did.example.org/healthCard",
+   "format":"ldp_vc"
+}
+```
+
+## Credential Sharing Response
+
+Below is a non-normative example of a Credential Sharing Response:
+
+```
+HTTP/1.1 200 OK
+  Content-Type: application/json
+  Cache-Control: no-store
+  Pragma: no-cache
+
+  {
+    "provisioning_code": "eyJhbGciOiJSUzI1NiIsInR5cCI6Ikp..sHQ"
+  }
+```
+
+//what other parameters need to be passed
+
 # Metadata
 
 ## Client Metadata {#client-metadata}
