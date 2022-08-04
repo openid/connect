@@ -781,9 +781,9 @@ The deferred Credential Response uses the `format` and `credential` parameters a
 
 # Credential Sharing Endpoint
 
-This endpoint is used by a Wallet of user A when it wants to obtain a `provisioning_code` that it can share with another user B, so that the Wallet of user B can contact the Issuer's Token Endpoint to receive a credential previously issued to user A.
+This endpoint enables sharing of the credentials among wallets. 
 
-This enables user A to share a credential with user B.
+When user A wants to share a credential with user B, Wallet of user A first sends a Credential Sharing Request and obtains a `provisioning_code`. Then it sends `provisioning_code` to another user B, so that the Wallet of user B can contact the Issuer's Token Endpoint to receive a credential originally issued to user A.
 
 How user A communicates `provisioning_code` to the user B is out of scope of this specification. 
 
