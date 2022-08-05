@@ -781,13 +781,23 @@ The deferred Credential Response uses the `format` and `credential` parameters a
 
 # Credential Sharing Endpoint
 
-This endpoint enables sharing of the credentials among wallets. 
+This endpoint enables sharing of the credentials among wallets. It issues a `provisioning_code` upon presentation of a valid Access Token valid for a Credential requested to be shared.
 
-When user A wants to share a credential with user B, Wallet of user A first sends a Credential Sharing Request and obtains a `provisioning_code`. Then it sends `provisioning_code` to another user B, so that the Wallet of user B can contact the Issuer's Token Endpoint to receive a credential originally issued to user A.
+When a Sender wants to share a credential with a Receiver, Wallet of the Sender first sends a Credential Sharing Request and obtains a `provisioning_code`. Then it sends `provisioning_code` to the Receiver, so that the Wallet of the Receiver can contact the Issuer's Token Endpoint to receive a credential originally issued to the Sender.
 
-How user A communicates `provisioning_code` to the user B is out of scope of this specification. 
+How user A communicates `provisioning_code` to the user B is out of scope of this specification.
+
+Communication with the Credential Endpoint MUST utilize TLS.
+
+Note: need to clearly define Sender/Receiver.
 
 ## Credential Sharing Request
+
+A Client makes a Credential Sharing Request by sending a HTTP POST request to the Credential Sharing Endpoint with the following parameters:
+
+* `type`: REQUIRED. Type of a Credential being requested to be shared. It corresponds to a `type` property in a Issuer metadata.
+
+Note: should `type` allow for multiple types?
 
 Below is a non-normative example of a Credential Sharing Request:
 
@@ -797,19 +807,15 @@ POST /token HTTP/1.1
   Content-Type: application/x-www-form-urlencoded
   Authorization: Basic czZCaGRSa3F0MzpnWDFmQmF0M2JW
 
-  type=openid_credential=
-  &credential_type=
-  &user_pin=493536
-```
-
-{
-   "type":"",
-   "":"https://did.example.org/healthCard",
-   "format":"ldp_vc"
-}
+  type=https%3A%2F%2Fdid%2Eexample%2Eorg%2FhealthCard
 ```
 
 ## Credential Sharing Response
+
+The following claims are used in the Credential Response:
+
+* `provisioning_code`: REQUIRED. The code representing the issuer's authorization for the Wallet of a Sender to share Credential of a certain type with the Wallet of a Receiver. This code MUST be short lived and single-use. 
+* `issuer`: OPTIONAL. The issuer URL of the Credential issuer, the Wallet of the Receiver will request a Credential from. 
 
 Below is a non-normative example of a Credential Sharing Response:
 
@@ -820,7 +826,8 @@ HTTP/1.1 200 OK
   Pragma: no-cache
 
   {
-    "provisioning_code": "eyJhbGciOiJSUzI1NiIsInR5cCI6Ikp..sHQ"
+    "provisioning_code": "eyJhbGciOiJSUzI1NiIsInR5cCI6Ikp..sHQ",
+    "issuer":"https://server.example.com",
   }
 ```
 
