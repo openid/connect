@@ -24,7 +24,7 @@
 
   <front>
     <title abbrev="OpenID Connect RP-Initiated Logout 1.0">OpenID Connect
-    RP-Initiated Logout 1.0 - draft 02</title>
+    RP-Initiated Logout 1.0 - draft 03</title>
 
     <author fullname="Michael B. Jones" initials="M.B." surname="Jones">
       <organization abbrev="Microsoft">Microsoft</organization>
@@ -66,7 +66,7 @@
       </address>
     </author>
 
-    <date day="18" month="April" year="2022" />
+    <date day="15" month="August" year="2022" />
 
     <workgroup>OpenID Connect Working Group</workgroup>
 
@@ -407,6 +407,9 @@
 	If any of the validation procedures defined in this specification fail, any operations requiring
 	the information that failed to correctly validate MUST be aborted and
 	the information that failed to validate MUST NOT be used.
+	Note that because logout actions are intended to be idempotent,
+	it is explicitly not an error for an RP to request that a logout be performed
+	when the OP does not consider that RP to be logged in.
       </t>
       <t>
 	As described in <xref target="RedirectionAfterLogout"/>,
@@ -744,6 +747,15 @@
 
     <section anchor="History" title="Document History">
       <t>[[ To be removed from the final specification ]]</t>
+
+      <t>
+	-03
+        <list style="symbols">
+	  <t>
+	    Fixed #1549 - Clarified that RP-Initiated Logout is idempotent.
+	  </t>
+	</list>
+      </t>
 
       <t>
 	-02
