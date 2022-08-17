@@ -745,6 +745,38 @@ issuers in Self-Sovereign Identity ecosystems using TRAIN</title>
         </front>
  </reference>
 
+<reference anchor="Data.Integrity" target="https://w3c.github.io/vc-data-integrity/">
+        <front>
+          <title>Data Integrity Proofs</title>
+          <author fullname="Manu Sporny">
+              <organization>Digital Bazaar</organization>
+          </author>
+          <author fullname="Dave Longley">
+              <organization>Digital Bazaar</organization>
+          </author>
+          <author fullname="Mike Prorock">
+              <organization>Mesur.io</organization>
+          </author>
+          <date day="14" month="Aug" year="2022"/>
+        </front>
+</reference>
+
+<reference anchor="JWP" target="https://json-web-proofs.github.io/json-web-proofs/draft-jmiller-jose-json-web-proof.html">
+        <front>
+          <title>JSON Web Proof (JWP)</title>
+          <author fullname="Jeremie Miller">
+              <organization>Ping Identity</organization>
+          </author>
+          <author fullname="David Waite">
+              <organization>Ping Identity</organization>
+          </author>
+          <author fullname="Michael B. Jones">
+              <organization>Microsoft</organization>
+          </author>
+          <date day="25" month="Jul" year="2022"/>
+        </front>
+</reference>
+
 # Examples {#alternative_credential_formats}
 
 OpenID for Verifiable Presentations is credential format agnostic, i.e. it is designed to allow applications to request and receive verifiable presentations and credentials in any format, not limited to the formats defined in [@!VC_DATA]. This section aims to illustrate this with examples utilizing different credential formats. Customization of OpenID for Verifiable Presentation for credential formats other than those defined in [@!VC_DATA] uses extensions points of Presentation Exchange [@!DIF.PresentationExchange]. 
@@ -818,6 +850,42 @@ It refers to the VP in the `vp_token` parameter provided in the same response, w
 <{{examples/response/ldp_vp.json}}
 
 Note: the VP's `challenge` claim contains the value of the `nonce` of the presentation request and the `domain` claims contains the client id of the verifier. This allows the verifier to detect replay of a presentation as recommened in (#preventing-replay). 
+
+## LDP VCs with BBS Signature Scheme
+
+BBS signature is a ZKP-enabled cryptographic scheme and can be used with any credential formats that supports signing multiple payloads (such as Data Integrity Proofs [@Data.Integrity] and JWPs [@JWP]).
+
+In order to create a ZKP-enabled credential with BBS, the credential Issuer must have a supported key type (e.g. bls12381g2)
+
+The following is an LDP-based Verifiable Credential with BBS Signature:
+
+<{{examples/credentials/ldp_bbs_vc.json}}
+
+### Presentation Request
+
+The presentation request will be similar to the LDP VC: 
+
+<{{examples/request/request.txt}}
+
+The requirements regarding the credential to be presented are conveyed in the presentation_definition parameter. The content of the request is shown in the following example:
+
+<{{examples/request/pd_bbs_vc.json}}
+
+In the `presentation_definition`, the `limit_disclosure` constraint is set to true to selectively disclose a subset of claims from the requested credential.
+
+### Presentation Response
+
+The presentation response will look similar to the LDP VC example :
+
+<{{examples/response/response.txt}}
+
+The below example shows contents in a presentation_submission:
+
+<{{examples/response/ps_bbs_ldp.json}}
+
+The following is an example of VP token response using BBS Signature proofs:
+
+<{{examples/response/vp_token_bbs_ldp.json}}
 
 ## AnonCreds
 
@@ -993,45 +1061,6 @@ The `id_token` content is shown in the following.
 ```
 
 Note: the `nonce` and `aud` are set to the `nonce` of the request and the client id of the verifier, respectively, in the same way as for the verifier presentations to prevent replay. 
-
-## LDP VCs with BBS Signature Scheme
-
-This section illustrates how a W3C Verifiable Credential signed mobile driving licence (mDL) credential expressed using a data model and data sets defined in [@ISO.18013-5] can be presented from the End-User's device directly to the RP using this specification.
-
-BBS signature is a ZKP-enabled cryptographic scheme and can be used with any credential formats that supports signing multiple payloads (such as LDP VCs and JWPs).
-
-In order to create a ZKP-enabled credential with BBS, the credential Issuer must have a supported key type (e.g. bls12381g2)
-
-The following is an LDP-based Verifiable Credential with BBS Signature:
-
-<{{examples/credentials/ldp_bbs_vc.json}}
-
-### Presentation Request
-
-The presentation request will be similar to the LDP VC: 
-
-<{{examples/request/request.txt}}
-
-The requirements regarding the credential to be presented are conveyed in the presentation_definition parameter. The content of the request is shown in the following example:
-
-<{{examples/request/pd_bbs_vc.json}}
-
-In the presentation_definition, the limit_disclosure constraint is set to true to selectively disclose a subset of claims from the requested credential.
-
-### Presentation Response
-
-The presentation response will look similar to the LDP VC example :
-
-<{{examples/response/response.txt}}
-
-The below example shows contents in a presentation_submission:
-
-<{{examples/response/ps_bbs_ldp.json}}
-
-The following is an example of VP token response using BBS Signature proofs:
-
-<{{examples/response/vp_token_bbs_ldp.json}}
-
 
 # IANA Considerations
 
