@@ -854,10 +854,70 @@
 
   <back>
     <references title="Normative References">
-      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.2119"?>
-      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.3986"?>
-      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.6749"?>
-      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.7230"?>
+      <!-- Reference from https://bib.ietf.org/public/rfc/bibxml/reference.RFC.2119.xml -->
+
+<reference anchor="RFC2119" target="https://www.rfc-editor.org/info/rfc2119">
+  <front>
+    <title>Key words for use in RFCs to Indicate Requirement Levels</title>
+    <author fullname="S. Bradner" initials="S" surname="Bradner"/>
+    <date month="March" year="1997"/>
+    <abstract>
+      <t>In many standards track documents several words are used to signify the requirements in the specification.  These words are often capitalized.  This document defines these words as they should be interpreted in IETF documents.  This document specifies an Internet Best Current Practices for the Internet Community, and requests discussion and suggestions for improvements.</t>
+    </abstract>
+  </front>
+  <seriesInfo name="BCP" value="14"/>
+  <seriesInfo name="RFC" value="2119"/>
+  <seriesInfo name="DOI" value="10.17487/RFC2119"/>
+</reference>
+
+      <!-- Reference from https://bib.ietf.org/public/rfc/bibxml/reference.RFC.3986.xml -->
+
+<reference anchor="RFC3986" target="https://www.rfc-editor.org/info/rfc3986">
+  <front>
+    <title>Uniform Resource Identifier (URI): Generic Syntax</title>
+    <author fullname="T. Berners-Lee" initials="T" surname="Berners-Lee"/>
+    <author fullname="R. Fielding" initials="R" surname="Fielding"/>
+    <author fullname="L. Masinter" initials="L" surname="Masinter"/>
+    <date month="January" year="2005"/>
+    <abstract>
+      <t>A Uniform Resource Identifier (URI) is a compact sequence of characters that identifies an abstract or physical resource.  This specification defines the generic URI syntax and a process for resolving URI references that might be in relative form, along with guidelines and security considerations for the use of URIs on the Internet.  The URI syntax defines a grammar that is a superset of all valid URIs, allowing an implementation to parse the common components of a URI reference without knowing the scheme-specific requirements of every possible identifier.  This specification does not define a generative grammar for URIs; that task is performed by the individual specifications of each URI scheme. [STANDARDS-TRACK]</t>
+    </abstract>
+  </front>
+  <seriesInfo name="STD" value="66"/>
+  <seriesInfo name="RFC" value="3986"/>
+  <seriesInfo name="DOI" value="10.17487/RFC3986"/>
+</reference>
+
+      <!-- Reference from https://bib.ietf.org/public/rfc/bibxml/reference.RFC.6749.xml -->
+
+<reference anchor="RFC6749" target="https://www.rfc-editor.org/info/rfc6749">
+  <front>
+    <title>The OAuth 2.0 Authorization Framework</title>
+    <author fullname="D. Hardt" initials="D" role="editor" surname="Hardt"/>
+    <date month="October" year="2012"/>
+    <abstract>
+      <t>The OAuth 2.0 authorization framework enables a third-party application to obtain limited access to an HTTP service, either on behalf of a resource owner by orchestrating an approval interaction between the resource owner and the HTTP service, or by allowing the third-party application to obtain access on its own behalf.  This specification replaces and obsoletes the OAuth 1.0 protocol described in RFC 5849. [STANDARDS-TRACK]</t>
+    </abstract>
+  </front>
+  <seriesInfo name="RFC" value="6749"/>
+  <seriesInfo name="DOI" value="10.17487/RFC6749"/>
+</reference>
+
+      <!-- Reference from https://bib.ietf.org/public/rfc/bibxml/reference.RFC.7230.xml -->
+
+<reference anchor="RFC7230" target="https://www.rfc-editor.org/info/rfc7230">
+  <front>
+    <title>Hypertext Transfer Protocol (HTTP/1.1): Message Syntax and Routing</title>
+    <author fullname="R. Fielding" initials="R" role="editor" surname="Fielding"/>
+    <author fullname="J. Reschke" initials="J" role="editor" surname="Reschke"/>
+    <date month="June" year="2014"/>
+    <abstract>
+      <t>The Hypertext Transfer Protocol (HTTP) is a stateless application-level protocol for distributed, collaborative, hypertext information systems.  This document provides an overview of HTTP architecture and its associated terminology, defines the "http" and "https" Uniform Resource Identifier (URI) schemes, defines the HTTP/1.1 message syntax and parsing requirements, and describes related security concerns for implementations.</t>
+    </abstract>
+  </front>
+  <seriesInfo name="RFC" value="7230"/>
+  <seriesInfo name="DOI" value="10.17487/RFC7230"/>
+</reference>
 
       <reference anchor="OpenID.Core" target="https://openid.net/specs/openid-connect-core-1_0.html">
         <front>
@@ -1033,16 +1093,6 @@
 	<seriesInfo name="DOI" value="10.17487/RFC7519"/>
       </reference>
 
-      <reference anchor="IANA.JWT.Claims" target="https://www.iana.org/assignments/jwt">
-        <front>
-          <title>JSON Web Token Claims</title>
-          <author>
-            <organization>IANA</organization>
-          </author>
-	  <date/>
-        </front>
-      </reference>
-
       <reference anchor="IANA.OAuth.Parameters" target="https://www.iana.org/assignments/oauth-parameters">
         <front>
           <title>OAuth Parameters</title>
@@ -1066,12 +1116,111 @@
     </references>
 
     <references title="Informative References">
-      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.2046"?>
-      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.6838"?>
-      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.7591"?>
-      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.8414"?>
-      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.8417"?>
-      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.8725"?>
+      <!-- Reference from https://bib.ietf.org/public/rfc/bibxml/reference.RFC.2046.xml -->
+
+<reference anchor="RFC2046" target="https://www.rfc-editor.org/info/rfc2046">
+  <front>
+    <title>Multipurpose Internet Mail Extensions (MIME) Part Two: Media Types</title>
+    <author fullname="N. Freed" initials="N" surname="Freed"/>
+    <author fullname="N. Borenstein" initials="N" surname="Borenstein"/>
+    <date month="November" year="1996"/>
+    <abstract>
+      <t>This second document defines the general structure of the MIME media typing system and defines an initial set of media types. [STANDARDS-TRACK]</t>
+    </abstract>
+  </front>
+  <seriesInfo name="RFC" value="2046"/>
+  <seriesInfo name="DOI" value="10.17487/RFC2046"/>
+</reference>
+
+      <!-- Reference from https://bib.ietf.org/public/rfc/bibxml/reference.RFC.6838.xml -->
+
+<reference anchor="RFC6838" target="https://www.rfc-editor.org/info/rfc6838">
+  <front>
+    <title>Media Type Specifications and Registration Procedures</title>
+    <author fullname="N. Freed" initials="N" surname="Freed"/>
+    <author fullname="J. Klensin" initials="J" surname="Klensin"/>
+    <author fullname="T. Hansen" initials="T" surname="Hansen"/>
+    <date month="January" year="2013"/>
+    <abstract>
+      <t>This document defines procedures for the specification and registration of media types for use in HTTP, MIME, and other Internet protocols.  This memo documents an Internet Best Current Practice.</t>
+    </abstract>
+  </front>
+  <seriesInfo name="BCP" value="13"/>
+  <seriesInfo name="RFC" value="6838"/>
+  <seriesInfo name="DOI" value="10.17487/RFC6838"/>
+</reference>
+
+      <!-- Reference from https://bib.ietf.org/public/rfc/bibxml/reference.RFC.7591.xml -->
+
+<reference anchor="RFC7591" target="https://www.rfc-editor.org/info/rfc7591">
+  <front>
+    <title>OAuth 2.0 Dynamic Client Registration Protocol</title>
+    <author fullname="J. Richer" initials="J" role="editor" surname="Richer"/>
+    <author fullname="M. Jones" initials="M" surname="Jones"/>
+    <author fullname="J. Bradley" initials="J" surname="Bradley"/>
+    <author fullname="M. Machulak" initials="M" surname="Machulak"/>
+    <author fullname="P. Hunt" initials="P" surname="Hunt"/>
+    <date month="July" year="2015"/>
+    <abstract>
+      <t>This specification defines mechanisms for dynamically registering OAuth 2.0 clients with authorization servers.  Registration requests send a set of desired client metadata values to the authorization server.  The resulting registration responses return a client identifier to use at the authorization server and the client metadata values registered for the client.  The client can then use this registration information to communicate with the authorization server using the OAuth 2.0 protocol.  This specification also defines a set of common client metadata fields and values for clients to use during registration.</t>
+    </abstract>
+  </front>
+  <seriesInfo name="RFC" value="7591"/>
+  <seriesInfo name="DOI" value="10.17487/RFC7591"/>
+</reference>
+
+      <!-- Reference from https://bib.ietf.org/public/rfc/bibxml/reference.RFC.8414.xml -->
+
+<reference anchor="RFC8414" target="https://www.rfc-editor.org/info/rfc8414">
+  <front>
+    <title>OAuth 2.0 Authorization Server Metadata</title>
+    <author fullname="M. Jones" initials="M" surname="Jones"/>
+    <author fullname="N. Sakimura" initials="N" surname="Sakimura"/>
+    <author fullname="J. Bradley" initials="J" surname="Bradley"/>
+    <date month="June" year="2018"/>
+    <abstract>
+      <t>This specification defines a metadata format that an OAuth 2.0 client can use to obtain the information needed to interact with an OAuth 2.0 authorization server, including its endpoint locations and authorization server capabilities.</t>
+    </abstract>
+  </front>
+  <seriesInfo name="RFC" value="8414"/>
+  <seriesInfo name="DOI" value="10.17487/RFC8414"/>
+</reference>
+
+      <!-- Reference from https://bib.ietf.org/public/rfc/bibxml/reference.RFC.8417.xml -->
+
+<reference anchor="RFC8417" target="https://www.rfc-editor.org/info/rfc8417">
+  <front>
+    <title>Security Event Token (SET)</title>
+    <author fullname="P. Hunt" initials="P" role="editor" surname="Hunt"/>
+    <author fullname="M. Jones" initials="M" surname="Jones"/>
+    <author fullname="W. Denniss" initials="W" surname="Denniss"/>
+    <author fullname="M. Ansari" initials="M" surname="Ansari"/>
+    <date month="July" year="2018"/>
+    <abstract>
+      <t>This specification defines the Security Event Token (SET) data structure.  A SET describes statements of fact from the perspective of an issuer about a subject.  These statements of fact represent an event that occurred directly to or about a security subject, for example, a statement about the issuance or revocation of a token on behalf of a subject.  This specification is intended to enable representing security- and identity-related events.  A SET is a JSON Web Token (JWT), which can be optionally signed and/or encrypted.  SETs can be distributed via protocols such as HTTP.</t>
+    </abstract>
+  </front>
+  <seriesInfo name="RFC" value="8417"/>
+  <seriesInfo name="DOI" value="10.17487/RFC8417"/>
+</reference>
+
+      <!-- Reference from https://bib.ietf.org/public/rfc/bibxml/reference.RFC.8725.xml -->
+
+<reference anchor="RFC8725" target="https://www.rfc-editor.org/info/rfc8725">
+  <front>
+    <title>JSON Web Token Best Current Practices</title>
+    <author fullname="Y. Sheffer" initials="Y" surname="Sheffer"/>
+    <author fullname="D. Hardt" initials="D" surname="Hardt"/>
+    <author fullname="M. Jones" initials="M" surname="Jones"/>
+    <date month="February" year="2020"/>
+    <abstract>
+      <t>JSON Web Tokens, also known as JWTs, are URL-safe JSON-based security tokens that contain a set of claims that can be signed and/or encrypted.  JWTs are being widely used and deployed as a simple security token format in numerous protocols and applications, both in the area of digital identity and in other application areas.  This Best Current Practices document updates RFC 7519 to provide actionable guidance leading to secure implementation and deployment of JWTs.</t>
+    </abstract>
+  </front>
+  <seriesInfo name="BCP" value="225"/>
+  <seriesInfo name="RFC" value="8725"/>
+  <seriesInfo name="DOI" value="10.17487/RFC8725"/>
+</reference>
 
       <reference anchor="JWS" target="https://tools.ietf.org/html/rfc7515">
 	<front>
