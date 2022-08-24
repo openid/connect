@@ -406,28 +406,35 @@ RPs indicate the trust frameworks that they support using the `trust_frameworks`
 Each trust framework definition contains the following parameters:
    * `type`: REQUIRED. A URI that unambiguously identifies a trust framework that the RP supports, for example, https://openid.net/specs/openid-connect-federation-1_0.html and https://train.trust-scheme.de/info
    * `info`: OPTIONAL. A URL that provides a human readable description of the trust framework.
-   * `identifiers`: REQUIRED. A set of JSON strings, each string identifying one particular trust scheme or trust federation of the framework type that the RP is a member of. The format of the JSON string is determined by the rules of the trust framework, for example, each trust scheme in TRAIN is identified by a DNS name, whilst each federation in OpenID Connect is identified by the id (URL) of a trust anchor.
+   * `identifiers`: REQUIRED. A set of JSON objects, each object identifying one particular trust scheme or trust federation of the framework type that the RP is a member of. The format of the JSON object is determined by the rules of the trust framework, for example, each trust scheme in TRAIN is identified by a DNS name, whilst each federation in OpenID Connect may be identified by its trust marks.
 
-The following is an example of the metadata for an RP that says it is a member of two TRAIN trust schemes
+The following is a non-normative example of the metadata for an RP that says it is a member of two TRAIN trust schemes
 
 ```
 {
 	“trust_frameworks": [{
 		"type": "https://train.trust-scheme.de/info",
 		"info": "https://dl.gi.de/bitstream/handle/20.500.12116/38702/proceedings-02.pdf",
-		“identifiers": ["example.tso.com", "ssi.company.uk"]
+		"identifiers": [{
+                "dns": ["example.tso.com ",
+                    "ssi.company.uk "
+                ]
+            }]
 	}]
 }
 ```
 
-The following is an example of the metadata for an RP that says it is a member of the edugain OpenID Trust Federation
+The following is a non-normative example of the metadata for an RP that says it is a member of a government operated OpenID Trust Federation
 
 ```
 {
 	“trust_framework": [{
-		"type": "https://openid.net/specs/openid-connect-federation-1_0.html",
-		"info": "https://openid.net/specs/openid-connect-federation-1_0.html",
-		“identifiers": ["https://edugain.geant.org"]
+	"type": "https://gov.country",
+            "info": "https://that-fancy.page",
+            "identifiers ": [{
+                "trust_marks": "[as they actually are defined in oidc fed]",
+                "verifiable_stuffs": "[vp]"
+            }]
 	}]
 }
 ```
