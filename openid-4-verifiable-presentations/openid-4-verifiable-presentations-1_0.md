@@ -401,7 +401,7 @@ This specification defines new client metadata parameters according to [@!RFC759
 
 RPs indicate the trust frameworks that they support using the `trust_frameworks` parameter.
 
-* `trust_frameworks`: An object that contains the definitions of each trust framework that the RP supports. These are hints to the reader of the metadata informing it how to determine if the RP can be trusted. If the reader understands the trust framework type, then it knows how to determine if the RP is a member of the identified scheme by using the methods particular to the trust framework. If the reader does not understand the trust framework type, then it does not know how to determine if the RP can be trusted.
+* `trust_frameworks`: An object that contains the definitions of each trust framework that the RP supports. These are hints to the reader (software) of the metadata informing it how to programmatically determine if the RP can be trusted. If the reader understands the trust framework type, then it knows how to programmatically determine if the RP is a member of the identified scheme by using the methods particular to the trust framework. If the reader does not understand the trust framework type, then it does not know how to programmatically determine if the RP can be trusted.
 
 Each trust framework definition contains the following parameters:
    * `type`: REQUIRED. A URI that unambiguously identifies a trust framework that the RP supports, for example, https://openid.net/specs/openid-connect-federation-1_0.html and https://train.trust-scheme.de/info
