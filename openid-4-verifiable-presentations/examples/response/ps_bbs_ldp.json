@@ -9,12 +9,7 @@
             "path_nested": {
                 "id": "id_credential_with_constraints",
                 "format": "ldp_vc",
-                "path": "$.verifiableCredential[0].credentialSubject.given_name"
-            },
-            "path_nested": {
-                "id": "id_credential_with_constraints",
-                "format": "ldp_vc",
-                "path": "$.verifiableCredential[0].credentialSubject.family_name"
+                "path": "$.verifiableCredential[0]"
             }
         }
     ]
