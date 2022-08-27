@@ -23,7 +23,7 @@
 
   <front>
     <title abbrev="OpenID Connect Back-Channel Logout 1.0">OpenID Connect
-    Back-Channel Logout 1.0 - draft 08</title>
+    Back-Channel Logout 1.0 - draft 09</title>
 
     <author fullname="Michael B. Jones" initials="M.B." surname="Jones">
       <organization abbrev="Microsoft">Microsoft</organization>
@@ -41,7 +41,7 @@
       </address>
     </author>
 
-    <date day="24" month="May" year="2022" />
+    <date day="23" month="August" year="2022" />
 
     <workgroup>OpenID Connect Working Group</workgroup>
 
@@ -453,6 +453,17 @@
   logout_token=eyJhbGci ... .eyJpc3Mi ... .T3BlbklE ...
 ]]></artwork>
 	</figure>
+
+	<t>
+	  The OP should not retransmit a Back-Channel Logout Request unless the OP suspects that
+	  previous transmissions may have failed due to potentially recoverable errors
+	  (such as network outage or temporary service interruption at either the OP or RP).
+	  In this case, the OP SHOULD delay retransmission for an appropriate amount of time
+	  to avoid overwhelming the RP.
+	  In all other cases, the OP SHOULD NOT retransmit a Back-Channel Logout Request.
+	  (Note that this is the same retransmission logic as specified in
+	  <xref target="RFC8935">Push-Based Security Event Token (SET) Delivery Using HTTP</xref>.)
+	</t>
       </section>
 
       <section anchor="Validation" title="Logout Token Validation">
@@ -1222,6 +1233,25 @@
   <seriesInfo name="DOI" value="10.17487/RFC8725"/>
 </reference>
 
+      <!-- Reference from https://bib.ietf.org/public/rfc/bibxml/reference.RFC.8935.xml -->
+
+<reference anchor="RFC8935" target="https://www.rfc-editor.org/info/rfc8935">
+  <front>
+    <title>Push-Based Security Event Token (SET) Delivery Using HTTP</title>
+    <author fullname="A. Backman" initials="A" role="editor" surname="Backman"/>
+    <author fullname="M. Jones" initials="M" role="editor" surname="Jones"/>
+    <author fullname="M. Scurtescu" initials="M" surname="Scurtescu"/>
+    <author fullname="M. Ansari" initials="M" surname="Ansari"/>
+    <author fullname="A. Nadalin" initials="A" surname="Nadalin"/>
+    <date month="November" year="2020"/>
+    <abstract>
+      <t>This specification defines how a Security Event Token (SET) can be delivered to an intended recipient using HTTP POST over TLS.  The SET is transmitted in the body of an HTTP POST request to an endpoint operated by the recipient, and the recipient indicates successful or failed transmission via the HTTP response.</t>
+    </abstract>
+  </front>
+  <seriesInfo name="RFC" value="8935"/>
+  <seriesInfo name="DOI" value="10.17487/RFC8935"/>
+</reference>
+
       <reference anchor="JWS" target="https://tools.ietf.org/html/rfc7515">
 	<front>
 	  <title>JSON Web Signature (JWS)</title>
@@ -1310,6 +1340,16 @@
 
     <section anchor="History" title="Document History">
       <t>[[ To be removed from the final specification ]]</t>
+
+      <t>
+	-09
+        <list style="symbols">
+	  <t>
+	    Fixed #1605 - Specified how to handle failed requests, using the same language as RFC 8935
+	    (Push-Based Security Event Token (SET) Delivery Using HTTP).
+	  </t>
+	</list>
+      </t>
 
       <t>
 	-08
