@@ -123,14 +123,14 @@ This specification defines the following mechanisms to allow Wallet applications
 * A newly defined Credential Endpoint from which Credentials can be issued. See (#credential-endpoint).
 * An optional mechanism for the Issuer to initiate the issuance. See (#issuance_initiation_endpoint).
 * An extended Authorization Request that allows to request authorization to request issuance of Credentials of specific types. See (#credential-authz-request).
-* An optional ability to bind an issued Credential to a cryptographic key material. The Credential request therefore allows to convey a proof of posession for the key material. Multiple proof types are supported. See (#credential_request). 
+* An optional ability to bind an issued Credential to a cryptographic key material. The Credential request therefore allows to convey a binding materiall. Multiple binding material formats are supported. See (#credential_request). 
 * A mechanism for the Deferred Credential Issuance. See (#deferred-credential-issuance).
 * A mechanism for the Issuer to publish metadata about the Credential it is capable of issuing. See (#server-metadata)
 * A mechanism that allows issuance of multiple Credentials of same or different type. See (#token-response) and (#credential-response).
 
 The Wallet sends one Credential Request per individual Credential. The wallet MAY use the same access token to send multiple Credential Requests to request issuance of 
-  - multiple Credentials of different types bound to the same proof, or
-  - multiple Credentials of the same type bound to different proofs
+  - multiple Credentials of different types bound to the same binding material, or
+  - multiple Credentials of the same type bound to different binding materials
 
 The Issuer MAY also request Credential presentation as means to authenticate or identify the User during the Issuance Flow as illustrated in a use case in (#use-case-2).
 
@@ -174,7 +174,8 @@ ToDo: discuss if need to illustrate the verifier... per use-case-1
         |                |      Token Response (access_token)                   |
         |                |<-----------------------------------------------------|    
         |                |                                                      |
-        |                |  (3) Credential Request (access_token, proof(s))     |
+        |                |  (3) Credential Request (access_token,               |
+        |                |      binding material(s))                            |
         |                |----------------------------------------------------->| 
         |                |      Credential Response                             |
         |                |      (credential(s) OR acceptance_token)             |
@@ -187,7 +188,7 @@ Figure: Issuance using Authorization code flow
 
 (2) The Wallet sends a Token Request to the Issuer's Token Endpoint with the authorization code obtained in step (2). The Issuer returns an Access Token in the Token Request upon successfully validating authorization code. This step happens in the backchannel using server to server communication. This step is defined in (#token_endpoint).
 
-(3) The Wallet sends a Credential Request to the Issuer's Credential Endpoint with the Access Token and proof of possession of the public key to which the the issued VC shall be bound. Upon successfully validating Access Token and proof, the Issuer returns a VC in the Credential Response if it is able to issue a Credential right away. This step is defined in (#credential-endpoint).
+(3) The Wallet sends a Credential Request to the Issuer's Credential Endpoint with the Access Token and binding material of the public key to which the the issued VC shall be bound. Upon successfully validating Access Token and binding material, the Issuer returns a VC in the Credential Response if it is able to issue a Credential right away. This step is defined in (#credential-endpoint).
 
 If the Issuer requires more time to issue a Credential, the Issuer may returns an Acceptance Token to the Wallet with the information when the Wallet can start sending Deferred Credential Request to obtain an issued Credential as defined in (#deferred-credential-issuance).
 
@@ -226,7 +227,8 @@ The diagram is based on an Issuer initiated flow illustrated in a use case in (#
         |                |      Token Response (access_token)                   |
         |                |<-----------------------------------------------------|    
         |                |                                                      |
-        |                |  (3) Credential Request (access_token, proof(s))     |
+        |                |  (3) Credential Request (access_token,               |
+        |                |      binding material(s))                            |
         |                |----------------------------------------------------->| 
         |                |      Credential Response                             |
         |                |      (credential(s))                                 |
@@ -266,7 +268,7 @@ Existing OAuth 2.0 mechanisms are extended as following:
 * Client Metadata: new metadata parameter is added to allow a Wallet (acting as OAuth 2.0 client) to publish its issuance initiation endpoint.
 * Server Metadata: New metadata parameters are added to allow the client to determine what types of verifiable Credentials a particular OAuth 2.0 Authorization Server is able to issue along with additional information about formats and prerequisites.
 * Authorization Endpoint: The `authorization_details` parameter is extended to allow clients to specify types of the Credentials when requesting authorization for issuance. These extension can also be used via the Pushed Authorization Endpoint, which is recommended by this specification. 
-* Token Endpoint: optional parameters are added to the token endpoint to provide the client with a nonce to be used for proof of possession of key material in a subsequent request to the Credential endpoint. 
+* Token Endpoint: optional parameters are added to the token endpoint to provide the client with a nonce to be used for binding material in a subsequent request to the Credential endpoint. 
 
 ToDo: potentially add a section that explains basics of OAuth 2.0 (perhaps an addendum).
 
@@ -533,7 +535,7 @@ Token Requests are made as defined in [@!RFC6749].
 
 In addition to the response parameters defined in [@!RFC6749], the AS MAY return the following parameters:
 
-* `c_nonce`: OPTIONAL. JSON string containing a nonce to be used to create a proof of possession of key material when requesting a Credential (see (#credential_request)).
+* `c_nonce`: OPTIONAL. JSON string containing a nonce to be used to create a binding material when requesting a Credential (see (#credential_request)).
 * `c_nonce_expires_in`: OPTIONAL. JSON integer denoting the lifetime in seconds of the `c_nonce`.
 * `authorization_pending`: OPTIONAL. JSON Boolean. In pre-authorized code flow, the Token Request is still pending as the issuer is waiting for the end user interaction to complete. The client SHOULD repeat the Token Request. Before each new request, the client MUST wait at least the number of seconds specified by the "interval" response parameter. ToDo: clarify boolean.
 * `interval`: OPTIONAL. The minimum amount of time in seconds that the client SHOULD wait between polling requests to the token endpoint in pre-authorized code flow.  If no value is provided, clients MUST use 5 as the default.
@@ -589,8 +591,8 @@ Note that claims in the Credential are usually about the End-User who possesses 
 
 For cryptographic binding, the Client has the following options to provide cryptographic binding material for a requested Credential as defined in (#credential_request):
 
-1. Provide proof of control alongside key material (`proof` that includes `sub_jwk` or `did`)
-1. Provide only proof of control without the key material (`proof` that does not include `sub_jwk` or `did`)
+1. Provide key material (`binding_material` that includes `jwk` or `did`)
+1. Provide binding material without the key material (`binding_material` that does not include `jwk` or `did`)
 
 ## Credential Request {#credential_request}
 
@@ -599,43 +601,53 @@ A Client makes a Credential Request to the Credential Endpoint by sending the fo
 * `type`: REQUIRED. Type of a Credential being requested. It corresponds to a `type` property in a Issuer metadata.
 * `format`: OPTIONAL. Format of the Credential to be issued. If not present, the issuer will determine the Credential 
 format based on the client's format default.
-* `proof` OPTIONAL. JSON Object containing proof of possession of the key material the issued Credential shall be 
-bound to. The `proof` object MUST contain the following `proof_type` element which determines its structure:
+* `binding_method`: OPTIONAL. JSON string denoting the mechanism how the Issuer would like to bind issued credential to the Holder. See (#binding_method) for the details.
+* `binding_material`: OPTIONAL. Object containing binding material of possession of the key material the issued Credential shall be bound to. See (#binding_material) for the details.
+* `attestation`: OPTIONAL. Object containing attestation containing the information how private keys are managed by the Wallet. See (#attestation_object) for the details. 
 
-  * `proof_type`: REQUIRED. JSON String denoting the proof type. 
+### `binding_method` values {#binding_method}
 
-* `attestation` OPTIONAL. JSON Object containing attestation containing the information how private keys are managed by the Wallet. See (#attestations) for the details. The `attestation` object MUST contain the following `attestation_type` element which determines its structure:
+The following are the valid values for `binding_method` property:
 
-  * `attestation_type`: REQUIRED. JSON String denoting the proof type. 
+* `public_key`: Public key of the Holder of the Credential is included in the issuer-signed Credential. Holder has to prove control over the corresponding key pair during presentation of the Credential.
+* `zkp`: Holder can prove legitimate possession of the credential using advanced cryptography without revealing key pair.
+* `biometrics`: Issuer-signed Credential includes biometric data that the Verifier has to use to verify Holder of the Credential during presentation. Often used during in-person presentations.
+* `claim_based`: During presentation, Holder has to present another Credential that contains some of the same claims as the issued credential, but is secured with another binding method.
 
-This specification defines the following values for `proof_type`:
+### Structure of a `binding_material` object {#binding_material}
 
-* `jwt`: objects of this type contain a single `jwt` element with a JWS [@!RFC7515] as proof of possession. The JWT MUST contain the following elements:
-    * `kid`: CONDITIONAL. JWT header containing the key ID. If the Credential shall be bound to a DID, the `kid` refers to a DID URL which identifies a particular key in the DID Document that the Credential shall be bound to. MUST NOT be present if `jwk` or `x5c` is present.
-    * `jwk`: CONDITIONAL. JWT header containing the key material the new Credential shall be bound to. MUST NOT be present if `kid` or `x5c` is present.
+The `binding_material` object MUST contain the following `binding_material_format` element which determines its structure:
+
+  * `binding_material_format`: REQUIRED. JSON String denoting the binding material format. Valid values include `jwt`.
+  * `jwt`: CONDITIONAL. MUST be present when `binding_material_format` value is `jwt`. Objects of this type contain a single `jwt` element with a JWS [@!RFC7515] as binding material. The JWT MUST contain the following elements:
+    * `kid`: CONDITIONAL. JWT header containing the key ID. If the Credential shall be bound to a DID, the `kid` refers to a DID URL which identifies a particular key in the DID Document that the Credential shall be bound to. MUST NOT be present if `jwk` is present.
+    * `jwk`: CONDITIONAL. JWT header containing the key material the new Credential shall be bound to. MUST NOT be present if `kid` is present.
     * `iss`: REQUIRED (string). The value of this claim MUST be the client_id of the client making the credential request.
     * `aud`: REQUIRED (string). The value of this claim MUST be the issuer URL of credential issuer.
-    * `iat`: REQUIRED (number). The value of this claim MUST be the time at which the proof was issued using the syntax defined in [@!RFC7519].
+    * `iat`: REQUIRED (number). The value of this claim MUST be the time at which the binding material was issued using the syntax defined in [@!RFC7519].
     * `nonce`: REQUIRED (string). The value type of this claim MUST be a string, where the value is a `c_nonce` provided by the credential issuer.
 
-This specification defines the following values for `attestation_type`:
+The `binding_material` element MUST incorporate a `c_nonce` value generated by the Credential issuer and the Credential issuer's identifier (audience) to allow the Credential issuer to detect replay. The way that data is incorporated depends on the binding material type. In a JWT, for example, the `c_nonce` is conveyd in the `nonce` claims whereas the audience is conveyed in the `aud` claim. In a Linked Data proof, for example, the `c_nonce` is included as the `challenge` element in the proof object and the issuer (the intended audience) is included as the `domain` element.
 
-* `jwt`: objects of this type contain a single `jwt` element with a JWS [@!RFC7515] as proof of possession. The JWT MUST contain the following elements:
-    * `x5c`: CONDITIONAL. JWT header containing a certificate or certificate chain corresponding to the key used to sign the JWT. This element may be used to convey a key attestation. In such a case, the actual key certificate will contain attributes related to the key properties. MUST NOT be present if `kid` or `jwk` is present.
+The Issuer MUST validate that the `binding_material` is actually signed by a key identified in `kid` parameter.
+
+### Structure of an `attestation` object {attestation_object}
+
+The `attestation` object MUST contain the following `attestation_format` element which determines its structure:
+
+  * `attestation_format`: REQUIRED. JSON String denoting the attestation format. Valid values include `jwt`.
+  * `jwt`: CONDITIONAL. MUST be present when `attestation_format` value is `jwt`. Objects of this type contain a single `jwt` element with a JWS [@!RFC7515] as attestation. The JWT MUST contain the following elements:
+    * `x5c`: REQUIRED. JWT header containing a certificate or certificate chain corresponding to the key used to sign the JWT. This element may be used to convey a key attestation. In such a case, the actual key certificate will contain attributes related to the key properties.
     * `iss`: REQUIRED (string). The value of this claim MUST be the client_id of the client making the credential request.
     * `aud`: REQUIRED (string). The value of this claim MUST be the issuer URL of credential issuer.
-    * `iat`: REQUIRED (number). The value of this claim MUST be the time at which the proof was issued using the syntax defined in [@!RFC7519].
+    * `iat`: REQUIRED (number). The value of this claim MUST be the time at which the attestation was issued using the syntax defined in [@!RFC7519].
     * `nonce`: REQUIRED (string). The value type of this claim MUST be a string, where the value is a `c_nonce` provided by the credential issuer. 
 
-The `proof` element MUST incorporate a `c_nonce` value generated by the Credential issuer and the Credential issuer's identifier (audience) to allow the Credential issuer to detect replay. The way that data is incorporated depends on the proof type. In a JWT, for example, the `c_nonce` is conveyd in the `nonce` claims whereas the audience is conveyed in the `aud` claim. In a Linked Data proof, for example, the `c_nonce` is included as the `challenge` element in the proof object and the issuer (the intended audience) is included as the `domain` element.
-
-The Issuer MUST validate that the `proof` is actually signed by a key identified in `kid` parameter.
-
-Below is a non-normative example of a `proof` parameter (line breaks for display purposes only):
+Below is a non-normative example of a `binding_material` object (line breaks for display purposes only):
 
 ```json
 {
-  "proof_type": "jwt",
+  "binding_material_format": "jwt",
   "jwt": "eyJraWQiOiJkaWQ6ZXhhbXBsZTplYmZlYjFmNzEyZWJjNmYxYzI3NmUxMmVjMjEva2V5cy8
   xIiwiYWxnIjoiRVMyNTYiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJzNkJoZFJrcXQzIiwiYXVkIjoiaHR
   0cHM6Ly9zZXJ2ZXIuZXhhbXBsZS5jb20iLCJpYXQiOiIyMDE4LTA5LTE0VDIxOjE5OjEwWiIsIm5vbm
@@ -658,7 +670,29 @@ where the JWT looks like this:
 }
 ```
 
-Here is another example JWT not only proving possession of a private key but also providing key attestation data for that key:
+Below is a non-normative example when in addition to a `binding_material` object, `attestation` object is also provided:
+
+```json
+{
+  "binding_method": "public_key",
+  "binding_meterial": {
+    "binding_material_format": "jwt",
+    "jwt": "eyJraWQiOiJkaWQ6ZXhhbXBsZTplYmZlYjFmNzEyZWJjNmYxYzI3NmUxMmVjMjEva2V5cy8
+    xIiwiYWxnIjoiRVMyNTYiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJzNkJoZFJrcXQzIiwiYXVkIjoiaHR
+    0cHM6Ly9zZXJ2ZXIuZXhhbXBsZS5jb20iLCJpYXQiOiIyMDE4LTA5LTE0VDIxOjE5OjEwWiIsIm5vbm
+    NlIjoidFppZ25zbkZicCJ9.ewdkIkPV50iOeBUqMXCC_aZKPxgihac0aW9EkL1nOzM"
+  },
+  "attestation": {
+    "attestation_format": "jwt",
+    "jwt": "ew0KICAiYWxnIjogIkVTMjU2IiwNCiAgIng1YyI6WzxrZXkgY2VydGlmaWNhdGUgKyBjZXJ0
+    aWZpY2F0ZSBjaGFpbiBmb3IgYXR0ZXN0YXRpb24-XQ0KfS4NCnsNCiAgImlzcyI6ICJzNkJoZFJrcXQz
+    IiwNCiAgImF1ZCI6ICJodHRwczovL3NlcnZlci5leGFtcGxlLmNvbSIsDQogICJpYXQiOiAxNjU5MTQ1
+    OTI0LA0KICAibm9uY2UiOiAidFppZ25zbkZicCINCn0"
+  }  
+}
+```
+
+where the `attestation` JWT looks like this:
 
 ```json
 {
@@ -684,9 +718,8 @@ Authorization: BEARER czZCaGRSa3F0MzpnWDFmQmF0M2JW
 {
   "type": "https://did.example.org/healthCard"
   "format": "ldp_vc",
-  "did": "did:example:ebfeb1f712ebc6f1c276e12ec21",
-  "proof": {
-    "proof_type": "jwt",
+  "binding_material": {
+    "binding_material_format": "jwt",
     "jwt": "eyJraWQiOiJkaWQ6ZXhhbXBsZTplYmZlYjFmNzEyZWJjNmYxYzI3NmUxMmVjMjEva2V5cy8
     xIiwiYWxnIjoiRVMyNTYiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJzNkJoZFJrcXQzIiwiYXVkIjoiaHR
     0cHM6Ly9zZXJ2ZXIuZXhhbXBsZS5jb20iLCJpYXQiOiIyMDE4LTA5LTE0VDIxOjE5OjEwWiIsIm5vbm
@@ -704,7 +737,7 @@ The following claims are used in the Credential Response:
 * `format`: REQUIRED. JSON string denoting the Credential's format
 * `credential`: OPTIONAL. Contains issued Credential. MUST be present when `acceptance_token` is not returned. MAY be a JSON string or a JSON object, depending on the Credential format. See the table below for the format specific encoding requirements.
 * `acceptance_token`: OPTIONAL. A JSON string containing a token subsequently used to obtain a Credential. MUST be present when `credential` is not returned.
-* `c_nonce`: OPTIONAL. JSON string containing a nonce to be used to create a proof of possession of key material when requesting a Credential (see (#credential_request)).
+* `c_nonce`: OPTIONAL. JSON string containing a nonce to be used to create a binding material of key material when requesting a Credential (see (#credential_request)).
 * `c_nonce_expires_in`: OPTIONAL. JSON integer denoting the lifetime in seconds of the `c_nonce`.
 
 The following table defines how issued Credential MUST be returned in the `credential` claim in the Credential Response based on the Credential format and the signature scheme. This specification does not require any additional encoding when Credential format is already represented as a JSON object or a JSON string.
@@ -754,9 +787,9 @@ Note: Consider using CIBA Ping/Push OR SSE Poll/Push. Another option would be th
 
 ## Credential Issuer-Provided Nonce
 
-Upon receiving a Credential Request, the Credential issuer MAY require the client to send a proof of possession of the key material it wants a Credential to be bound to. This proof MUST incorporate a nonce generated by the Credential issuer. The Credential issuer will provide the client with a nonce in an error response to any Credential Request not including such a proof or including an invalid proof. 
+Upon receiving a Credential Request, the Credential issuer MAY require the client to send a binding material it wants a Credential to be bound to. This binding material MUST incorporate a nonce generated by the Credential issuer. The Credential issuer will provide the client with a nonce in an error response to any Credential Request not including such a binding material or including an invalid binding material. 
 
-Below is a non-normative example of a Credential Response when the Issuer is requesting a Wallet to provide in a subsequent Credential Request a `proof` that is bound to a `c_nonce`:
+Below is a non-normative example of a Credential Response when the Issuer is requesting a Wallet to provide in a subsequent Credential Request a `binding_material` that is bound to a `c_nonce`:
 
 ```
 HTTP/1.1 400 Bad Request
@@ -764,9 +797,9 @@ HTTP/1.1 400 Bad Request
   Cache-Control: no-store
 
 {
-  "error": "invalid_or_missing_proof"
+  "error": "invalid_or_missing_binding_material"
   "error_description":
-       "Credential issuer requires proof element in Credential Request"
+       "Credential issuer requires binding material element in Credential Request"
   "c_nonce": "8YE9hCnyV2",
   "c_nonce_expires_in": 86400  
 }
@@ -948,12 +981,12 @@ Note: The Client MAY use other mechanisms to obtain information about the verifi
 
 Credential Issuers often want to know what Wallet they are issuing Credentials to and how private keys are managed for the following reasons:
 
-* The issuer may wants to ensure that private keys are properly protected from exfiltration and replay in order to prevent an adversary from impersonating the legitimate Credential holder by presenting her Credential.
+* The issuer may wants to ensure that private keys are properly protected from exfiltration and replay in order to prevent an adversary from impersonating the legitimate Credential Holder by presenting her Credential.
 * The issuer may also want to ensure that the Wallet managing the Credentials adheres to certain policies and, potentially, was audited and approved under a certain regulatory and/or commercial scheme. 
 
 The following mechanisms in concert can be utilized to fulfill those objectives:
 
-**Key attestation** is a mechanism where the device or security element in a device asserts the key management policy to the application creating and using this key. The Android Operating System, for example, provides apps with a certificate including a certificate chain asserting that a particular key is managed, for example, by an hardware security module [ref]. The Wallet can provide this data along with the proof of possession in the Credential Request (see (#credential_request) for an example) to allow the issuer to validate the key management policy. This indeed requires the issuer to rely on the trust anchor of the certificate chain and the respective key management policy. Another variant of this concept is the use of a Qualified Electronic Signature as defined by the eIDAS regulation [ref]. This signatures won't reveal the concrete properties of the associated private key to the issuer. However, due to the regulatory regime of eIDAS the issuer can deduce that the signing service manages the private keys according to this regime and fulfills very high security requirements. As another example, FIDO2 allows RPs to obtain an attestation along with the public key from a FIDO authenticator. That implicitly asserts the key management policy since the assertion is bound to a certain authenticator model and its key management capabilities. 
+**Key attestation** is a mechanism where the device or security element in a device asserts the key management policy to the application creating and using this key. The Android Operating System, for example, provides apps with a certificate including a certificate chain asserting that a particular key is managed, for example, by an hardware security module [ref]. The Wallet can provide this data along with the binding material in the Credential Request (see (#credential_request) for an example) to allow the issuer to validate the key management policy. This indeed requires the issuer to rely on the trust anchor of the certificate chain and the respective key management policy. Another variant of this concept is the use of a Qualified Electronic Signature as defined by the eIDAS regulation [ref]. This signatures won't reveal the concrete properties of the associated private key to the issuer. However, due to the regulatory regime of eIDAS the issuer can deduce that the signing service manages the private keys according to this regime and fulfills very high security requirements. As another example, FIDO2 allows RPs to obtain an attestation along with the public key from a FIDO authenticator. That implicitly asserts the key management policy since the assertion is bound to a certain authenticator model and its key management capabilities. 
 
 **App Attestation**: Key attestation, however, does not establish trust in the application storing the Credential and producing presentation of that Credential. App attestation as provided by mobile operating systems, e.g. iOS's DeviceCheck or Android's Safetynet, allows a server system to ensure it is communicating to a legitimate instance of its genuine app. Those mechanisms can be utilized to validate the internal integrity of the Wallet (as a whole).  
 
@@ -961,7 +994,7 @@ The following mechanisms in concert can be utilized to fulfill those objectives:
 
 **Client authentication** allows a Wallet to authenticate with an issuer. In order to securely authenticate, the Wallet needs to utilize a backend component managing the key material and processing the secure communication with the Credential issuer. The issuer may establish trust with the Wallet based on its own auditing or a trusted 3rd party attestation of the conformance of the Wallet to a certain policy.  
 
-Directly using key, app and/or device attestations to proof certain capabilities towards an issuer is an obvious option. However, this at least requires platform mechanisms that issue signed assertions that 3rd parties can evaluate, which is not always the case (e.g. iOS's DeviceCheck). Also, such an approach creates dependencies on platform specific mechanisms, trust anchors, and platform specific identifiers (e.g. Android `apkPackageName`) and it reveals information about the internal design of a Wallet app. Implementers should take that consequences into account. 
+Directly using key, app and/or device attestations to prove certain capabilities towards an issuer is an obvious option. However, this at least requires platform mechanisms that issue signed assertions that 3rd parties can evaluate, which is not always the case (e.g. iOS's DeviceCheck). Also, such an approach creates dependencies on platform specific mechanisms, trust anchors, and platform specific identifiers (e.g. Android `apkPackageName`) and it reveals information about the internal design of a Wallet app. Implementers should take that consequences into account. 
 
 The approach recommended by this specification is that the issuer relies on the OAuth 2.0 client authentication to establish trust in the Wallet and leaves it to the Wallet to ensure its internal integrity using app and key attestation (if required). This establishes a clean separation between the different hemispheres and a uniform interface irrespectively of the Wallet's architecture (e.g. native vs web Wallet). Client authentication can be performed with Credentials registered with the issuer or with assertions issued to the Wallet by a 3rd party the issuer trusts for the purpose of client authentication.  
 
@@ -996,7 +1029,7 @@ In claim-based binding, no cryptographic binding material is provided. Instead, 
 
 ## Binding of the Credential without Cryptographic Binding nor Claim-based Binding {#no-binding}
 
-Some Issuers might choose issuing bearer Credentials without either cryptographic binding nor claim-based binding, because they are meant to be presented without proof of possession.
+Some Issuers might choose issuing bearer Credentials without either cryptographic binding nor claim-based binding, because they are meant to be presented without binding material.
 
 One such use case is low assurance Credentials such as coupons or tickets. 
 
@@ -1171,7 +1204,7 @@ The technology described in this specification was made available from contribut
 
    * added support for requesting Credential authorization with scopes 
    * removed support to pass VPs in the Authorization Request
-   * reworked "proof" parameter definition and added "jwt" proof type
+   * reworked "binding_material" parameter definition and added "jwt" proof type
 
    -03
 
