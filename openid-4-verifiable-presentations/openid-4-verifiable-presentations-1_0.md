@@ -479,6 +479,20 @@ RPs indicate their support for transferring presentation definitions by value an
 
 # Implementation Considerations
 
+## Presentation of Credentials when Internet Connection is Absent (Offline)
+
+This section describes how credentials can be presented when the Client and/or the AS had Internet connection at some point, but do not have it when Credential presentation is requested.
+ 
+* wallet can obtain a RP's public key via QR code (https://bitbucket.org/openid/connect/issues/1482/static-trust-negotiation-in-a-scenario#comment-62338578)
+
+When Client does not have Internet Connection
+
+1. The wallet has to obtain the verifier’s pub key and need to trust it:
+
+the public key, in jwk format, has the claim x5c. In this way the wallet can trust the certificate chain, having stored, before hand, all the certificates of the trusted parties
+a trusted third party has signed the public key in a previous moment, the verifier uses this signed public key, the wallet has all the public keys of these “superior” trusted third parties, to verify the signature
+2. the sub_jwk MAY be signed by a trusted third party. This could involve the requirement to have signed_sub_jwk with a signed JWT in it.
+
 ## Support for Federations/Trust Schemes
 
 Often RPs will want to request verifiable credentials from an issuer who is a member of a federation or trust scheme, rather than from a specific issuer, for example, a "BSc Chemistry Degree" credential from a US University rather than from a specifically named university.
