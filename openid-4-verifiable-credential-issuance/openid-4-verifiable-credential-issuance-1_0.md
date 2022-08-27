@@ -609,7 +609,7 @@ format based on the client's format default.
 
 ### `binding_method` values {#binding_method}
 
-The following are the valid values for `binding_method` property:
+The following is a non-exhaustive list of valid values for `binding_method` property:
 
 * `public_key`: Public key of the Holder of the Credential is included in the issuer-signed Credential. Holder has to prove control over the corresponding key pair during presentation of the Credential.
 * `zkp`: Holder can prove legitimate possession of the credential using advanced cryptography without revealing key pair.
@@ -621,6 +621,7 @@ The following are the valid values for `binding_method` property:
 The `binding_material` object MUST contain the following `binding_material_format` element which determines its structure:
 
   * `binding_material_format`: REQUIRED. JSON String denoting the binding material format. Valid values include `jwt`.
+  * `binding_material_key_type`: CONDITIONAL.  MUST be present when `binding_method` is `public_key`. Non-exhaustive list of valid values are `did`, `jwk` and `jwk-thumbprint`.
   * `jwt`: CONDITIONAL. MUST be present when `binding_material_format` value is `jwt`. Objects of this type contain a single `jwt` element with a JWS [@!RFC7515] as binding material. The JWT MUST contain the following elements:
     * `kid`: CONDITIONAL. JWT header containing the key ID. If the Credential shall be bound to a DID, the `kid` refers to a DID URL which identifies a particular key in the DID Document that the Credential shall be bound to. MUST NOT be present if `jwk` is present.
     * `jwk`: CONDITIONAL. JWT header containing the key material the new Credential shall be bound to. MUST NOT be present if `kid` is present.
@@ -650,6 +651,7 @@ Below is a non-normative example of a `binding_material` object (line breaks for
 ```json
 {
   "binding_material_format": "jwt",
+  "binding_material_key_type": "did",
   "jwt": "eyJraWQiOiJkaWQ6ZXhhbXBsZTplYmZlYjFmNzEyZWJjNmYxYzI3NmUxMmVjMjEva2V5cy8
   xIiwiYWxnIjoiRVMyNTYiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJzNkJoZFJrcXQzIiwiYXVkIjoiaHR
   0cHM6Ly9zZXJ2ZXIuZXhhbXBsZS5jb20iLCJpYXQiOiIyMDE4LTA5LTE0VDIxOjE5OjEwWiIsIm5vbm
@@ -679,6 +681,7 @@ Below is a non-normative example when in addition to a `binding_material` object
   "binding_method": "public_key",
   "binding_meterial": {
     "binding_material_format": "jwt",
+    "binding_material_key_type": "did",
     "jwt": "eyJraWQiOiJkaWQ6ZXhhbXBsZTplYmZlYjFmNzEyZWJjNmYxYzI3NmUxMmVjMjEva2V5cy8
     xIiwiYWxnIjoiRVMyNTYiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJzNkJoZFJrcXQzIiwiYXVkIjoiaHR
     0cHM6Ly9zZXJ2ZXIuZXhhbXBsZS5jb20iLCJpYXQiOiIyMDE4LTA5LTE0VDIxOjE5OjEwWiIsIm5vbm
