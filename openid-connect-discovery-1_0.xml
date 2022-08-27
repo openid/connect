@@ -1738,18 +1738,199 @@
 
   <back>
     <references title="Normative References">
-      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.2119"?>
-      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.2246"?>
-      <?rfc include='http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.3986'?>
-      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.5246"?>
-      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.5322"?>
-      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.5646"?>
-      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.5785"?>
-      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.6125"?>
-      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.6749"?>
-      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.7033"?>
-      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.7159"?>
-      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.7565"?>
+      <!-- Reference from https://bib.ietf.org/public/rfc/bibxml/reference.RFC.2119.xml -->
+
+<reference anchor="RFC2119" target="https://www.rfc-editor.org/info/rfc2119">
+  <front>
+    <title>Key words for use in RFCs to Indicate Requirement Levels</title>
+    <author fullname="S. Bradner" initials="S" surname="Bradner"/>
+    <date month="March" year="1997"/>
+    <abstract>
+      <t>In many standards track documents several words are used to signify the requirements in the specification.  These words are often capitalized.  This document defines these words as they should be interpreted in IETF documents.  This document specifies an Internet Best Current Practices for the Internet Community, and requests discussion and suggestions for improvements.</t>
+    </abstract>
+  </front>
+  <seriesInfo name="BCP" value="14"/>
+  <seriesInfo name="RFC" value="2119"/>
+  <seriesInfo name="DOI" value="10.17487/RFC2119"/>
+</reference>
+
+      <!-- Reference from https://bib.ietf.org/public/rfc/bibxml/reference.RFC.2246.xml -->
+
+<reference anchor="RFC2246" target="https://www.rfc-editor.org/info/rfc2246">
+  <front>
+    <title>The TLS Protocol Version 1.0</title>
+    <author fullname="T. Dierks" initials="T" surname="Dierks"/>
+    <author fullname="C. Allen" initials="C" surname="Allen"/>
+    <date month="January" year="1999"/>
+    <abstract>
+      <t>This document specifies Version 1.0 of the Transport Layer Security (TLS) protocol.  The TLS protocol provides communications privacy over the Internet.  The protocol allows client/server applications to communicate in a way that is designed to prevent eavesdropping, tampering, or message forgery.</t>
+    </abstract>
+  </front>
+  <seriesInfo name="RFC" value="2246"/>
+  <seriesInfo name="DOI" value="10.17487/RFC2246"/>
+</reference>
+
+      <!-- Reference from https://bib.ietf.org/public/rfc/bibxml/reference.RFC.3986.xml -->
+
+<reference anchor="RFC3986" target="https://www.rfc-editor.org/info/rfc3986">
+  <front>
+    <title>Uniform Resource Identifier (URI): Generic Syntax</title>
+    <author fullname="T. Berners-Lee" initials="T" surname="Berners-Lee"/>
+    <author fullname="R. Fielding" initials="R" surname="Fielding"/>
+    <author fullname="L. Masinter" initials="L" surname="Masinter"/>
+    <date month="January" year="2005"/>
+    <abstract>
+      <t>A Uniform Resource Identifier (URI) is a compact sequence of characters that identifies an abstract or physical resource.  This specification defines the generic URI syntax and a process for resolving URI references that might be in relative form, along with guidelines and security considerations for the use of URIs on the Internet.  The URI syntax defines a grammar that is a superset of all valid URIs, allowing an implementation to parse the common components of a URI reference without knowing the scheme-specific requirements of every possible identifier.  This specification does not define a generative grammar for URIs; that task is performed by the individual specifications of each URI scheme. [STANDARDS-TRACK]</t>
+    </abstract>
+  </front>
+  <seriesInfo name="STD" value="66"/>
+  <seriesInfo name="RFC" value="3986"/>
+  <seriesInfo name="DOI" value="10.17487/RFC3986"/>
+</reference>
+
+      <!-- Reference from https://bib.ietf.org/public/rfc/bibxml/reference.RFC.5246.xml -->
+
+<reference anchor="RFC5246" target="https://www.rfc-editor.org/info/rfc5246">
+  <front>
+    <title>The Transport Layer Security (TLS) Protocol Version 1.2</title>
+    <author fullname="T. Dierks" initials="T" surname="Dierks"/>
+    <author fullname="E. Rescorla" initials="E" surname="Rescorla"/>
+    <date month="August" year="2008"/>
+    <abstract>
+      <t>This document specifies Version 1.2 of the Transport Layer Security (TLS) protocol.  The TLS protocol provides communications security over the Internet.  The protocol allows client/server applications to communicate in a way that is designed to prevent eavesdropping, tampering, or message forgery. [STANDARDS-TRACK]</t>
+    </abstract>
+  </front>
+  <seriesInfo name="RFC" value="5246"/>
+  <seriesInfo name="DOI" value="10.17487/RFC5246"/>
+</reference>
+
+      <!-- Reference from https://bib.ietf.org/public/rfc/bibxml/reference.RFC.5322.xml -->
+
+<reference anchor="RFC5322" target="https://www.rfc-editor.org/info/rfc5322">
+  <front>
+    <title>Internet Message Format</title>
+    <author fullname="P. Resnick" initials="P" role="editor" surname="Resnick"/>
+    <date month="October" year="2008"/>
+    <abstract>
+      <t>This document specifies the Internet Message Format (IMF), a syntax for text messages that are sent between computer users, within the framework of "electronic mail" messages.  This specification is a revision of Request For Comments (RFC) 2822, which itself superseded Request For Comments (RFC) 822, "Standard for the Format of ARPA Internet Text Messages", updating it to reflect current practice and incorporating incremental changes that were specified in other RFCs. [STANDARDS-TRACK]</t>
+    </abstract>
+  </front>
+  <seriesInfo name="RFC" value="5322"/>
+  <seriesInfo name="DOI" value="10.17487/RFC5322"/>
+</reference>
+
+      <!-- Reference from https://bib.ietf.org/public/rfc/bibxml/reference.RFC.5646.xml -->
+
+<reference anchor="RFC5646" target="https://www.rfc-editor.org/info/rfc5646">
+  <front>
+    <title>Tags for Identifying Languages</title>
+    <author fullname="A. Phillips" initials="A" role="editor" surname="Phillips"/>
+    <author fullname="M. Davis" initials="M" role="editor" surname="Davis"/>
+    <date month="September" year="2009"/>
+    <abstract>
+      <t>This document describes the structure, content, construction, and semantics of language tags for use in cases where it is desirable to indicate the language used in an information object.  It also describes how to register values for use in language tags and the creation of user-defined extensions for private interchange.  This document specifies an Internet Best Current Practices for the Internet Community, and requests discussion and suggestions for improvements.</t>
+    </abstract>
+  </front>
+  <seriesInfo name="BCP" value="47"/>
+  <seriesInfo name="RFC" value="5646"/>
+  <seriesInfo name="DOI" value="10.17487/RFC5646"/>
+</reference>
+
+      <!-- Reference from https://bib.ietf.org/public/rfc/bibxml/reference.RFC.5785.xml -->
+
+<reference anchor="RFC5785" target="https://www.rfc-editor.org/info/rfc5785">
+  <front>
+    <title>Defining Well-Known Uniform Resource Identifiers (URIs)</title>
+    <author fullname="M. Nottingham" initials="M" surname="Nottingham"/>
+    <author fullname="E. Hammer-Lahav" initials="E" surname="Hammer-Lahav"/>
+    <date month="April" year="2010"/>
+    <abstract>
+      <t>This memo defines a path prefix for "well-known locations", "/.well-known/", in selected Uniform Resource Identifier (URI) schemes. [STANDARDS-TRACK]</t>
+    </abstract>
+  </front>
+  <seriesInfo name="RFC" value="5785"/>
+  <seriesInfo name="DOI" value="10.17487/RFC5785"/>
+</reference>
+
+      <!-- Reference from https://bib.ietf.org/public/rfc/bibxml/reference.RFC.6125.xml -->
+
+<reference anchor="RFC6125" target="https://www.rfc-editor.org/info/rfc6125">
+  <front>
+    <title>Representation and Verification of Domain-Based Application Service Identity within Internet Public Key Infrastructure Using X.509 (PKIX) Certificates in the Context of Transport Layer Security (TLS)</title>
+    <author fullname="P. Saint-Andre" initials="P" surname="Saint-Andre"/>
+    <author fullname="J. Hodges" initials="J" surname="Hodges"/>
+    <date month="March" year="2011"/>
+    <abstract>
+      <t>Many application technologies enable secure communication between two entities by means of Internet Public Key Infrastructure Using X.509 (PKIX) certificates in the context of Transport Layer Security (TLS).  This document specifies procedures for representing and verifying the identity of application services in such interactions. [STANDARDS-TRACK]</t>
+    </abstract>
+  </front>
+  <seriesInfo name="RFC" value="6125"/>
+  <seriesInfo name="DOI" value="10.17487/RFC6125"/>
+</reference>
+
+      <!-- Reference from https://bib.ietf.org/public/rfc/bibxml/reference.RFC.6749.xml -->
+
+<reference anchor="RFC6749" target="https://www.rfc-editor.org/info/rfc6749">
+  <front>
+    <title>The OAuth 2.0 Authorization Framework</title>
+    <author fullname="D. Hardt" initials="D" role="editor" surname="Hardt"/>
+    <date month="October" year="2012"/>
+    <abstract>
+      <t>The OAuth 2.0 authorization framework enables a third-party application to obtain limited access to an HTTP service, either on behalf of a resource owner by orchestrating an approval interaction between the resource owner and the HTTP service, or by allowing the third-party application to obtain access on its own behalf.  This specification replaces and obsoletes the OAuth 1.0 protocol described in RFC 5849. [STANDARDS-TRACK]</t>
+    </abstract>
+  </front>
+  <seriesInfo name="RFC" value="6749"/>
+  <seriesInfo name="DOI" value="10.17487/RFC6749"/>
+</reference>
+
+      <!-- Reference from https://bib.ietf.org/public/rfc/bibxml/reference.RFC.7033.xml -->
+
+<reference anchor="RFC7033" target="https://www.rfc-editor.org/info/rfc7033">
+  <front>
+    <title>WebFinger</title>
+    <author fullname="P. Jones" initials="P" surname="Jones"/>
+    <author fullname="G. Salgueiro" initials="G" surname="Salgueiro"/>
+    <author fullname="M. Jones" initials="M" surname="Jones"/>
+    <author fullname="J. Smarr" initials="J" surname="Smarr"/>
+    <date month="September" year="2013"/>
+    <abstract>
+      <t>This specification defines the WebFinger protocol, which can be used to discover information about people or other entities on the Internet using standard HTTP methods.  WebFinger discovers information for a URI that might not be usable as a locator otherwise, such as account or email URIs.</t>
+    </abstract>
+  </front>
+  <seriesInfo name="RFC" value="7033"/>
+  <seriesInfo name="DOI" value="10.17487/RFC7033"/>
+</reference>
+
+      <!-- Reference from https://bib.ietf.org/public/rfc/bibxml/reference.RFC.7159.xml -->
+
+<reference anchor="RFC7159" target="https://www.rfc-editor.org/info/rfc7159">
+  <front>
+    <title>The JavaScript Object Notation (JSON) Data Interchange Format</title>
+    <author fullname="T. Bray" initials="T" role="editor" surname="Bray"/>
+    <date month="March" year="2014"/>
+    <abstract>
+      <t>JavaScript Object Notation (JSON) is a lightweight, text-based, language-independent data interchange format. It was derived from the ECMAScript Programming Language Standard. JSON defines a small set of formatting rules for the portable representation of structured data.</t>
+      <t>This document removes inconsistencies with other specifications of JSON, repairs specification errors, and offers experience-based interoperability guidance.</t>
+    </abstract>
+  </front>
+  <seriesInfo name="RFC" value="7159"/>
+  <seriesInfo name="DOI" value="10.17487/RFC7159"/>
+</reference>
+
+      <!-- Reference from https://bib.ietf.org/public/rfc/bibxml/reference.RFC.7565.xml -->
+
+<reference anchor="RFC7565" target="https://www.rfc-editor.org/info/rfc7565">
+  <front>
+    <title>The 'acct' URI Scheme</title>
+    <author fullname="P. Saint-Andre" initials="P" surname="Saint-Andre"/>
+    <date month="May" year="2015"/>
+    <abstract>
+      <t>This document defines the 'acct' Uniform Resource Identifier (URI) scheme as a way to identify a user's account at a service provider, irrespective of the particular protocols that can be used to interact with the account.</t>
+    </abstract>
+  </front>
+  <seriesInfo name="RFC" value="7565"/>
+  <seriesInfo name="DOI" value="10.17487/RFC7565"/>
+</reference>
 
       <reference anchor="USA15" target="http://www.unicode.org/reports/tr15/">
 	<front>
@@ -1974,7 +2155,22 @@
 
     <references title="Informative References">
 
-      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.8414"?>
+      <!-- Reference from https://bib.ietf.org/public/rfc/bibxml/reference.RFC.8414.xml -->
+
+<reference anchor="RFC8414" target="https://www.rfc-editor.org/info/rfc8414">
+  <front>
+    <title>OAuth 2.0 Authorization Server Metadata</title>
+    <author fullname="M. Jones" initials="M" surname="Jones"/>
+    <author fullname="N. Sakimura" initials="N" surname="Sakimura"/>
+    <author fullname="J. Bradley" initials="J" surname="Bradley"/>
+    <date month="June" year="2018"/>
+    <abstract>
+      <t>This specification defines a metadata format that an OAuth 2.0 client can use to obtain the information needed to interact with an OAuth 2.0 authorization server, including its endpoint locations and authorization server capabilities.</t>
+    </abstract>
+  </front>
+  <seriesInfo name="RFC" value="8414"/>
+  <seriesInfo name="DOI" value="10.17487/RFC8414"/>
+</reference>
 
       <reference anchor="OpenID.Session" target="https://openid.net/specs/openid-connect-session-1_0.html">
         <front>

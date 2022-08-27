@@ -7,7 +7,7 @@ keyword = ["security", "openid", "ssi"]
 
 [seriesInfo]
 name = "Internet-Draft"
-value = "openid-4-verifiable-presentations-1_0-12"
+value = "openid-4-verifiable-presentations-1_0-13"
 status = "standard"
 
 [[author]]
@@ -81,7 +81,11 @@ A verifiable presentation is a tamper-evident presentation encoded in such a way
 
 Wallet
 
-Entity that receives, stores, presents, and manages Credentials and key material of the End-User. There is no single deployment model of a Wallet: Credentials and keys can both be stored/managed locally by the end-user, or by using a remote self-hosted service, or a remote third party service. In the context of this specification, the Wallet acts as an OAuth 2.0 Client (see [@!RFC6749]) towards the Credential Issuer. 
+Entity that receives, stores, presents, and manages Credentials and key material of the End-User. There is no single deployment model of a Wallet: Credentials and keys can both be stored/managed locally by the end-user, or by using a remote self-hosted service, or a remote third party service. In the context of this specification, the Wallet acts as an OAuth 2.0 Authorization Server (see [@!RFC6749]) towards the Credential Verifier which acts as the OAuth 2.0 Client. 
+
+Base64url Encoding
+
+Base64 encoding using the URL- and filename-safe character set defined in Section 5 of [@!RFC4648], with all trailing '=' characters omitted (as permitted by Section 3.2 of [@!RFC4648]) and without the inclusion of any line breaks, whitespace, or other additional characters. Note that the base64url encoding of the empty octet sequence is the empty string. (See Appendix C of [@!RFC7515] for notes on implementing base64url encoding without padding.)
 
 # Use Cases
 
@@ -121,11 +125,12 @@ Deployments can use any pre-existing OAuth grant type and response type in conju
 The parameters comprising a request for verifiable presentations are given in the following: 
 
 * `response_type`: REQUIRED. this parameter is defined in [@!RFC6749]. The possible values are determined by the response type registry established by [@!RFC6749]. This specification introduces the response type "vp_token". This response type asks the Authorization Server (AS) to return only a VP Token in the Authorization Response. 
+* `scope`: OPTIONAL. this parameter is defined in [@!RFC6749]. The wallet MAY allows verifiers to request presentation of credentials be utilizing a pre-defined scope value. See (#request_scope) for more details.
 * `presentation_definition`: CONDITIONAL. A string containing a `presentation_definition` JSON object as defined in Section 4 of [@!DIF.PresentationExchange]. See (#request_presentation_definition) for more details. 
 * `presentation_definition_uri`: CONDITIONAL. A string containing a URL pointing to a resource where a `presentation_definition` JSON object as defined in Section 4 of [@!DIF.PresentationExchange] can be retrieved . See (#request_presentation_definition_uri) for more details.
 * `nonce`: REQUIRED. This parameter follows the definition given in [@!OpenID.Core]. It is used to securely bind the verifiable presentation(s) provided by the AS to the particular transaction.
 
-Note: A request MUST contain a `presentation_definition` or a `presentation_definition_uri` but both are mutually exclusive. 
+Note: A request MUST contain either a `presentation_definition` or a `presentation_definition_uri` or a single `scope` value representing a presentation definition, those three ways to request credential presentation are mutually exclusive. The wallet MUST refuse any request violating this requirement. 
 
 This is an example request: 
 
@@ -207,6 +212,37 @@ Content-Type: application/json
     ]
 }
 ```
+## scope {#request_scope}
+
+Wallets MAY support requesting presentation of credentials using OAuth 2.0 scope values. 
+
+Such a scope value MUST be an alias for a well-defined presentation definition as it will be 
+refered to in the `presentation_submission` response parameter. 
+
+The concrete scope values and the mapping between a certain scope value and the respective 
+presentation definition is out of scope of this specification. 
+
+Possible options include normative text in a specification defining scope values along with a description of their
+semantics or machine readable definitions in the wallet's server metadata, mapping a scope value to an equivalent 
+`presentation_definition` object as defined in [@!DIF.PresentationExchange]. 
+
+The definition MUST allow the verifier to determine the identifiers for presentation definition and input descriptors 
+used in the respective presentation submission response parameter as well as the credential formats and types in 
+the `vp_token` response parameter.  
+
+It is RECOMMENDED to use collision-resistant scopes values.
+
+Below is a non-normative example of an Authorization Request using the scope value `com.example.IDCardCredential_presentation`, 
+which is an alias for the first presentation definition example given in (#request_presentation_definition):
+
+```
+  GET /authorize?
+    response_type=vp_token
+    &client_id=https%3A%2F%2Fclient.example.org%2Fcb
+    &redirect_uri=https%3A%2F%2Fclient.example.org%2Fcb
+    &scope=com.example.healthCardCredential_presentation
+    &nonce=n-0S6_WzA2Mj HTTP/1.1
+```
 
 # Response {#vp_token_response}
 
@@ -225,11 +261,9 @@ The VP Token either contains a single verifiable presentation or an array of ver
 
 The `presentation_submission` element as defined in [@!DIF.PresentationExchange] links the input descriptor identifiers as specified in the corresponding request to the respective verifiable presentations within the VP Token along with format information. The root of the path expressions in the descriptor map is the respective verifiable presentation, pointing to the respective verifiable credentials.
 
-This `presentation_submission` element MUST be included either in each of the verifiable presentations, or as a separate response parameter alongside vp_token.
+This `presentation_submission` element MUST be included as a separate response parameter alongside the vp_token. Clients MUST ignore any `presentation_submission` element included inside a VP.
 
-`presentation_submission` element might, for example, be included inside each verifiable presentation, if the particular format of the provided presentations does not allow for the direct inclusion of `presentation_submission` elements, or if the AS wants to provide the RP with additional information about the format and structure in advance of the processing of the VP Token.
-
-When processing the response, the Client MUST first look for a `presentation_submission` response parameter, and if not found, look for `presentation_submission` elements inside each verifiable presentation.
+Including the `presentation_submission` element as a separate response parameter allows the AS to provide the RP with additional information about the format and structure in advance of the processing of the VP Token, and can be used even with the credential formats that do not allow for the direct inclusion of `presentation_submission` elements inside a credential itself.
 
 In case the AS returns a single verifiable presentation in the VP Token, the `descriptor_map` would then contain a simple path expression "$".
 
@@ -242,10 +276,6 @@ The following is an example response to a request of a response type `vp_token`,
     &vp_token=...
 ```
 
-The following is an example of a VP with an embedded presentation_submission:
-
-<{{examples/response/vp_token_ldp_vp_with_ps.json}}
-
 This is an example of a VP Token containing a single verifiable presentation
 
 <{{examples/response/vp_token_raw_ldp_vp.json}}
@@ -254,7 +284,7 @@ with a matching `presentation_submission`.
 
 <{{examples/response/presentation_submission.json}}
 
-A `descriptor_map` element MAY also contain a `path_nested` element referring to the actual credential carried in the respective verifiable presentation. 
+A `descriptor_map` element MUST  contain a `path_nested` element referring to the actual credential carried in the respective verifiable presentation. 
 
 This is an example of a VP Token containing multiple verifiable presentations,   
 
@@ -263,6 +293,16 @@ This is an example of a VP Token containing multiple verifiable presentations,
 with a matching `presentation_submission` parameter.
 
 <{{examples/response/presentation_submission_multiple_vps.json}}
+
+## Error Response
+
+The error response follows the rules as defined in [@!RFC6749]. 
+
+When the requested scope value is invalid, unknown, or malformed, the AS should respond with the error code `invalid_scope` defined in Section 4.1.2.1 of [@!RFC6749].
+
+Additionally, if the request contains more then a `presentation_definition` parameter or a `presentation_definition_uri` parameter or a 
+scope value representing a presentation definition, the wallet MUST refuse to process the request and return an `invalid_request` error
+as defined in [@!RFC6749]. 
 
 # Verifier-initiated Cross Device Flow 
 
@@ -317,7 +357,7 @@ The respective HTTP POST response to the verifier would look like this:
 
 Presented credentials MUST be returned in the VP Token as defined in Section 6.7.3. of [@!OpenID.VCI], based on the format and the signature scheme of the credentials and presentations. This specification does not require any additional encoding when credential format is already represented as a JSON object or a JSON string.
 
-Credential formats expressed as binary formats MUST be base64url-encoded and returned as a JSON string.
+Credential formats expressed as binary formats MUST be Base64url encoded and returned as a JSON string.
 
 Table in Section 6.7.3. of [@!OpenID.VCI] might be superceded by a registry in the future.
 
@@ -331,7 +371,27 @@ This specification defines new server metadata parameters according to [@!RFC841
 
 The AS publishes the formats it supports using the `vp_formats_supported` metadata parameter. 
 
-* `vp_formats_supported`: A JSON object defining the formats and proof types of verifiable credentials and verifiable presentations that a RP supports. Valid values are defined in Section 6.7.3. of [@!OpenID.VCI]. Other values may be used when defined in the profiles of this specification.
+* `vp_formats_supported`:  An object containing a list of key value pairs, where the key is a string identifying a credential format supported by the AS. Valid credential format identifiers values are defined in Section 9.3 of [@!OpenID.VCI]. Other values may be used when defined in the profiles of this specification. The key's value is an object containing a parameter defined below:
+  * `alg_values_supported`: An object where the value is an array of case sensitive strings that identify the cryptographic suites that are supported. Cryptosuites for Credentials in `jwt_vc` format should use algorithm names defined in [IANA JOSE Algorithms Registry](https://www.iana.org/assignments/jose/jose.xhtml#web-signature-encryption-algorithms). Cryptosuites for Credentials in `ldp_vc` format should use signature suites names defined in [Linked Data Cryptographic Suite Registry](https://w3c-ccg.github.io/ld-cryptosuite-registry/). Cryptosuites for Credentials in `mdl_iso_cbor` format should use signature suites names defined in ISO/IEC 18013-5:2021. Parties using other credential formats will need to agree upon the meanings of the values used, which may be context-specidic. 
+
+Below is a non-normative example of a `vp_formats_supported` parameter:
+
+```
+vp_formats_supported": {
+‌ "jwt_vc": {
+  ‌ "alg_values_supported": [
+    ‌ "ES256K",
+    ‌ "ES384"
+  ‌ ]
+‌ },
+‌ "jwt_vp": {
+  ‌ "alg_values_supported": [
+    ‌ "ES256K",
+     "EdDSA"
+  ‌ ]
+‌ }
+}
+```
 
 ## Client Metadata
 
@@ -401,7 +461,7 @@ This specification defines new client metadata parameters according to [@!RFC759
 
 RPs indicate the supported formats using the new parameter `vp_formats`.
 
-* `vp_formats`: REQUIRED. An object defining the formats and proof types of verifiable presentations and verifiable credentials that a RP supports. Valid values are defined in the table in Section 6.7.3. of [@!OpenID.VCI] and include `jwt_vc`, `ldp_vc`, `jwt_jp` and `ldp_vp`. Formats identifiers not in the table may be supported when defined in the profiles of this specification.
+* `vp_formats`: REQUIRED. An object defining the formats and proof types of verifiable presentations and verifiable credentials that a RP supports. Valid format identifier values are defined in the table in Section 9.3. of [@!OpenID.VCI] and include `jwt_vc`, `ldp_vc`, `jwt_jp` and `ldp_vp`. Formats identifiers not in the table may be supported when defined in the profiles of this specification.
 
 Here is an example for an RP registering with a Standard OP via dynamic client registration:
 
@@ -454,6 +514,11 @@ An example `claims` parameter containing a `presentation_definition` that filter
 
 This example will chose a VC that has been issued by a university that is a member of the `ukuniversities.ac.uk` federation and that uses the TRAIN terms of use specification for asserting federation memberships.
 
+## Nested Verifiable Presentations
+
+Current version of OpenID4VP does not support presentation of a VP nested inside another VP, even though [@!DIF.PresentationExchange] specification theoretically supports this by stating that the nesting of `path_nested` objects "may be any number of levels deep".
+
+One level of nesting `path_nested` objects is sufficient to describe a VC included inside a VP.
 
 # Security Considerations {#security_considerations}
 
@@ -1041,6 +1106,10 @@ The technology described in this specification was made available from contribut
 # Document History
 
    [[ To be removed from the final specification ]]
+
+   -13
+
+   * added scope support
 
    -12
 
