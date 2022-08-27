@@ -7,7 +7,7 @@ keyword = ["security", "openid", "ssi"]
 
 [seriesInfo]
 name = "Internet-Draft"
-value = "openid-4-verifiable-credential-issuance-1_0-08"
+value = "openid-4-verifiable-credential-issuance-1_0-09"
 status = "standard"
 
 [[author]]
@@ -1183,6 +1183,10 @@ The technology described in this specification was made available from contribut
 # Document History
 
    [[ To be removed from the final specification ]]
+
+   -09
+
+   * separated attestation from binding method (used to be called proofs)
 
    -08
 
