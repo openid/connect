@@ -123,7 +123,7 @@ This specification defines the following mechanisms to allow Wallet applications
 * A newly defined Credential Endpoint from which Credentials can be issued. See (#credential-endpoint).
 * An optional mechanism for the Issuer to initiate the issuance. See (#issuance_initiation_endpoint).
 * An extended Authorization Request that allows to request authorization to request issuance of Credentials of specific types. See (#credential-authz-request).
-* An optional ability to bind an issued Credential to a cryptographic key material. The Credential request therefore allows to convey a binding materiall. Multiple binding material formats are supported. See (#credential_request). 
+* An optional ability to bind an issued Credential to a cryptographic key material. The Credential request therefore allows to convey a binding material. Multiple binding material formats are supported. See (#credential_request). 
 * A mechanism for the Deferred Credential Issuance. See (#deferred-credential-issuance).
 * A mechanism for the Issuer to publish metadata about the Credential it is capable of issuing. See (#server-metadata)
 * A mechanism that allows issuance of multiple Credentials of same or different type. See (#token-response) and (#credential-response).
@@ -603,18 +603,8 @@ A Client makes a Credential Request to the Credential Endpoint by sending the fo
 * `type`: REQUIRED. Type of a Credential being requested. It corresponds to a `type` property in a Issuer metadata.
 * `format`: OPTIONAL. Format of the Credential to be issued. If not present, the issuer will determine the Credential 
 format based on the client's format default.
-* `binding_method`: OPTIONAL. JSON string denoting the mechanism how the Issuer would like to bind issued credential to the Holder. See (#binding_method) for the details.
 * `binding_material`: OPTIONAL. Object containing binding material of possession of the key material the issued Credential shall be bound to. See (#binding_material) for the details.
-* `attestation`: OPTIONAL. Object containing attestation containing the information how private keys are managed by the Wallet. See (#attestation_object) for the details. 
-
-### `binding_method` values {#binding_method}
-
-The following is a non-exhaustive list of valid values for `binding_method` property:
-
-* `public_key`: Public key of the Holder of the Credential is included in the issuer-signed Credential. Holder has to prove control over the corresponding key pair during presentation of the Credential.
-* `zkp`: Holder can prove legitimate possession of the credential using advanced cryptography without revealing key pair.
-* `biometrics`: Issuer-signed Credential includes biometric data that the Verifier has to use to verify Holder of the Credential during presentation. Often used during in-person presentations.
-* `claim_based`: During presentation, Holder has to present another Credential that contains some of the same claims as the issued credential, but is secured with another binding method.
+* `attestation`: OPTIONAL. Object containing the information that Credential Issuer can use to check the integrity of the Wallet application and/or how private keys are managed by the Wallet. See (#attestation_object) for the details.
 
 ### Structure of a `binding_material` object {#binding_material}
 
@@ -638,13 +628,8 @@ The Issuer MUST validate that the `binding_material` is actually signed by a key
 
 The `attestation` object MUST contain the following `attestation_format` element which determines its structure:
 
-  * `attestation_format`: REQUIRED. JSON String denoting the attestation format. Valid values include `jwt`.
-  * `jwt`: CONDITIONAL. MUST be present when `attestation_format` value is `jwt`. Objects of this type contain a single `jwt` element with a JWS [@!RFC7515] as attestation. The JWT MUST contain the following elements:
-    * `x5c`: REQUIRED. JWT header containing a certificate or certificate chain corresponding to the key used to sign the JWT. This element may be used to convey a key attestation. In such a case, the actual key certificate will contain attributes related to the key properties.
-    * `iss`: REQUIRED (string). The value of this claim MUST be the client_id of the client making the credential request.
-    * `aud`: REQUIRED (string). The value of this claim MUST be the issuer URL of credential issuer.
-    * `iat`: REQUIRED (number). The value of this claim MUST be the time at which the attestation was issued using the syntax defined in [@!RFC7519].
-    * `nonce`: REQUIRED (string). The value type of this claim MUST be a string, where the value is a `c_nonce` provided by the credential issuer. 
+  * `attestation_type`: REQUIRED. JSON String denoting the type of the attestation. A non-exhaustive list of valid values defined by this specification includes `android_safetynet`, `apple_app_attest`, `jwt` (that can contain `x5c`, `x5u`, `x5t`, etc. in the header), etc.
+  * `attestation_value`: REQUIRED. Object containing the attestation value of a type identified using `attestation_type` parameter.
 
 Below is a non-normative example of a `binding_material` object (line breaks for display purposes only):
 
@@ -697,7 +682,7 @@ Below is a non-normative example when in addition to a `binding_material` object
 }
 ```
 
-where the `attestation` JWT looks like this:
+where the `attestation` JWT may look like this:
 
 ```json
 {
