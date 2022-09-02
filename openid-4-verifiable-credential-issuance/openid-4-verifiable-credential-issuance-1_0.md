@@ -934,29 +934,6 @@ HTTP/1.1 200 OK
 
 Note: Consider using CIBA Ping/Push OR SSE Poll/Push. Another option would be the Client providing `client_notification_token` to the Issuer, so that the issuer sends a Credential response upon successfully receiving a Credential request and then no need for the client to bring an acceptance token, the Issuer will send the credential once it is issued in a response that includes `client_notification_token`. (consider SSE options)
 
-### Credential Error Response
-
-The following errors are defined:
-
-* invalid_request - the credential request was malformed
-* invalid_token - the access_token was invalid
-* unsupported_type - the requested type is not supported
-* unsupported_format - the requested format is not supported
-* invalid_credential - the requested credential did not match any of the credentials to be issued
-* invalid_or_missing_proof - see next section
-
-This is a non-normative example Credential Error Response:
-
-```
-HTTP/1.1 400 Bad Request
-Content-Type: application/json
-Cache-Control: no-store
-Pragma: no-cache
-
-{
-   "error": "invalid_request"
-}
-```
 
 #### Credential Issuer-Provided Nonce
 
