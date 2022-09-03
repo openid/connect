@@ -404,38 +404,33 @@ RPs indicate the trust frameworks that they support using the `trust_frameworks`
 * `trust_frameworks`: An object that contains the definitions of each trust framework that the RP supports. These are hints to the reader (software) of the metadata informing it how to programmatically determine if the RP can be trusted. If the reader understands the trust framework type, then it knows how to programmatically determine if the RP is a member of the identified scheme by using the methods particular to the trust framework. If the reader does not understand the trust framework type, then it does not know how to programmatically determine if the RP can be trusted.
 
 Each trust framework definition contains the following parameters:
-   * `type`: REQUIRED. A URI that unambiguously identifies a trust framework that the RP supports, for example, https://openid.net/specs/openid-connect-federation-1_0.html and https://train.trust-scheme.de/info
-   * `info`: OPTIONAL. A URL that provides a human readable description of the trust framework.
-   * `identifiers`: REQUIRED. A set of JSON objects, each object identifying one particular trust scheme or trust federation of the framework type that the RP is a member of. The format of the JSON object is determined by the rules of the trust framework, for example, each trust scheme in TRAIN is identified by a DNS name, whilst each federation in OpenID Connect may be identified by its trust marks.
+   * `trust_frameworks`: REQUIRED. A JSON object containing a list of key value pairs, where the key is a URI that unambiguously identifies one type of trust framework that the RP supports, for example, https://openid.net/specs/openid-connect-federation-1_0.html or https://train.trust-scheme.de/info. The precise contents of this JSON object are determined by the trust framework itself.
+   
 
 The following is a non-normative example of the metadata for an RP that says it is a member of two TRAIN trust schemes
 
 ```
 {
-	“trust_frameworks": [{
-		"type": "https://train.trust-scheme.de/info",
-		"info": "https://dl.gi.de/bitstream/handle/20.500.12116/38702/proceedings-02.pdf",
-		"identifiers": [{
-                "dns": ["example.tso.com ",
-                    "ssi.company.uk "
-                ]
-            }]
-	}]
+ "trust_frameworks": {
+    "https://train.trust-scheme.de/info": {
+    "info": "https://dl.gi.de/bitstream/handle/20.500.12116/38702/proceedings-02.pdf",
+    "trustScheme": ["example.tso.com ","ssi.company.uk "]
+     }
+  }
 }
 ```
 
-The following is a non-normative example of the metadata for an RP that says it is a member of a government operated OpenID Trust Federation
+The following is a non-normative example of the metadata for an RP that supports OpenID Federation and provides its trust chain to its trust anchor
 
 ```
 {
-	“trust_framework": [{
-	"type": "https://gov.country",
-            "info": "https://that-fancy.page",
-            "identifiers ": [{
-                "trust_marks": "[as they actually are defined in oidc fed]",
-                "verifiable_stuffs": "[vp]"
-            }]
-	}]
+ "trust_frameworks": {
+    "https://openid.net/specs/openid-connect-federation-1_0.html": {
+    "trust_chain": ["eyJhbGciOiJSUzI1NiIsImtpZCI6Ims1NEhRdERpYnlHY3M5WldWTWZ2aUhm ...",
+                    "eyJhbGciOiJSUzI1NiIsImtpZCI6IkJYdmZybG5oQU11SFIwN2FqVW1BY0JS ...",
+                    "eyJhbGciOiJSUzI1NiIsImtpZCI6IkJYdmZybG5oQU11SFIwN2FqVW1BY0JS ..." ]
+     }
+  }
 }
 ```
 
