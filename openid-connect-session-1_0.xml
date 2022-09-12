@@ -20,11 +20,11 @@
   <?rfc sortrefs="yes"?>
   <?rfc strict="yes" ?>
   <?rfc iprnotified="no" ?>
-  <?rfc private="Draft" ?>
+  <?rfc private="Final" ?>
 
   <front>
     <title abbrev="OpenID Connect Session Management 1.0">OpenID Connect
-    Session Management 1.0 - draft 31</title>
+    Session Management 1.0</title>
 
     <author fullname="Breno de Medeiros" initials="B." surname="de Medeiros">
       <organization>Google</organization>
@@ -66,7 +66,7 @@
       </address>
     </author>
 
-    <date day="18" month="April" year="2022" />
+    <date day="12" month="September" year="2022" />
 
     <workgroup>OpenID Connect Working Group</workgroup>
 
@@ -760,11 +760,11 @@
           <title>OpenID Connect Core 1.0</title>
 
           <author fullname="Nat Sakimura" initials="N." surname="Sakimura">
-            <organization abbrev="NAT.Consulting (was at NRI)">NAT.Consulting</organization>
+	    <organization abbrev="NRI">Nomura Research Institute, Ltd.</organization>
           </author>
 
           <author fullname="John Bradley" initials="J." surname="Bradley">
-            <organization abbrev="Yubico (was at Ping Identity)">Yubico</organization>
+	    <organization abbrev="Ping Identity">Ping Identity</organization>
           </author>
 
           <author fullname="Michael B. Jones" initials="M.B." surname="Jones">
@@ -776,7 +776,7 @@
           </author>
 
 	  <author fullname="Chuck Mortimore" initials="C." surname="Mortimore">
-	    <organization abbrev="Stripe (was at Salesforce)">Stripe</organization>
+	    <organization abbrev="Salesforce">Salesforce</organization>
 	  </author>
 
           <date day="8" month="November" year="2014"/>
@@ -788,11 +788,11 @@
           <title>OpenID Connect Discovery 1.0</title>
 
           <author fullname="Nat Sakimura" initials="N." surname="Sakimura">
-            <organization abbrev="NAT.Consulting (was at NRI)">NAT.Consulting</organization>
+            <organization abbrev="NRI">Nomura Research Institute, Ltd.</organization>
           </author>
 
           <author fullname="John Bradley" initials="J." surname="Bradley">
-            <organization abbrev="Yubico (was at Ping Identity)">Yubico</organization>
+            <organization abbrev="Ping Identity">Ping Identity</organization>
           </author>
 
           <author fullname="Michael B. Jones" initials="M.B." surname="Jones">
@@ -831,7 +831,7 @@
 	    <organization abbrev="Yubico">Yubico</organization>
 	  </author>
 
-	  <date day="18" month="April" year="2022" />
+	  <date day="12" month="September" year="2022" />
 	</front>
       </reference>
 
@@ -843,7 +843,7 @@
 	    <organization abbrev="Microsoft">Microsoft</organization>
 	  </author>
 
-	  <date day="18" month="April" year="2022" />
+	  <date day="12" month="September" year="2022" />
 	</front>
       </reference>
 
@@ -859,7 +859,7 @@
             <organization abbrev="Yubico">Yubico</organization>
           </author>
 
-	  <date day="18" month="April" year="2022" />
+	  <date day="12" month="September" year="2022" />
 	</front>
       </reference>
 
@@ -907,13 +907,13 @@
           <t>John Bradley (ve7jtb@ve7jtb.com), Yubico</t>
           <t>Breno de Medeiros (breno@google.com), Google</t>
 	  <t>Vladimir Dzhuvinov (vladimir@connect2id.com), Connect2id</t>
-          <t>George Fletcher (gffletch@aol.com), Capital One (was at AOL)</t>
+          <t>George Fletcher (gffletch@aol.com), Capital One</t>
           <t>Edmund Jay (ejay@mgi1.com), Illumila</t>
           <t>Michael B. Jones (mbj@microsoft.com), Microsoft</t>
 	  <t>Tom Jones (thomasclinganjones@gmail.com), Independent</t>
 	  <t>Todd Lainhart (lainhart@us.ibm.com), IBM</t>
 	  <t>Torsten Lodderstedt (torsten@lodderstedt.net), yes.com</t>
-          <t>Anthony Nadalin (nadalin@prodigy.net), Independent (was at Microsoft)</t>
+          <t>Anthony Nadalin (nadalin@prodigy.net), Independent</t>
           <t>Axel Nennker (axel.nennker@telekom.de), Deutsche Telekom</t>
 	  <t>Justin Richer (justin@bspk.io), Bespoke Engineering</t>
           <t>Nat Sakimura (nat@nat.consulting), NAT.Consulting</t>
@@ -960,384 +960,5 @@
       specification.</t>
     </section>
 
-    <section anchor="History" title="Document History">
-      <t>[[ To be removed from the final specification ]]</t>
-
-      <t>
-	-31
-        <list style="symbols">
-	  <t>
-	    Fixed #1202 - Corrected example OP iframe JavaScript splitting client_id and session_state.
-	  </t>
-	  <t>
-	    Updated contributor affiliations.
-	  </t>
-	  <t>
-	    Updated many spec URLs from http to https.
-	  </t>
-	</list>
-      </t>
-
-      <t>
-        -30
-        <list style="symbols">
-	  <t>
-	    Fixed #1038 - Add RP iframe / parent window communication cross-origin note.
-	  </t>
-	  <t>
-	    Fixed #1011 - Replaced uses of "Browser" with "User Agent".
-	  </t>
-	  <t>
-	    Fixed #1033 - Removed misleading statement about ID Token expiration.
-	    Note that the fix to #1071 already addressed the main point of this issue.
-	  </t>
-	  <t>
-	    Fixed #1030 - Specify the use of HTTPS URIs.
-	  </t>
-	  <t>
-	    Fixed #1003 - Document possible impacts of disabling access to third-party content.
-	  </t>
-	  <t>
-	    Fixed #1133 - Clarify that logout notifications to RPs are idempotent.
-	  </t>
-	  <t>
-	    Fixed #1022 - Session Management OP Frame message origin assertion.
-	  </t>
-	  <t>
-	    Fixed #1047 - session_state - upon authentication failure?
-	  </t>
-        </list>
-      </t>
-
-      <t>
-        -29
-        <list style="symbols">
-	  <t>
-	    Fixed #1085 - Split RP-Initiated Logout into its own specification.
-	  </t>
-	  <t>
-	    Registered the AS metadata value <spanx style="verb">check_session_iframe</spanx>.
-	  </t>
-	  <t>
-	    Updated affiliations and acknowledgements.
-	  </t>
-	  <t>
-	    Moved metadata section to a more logical location.
-	  </t>
-        </list>
-      </t>
-
-      <t>
-        -28
-        <list style="symbols">
-	  <t>
-	    Stated why the client_id is included in the session state calculation,
-	    addressing issue #969.
-	  </t>
-        </list>
-      </t>
-
-      <t>
-        -27
-        <list style="symbols">
-	  <t>
-	    Removed references to terms that are not used.
-	  </t>
-        </list>
-      </t>
-
-      <t>
-        -26
-        <list style="symbols">
-	  <t>
-	    Referenced Front-Channel Logout and Back-Channel Logout specifications.
-	  </t>
-        </list>
-      </t>
-
-      <t>
-        -25
-        <list style="symbols">
-	  <t>
-	    Changed instances of http://server.example.com to https://server.example.com.
-	  </t>
-	  <t>
-	    Tracked terminology changes made in the referenced IETF specs since errata set 1.
-	  </t>
-	  <t>
-	    Registered the <spanx style="verb">post_logout_redirect_uris</spanx>
-	    client metadata value.
-	  </t>
-        </list>
-      </t>
-
-      <t>
-        -24
-        <list style="symbols">
-	  <t>
-	    Stated that post-logout redirection is only done when the logout
-	    is RP-initiated and that otherwise it is not done.
-          </t>
-	  <t>
-	    Fixed #967 - Errors in the Javascript example for the OP iframe
-	  </t>
-        </list>
-      </t>
-      <t>
-        -23
-        <list style="symbols">
-	  <t>
-	    Fixed issue #915 - Computation of OP session_state in the IdP requires origin URI.
-	  </t>
-          <t>
-            Updated the RFC 2616 reference to RFC 7230.
-          </t>
-        </list>
-      </t>
-
-      <t>
-        -22
-        <list style="symbols">
-          <t>
-            Referenced specification versions incorporating errata set 1.
-          </t>
-        </list>
-      </t>
-
-      <t>
-	-21
-        <list style="symbols">
-          <t>
-	    Updated dates for specs containing errata updates.
-	  </t>
-	  <t>
-	    Fixed #930 - Added "error" return from OP iframe to respond to
-	    syntactically invalid postMessage values received.
-	  </t>
-	  <t>
-	    Fixed #954 - Added "NOT RECOMMENDED" to the list of RFC 2119 terms.
-	  </t>
-	</list>
-      </t>
-
-      <t>
-	-20
-        <list style="symbols">
-          <t>
-	    Fixed #917 - Session state must not contain the space character.
-	  </t>
-	  <t>
-	    Fixed #927 - Added "state" parameter to RP-initiated logout messages.
-	  </t>
-	</list>
-      </t>
-
-      <t>
-	-19
-        <list style="symbols">
-          <t>
-	    Updated dates for final OpenID Connect specifications.
-	  </t>
-	</list>
-      </t>
-      <t>
-	-18
-        <list style="symbols">
-	  <t>
-	    Described that logout requests without a valid
-	    <spanx style="verb">id_token_hint</spanx> are a potential means
-	    of denial of service.
-	  </t>
-	</list>
-      </t>
-
-      <t>
-	-17
-        <list style="symbols">
-	  <t>
-	    Fixed #883 - Moved the RP iframe description ahead of the OP iframe description.
-	  </t>
-	  <t>
-	    Fixed #873 - Clarified that the HttpOnly flag can't be set for cookies
-	    used to maintain OP browser state.
-	  </t>
-	</list>
-      </t>
-
-      <t>
-	-16
-        <list style="symbols">
-	  <t>
-	    Replaced uses of the OpenID Connect Messages and OpenID Connect Standard
-	    specifications with OpenID Connect Core.
-	  </t>
-	  <t>
-	    Added section headings for Discovery and Registration parameters
-	    defined for use when Session Management is supported.
-	  </t>
-	</list>
-      </t>
-
-      <t>
-	-15
-        <list style="symbols">
-	  <t>
-	    Fixed #842 - Made <spanx style="verb">post_logout_redirect_uri</spanx>
-	    treatment parallel to <spanx style="verb">redirect_uri</spanx>.
-	  </t>
-	  <t>
-	    Fixed #859 - Added IMPORTANT NOTE TO READERS about the terminology
-	    definitions being a normative part of the specification.
-	  </t>
-	</list>
-      </t>
-
-      <t>-14
-        <list style="symbols">
-	  <t>
-	    Clarified RP-initiated logout description.
-	  </t>
-	  <t>
-	    Added an <spanx style="verb">id_token_hint</spanx> parameter to logout requests.
-	  </t>
-	  <t>
-	    Stated that RPs should gracefully any false positive
-	    <spanx style='verb'>changed</spanx> notifications that may occur.
-	  </t>
-        </list>
-      </t>
-
-      <t>-13
-        <list style="symbols">
-	  <t>
-	    Added OpenID Connect Working Group declaration to the document metadata.
-	  </t>
-        </list></t>
-
-      <t>-12
-        <list style="symbols">
-	  <t>
-	    Fixed #364 - Term "Session" not defined.
-	  </t>
-	  <t>
-	    State that when any validations fail, any operations requiring
-	    the information that failed to correctly validate MUST be aborted and
-	    the information that failed to validate MUST NOT be used.
-	  </t>
-	  <t>
-	    Fixed #779 - Parameters missing from IANA Considerations.
-	  </t>
-	  <t>
-	    Fixed #782 - Changed uses of "_url" in identifiers to "_uri".
-	  </t>
-        </list></t>
-
-      <t>-11
-        <list style="symbols">
-	  <t>
-	    Applied changes from October 24, 2012 editing session at the
-	    Internet Identity Workshop (IIW).
-	    This separates the session state from the ID Token,
-	    adding the new <spanx style="verb">session_state</spanx> parameter
-	    to the authorization response.
-	    These identifiers also changed:
-	    <spanx style="verb">check_session_endpoint</spanx> to
-	    <spanx style="verb">check_session_iframe_url</spanx> and
-	    <spanx style="verb">end_session_endpoint</spanx> to
-	    <spanx style="verb">end_session_endpoint_url</spanx>.
-	  </t>
-	  <t>
-	    Fixed #605 - op_logout_url description.
-	  </t>
-	  <t>
-	    Added Implementation Considerations section.
-	  </t>
-	  <t>
-	    Fixed #698 - Inconsistent use of articles.
-	  </t>
-	  <t>
-	    Naming consistency changes.  Renamed
-	    <spanx style="verb">check_session_iframe_url</spanx> to
-	    <spanx style="verb">check_session_iframe</spanx> and
-	    <spanx style="verb">end_session_endpoint_url</spanx> back to
-	    <spanx style="verb">end_session_endpoint</spanx>.
-	  </t>
-        </list></t>
-
-      <t>-10
-        <list style="symbols">
-	  <t>
-	    Fixed #689 - Track JWT change that allows JWTs to have multiple audiences.
-	  </t>
-        </list></t>
-
-      <t>-09
-        <list style="symbols">
-	  <t>
-	    Changed <spanx style='verb'>user_hint</spanx> to
-	    <spanx style='verb'>id_token_hint</spanx> for consistency with Messages.
-	  </t>
-	  <t>Fixed #666 - JWS signature validation vs. verification.</t>
-          <t>Referenced OAuth 2.0 RFC -- RFC 6749.</t>
-      </list></t>
-
-      <t>-08
-        <list style="symbols">
-          <t>Complete rewrite based on the decisions made at the
-	  May 5, 2012 face to face working group meeting.</t>
-        </list></t>
-
-      <t>-07 <list style="symbols">
-          <t>Added warning about the significant revisions planned to session
-          management to the abstract and introduction.</t>
-
-          <t>Changed client.example.com to client.example.org, per issue
-          #251</t>
-
-          <t>Listed author of ISO29115 as "International Telecommunication
-          Union and International Organization for Standardization", per issue
-          #589</t>
-
-          <t>Use standards track version of JSON Web Token spec
-          (draft-ietf-oauth-json-web-token)</t>
-        </list></t>
-
-      <t>-06 <list style="symbols">
-          <t>Updated Notices</t>
-
-          <t>Updated References</t>
-        </list></t>
-
-      <t>-05 <list style="symbols">
-          <t>Removed Check Session Endpoint</t>
-
-          <t>Updated ID Token claims to reflect changes in Messages</t>
-        </list></t>
-
-      <t>-04 <list style="symbols">
-          <t>Changes associated with renaming "Lite" to "Basic Client" and
-          replacing "Core" and "Framework" with "Messages" and "Standard".</t>
-
-          <t>Numerous cleanups, including updating references.</t>
-        </list></t>
-
-      <t>-03 <list style="symbols">
-          <t>Corrected examples.</t>
-        </list></t>
-
-      <t>-02 <list style="symbols">
-          <t>Correct issues raised by Johnny Bufu and discussed on the
-          7-Jul-11 working group call.</t>
-        </list></t>
-
-      <t>-01 <list style="symbols">
-          <t>Consistency and cleanup pass, including removing unused
-          references.</t>
-        </list></t>
-
-      <t>-00 <list style="symbols">
-          <t>Split from core when all optional features were removed.</t>
-        </list></t>
-    </section>
   </back>
 </rfc>

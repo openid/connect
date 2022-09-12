@@ -19,11 +19,11 @@
   <?rfc sortrefs="yes"?>
   <?rfc strict="yes" ?>
   <?rfc iprnotified="no" ?>
-  <?rfc private="Draft" ?>
+  <?rfc private="Final" ?>
 
   <front>
     <title abbrev="OpenID Connect Front-Channel Logout 1.0">OpenID Connect
-    Front-Channel Logout 1.0 - draft 06</title>
+    Front-Channel Logout 1.0</title>
 
     <author fullname="Michael B. Jones" initials="M.B." surname="Jones">
       <organization abbrev="Microsoft">Microsoft</organization>
@@ -33,7 +33,7 @@
       </address>
     </author>
 
-    <date day="2" month="May" year="2022" />
+    <date day="12" month="September" year="2022" />
 
     <workgroup>OpenID Connect Working Group</workgroup>
 
@@ -587,11 +587,11 @@
           <title>OpenID Connect Core 1.0</title>
 
           <author fullname="Nat Sakimura" initials="N." surname="Sakimura">
-            <organization abbrev="NAT.Consulting (was at NRI)">NAT.Consulting</organization>
+	    <organization abbrev="NRI">Nomura Research Institute, Ltd.</organization>
           </author>
 
           <author fullname="John Bradley" initials="J." surname="Bradley">
-            <organization abbrev="Yubico (was at Ping Identity)">Yubico</organization>
+	    <organization abbrev="Ping Identity">Ping Identity</organization>
           </author>
 
           <author fullname="Michael B. Jones" initials="M.B." surname="Jones">
@@ -603,7 +603,7 @@
           </author>
 
 	  <author fullname="Chuck Mortimore" initials="C." surname="Mortimore">
-	    <organization abbrev="Stripe (was at Salesforce)">Stripe</organization>
+	    <organization abbrev="Salesforce">Salesforce</organization>
 	  </author>
 
           <date day="8" month="November" year="2014"/>
@@ -615,11 +615,11 @@
           <title>OpenID Connect Discovery 1.0</title>
 
           <author fullname="Nat Sakimura" initials="N." surname="Sakimura">
-            <organization abbrev="NAT.Consulting (was at NRI)">NAT.Consulting</organization>
+            <organization abbrev="NRI">Nomura Research Institute, Ltd.</organization>
           </author>
 
           <author fullname="John Bradley" initials="J." surname="Bradley">
-            <organization abbrev="Yubico (was at Ping Identity)">Yubico</organization>
+            <organization abbrev="Ping Identity">Ping Identity</organization>
           </author>
 
           <author fullname="Michael B. Jones" initials="M.B." surname="Jones">
@@ -639,11 +639,11 @@
           <title>OpenID Connect Dynamic Client Registration 1.0</title>
 
           <author fullname="Nat Sakimura" initials="N." surname="Sakimura">
-            <organization abbrev="NAT.Consulting (was at NRI)">NAT.Consulting</organization>
+            <organization abbrev="NRI">Nomura Research Institute, Ltd.</organization>
           </author>
 
           <author fullname="John Bradley" initials="J." surname="Bradley">
-            <organization abbrev="Yubico (was at Ping Identity)">Yubico</organization>
+            <organization abbrev="Ping Identity">Ping Identity</organization>
           </author>
 
           <author fullname="Michael B. Jones" initials="M.B." surname="Jones">
@@ -678,7 +678,7 @@
 	    <organization abbrev="Microsoft">Microsoft</organization>
 	  </author>
 
-	  <date day="18" month="April" year="2022" />
+	  <date day="12" month="September" year="2022" />
 	</front>
       </reference>
 
@@ -706,7 +706,7 @@
 	    <organization abbrev="Yubico">Yubico</organization>
 	  </author>
 
-	  <date day="18" month="April" year="2022" />
+	  <date day="12" month="September" year="2022" />
 	</front>
       </reference>
 
@@ -722,7 +722,7 @@
             <organization abbrev="Yubico">Yubico</organization>
           </author>
 
-	  <date day="18" month="April" year="2022" />
+	  <date day="12" month="September" year="2022" />
 	</front>
       </reference>
 
@@ -868,111 +868,5 @@
       specification.</t>
     </section>
 
-    <section anchor="History" title="Document History">
-      <t>[[ To be removed from the final specification ]]</t>
-
-      <t>
-	-06
-        <list style="symbols">
-	  <t>
-	    Fixed #1481 - Corrected example Front-Channel Logout URL.
-	  </t>
-	  <t>
-	    Fixed #1483 - Removed Pragma: no-cache and Cache-Control: no-cache,
-	    leaving only Cache-Control: no-store.
-	  </t>
-	</list>
-      </t>
-
-      <t>
-	-05
-        <list style="symbols">
-	  <t>
-	    Updated contributor affiliations.
-	  </t>
-	  <t>
-	    Updated many spec URLs from http to https.
-	  </t>
-	</list>
-      </t>
-
-      <t>
-	-04
-	<list style="symbols">
-	  <t>
-	    Fixed #1030 - Specify the use of HTTPS URIs.
-	  </t>
-	  <t>
-	    Fixed #1176 - Verify that the <spanx style="verb">sid</spanx> logout parameter matches this claim in an ID Token.
-	  </t>
-	  <t>
-	    Added Implementation Considerations section.
-	  </t>
-	  <t>
-	    Fixed #1003 - Document possible impacts of disabling access to third-party content.
-	  </t>
-	  <t>
-	    Fixed #1133 - Clarify that logout notifications to RPs are idempotent.
-	  </t>
-       </list>
-      </t>
-
-      <t>
-	-03
-	<list style="symbols">
-          <t>
-	    Fixed #1085 - Split RP-Initiated Logout into its own specification.
-	  </t>
-	  <t>
-	    Registered the AS metadata value <spanx style="verb">frontchannel_logout_supported</spanx>.
-	  </t>
-	  <t>
-	    Updated affiliations and acknowledgements.
-	  </t>
-        </list>
-      </t>
-
-      <t>
-	-02
-	<list style="symbols">
-          <t>
-	    Added explicit definitions for the <spanx style="verb">iss</spanx> (issuer)
-	    and <spanx style="verb">sid</spanx> (session ID) query parameters
-	    that are used with the logout URI.
-	  </t>
-        </list>
-      </t>
-
-      <t>
-	-01
-	<list style="symbols">
-          <t>
-	    Scoped Session ID to be Issuer-specific, aligning it with the back-channel logout usage.
-	  </t>
-	  <t>
-	    Finished changing uses of "logout_uri" to "frontchannel_logout_uri".
-	  </t>
-	  <t>
-	    Removed references to terms that are not used.
-	  </t>
-        </list>
-      </t>
-
-      <t>
-	-00
-	<list style="symbols">
-          <t>
-	    Renamed HTTP-Based Logout to Front-Channel Logout.
-	  </t>
-          <t>
-	    Created openid-connect-frontchannel-1_0 from openid-connect-logout-1_0 draft 04.
-	  </t>
-	  <t>
-	    Prefixed identifiers with "frontchannel_" to be parallel with
-	    the Back-Channel Logout specification.
-	  </t>
-        </list>
-      </t>
-    </section>
   </back>
 </rfc>
