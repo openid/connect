@@ -24,7 +24,7 @@
 
   <front>
     <title abbrev="OpenID Connect Implicit Client Guide 1.0">OpenID Connect
-    Implicit Client Implementer's Guide 1.0 - draft 24</title>
+    Implicit Client Implementer's Guide 1.0 - draft 25</title>
 
     <author fullname="Nat Sakimura" initials="N." surname="Sakimura">
       <organization abbrev="NAT.Consulting">NAT.Consulting</organization>
@@ -59,14 +59,14 @@
     </author>
 
     <author fullname="Chuck Mortimore" initials="C." surname="Mortimore">
-      <organization abbrev="Stripe">Stripe</organization>
+      <organization abbrev="Disney">Disney</organization>
       <address>
         <email>charliemortimore@gmail.com</email>
 	<uri>https://twitter.com/cmort</uri>
       </address>
     </author>
 
-    <date day="18" month="April" year="2022" />
+    <date day="14" month="September" year="2022" />
 
     <workgroup>OpenID Connect Working Group</workgroup>
 
@@ -2943,7 +2943,7 @@
           </author>
 
 	  <author fullname="Chuck Mortimore" initials="C." surname="Mortimore">
-	    <organization abbrev="Stripe (was at Salesforce)">Stripe</organization>
+	    <organization abbrev="Disney (was at Salesforce)">Disney</organization>
 	  </author>
 
           <date day="8" month="November" year="2014"/>
@@ -3157,10 +3157,10 @@
           </author>
 
           <author fullname="Chuck Mortimore" initials="C." surname="Mortimore">
-            <organization abbrev="Stripe">Stripe</organization>
+            <organization abbrev="Disney">Disney</organization>
           </author>
 
-	  <date day="18" month="April" year="2022" />
+	  <date day="14" month="September" year="2022" />
         </front>
       </reference>
 
@@ -3214,7 +3214,7 @@
           <t>Michael B. Jones (mbj@microsoft.com), Microsoft</t>
 	  <t>Torsten Lodderstedt (torsten@lodderstedt.net), yes.com</t>
           <t>Nov Matake (nov@matake.jp), Independent</t>
-          <t>Chuck Mortimore (charliemortimore@gmail.com), Stripe</t>
+          <t>Chuck Mortimore (charliemortimore@gmail.com), Disney</t>
           <t>Anthony Nadalin (nadalin@prodigy.net), Independent</t>
 	  <t>Hideki Nara (hdknr@ic-tact.co.jp), Tact Communications</t>
           <t>Axel Nennker (axel.nennker@telekom.de), Deutsche Telekom</t>
@@ -3272,6 +3272,15 @@
 
     <section anchor="History" title="Document History">
       <t>[[ To be removed from the final document ]]</t>
+
+      <t>
+	-25
+        <list style="symbols">
+	  <t>
+	    Updated contributor affiliations.
+	  </t>
+	</list>
+      </t>
 
       <t>
 	-24
