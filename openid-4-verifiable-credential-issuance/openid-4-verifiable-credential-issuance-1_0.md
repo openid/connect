@@ -46,7 +46,7 @@ This specification defines an API and corresponding OAuth 2.0-based authorizatio
 
 This specification defines an API designated as Credential Endpoint and corresponding OAuth 2.0-based authorization mechanisms (see [@!RFC6749]) for the issuance of verifiable Credentials, supporting W3C formats as well as other Credential formats. This allows existing OAuth 2.0 deployments and OpenID Connect OPs (see [@OpenID.Core]) to extend their service and become Credential issuers. It also allows new applications built using Verifiable Credentials to utilize OAuth 2.0 as integration and interoperability layer.
 
-Verifiable Credentials are very similar to identity assertions, like ID Tokens in OpenID Connect, in that they allow an Issuer to assert End-User claims. However, in contrast to the identity assertions, a verifiable Credential follows a pre-defined schema (the Credential type) and is typically bound to key material allowing the End-User to prove the legitimate possession of the Credential. This allows secure direct presentation of the Credential from the End-User to the RP, without involvement of the Credential issuer. This specification caters for those differences.
+Verifiable Credentials are very similar to identity assertions, like ID Tokens in OpenID Connect, in that they allow an Issuer to assert End-User claims. However, in contrast to the identity assertions, a verifiable Credential follows a pre-defined schema (the credentialSchema) and is typically bound to key material allowing the End-User to prove the legitimate possession of the Credential. This allows secure direct presentation of the Credential from the End-User to the RP, without involvement of the Credential issuer. This specification caters for those differences.
 
 # Terminology
 
@@ -818,9 +818,9 @@ This section defines the structure of the object that appears as the value to th
   * `description`: OPTIONAL. String value of a description of the Credential.
   * `background_color`: OPTIONAL. String value of a background color of the Credential represented as numerical color values defined in CSS Color Module Level 37 [@!CSS-Color].
   * `text_color`: OPTIONAL. String value of a text color of the Credential represented as numerical color values defined in CSS Color Module Level 37 [@!CSS-Color].
-* `credentialSchema`: OPTIONAL. Object describing the schema of the credential. It comprises two properties:
+* `credentialSchema`: OPTIONAL. Object describing the schema of the credential, in one or more schema languages (types). It comprises a set of two properties:
    * `id` : REQUIRED. The URI where the schema definition file can be found
-   * `type`: REQUIRED. The type of schema contained in the schema file
+   * `type`: REQUIRED. The type of schema contained in the schema file (i.e. schema language)
 * `formats`: REQUIRED. A JSON object containing a list of key value pairs, where the key is a string identifying the format of the Credential. Below is a non-exhaustive list of valid key values defined by this specification:
   * Claim Format Designations defined in [@!DIF.PresentationExchange], such as `jwt_vc` and `ldp_vc`
   * `mdl_iso`: defined in this specification to express a mobile driving licence (mDL) Credential compliant to a data model and data sets defined in ISO/IEC 18013-5:2021 specification. 
@@ -878,10 +878,10 @@ The following example shows a non-normative example of the relevant entries in t
           "cryptographic_suites_supported": ["Ed25519Signature2018"]
         }
       },
-      "credentialSchema": {
+      "credentialSchema": [{
 	"id": "https://example.org/examples/degree.json",
 	"type": "JsonSchemaValidator2018"
-       },
+       }],
        "claims": {
         "given_name": {
           "mandatory": false,
