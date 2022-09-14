@@ -22,17 +22,17 @@
         },
         "issuanceDate": "2010-07-14",
         "credentialSubject": {
-            "degreeType": "Undergraduate"
+            "degreeSchool": "College of Engineering"
         },
         "proof": {
           "type": "BbsBlsSignatureProof2020",
-          "created": "2010-05-25T23:07:10Z",
+          "created": "2010-06-25T23:07:10Z",
           "verificationMethod": "did:example:489398593#test",
           "proofPurpose": "assertionMethod",
-          "proofValue": "ABgA/4N3qygQRJlX3gmQOlJRGbO1KT...RJeq5biEm9OQ3AvCuxo8PHNrqzNvc6VA==",
-          "nonce": "37pdwue1a8FWLqgwCd0QJ0IJTFhp609KtxeCTWZGnfAVE+sOBDffYez+TY/bmVy+6z4="
+          "proofValue": "lX3gmQOlJRGbO1KTRJeq5biEm9OQ3A...RJeq5biEm9OQ3AvCuxo8PHNrqzNvc6VA==",
+          "nonce": "xeCTWZGnfAVEFWLqgwCd0QJ0IJTFhp609KtxeCTWZGnfAVE+sOBDffYez+TY/bmVy+6z4="
         }
       }
     ],
-    "id": "keLM6f1c2"
+    "id": "ebc6f1c2"
 }

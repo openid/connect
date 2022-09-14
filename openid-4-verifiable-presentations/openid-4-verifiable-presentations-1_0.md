@@ -867,11 +867,11 @@ The presentation request will be similar to the LDP VC:
 
 <{{examples/request/request.txt}}
 
-The requirements regarding the credential to be presented are conveyed in the presentation_definition parameter. The content of the request is shown in the following example:
+The requirements regarding the credential to be presented are conveyed in the `presentation_definition` parameter. The content of the request is shown in the following example:
 
 <{{examples/request/pd_bbs_vc.json}}
 
-In the `presentation_definition`, the `limit_disclosure` constraint is set to true to selectively disclose a subset of claims from the requested credential.
+In the `presentation_definition`, the `limit_disclosure` constraint is set to true to selectively disclose a subset of claims from the requested credential. In the above request, subset of claims (degree type) is requested from the LDP based BBS credential.
 
 ### Presentation Response
 
@@ -879,7 +879,7 @@ The presentation response will look similar to the LDP VC example :
 
 <{{examples/response/response.txt}}
 
-The below example shows contents in a presentation_submission:
+The below example shows contents in a `presentation_submission`:
 
 <{{examples/response/ps_bbs_ldp.json}}
 
@@ -887,6 +887,23 @@ The following is an example of VP token response using BBS Signature proofs:
 
 <{{examples/response/vp_token_bbs_ldp.json}}
 
+### Unlinkable Proofs 
+
+A notable feature of BBS Signature scheme is its ability to sign multiple messages whilst producing a single output digital signature. The possessor of the signature is able to generate proofs that selectively disclose subsets of the originally signed set of messages whilst preserving the verifiable authenticity and integrity of the messages. 
+
+The unlinkable proof property of BBS Signature ensures that no correlation exists between proofs(subset of claims) generated from the same signature . 
+
+For instance, If the same verifier (used in the previous example) requests a new credential with a different subset of data for a new interaction, the same subject can present the requested credential without the fear of correlation of proof value. 
+
+For the new interaction, the verifier will make the below presentation request:
+
+<{{examples/request/pd_bbs_vc_unlinkable.json}}
+
+The following VP Token response using BBS Signature proofs will be sent to the verifier:
+
+<{{examples/response/vp_token_bbs_ldp_unlinkable.json}}
+
+Using the VP Token response from the two interaction, a verifier cannot make any correlation or make any determination that it is interacting with the same subject based on the proof value derived from the same signature. 
 ## AnonCreds
 
 AnonCreds is a credential format defined as part of the Hyperledger Indy project [@Hyperledger.Indy].

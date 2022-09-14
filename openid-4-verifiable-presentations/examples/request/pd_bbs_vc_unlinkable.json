@@ -24,7 +24,7 @@
                     },
                     {
                         "path": [
-                            "$.credentialSubject.degreeType"
+                            "$.credentialSubject.degreeSchool"
                         ]
                     }
                 ]
