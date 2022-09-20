@@ -116,6 +116,8 @@ OpenID for Verifiable Presentations supports scenarios where Authorization Reque
 
 Deployments can use any pre-existing OAuth grant type and response type in conjunction with this specifications to support those scenarios in the context of different deployment architectures. This specification also introduces a new OAuth response mode to support cross device scenarios initiated by the verifier (see {#response_mode_post}). 
 
+Wallets can determine if it is possible to trust the Verifier or not by the Verifier including a new property `trust_methods_supported` in its metadata and in the request message.
+
 # Request {#vp_token_request}
 
 The parameters comprising a request for verifiable presentations are given in the following: 
@@ -124,6 +126,7 @@ The parameters comprising a request for verifiable presentations are given in th
 * `presentation_definition`: CONDITIONAL. A string containing a `presentation_definition` JSON object as defined in Section 4 of [@!DIF.PresentationExchange]. See (#request_presentation_definition) for more details. 
 * `presentation_definition_uri`: CONDITIONAL. A string containing a URL pointing to a resource where a `presentation_definition` JSON object as defined in Section 4 of [@!DIF.PresentationExchange] can be retrieved . See (#request_presentation_definition_uri) for more details.
 * `nonce`: REQUIRED. This parameter follows the definition given in [@!OpenID.Core]. It is used to securely bind the verifiable presentation(s) provided by the AS to the particular transaction.
+* `trust_methods_supported`: OPTIONAL. This parameter lists the trust methods that the verifier/RP supports. Each trust method is identified by a globally unique URI. The contents of the trust method object are determined by the specific trust method. For further details (see (#client_metadata_parameters))
 
 Note: A request MUST contain a `presentation_definition` or a `presentation_definition_uri` but both are mutually exclusive. 
 
@@ -135,7 +138,8 @@ This is an example request:
     &client_id=https%3A%2F%2Fclient.example.org%2Fcb
     &redirect_uri=https%3A%2F%2Fclient.example.org%2Fcb
     &presentation_definition=...
-    &nonce=n-0S6_WzA2Mj HTTP/1.1
+    &nonce=n-0S6_WzA2Mj
+    &trust_methods_supported=urn%3Aietf%3Aparams%3Aoauth%3Afederation... HTTP/1.1
 ```
 
 ## presentation_definition {#request_presentation_definition}
@@ -323,7 +327,7 @@ Table in Section 6.7.3. of [@!OpenID.VCI] might be superceded by a registry in t
 
 # Metadata {#metadata}
 
-This specification introduces additional metadata to enable Client and AS to determine the trust framework(s) being used, and the verifiable presentation and verifiable credential formats, proof types and algorithms to be used in a protocol exchange.
+This specification introduces additional metadata to enable Client and AS to determine the trust method(s) being used, and the verifiable presentation and verifiable credential formats, proof types and algorithms to be used in a protocol exchange.
 
 ## Authorization Server Metadata {#as_metadata_parameters}
 
@@ -397,25 +401,25 @@ Usage of `client_metadata` or `client_metadata_uri` parameters with `client_id` 
 
 This specification defines new client metadata parameters according to [@!RFC7591].
 
-#### Trust Frameworks
+#### Trust Methods
 
-RPs indicate the types of trust framework that they support using the `trust_frameworks` parameter.
+RPs indicate the types of trust methods that they support using the `trust_methods_supported` parameter.
 
-These are hints to the reader (software) of the metadata informing it how to programmatically determine if the RP can be trusted. If the reader understands the trust framework type, then it knows how to programmatically determine if the RP is a member of the identified trust domain by using the method(s) particular to the trust framework type. If the reader does not understand the trust framework type, then it does not know how to programmatically determine if the RP can be trusted.
+These are hints to the reader (software) of the metadata informing it how to programmatically determine if the RP can be trusted. If the reader understands (one of) the trust method(s), then it knows how to programmatically determine if the RP can be trusted by using the technique particular to the identified trust method. If the reader does not understand the trust method, then it does not know how to programmatically determine if the RP can be trusted.
 
-   * `trust_frameworks`: REQUIRED. A JSON object containing a list of key value pairs, where the key is a URI that unambiguously identifies one type of trust framework that the RP supports, for example, https://openid.net/specs/openid-connect-federation-1_0.html or https://train.trust-scheme.de/info. The precise contents of this JSON object are determined by the trust framework itself.
+   * `trust_methods_supported`: REQUIRED. A JSON object containing a list of key value pairs, where the key is a URI that unambiguously identifies one type of trust method that the RP supports, for example, urn:ietf:params:oauth:federation or https://train.trust-scheme.de/info. The precise contents of this JSON object are determined by the trust method itself.
    
 
 The following is a non-normative example of the metadata for an RP that says it is a member of two TRAIN trust schemes
 
 ```
 {
- "trust_frameworks": {
+ "trust_methods_supported": [{
     "https://train.trust-scheme.de/info": {
     "info": "https://dl.gi.de/bitstream/handle/20.500.12116/38702/proceedings-02.pdf",
     "trustScheme": ["example.tso.com ","ssi.company.uk "]
      }
-  }
+  }]
 }
 ```
 
@@ -423,15 +427,16 @@ The following is a non-normative example of the metadata for an RP that supports
 
 ```
 {
- "trust_frameworks": {
-    "https://openid.net/specs/openid-connect-federation-1_0.html": {
+ "trust_methods_supported": [{
+    "urn:ietf:params:oauth:federation": {
     "trust_chain": ["eyJhbGciOiJSUzI1NiIsImtpZCI6Ims1NEhRdERpYnlHY3M5WldWTWZ2aUhm ...",
                     "eyJhbGciOiJSUzI1NiIsImtpZCI6IkJYdmZybG5oQU11SFIwN2FqVW1BY0JS ...",
                     "eyJhbGciOiJSUzI1NiIsImtpZCI6IkJYdmZybG5oQU11SFIwN2FqVW1BY0JS ..." ]
      }
-  }
+  }]
 }
 ```
+The Verifier/RP may also include the trust_methods_supported parameter in its initial request to the wallet.
 
 #### vp_formats
 
