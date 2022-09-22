@@ -23,7 +23,7 @@
   <?rfc private="Draft" ?>
 
   <front>
-    <title abbrev="OpenID Connect Discovery 1.0">OpenID Connect Discovery 1.0 - draft 31 incorporating errata set 2</title>
+    <title abbrev="OpenID Connect Discovery 1.0">OpenID Connect Discovery 1.0 - draft 32 incorporating errata set 2</title>
 
     <author fullname="Nat Sakimura" initials="N." surname="Sakimura">
       <organization abbrev="NAT.Consulting (was at NRI)">NAT.Consulting</organization>
@@ -56,7 +56,7 @@
       </address>
     </author>
 
-    <date day="18" month="April" year="2022" />
+    <date day="14" month="September" year="2022" />
 
     <workgroup>OpenID Connect Working Group</workgroup>
 
@@ -1975,7 +1975,7 @@
           </author>
 
 	  <author fullname="Chuck Mortimore" initials="C." surname="Mortimore">
-	    <organization abbrev="Stripe (was at Salesforce)">Stripe</organization>
+	    <organization abbrev="Disney (was at Salesforce)">Disney</organization>
 	  </author>
 
           <date day="8" month="November" year="2014"/>
@@ -2196,7 +2196,7 @@
 	    <organization abbrev="Microsoft">Microsoft</organization>
 	  </author>
 
-          <date day="18" month="April" year="2022" />
+          <date day="12" month="September" year="2022" />
         </front>
       </reference>
 
@@ -2253,7 +2253,7 @@
 	  <t>Michael B. Jones (mbj@microsoft.com), Microsoft</t>
 	  <t>Torsten Lodderstedt (torsten@lodderstedt.net), yes.com (was at Deutsche Telekom)</t>
 	  <t>Nov Matake (nov@matake.jp), Independent</t>
-	  <t>Chuck Mortimore (charliemortimore@gmail.com), Stripe (was at Salesforce)</t>
+	  <t>Chuck Mortimore (charliemortimore@gmail.com), Disney (was at Salesforce)</t>
 	  <t>Anthony Nadalin (nadalin@prodigy.net), Independent (was at Microsoft)</t>
 	  <t>Axel Nennker (axel.nennker@telekom.de), Deutsche Telekom</t>
 	  <t>John Panzer (jpanzer@google.com), Google</t>
@@ -2310,6 +2310,18 @@
 
     <section anchor="History" title="Document History">
       <t>[[ To be removed from the approved errata ]]</t>
+
+      <t>
+	-32
+        <list style="symbols">
+	  <t>
+	    Updated logout spec references.
+	  </t>
+	  <t>
+	    Updated contributor affiliations.
+	  </t>
+	</list>
+      </t>
 
       <t>
 	-31

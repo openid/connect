@@ -23,7 +23,7 @@
   <?rfc private="Draft" ?>
 
   <front>
-    <title abbrev="OpenID Connect Core 1.0">OpenID Connect Core 1.0 - draft 28 incorporating errata set 2</title>
+    <title abbrev="OpenID Connect Core 1.0">OpenID Connect Core 1.0 - draft 29 incorporating errata set 2</title>
 
     <author fullname="Nat Sakimura" initials="N." surname="Sakimura">
       <organization abbrev="NAT.Consulting (was at NRI)">NAT.Consulting</organization>
@@ -58,14 +58,14 @@
     </author>
 
     <author fullname="Chuck Mortimore" initials="C." surname="Mortimore">
-      <organization abbrev="Stripe (was at Salesforce)">Stripe</organization>
+      <organization abbrev="Disney (was at Salesforce)">Disney</organization>
       <address>
         <email>charliemortimore@gmail.com</email>
 	<uri>https://twitter.com/cmort</uri>
       </address>
     </author>
 
-    <date day="18" month="April" year="2022" />
+    <date day="14" month="September" year="2022" />
 
     <workgroup>OpenID Connect Working Group</workgroup>
 
@@ -8664,10 +8664,10 @@
 	  </author>
 
 	  <author fullname="Chuck Mortimore" initials="C." surname="Mortimore">
-	    <organization abbrev="Stripe">Stripe</organization>
+	    <organization abbrev="Disney">Disney</organization>
 	  </author>
 
-	  <date day="18" month="April" year="2022" />
+	  <date day="14" month="September" year="2022" />
 	</front>
       </reference>
 
@@ -8692,16 +8692,16 @@
 	  </author>
 
 	  <author fullname="Chuck Mortimore" initials="C." surname="Mortimore">
-	    <organization abbrev="Stripe">Stripe</organization>
+	    <organization abbrev="Disney">Disney</organization>
 	  </author>
 
-	  <date day="18" month="April" year="2022" />
+	  <date day="14" month="September" year="2022" />
 	</front>
       </reference>
 
       <reference anchor="OpenID.RPInitiated" target="https://openid.net/specs/openid-connect-rpinitiated-1_0.html">
 	<front>
-	  <title>OpenID Connect Session Management 1.0</title>
+	  <title>OpenID Connect RP-Initiated Logout 1.0</title>
 
 	  <author fullname="Michael B. Jones" initials="M.B." surname="Jones">
 	    <organization abbrev="Microsoft">Microsoft</organization>
@@ -8723,7 +8723,7 @@
 	    <organization abbrev="Yubico">Yubico</organization>
 	  </author>
 
-	  <date day="18" month="April" year="2022" />
+	  <date day="12" month="September" year="2022" />
 	</front>
       </reference>
 
@@ -8751,7 +8751,7 @@
 	    <organization abbrev="Microsoft">Microsoft</organization>
 	  </author>
 
-	  <date day="18" month="April" year="2022" />
+	  <date day="12" month="September" year="2022" />
 	</front>
       </reference>
 
@@ -8763,7 +8763,7 @@
 	    <organization abbrev="Microsoft">Microsoft</organization>
 	  </author>
 
-	  <date day="18" month="April" year="2022" />
+	  <date day="12" month="September" year="2022" />
 	</front>
       </reference>
 
@@ -8779,7 +8779,7 @@
             <organization abbrev="Yubico">Yubico</organization>
           </author>
 
-	  <date day="18" month="April" year="2022" />
+	  <date day="12" month="September" year="2022" />
 	</front>
       </reference>
 
@@ -9317,7 +9317,7 @@
 	  <t>Torsten Lodderstedt (torsten@lodderstedt.net), yes.com (was at Deutsche Telekom)</t>
 	  <t>James Manger (James.H.Manger@team.telstra.com), Telstra</t>
 	  <t>Nov Matake (nov@matake.jp), Independent</t>
-	  <t>Chuck Mortimore (charliemortimore@gmail.com), Stripe (was at Salesforce)</t>
+	  <t>Chuck Mortimore (charliemortimore@gmail.com), Disney (was at Salesforce)</t>
 	  <t>Anthony Nadalin (nadalin@prodigy.net), Independent (was at Microsoft)</t>
 	  <t>Hideki Nara (hdknr@ic-tact.co.jp), Tact Communications</t>
 	  <t>Axel Nennker (axel.nennker@telekom.de), Deutsche Telekom</t>
@@ -9375,6 +9375,18 @@
 
     <section anchor="History" title="Document History">
       <t>[[ To be removed from the approved errata ]]</t>
+
+      <t>
+	-29
+        <list style="symbols">
+	  <t>
+	    Updated logout spec references.
+	  </t>
+	  <t>
+	    Updated contributor affiliations.
+	  </t>
+	</list>
+      </t>
 
       <t>
 	-28
