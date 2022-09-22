@@ -22,7 +22,7 @@
   <?rfc private="Draft" ?>
 
   <front>
-    <title abbrev="OpenID Connect Native SSO for Mobile Apps 1.0">OpenID Connect
+    <title abbrev="OIDC App Native SSO">OpenID Connect
     Native SSO for Mobile Apps 1.0 - draft 04</title>
 
     <author fullname="George F. Fletcher" initials="G.F.F." surname="Fletcher">
@@ -32,7 +32,7 @@
       </address>
     </author>
 
-    <date day="20" month="September" year="2022" />
+    <date day="22" month="September" year="2022" />
 
     <workgroup>OpenID Connect Working Group</workgroup>
 
