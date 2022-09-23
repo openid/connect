@@ -22,7 +22,7 @@
   <?rfc private="Draft" ?>
 
   <front>
-    <title abbrev="OpenID Connect Native SSO">OpenID Connect
+    <title abbrev="Mobile App Native SSO">OpenID Connect
     Native SSO for Mobile Apps 1.0 - draft 04</title>
 
     <author fullname="George F. Fletcher" initials="G.F.F." surname="Fletcher">
@@ -140,7 +140,7 @@
 |  #1      |     |  #2      |      |           |      |            |
 +----+-----+     +----+-----+      +-----+-----+      +-----+------+
      |                |                  |                  |
-     | [1] Start OIDC AuthN              |                  |
+     | [1] Start OpenID Connect AuthN    |                  |
      +----------------+----------------> |                  |
      |                |                  | [2] /authorize   |
      |                |                  +----------------> |
@@ -209,8 +209,8 @@
 
 	  <section anchor="AuthZExtensions" title="Native App Authorization Extensions">
       <t>
-		  The following sections describe the extensions required to the standard OIDC
-		  Authentication flow which will enable a second mobile app to share the
+		  The following sections describe the extensions required to the standard OpenID
+		  Connect Authentication flow which will enable a second mobile app to share the
 		  authentication of the first mobile app where both mobile applications are
 		  signed by the same vendor certificates.
       </t>
@@ -268,7 +268,7 @@
 		  <section anchor="TokenRsp" title="Token Response">
 			  <t>When the authorization server receives the
 				  <spanx style="verb">device_secret</spanx> value it MUST
-				  process the authorization_code grant type per the OIDC spec with the
+				  process the authorization_code grant type per the OpenID Connect spec with the
 				  following additions applying to the id_token.
 				  <list style="numbers">
 					  <t>Add a <spanx style="verb">ds_hash</spanx> claim to the id_token to represent a function of
@@ -286,16 +286,16 @@
 							  </t>
 						  </list>
 					  </t>
-					  <t>Add a session id to the id_token that represents the user?s
+					  <t>Add a session id to the id_token that represents the user's
 						  current authentication session.
 						  <list style="hanging">
 							  <t hangText="sid">
 								  <vspace/>
-								  REQUIRED. A string that uniquely identifies this user?s
-								  authentication ?session?. This value can be used in
+								  REQUIRED. A string that uniquely identifies this user's
+								  authentication session. This value can be used in
 								  logout flows as well as the flow this spec is describing.
-								  For mobile apps where there is no explicit ?browser
-								  authentication? this value SHOULD represent the
+								  For mobile apps where there is no explicit browser
+								  authentication this value SHOULD represent the
 								  underlying session associated with the refresh_token.
 							  </t>
 						  </list>
@@ -310,7 +310,7 @@
 				  the request processed as if no device_secret was specified.</t>
 			  <t>If the authorization request included the device_sso scope then the
 				  authorization server MUST return a device_secret in the response.
-				  The device_secret is returned in the ?device_token? claim of the
+				  The device_secret is returned in the device_token claim of the
 				  returned JSON data.</t>
 			  <t>If no devices_secret is specified, then the AS MUST generate the
 				  token. If a device_secret is specified and is valid, the AS MAY
@@ -329,7 +329,7 @@
 		  <section anchor="TXProfile" title="OAuth2 Token Exchange Profile">
 			  <t>The client authenticates using its registered token endpoint
           endpoint client authentication method. This could range from HTTP
-          Basic Authentication, to OIDC defined private_key_jwt. The AS must
+          Basic Authentication, to OpenID Connect defined private_key_jwt. The AS must
           be able to obtain the client_id of the requesting mobile app
           (mobile app #2) from the client authentication method.
         </t>
@@ -392,7 +392,7 @@
 			  </t>
 		  </section>
 		  <section anchor="TXReq" title="Token Exchange Request">
-			  <t>When a mobile app wants to request ?native SSO? (i.e. obtain refresh and access
+			  <t>When a mobile app wants to request native SSO (i.e. obtain refresh and access
 				  tokens for an already signed in user) it makes a standard OAuth2 /token
 				  endpoint request following the profile for Token Exchange defined above.</t>
         <t>The following is a non-normative example</t>
@@ -422,25 +422,25 @@
 					     signature of the id_token JWT.</t>
 					  <t>Verify that the binding between the id_token and the device_secret
 						  (as defined in the extension to the /token response) is valid.</t>
-					  <t>Verify that the session id in the id_token (?sid? claim) is still
+					  <t>Verify that the session id in the id_token (sid claim) is still
 						  valid. If the session is no longer valid, the AS MUST return an
-						  error of ?invalid_grant?. Note that in the case of a refresh_tokens
+						  error of invalid_grant. Note that in the case of a refresh_tokens
               issued with an offline_scope the 'sid' value SHOULD represent the
               offline "session" such that if the original refresh_token is revoked
               the 'ds_hash' value in the id_token is no longer valid.
             </t>
 					  <t>Validate that the client requesting native SSO is authorized to
 						  do so. The AS SHOULD maintain a list of client_ids that can share
-						  user authentications. For example, the AS MAY take the ?aud?
+						  user authentications. For example, the AS MAY take the 'aud'
 						  claim from the id_token and the client_id from the token request
 						  and ensures that both client_ids are allowed to share user
 						  authentications.</t>
 					  <t>The AS SHOULD verify that the scopes requested by the client in
 						  the token request (either default scopes or explicitly specified
-						  in the optional ?scope? parameter) do NOT require explicit user
+						  in the optional scope parameter) do NOT require explicit user
 						  consent. If any requested scopes require explicit user consent
 						  the AS SHOULD fail the request and return an error of
-						  ?invalid_scope?.</t>
+						  invalid_scope.</t>
 				  </list>
 			  </t>
 			  <t>Based on the AS definition of the device_secret, the AS may perform
