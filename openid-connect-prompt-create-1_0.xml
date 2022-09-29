@@ -42,9 +42,10 @@
       <t>
         An extension to the OpenID Connect Authentication Framework
         defining a new value for the <spanx style="verb">prompt</spanx>
-        parameter that instructs the OpenID Provider to start the user flow with
-        user registration and after the user account has been created return the
-        requested tokens to the client to complete the authentication flow.
+        parameter that instructs the OpenID Provider to start the user
+        account creation experience and after the user account has been
+        created return the requested tokens to the client to complete
+        the authentication flow.
       </t>
     </abstract>
 
@@ -124,9 +125,9 @@
         this specification. The behavior is the same for all response types.
       </t>
         <t>
-          This flow should not be considered successful without the return of a valid
+          This flow MUST NOT be considered successful without the return of a valid
           <spanx style="verb">id_token</spanx> or <spanx style="verb">id_token</spanx> +
-          <spanx style="verb">access_token</spanx>. The client should not assume a
+          <spanx style="verb">access_token</spanx>. The client MUST NOT assume a
           new identity has been created without the successful response.
         </t>
       <t>
