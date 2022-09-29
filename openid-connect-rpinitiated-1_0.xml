@@ -20,11 +20,11 @@
   <?rfc sortrefs="yes"?>
   <?rfc strict="yes" ?>
   <?rfc iprnotified="no" ?>
-  <?rfc private="Draft" ?>
+  <?rfc private="Final" ?>
 
   <front>
     <title abbrev="OpenID Connect RP-Initiated Logout 1.0">OpenID Connect
-    RP-Initiated Logout 1.0 - draft 03</title>
+    RP-Initiated Logout 1.0</title>
 
     <author fullname="Michael B. Jones" initials="M.B." surname="Jones">
       <organization abbrev="Microsoft">Microsoft</organization>
@@ -66,7 +66,7 @@
       </address>
     </author>
 
-    <date day="15" month="August" year="2022" />
+    <date day="12" month="September" year="2022" />
 
     <workgroup>OpenID Connect Working Group</workgroup>
 
@@ -611,11 +611,11 @@
           <title>OpenID Connect Core 1.0</title>
 
           <author fullname="Nat Sakimura" initials="N." surname="Sakimura">
-            <organization abbrev="NAT.Consulting (was at NRI)">NAT.Consulting</organization>
+	    <organization abbrev="NRI">Nomura Research Institute, Ltd.</organization>
           </author>
 
           <author fullname="John Bradley" initials="J." surname="Bradley">
-            <organization abbrev="Yubico (was at Ping Identity)">Yubico</organization>
+	    <organization abbrev="Ping Identity">Ping Identity</organization>
           </author>
 
           <author fullname="Michael B. Jones" initials="M.B." surname="Jones">
@@ -627,7 +627,7 @@
           </author>
 
 	  <author fullname="Chuck Mortimore" initials="C." surname="Mortimore">
-	    <organization abbrev="Stripe (was at Salesforce)">Stripe</organization>
+	    <organization abbrev="Salesforce">Salesforce</organization>
 	  </author>
 
           <date day="8" month="November" year="2014"/>
@@ -639,11 +639,11 @@
           <title>OpenID Connect Discovery 1.0</title>
 
           <author fullname="Nat Sakimura" initials="N." surname="Sakimura">
-            <organization abbrev="NAT.Consulting (was at NRI)">NAT.Consulting</organization>
+            <organization abbrev="NRI">Nomura Research Institute, Ltd.</organization>
           </author>
 
           <author fullname="John Bradley" initials="J." surname="Bradley">
-            <organization abbrev="Yubico (was at Ping Identity)">Yubico</organization>
+            <organization abbrev="Ping Identity">Ping Identity</organization>
           </author>
 
           <author fullname="Michael B. Jones" initials="M.B." surname="Jones">
@@ -663,11 +663,11 @@
           <title>OpenID Connect Dynamic Client Registration 1.0</title>
 
           <author fullname="Nat Sakimura" initials="N." surname="Sakimura">
-            <organization abbrev="NAT.Consulting (was at NRI)">NAT.Consulting</organization>
+            <organization abbrev="NRI">Nomura Research Institute, Ltd.</organization>
           </author>
 
           <author fullname="John Bradley" initials="J." surname="Bradley">
-            <organization abbrev="Yubico (was at Ping Identity)">Yubico</organization>
+            <organization abbrev="Ping Identity">Ping Identity</organization>
           </author>
 
           <author fullname="Michael B. Jones" initials="M.B." surname="Jones">
@@ -702,7 +702,7 @@
 	    <organization abbrev="Microsoft">Microsoft</organization>
 	  </author>
 
-	  <date day="18" month="April" year="2022" />
+	  <date day="12" month="September" year="2022" />
 	</front>
       </reference>
 
@@ -714,7 +714,7 @@
 	    <organization abbrev="Microsoft">Microsoft</organization>
 	  </author>
 
-	  <date day="18" month="April" year="2022" />
+	  <date day="12" month="September" year="2022" />
 	</front>
       </reference>
 
@@ -730,7 +730,7 @@
             <organization abbrev="Yubico">Yubico</organization>
           </author>
 
-	  <date day="18" month="April" year="2022" />
+	  <date day="12" month="September" year="2022" />
 	</front>
       </reference>
 
@@ -797,13 +797,13 @@
           <t>John Bradley (ve7jtb@ve7jtb.com), Yubico</t>
           <t>Breno de Medeiros (breno@google.com), Google</t>
 	  <t>Vladimir Dzhuvinov (vladimir@connect2id.com), Connect2id</t>
-          <t>George Fletcher (gffletch@aol.com), Capital One (was at AOL)</t>
+          <t>George Fletcher (gffletch@aol.com), Capital One</t>
 	  <t>Roland Hedberg (roland@catalogix.se), Independent</t>
           <t>Edmund Jay (ejay@mgi1.com), Illumila</t>
           <t>Michael B. Jones (mbj@microsoft.com), Microsoft</t>
 	  <t>Todd Lainhart (lainhart@us.ibm.com), IBM</t>
 	  <t>Torsten Lodderstedt (torsten@lodderstedt.net), yes.com</t>
-          <t>Anthony Nadalin (nadalin@prodigy.net), Independent (was at Microsoft)</t>
+          <t>Anthony Nadalin (nadalin@prodigy.net), Independent</t>
           <t>Axel Nennker (axel.nennker@telekom.de), Deutsche Telekom</t>
 	  <t>Justin Richer (justin@bspk.io), Bespoke Engineering</t>
           <t>Nat Sakimura (nat@nat.consulting), NAT.Consulting</t>
@@ -850,92 +850,5 @@
       specification.</t>
     </section>
 
-    <section anchor="History" title="Document History">
-      <t>[[ To be removed from the final specification ]]</t>
-
-      <t>
-	-03
-        <list style="symbols">
-	  <t>
-	    Fixed #1549 - Clarified that RP-Initiated Logout is idempotent.
-	  </t>
-	</list>
-      </t>
-
-      <t>
-	-02
-        <list style="symbols">
-	  <t>
-	    Fixed #1182 - Added the <spanx style="verb">logout_hint</spanx> parameter at the Logout Endpoint.
-	  </t>
-	  <t>
-	    Fixed #1032 - Added the <spanx style="verb">client_id</spanx> parameter at the Logout Endpoint.
-	  </t>
-	  <t>
-	    Fixed #1338 - Allow <spanx style="verb">post_logout_redirect_uri</spanx> to use an alternate scheme.
-	  </t>
-	  <t>
-	    Fixed #1183, #1184, and #1216 - Described error handling.
-	  </t>
-	  <t>
-	    Updated contributor affiliations.
-	  </t>
-	  <t>
-	    Updated many spec URLs from http to https.
-	  </t>
-	</list>
-      </t>
-
-      <t>
-	-01
-	<list style="symbols">
-          <t>
-	    Fixed #1071 - Require <spanx style="verb">id_token_hint</spanx> in RP-initiated logout
-	    for redirect to <spanx style="verb">post_logout_redirect_uri</spanx>.
-	  </t>
-	  <t>
-	    Fixed #1134 - Clarify that OPs must send a logout notification to the RP that requested RP-Initiated Logout.
-	  </t>
-	  <t>
-	    Fixed #1030 - Specify the use of HTTPS URIs.
-	  </t>
-	  <t>
-	    Fixed #1087 - Insufficient description of <spanx style="verb">id_token_hint</spanx> processing and validation.
-	  </t>
-	  <t>
-	    Fixed #1056 - Support both GET and POST at the Logout Endpoint.
-	  </t>
-	  <t>
-	    Fixed #1017 - Added <spanx style="verb">ui_locales</spanx> parameter at Logout Endpoint.
-	  </t>
-	  <t>
-	    Defined the Logout Endpoint term.
-	  </t>
-        </list>
-      </t>
-
-      <t>
-	-00
-	<list style="symbols">
-          <t>
-	    Fixed #1085 - Split RP-Initiated Logout into its own specification.
-	  </t>
-	  <t>
-	    Registered the AS metadata value <spanx style="verb">end_session_endpoint</spanx>.
-	  </t>
-	  <t>
-	    Updated affiliations and acknowledgements.
-	  </t>
-	  <t>
-	    Moved metadata sections to more logical locations.
-	  </t>
-	  <t>
-	    Added paragraph describing the relationship between
-	    RP-Initiated Logout and the three OP-initiated logout mechanisms.
-	  </t>
-        </list>
-      </t>
-
-    </section>
   </back>
 </rfc>

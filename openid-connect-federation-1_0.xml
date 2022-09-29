@@ -24,7 +24,7 @@
 
   <front>
     <title abbrev="OpenID Connect Federation">OpenID Connect Federation 1.0 -
-      draft 21
+      draft 23
     </title>
 
     <author fullname="Roland Hedberg" initials="R." role="editor"
@@ -77,7 +77,7 @@
       </address>
     </author>
 
-    <date day="16" month="August" year="2022"/>
+    <date day="27" month="September" year="2022"/>
 
     <workgroup>OpenID Connect Working Group</workgroup>
 
@@ -203,6 +203,15 @@
               <vspace/>
               An Entity that represents a trusted third party.
             </t>
+            <t hangText="Federation Entity Discovery">
+              <vspace/>
+              A process that starts with an Entity Identifier and collects
+              a number of Entity Statements until the chosen Trust Anchor is reached.
+              From the collected Entity Statements a Trust Chain
+              is constructed and verified.
+              The end result of the Federation Entity Discovery is that the
+              Leaf Entity's metadata is constructed from the Trust Chain.
+            </t>
             <t hangText="Trust Chain">
               <vspace/>
               A sequence of Entity Statements that represents a chain
@@ -212,6 +221,10 @@
               A trust mark represents a statement of conformance to a
               well-scoped set of trust and/or interoperability requirements
               as determined by an accreditation authority.
+            </t>
+            <t hangText="Federation Entity Keys">
+              Keys that an Entity uses to sign its Entity Configuration.
+              These keys are also used by an entity to sign Entity Statements.
             </t>
           </list>
         </t>
@@ -322,7 +335,7 @@
               to be used in other protocols, such as OpenID Connect, are conveyed
               in the  <spanx style="verb">metadata</spanx> element of the respective Entity Statement.
               This claim is only OPTIONAL for the Entity Statement returned
-              from an OP when the client is doing explicit registration.
+              from an OP when the client is doing Explicit Registration.
               In all other cases it is REQUIRED.
               Every JWK in the JWK Set MUST have a Key ID (<spanx style="verb">kid</spanx>).
           It is RECOMMENDED that the Key ID be the JWK Thumbprint <xref target="RFC7638"/>
@@ -600,12 +613,24 @@
           </list>
         </t>
         <t>
-          A Trust Chain begins with a Leaf Entity Configuration, 
+          A Trust Chain begins with a Leaf Entity Configuration,
           has zero or more Entity Statements
-          issued by intermediates about subordinates, and ends with an
-          Entity Statement issued by the Trust Anchor about the top-most
-          intermediate (if there are intermediates) or the Leaf Entity
-          (if there are no intermediates).
+          issued by intermediates about subordinates, 
+          including the Entity Statement issued by the 
+          Trust Anchor about the top-most intermediate 
+          (if there are intermediates) or the Leaf Entity 
+          (if there are no intermediates). 
+          The Trust Chain MAY end with the
+          Entity Configuration of the Trust Anchor.
+        </t>
+        <t>
+          If present, the Trust Anchor's Entity Configuration 
+          at the end of the chain contains configuration of the Federation, 
+          such as the public keys of the Trust Anchor and other parameters 
+          considered within the trust evaluation. 
+          When this is this case, the Trust Chain
+          consequentially contains the configuration of the Federation 
+          at the date of the evaluation of the chain.
         </t>
         <t>
           A simple example: If we have an RP that belongs to organization A
@@ -616,10 +641,13 @@
               an Entity Configuration about the RP published by the RP,
             </t>
             <t>
-              an Entity Statement about the RP published by Organization A, and
+              an Entity Statement about the RP published by Organization A,
             </t>
             <t>
-              an Entity Statement about Organization A published by Federation F.
+              an Entity Statement about Organization A published by Trust Anchor F,
+            </t>
+            <t>
+              the Entity Configuration about the Trust Anchor F.
             </t>
           </list>
         </t>
@@ -709,9 +737,8 @@
             <t hangText="signed_jwks_uri">
               <vspace/>
               OPTIONAL. A URI pointing to a signed JWT having the Entity's
-              JWK Set as its payload. The JWT is signed with a key that was included
-              in the JWK that the Entity published in its self-signed Entity
-              Statement.
+              JWK Set as its payload. The JWT MUST be signed using a Federation
+              Entity Key.
               If an Entity can use <spanx style="verb">signed_jwks_uri</spanx>,
               it MUST NOT use <spanx style="verb">jwks</spanx> or
               <spanx style="verb">jwks_uri</spanx>.
@@ -937,9 +964,9 @@
               information in the request (like the redirect_uri) to information it has gained
               on the client, through static or dynamic registration.
               If the map is successful, then the request is permitted to be processed.
-              If the RP uses automatic registration as described in this specification
+              If the RP uses Automatic Registration, as defined in <xref target="automatic"/>,
               the OP has no prior knowledge
-              of the RP. Therefore the OP must start by gathering
+              of the RP. Therefore, the OP must start by gathering
               information about the RP using the process outlined in
               <xref target="federation_configuration"/>. Once it has the RP's
               metadata, the OP can then verify the request in the same way
@@ -994,7 +1021,7 @@
               Examples of authentication request methods are
           <list style="symbols">
         <t>
-          Authorization Request (AR) as described in Section 3 of
+          Authentication Request, as described in Section 3 of
           <xref target="OpenID.Core">OpenID Connect Core 1.0</xref>, and
         </t>
         <t>
@@ -1192,14 +1219,6 @@ The example above uses a <spanx style="verb">signed_jwks_uri</spanx> element for
               <xref target="resolve"/>. Any federation Entity MAY publish a
                 <spanx style="verb">federation_resolve_endpoint</spanx>.
             </t>
-            <t hangText="federation_status_endpoint">
-              <vspace/>
-              OPTIONAL.
-              The Trust Mark status endpoint described in
-              <xref target="status_endpoint"/>. Trust mark issuers SHOULD
-              publish a
-                <spanx style="verb">federation_status_endpoint</spanx>.
-            </t>
             <t hangText="organization_name">
               <vspace/>
               OPTIONAL. A human-readable
@@ -1252,12 +1271,12 @@ The example above uses a <spanx style="verb">signed_jwks_uri</spanx> element for
         <t>
           The following properties are allowed:
           <list style="hanging">
-            <t hangText="status_endpoint">
+            <t hangText="federation_status_endpoint">
               <vspace/>
               OPTIONAL.
-              The endpoint for the status operation is described in
-              <xref target="status_endpoint"/>. Issuers of Trust Marks
-              MAY publish a <spanx style="verb">status_endpoint</spanx>.
+              The Trust Mark status endpoint described in
+              <xref target="status_endpoint"/>. Trust mark issuers SHOULD
+              publish a <spanx style="verb">federation_status_endpoint</spanx>.
             </t>
           </list>
         </t>
@@ -1265,7 +1284,7 @@ The example above uses a <spanx style="verb">signed_jwks_uri</spanx> element for
         <figure>
           <artwork><![CDATA[
 "trust_mark_issuer": {
-  "status_endpoint": "https://trust_marks_are_us.example.com/status"
+  "federation_status_endpoint": "https://trust_marks_are_us.example.com/status"
 }
 ]]></artwork>
         </figure>
@@ -1608,10 +1627,10 @@ The example above uses a <spanx style="verb">signed_jwks_uri</spanx> element for
               </t>
               <t>
                  If more than one value is specified in
-                 <spanx style="verb">one_of</spanx> and the Leaf Entity 
+                 <spanx style="verb">one_of</spanx> and the Leaf Entity
                  does not specify the metadata claim for which
                  <spanx style="verb">one_of</spanx> is referred to,
-                 it’s an implementation choice which of the values in
+                 it is an implementation choice which of the values in
                  the <spanx style="verb">one_of</spanx> array will be used.
               </t>
             </list>
@@ -1916,12 +1935,13 @@ The example above uses a <spanx style="verb">signed_jwks_uri</spanx> element for
             limit is imposed.
           </t>
           <t>
-            Assuming that we have a Trust Chain with four Entity Statements:
+            Assuming that we have a Trust Chain with five Entity Statements:
             <list style="numbers">
-              <t>Leaf Entity (LE)</t>
-              <t>Intermediate 1 (I1)</t>
-              <t>Intermediate 2 (I2)</t>
-              <t>Trust Anchor (TA)</t>
+              <t>Leaf Entity (LE) Entity Configuration</t>
+              <t>Intermediate 1 (I1-LE) Entity Statement issued for LE</t>
+              <t>Intermediate 2 (I2-I1) Entity Statement issued for I1</t>
+              <t>Trust Anchor (TA-I2) Entity Statement issued for I2</t>
+              <t>Trust Anchor (TA) Entity Configuration</t>
             </list>
           </t>
           <t>
@@ -1996,8 +2016,11 @@ The example above uses a <spanx style="verb">signed_jwks_uri</spanx> element for
         </t>
         <t>
           The Trust Marks are signed by a federation accredited
-          authority. The validation of such a signed statement is performed
+          authority.
+          The validation of such a signed statement is performed
           in the same way that an Entity Configuration is validated.
+          To make this validation possible the key used by the Trust Mark
+          Issuer to sign Trust Marks MUST be one of its the Federation Entity Keys.
         </t>
         <t>
           Note that a federation MAY allow an Entity to self-sign
@@ -2279,11 +2302,10 @@ The example above uses a <spanx style="verb">signed_jwks_uri</spanx> element for
       </t>
       <t>
         Federation Entities SHOULD make an Entity Configuration Document
-        available
-        at the configuration endpoint. There is only one exception to this
-        rule and that is for an RP that only does explicit registration. Since
-        it
-        posts the self-signed Entity Statement to the OP during client
+        available at the configuration endpoint.
+	There is only one exception to this
+        rule and that is for an RP that only does Explicit Registration.
+	Since it posts the Entity Configuration to the OP during client
         registration, the OP has everything it needs from the RP.
       </t>
       <section title="Federation Entity Configuration Request">
@@ -2292,8 +2314,7 @@ The example above uses a <spanx style="verb">signed_jwks_uri</spanx> element for
           HTTP GET request at the previously specified path.
           The requesting party would make the following request to the Entity
           <spanx style="verb">https://openid.sunet.se</spanx>
-          to obtain its
-          configuration information:
+          to obtain its configuration information:
         </t>
         <t>
           <figure>
@@ -2585,12 +2606,17 @@ Host: openid.sunet.se
 
         <section title="Resolve Response">
           <t>
-            The response is a signed JWT containing resolved metadata and
+            The positive response is a signed JWT, where the content
+            type MUST be set to
+            <spanx style="verb">application/resolve-response+jwt</spanx>,
+            containing resolved metadata and
             verified Trust Marks. The response MAY also contain
-            the sequence of the Entity Statements that compose the Trust Chain.
-            The keys used by the resolver MUST be the
-            same keys used to construct its Entity Configuration.
-            The response SHOULD contain the aud claim only
+            the sequence of the Entity Statements that compose the Trust Chain,
+            sorted as shown in <xref target="trust_chain"/>.
+            The key used by the resolver to sign the response MUST be one of its
+            Federation Entity Keys.
+            The response SHOULD contain the 
+            <spanx style="verb">aud</spanx> claim only
             if the requesting client is authenticated.
           </t>
           <figure>
@@ -2674,7 +2700,7 @@ Host: openid.sunet.se
             protected metadata correctly and to provide it with authentic results.</t>
           <t>
             You can, of course, use the service as a recommendation. A way to
-            get a quick response, a hint, that you can use as the bases for
+            get a quick response, a hint, that you can use as the basis for
             going forward or not.</t>
         </section>
       </section>
@@ -2927,8 +2953,7 @@ Content-Type: application/json
         </t>
       </section>
 
-      <section title="Validating a Trust Chain"
-               anchor="trust_chain_validation">
+      <section title="Validating a Trust Chain" anchor="trust_chain_validation">
         <t>
           As described in <xref target="trust_chain"/>,
           a Trust Chain consists of an ordered list of Entity
@@ -3079,10 +3104,10 @@ Content-Type: application/json
       <section title="Redundant Retrieval of Trust Anchor Keys" anchor="TrustAnchorKeys">
     <t>
       It is RECOMMENDED that Federation Operators provide a means of retrieving the public keys
-      for Trust Anchors that it administers that is independent of the Entity Statements
+      for Trust Anchors that it administers that is independent of the Entity Configurations
       for those Trust Anchors.
       This is intended to provide redundancy in the eventuality of the compromise of
-      the Web PKI infrastructure underlying retrieval of public keys from Entity Statements.
+      the Web PKI infrastructure underlying retrieval of public keys from Entity Configurations.
     </t>
     <t>
       The keys retreived via the independent mechanism specified by the Federation Operator
@@ -3111,48 +3136,40 @@ Content-Type: application/json
       </t>
       <t>
         There are two alternative approaches to establish trust between an
-        RP and an OP, which we call automatic and explicit
-        registration. Members of a federation or a community
+        RP and an OP, which we call Automatic and Explicit Registration.
+	Members of a federation or a community
         SHOULD agree upon which one to use. While implementations should
         support both methods, deployments MAY choose to disable the use of one
         of them.
       </t>
       <t>
-        Independent of whether the RP uses automatic or explicit registration,
+        Independent of whether the RP uses Automatic or Explicit Registration,
         the way that the RP learns about the OP is the same.
         It will use the procedure that is
         described in <xref target="resolving_trust"/>.
       </t>
+
       <section title="Automatic Registration" anchor="automatic">
         <t>
-          Automatic registration allows an RP to send Authorization Requests
-          to an OP without first registering with the OP. It basically works by
-          the OP using the Client ID in the request to find the RP's metadata
-          using the process outlined in
-          <xref target="resolving_trust"/>
-          and then
-          verifies that the RP is in control of a private key that is a
-          companion
-          to one of the public keys the RP published through its metadata.
+	  Automatic Registration enables an RP to make Authentication Requests
+	  without a prior registration step with the OP.
+	  The OP resolves the RP's Entity Configuration from the Client ID in the Authentication Request,
+	  following the process defined in <xref target="resolving_trust"/>.
         </t>
         <t>
-          For automatic registration to work a number of things MUST be valid:
+          Automatic Registration has the following characteristics:
           <list style="symbols">
             <t>
-              The Client ID of the RP
-              MUST be set to be identical to the RP Entity Identifier.
-            </t>
-            <t>
-              Without a registration process, the RP does not have a
-              client secret. Instead, the automatic registration model requires
-              the
-              RP to make use of asymmetric cryptography. Basically, the RP must
-              prove that it has control of the RP's private keys.
-            </t>
-            <t>
-              The Client ID MUST be a URL from which the OP can
+	      In all interactions with the OP, the RP employs its Entity Identifier as the Client ID.
+              The Entity Identifier is the URL from which the OP can
               fetch the RP's Entity Configuration using the process
               described in <xref target="federation_configuration"/>.
+            </t>
+            <t>
+	      Since there is no registration step prior to the Authentication Request,
+	      the RP cannot be supplied with a Client Secret.
+	      Instead, the Automatic Registration model requires the RP to use
+	      asymmetric cryptography to authenticate its requests.
             </t>
             <t>
               The OP MUST publish that it supports a request authentication
@@ -3170,7 +3187,7 @@ Content-Type: application/json
             or using pushed authorization as described in
             <xref target="RFC9126">Pushed Authorization Requests</xref>.
           </t>
-          <section title="Using a Request Object">
+          <section title="Using a Request Object" anchor="UsingAuthzRequestObject">
 
             <t>
               In the case where a Request Object is used, the value of the
@@ -3183,8 +3200,8 @@ Content-Type: application/json
               <list style="hanging">
                 <t hangText="aud">
                   <vspace/>
-                  REQUIRED. The Audience (aud) MUST be the URL of the
-                  Authorization Server's Authorization Endpoint.
+                  REQUIRED. The Audience (aud) value MUST be or include
+                  the OP's Issuer Identifier URL.
                 </t>
                 <t hangText="iss">
                   <vspace/>
@@ -3216,6 +3233,16 @@ Content-Type: application/json
                   <vspace/>
                   OPTIONAL. Time at which the JWT was issued.
                 </t>
+                <t hangText="trust_chain" anchor="trust_chain_param">
+                  <vspace/>
+                  OPTIONAL. Array containing the sequence of the statements
+                  that compose the Trust Chain between the RP that makes
+                  the request and the selected Trust Anchor,
+                  sorted as shown in <xref target="trust_chain"/>.
+                  Due to the large size of a Trust Chain it could be necessary to use
+                  a <xref target="RFC9101">JWT-Secured Authorization Request (JAR)</xref> or
+                  <xref target="RFC9126">Pushed Authorization Request</xref>.
+                </t>
               </list>
             </t>
             <figure>
@@ -3235,13 +3262,18 @@ Content-Type: application/json
   "redirect_uri": "https://rp.example.com/authz_cb",
   "response_type": "code",
   "scope": "openid profile email address phone",
-  "state": "YmX8PM9I7WbNoMnnieKKBiptVW0sP2OZ"
+  "state": "YmX8PM9I7WbNoMnnieKKBiptVW0sP2OZ",
+  "trust_chain" : [
+    "eyJhbGciOiJSUzI1NiIsImtpZCI6Ims1NEhRdERpYnlHY3M5WldWTWZ2aUhm ...",
+    "eyJhbGciOiJSUzI1NiIsImtpZCI6IkJYdmZybG5oQU11SFIwN2FqVW1BY0JS ...",
+    "eyJhbGciOiJSUzI1NiIsImtpZCI6IkJYdmZybG5oQU11SFIwN2FqVW1BY0JS ..."
+  ]
 }
 ]]></artwork>
             </figure>
             <figure>
               <preamble>
-                The following is a non-normative example of an Authorization
+                The following is a non-normative example of an Authentication
                 Request using the request parameter (with line wraps within
                 values for display purposes only):
               </preamble>
@@ -3271,21 +3303,48 @@ https://server.example.com/authorize?
       IRa4r6OKgFMNDqPzGqgwPuXMbjhBTuJptUgsmbEwdsGYw
 ]]></artwork>
             </figure>
-            <section title="Processing the Authentication Request">
+            <section title="Processing the Authentication Request" anchor="AuthzRequestProcessing">
               <t>
                 When the OP receives an incoming Authentication Request,
                 the OP supports OpenID Connect Federation, the incoming
                 Client ID
                 is a valid URL, and the OP does not have the Client ID
                 registered as a known
-                client, then the OP SHOULD try to resolve and fetch trust
-                chains starting with the RP's Entity
-                Statement as described in <xref target="fetching-es"/>.
+                client, then the OP SHOULD resolve the Trust
+                Chains related to the requestor.
               </t>
               <t>
-                The OP MUST then validate the possible Trust Chains, as
-                described in
-                <xref target="trust_chain_validation"/>,
+                An RP MAY present to the OP a Trust Chain related to itself,
+                using the <spanx style="verb">trust_chain</spanx>
+                parameter.
+
+                If the OP doesn't have a valid registration for the RP or
+                its registration has expired, the OP MAY use the received
+                Trust Chain as a hint which path to take from the
+                Leaf Entity to the Trust Anchor.
+                The OP MAY evaluate the statements in the
+                <spanx style="verb">trust_chain</spanx>
+                to make its Federation Entity Discovery procedure more efficient,
+                especially if the RP shows more than a single authority hint in
+                its Entity Configuration.
+
+                If the OP already has a valid registration for the RP it MAY
+                use the received Trust Chain to update the RP's registration.
+
+                Whenever the OP uses a Trust Chain submitted by an RP, the
+                OP MUST fully verify it, with every statement contained in it.
+
+                A Trust Chain may be relied upon by the OP because it has validated
+                all of its statements. This is true whether these statements
+                are retrieved from their URLs or whether they
+                are provided via the <spanx style="verb">trust_chain</spanx>
+                parameter.
+              </t>
+              <t anchor="TrustChainParamAbsent">
+                If the RP doesn't include the <spanx style="verb">trust_chain</spanx>
+                in the request or the OP doesn't support this feature, it then MUST
+                validate the possible Trust Chains, starting with the RP's Entity
+                Configuration as described in <xref target="fetching-es"/>,
                 and resolve the RP metadata with type
                 <spanx style="verb">openid_relying_party</spanx>.
               </t>
@@ -3300,7 +3359,7 @@ https://server.example.com/authorize?
               </t>
               <t>
                 Once the OP has the RP's metadata, it can verify that the client
-                was actually the one sending the Authorization Request by
+                was actually the one sending the Authentication Request by
                 verifying the signature of the Request Object using the key
                 material the client published through its metadata (underneath
                 <spanx style="verb">metadata/openid_relying_party</spanx>).
@@ -3380,32 +3439,9 @@ redirect_uri=https%3A%2F%2Frp.example.com%2Fauthz_cb
             </figure>
             <section title="Processing the Authentication Request">
               <t>
-                There are three different paths the OP MUST follow when
-                processing the Authentication Request, depending on which
-                request authentication
-                method was used. It all starts the same though.
-                When the OP receives an incoming Authentication Request,
-                the OP supports OpenID Connect Federation, the incoming
-                Client ID
-                is a valid URL, the OP does not have the Client ID
-                registered as a known client and the OP supports the request
-                authentication method used then the OP SHOULD try to resolve and
-                fetch Trust Chains starting with the RP's Entity
-                Statement as described in <xref target="fetching-es"/>.
-              </t>
-              <t>
-                The OP SHOULD validate the possible Trust Chains, as described
-                in
-                <xref target="trust_chain_validation"/>,
-                and resolve the RP metadata with type
-                <spanx style="verb">openid_relying_party</spanx>.
-              </t>
-              <t>
-                The OP SHOULD consider the resolved metadata of the RP and
-                verify that it complies with the client metadata specification
-                in
-                <xref target="OpenID.Registration">OpenID Connect Dynamic Client
-                  Registration 1.0</xref>.
+                All the assumptions and requirements already defined in
+                 <xref target="AuthzRequestProcessing"/>
+                also apply to <xref target="RFC9126">Pushed Authorization Requests</xref>.
               </t>
               <t>
                 Once the OP has the RP's metadata, it can verify the client
@@ -3479,18 +3515,27 @@ HTTP/1.1 302 Found
     &state=af0ifjsldkj
 ]]></artwork>
           </figure>
+	</section>
+	<section title="Possible Other Uses of Automatic Registration" anchor="AutomaticRegistrationOtherUses">
+	  <t>
+	    Note that we anticipate that Automatic Registration could be employed
+	    for use cases beyond OpenID Connect Federation.
+	    If used with pure OAuth 2.0, for instance,
+	    Automatic Registration would occur during Authorization Requests.
+	    If for a particular such use case the client does not need to be securely identified,
+	    then the requirement for signed requests could be relaxed.
+	  </t>
         </section>
+
       </section>
       <section title="Explicit Registration" anchor="explicit">
         <t>
-          This method involves performing an explicit registration of a new
-          client the first time an RP interacts with an OP
-          using something that basically follows the steps in
-          <xref target="OpenID.Registration">OpenID Connect Dynamic Client
-            Registration 1.0
-          </xref>
-          but where the client registration request
-          is a signed Entity Statement.
+	  This method involves performing an explicit registration step for a new client
+	  before the RP interacts with an OP for the first time,
+          similarly to the process specified by
+          <xref target="OpenID.Registration">OpenID Connect Dynamic Client Registration 1.0</xref>,
+          but where the client registration request contains the Entity Configuration
+          or an entire Trust Chain.
         </t>
         <section anchor="Clireg" title="Client Registration">
           <section anchor="Cliregreq" title="Client Registration Request">
@@ -3501,7 +3546,7 @@ HTTP/1.1 302 Found
               in the OP's metadata.
             </t>
             <t>
-              Given that the OP supports explicit registration, the RP
+              Given that the OP supports Explicit Registration, the RP
               progresses as follows:
             </t>
             <t>
@@ -3516,20 +3561,38 @@ HTTP/1.1 302 Found
                   Using this subset of Trust Anchors, the RP will choose a set of
                   <spanx style="verb">authority_hints</spanx>
                   from the hints that are available to it. Each hint MUST,
-                  when used as a starting point for trust chain collection,
+                  when used as a starting point for Trust Chain collection,
                   lead to at least one of the Trust Anchors in the subset.
                 </t>
                 <t>
-                  The RP will now construct an Entity Configuration
+                  The RP will now construct its Entity Configuration
                   where the metadata statement chosen is influenced by the OP's
-                  metadata and where the <spanx style="verb">authority_hints</spanx>
+                  metadata and where the
+                  <spanx style="verb">authority_hints</spanx>
                   included are picked by the process described above.
                 </t>
                 <t>
-                  The Entity Configuration is sent, using POST, to the
+                  The RP MAY include its Entity Configuration
+                  in a Trust Chain regarding itself.
+                  The Registration Request will contain an
+                  array containing the sequence of the
+                  statements that compose the Trust Chain
+                  between the RP that makes the request and the
+                  selected Trust Anchor.
+               </t>
+                <t>
+                  The Entity Configuration, or the entire Trust Chain,
+                  is sent, using POST, to the
                   <spanx style="verb">federation_registration_endpoint</spanx>
-                  defined in this document. The content type MUST be set to
-                  <spanx style="verb">application/entity-statement+jwt</spanx>.
+                  defined in this document.
+                </t>
+                <t>
+                  The content type of the Registration Request MUST be set to
+                  <spanx style="verb">application/entity-statement+jwt</spanx>
+                  if it contains only the Entity Configuration of the
+                  requestor. Otherwise if it contains the Trust Chain, the
+                  content type of the Registration Request MUST be set to
+                  <spanx style="verb">application/trust-chain+json</spanx>.
                 </t>
               </list>
             </t>
@@ -3538,24 +3601,32 @@ HTTP/1.1 302 Found
           <section anchor="cliregresp" title="Client Registration Response">
             <section title="OP Constructing the Response">
               <t>
-                The Trust Chains MUST be constructed using the received
-                Entity Statements.
-              </t>
-              <t>
                 <list style="numbers">
                   <t>
-                    After the OP receives the request, it collects and
+                    After the OP receives the registration request, it
+                    checks if this contains an Entity Configuration or an
+                    entire Trust Chain.
+                 </t>
+                 <t>
+                    If the request contains an Entity Configuration, the OP
+                    collects and
                     evaluates the Trust Chains starting with the
                     <spanx style="verb">authority_hints</spanx>
-                    in the registration request.
+                    in the Entity Configuration of the requestor.
                     After it has verified at least one Trust Chain it
                     MUST verify that the signature on the received registration
                     request is correct.
+                    If the OP finds more than one acceptable Trust Chain,
+                    it MUST choose one Trust Anchor from those chains as the one it will
+                    proceed with.
                   </t>
                   <t>
-                    If it finds more than one acceptable Trust Chain, it MUST
-                    choose one Trust Anchor from those chains as the one it will
-                    proceed with.
+                    If the request contains a Trust Chain,
+                    the OP MAY evaluate the statements in the Trust Chain
+                    to make its Federation Entity Discovery procedure more efficient,
+                    especially if the RP shows more than a single authority
+                    hint in its Entity Configuration.
+
                   </t>
                   <t>
                     At this point, if there already exists a client
@@ -3598,7 +3669,7 @@ HTTP/1.1 302 Found
                   </t>
                   <t>
                     The RP MUST NOT apply metadata policies and assertions
-                    from the trust chains that the OP provides because those
+                    from the Trust Chains that the OP provides because those
                     are not valid for the RP's metadata.
                     The RP MUST apply policies and assertions to the metadata
                     using one of its own Trust Chains that ends in the Trust
@@ -3606,8 +3677,8 @@ HTTP/1.1 302 Found
                     Once it has applied those policies and assertions, it can
                     then apply the policies and assertions returned from the OP.
                     This is equivalent to adding the OP's metadata policies and
-                    assertions to the trust chain in between the RP's and its
-                    immediate superior's entity statements.
+                    assertions to the Trust Chain in between the RP's and its
+                    immediate superior's Entity Statements.
                     When the RP has applied all the metadata policies and
                     assertions to its metadata statement, it then stores
                     the result and will use the agreed-upon metadata when
@@ -3645,7 +3716,7 @@ HTTP/1.1 302 Found
             The temporary nature of explicit registration means that an RP must
             expect its registration to become invalidated at any time, causing
             RP requests to the OP, such as authorization, token or UserInfo
-            requests, to fail. An RP may devise appropriate strategies to
+            requests, to fail. An RP MAY devise appropriate strategies to
             re-register with the OP and restart the transaction when such a
             condition occurs.
           </t>
@@ -3711,6 +3782,32 @@ HTTP/1.1 302 Found
           </t>
         </section>
       </section>
+
+      <section title="Differences between Automatic Registration and Explicit Registration" anchor="AutomaticVsExplicit">
+	<t>
+	  The primary differences between Automatic Registration and Explicit Registration are:
+          <list style="symbols">
+            <t>
+	      With Automatic Registration, there is no registration step prior to the Authentication Request,
+	      whereas with Explicit Registration, there is.
+	      (<xref target="OpenID.Registration">OpenID Connect Dynamic Client Registration 1.0</xref>
+	      and <xref target="RFC7591">OAuth 2.0 Dynamic Client Registration</xref>)
+	      also employ a prior registration step.)
+	    </t>
+	    <t>
+	      With Automatic Registration, the Client ID value is the RP's Entity Identifier,
+	      and is supplied to the OP by the RP,
+	      whereas with Explicit Registration, a Client ID is assigned by the OP and supplied to the RP.
+	    </t>
+	    <t>
+	      Instead of using a Client Secret to authenticate the client, with Automatic Registration,
+	      the client is authenticated by means of the RP proving that it controls a private key
+	      corresponding to one of its Entity Configuration's public keys.
+	    </t>
+	  </list>
+	</t>
+      </section>
+
       <section title="ID Token Validation">
         <t>
             The RP MUST validate any ID token as defined in Section 3.1.3.7. of <xref target="OpenID.Core">OpenID Connect Core 1.0</xref>. If the
@@ -3719,6 +3816,44 @@ HTTP/1.1 302 Found
             and combining the metadata policies from the Entity Statements of the Trust Chain as described in <xref target="metadata_policy"/>.
         </t>
       </section>
+
+      <section title="Rationale for the Trust Chain in the Request" anchor="TrustChainParamRationale">
+        <t>
+        Both Automatic and Explicit Client Registration support
+        the submission of the Trust Chain embedded in the Request,
+        calculated by the requestor and related to itself.
+
+        This enables the following benefits in
+        a federation:
+
+            <t anchor="MetadataUpdateHint">
+            It solves the problem of OPs using RP metadata that has become stale.
+            This may occur when the OP uses cached RP metadata from a Trust Chain
+            that hasn't reached its expiration time yet. By passing the
+            <spanx style="verb">trust_chain</spanx>
+            in the Request the RP can notify the OP that a
+            change has taken place, thus letting the OP update its client
+            registration and prevent potential temporary faults due to stale metadata.
+            </t>
+
+            <t anchor="TrustPathHint">
+            It enables the RP to pass a verifiable hint which trust path to
+            take in order to build the Trust Chain. This can reduce the costs
+            of RP Federation Entity Discovery for OPs in complex federations where the
+            RP has multiple Trust Anchors or the Trust Chain resolution may
+            result in dead-ends.
+            </t>
+
+            <t anchor="ECHint">
+            It enables direct passing of the Entity Configuration, including
+            any present Trust Marks, thus saving the OP from having to make
+            an HTTP request to the RP
+            <spanx style="verb">/.well-known/openid-federation</spanx>
+            endpoint.
+            </t>
+         </t>
+      </section>
+
     </section>
 
     <section anchor="ClaimsLanguagesAndScripts" title="Claims Languages and Scripts">
@@ -4161,7 +4296,177 @@ HTTP/1.1 302 Found
         </list>
         <?rfc subcompact="no"?>
       </t>
+
+      <t>
+        <?rfc subcompact="yes"?>
+        <list style="symbols">
+          <t>
+        Type name: application
+          </t>
+          <t>
+        Subtype name: resolve-response+jwt
+          </t>
+          <t>
+        Required parameters: n/a
+          </t>
+          <t>
+        Optional parameters: n/a
+          </t>
+          <t>
+        Encoding considerations: binary;
+        An Entity Resolve Response is a signed JWT;
+        JWT values are encoded as a
+        series of base64url-encoded values (some of which may be the
+        empty string) separated by period ('.') characters.
+          </t>
+          <t>
+        Security considerations: See <xref target="Security"/> of [[ this specification ]]
+          </t>
+          <t>
+        Interoperability considerations: n/a
+          </t>
+          <t>
+        Published specification: [[ this specification ]]
+          </t>
+          <t>
+        Applications that use this media type:
+        Applications that use [[ this specification ]]
+          </t>
+          <t>
+        Fragment identifier considerations: n/a
+          </t>
+          <t>
+        Additional information:<list style="empty">
+            <t>Magic number(s): n/a</t>
+        <t>File extension(s): n/a</t>
+        <t>Macintosh file type code(s): n/a </t></list>
+<vspace/>
+          </t>
+          <t>
+        Person &amp; email address to contact for further information:
+<vspace/>
+        Michael B. Jones, mbj@microsoft.com
+          </t>
+          <t>
+        Intended usage: COMMON
+          </t>
+          <t>
+        Restrictions on usage: none
+          </t>
+          <t>
+        Author: Michael B. Jones, mbj@microsoft.com
+          </t>
+          <t>
+        Change controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net
+          </t>
+          <t>
+        Provisional registration? No
+          </t>
+        </list>
+        <?rfc subcompact="no"?>
+      </t>
+
+
+      <t>
+        <?rfc subcompact="yes"?>
+        <list style="symbols">
+          <t>
+        Type name: application
+          </t>
+          <t>
+        Subtype name: trust-chain+json
+          </t>
+          <t>
+        Required parameters: n/a
+          </t>
+          <t>
+        Optional parameters: n/a
+          </t>
+          <t>
+        Encoding considerations: binary;
+        A Trust Chain is a JSON Array of JWTs;
+        JWT values are encoded as a
+        series of base64url-encoded values (some of which may be the
+        empty string) separated by period ('.') characters.
+          </t>
+          <t>
+        Security considerations: See <xref target="Security"/> of [[ this specification ]]
+          </t>
+          <t>
+        Interoperability considerations: n/a
+          </t>
+          <t>
+        Published specification: [[ this specification ]]
+          </t>
+          <t>
+        Applications that use this media type:
+        Applications that use [[ this specification ]]
+          </t>
+          <t>
+        Fragment identifier considerations: n/a
+          </t>
+          <t>
+        Additional information:<list style="empty">
+            <t>Magic number(s): n/a</t>
+        <t>File extension(s): n/a</t>
+        <t>Macintosh file type code(s): n/a </t></list>
+<vspace/>
+          </t>
+          <t>
+        Person &amp; email address to contact for further information:
+<vspace/>
+        Michael B. Jones, mbj@microsoft.com
+          </t>
+          <t>
+        Intended usage: COMMON
+          </t>
+          <t>
+        Restrictions on usage: none
+          </t>
+          <t>
+        Author: Michael B. Jones, mbj@microsoft.com
+          </t>
+          <t>
+        Change controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net
+          </t>
+          <t>
+        Provisional registration? No
+          </t>
+        </list>
+        <?rfc subcompact="no"?>
+      </t>
+
     </section>
+      </section>
+
+    <section anchor="ParameterRegistry" title="OAuth Parameter Registry">
+        <t>
+          This specification registers the following parameter name in the IANA "OAuth
+          Parameters" registry <xref target="IANA.OAuth.Parameters"/> established
+          by <xref target="RFC6749"/>.
+        </t>
+
+        <section anchor="ParameterContents" title="Registry Contents">
+          <t>
+            <?rfc subcompact="yes"?>
+            <list style='symbols'>
+              <t>
+                Parameter Name:
+                <spanx style="verb">trust_chain</spanx>
+              </t>
+              <t>
+                Parameter Usage Location: authorization request
+              </t>
+              <t>
+                Change Controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net
+              </t>
+              <t>
+                Specification Document(s): Section <xref target="AuthzRequestProcessing"/> of [[ this specification ]]
+              </t>
+            </list>
+          </t>
+        </section>
+
       </section>
 
     </section>
@@ -4171,9 +4476,9 @@ HTTP/1.1 302 Found
       <t>
         Some of the interfaces defined in this specification could be used for
         Denial-of-Service attacks (DoS), most notably, the Resolve endpoint
-        (<xref target="entity_listing"/>), explicit client registration
+        (<xref target="entity_listing"/>), Explicit Client Registration
         (<xref target="explicit"/>), and
-        automatic client registration (<xref target="automatic"/>), can
+        Automatic Client Registration (<xref target="automatic"/>), can
         be exploited as vectors of http propagation attacks.
 
         If you plan to provide these endpoints, you should consider
@@ -4184,7 +4489,7 @@ HTTP/1.1 302 Found
         A Trust Mark can be statically validated, using the public key of its issuer.
         The static validation of the Trust Marks represent a
         filter against a propagation attacks. An attacker
-        could exploit the metadata discovery mechanism and use an OIDC Federation
+        could exploit the Federation Entity Discovery mechanism and use an OIDC Federation
         to propagate many http requests. For each authorization request, crafted
         by an anonymous client, the OP would produce ~3 http requests to third parties
         in absence of intermediaries, and at least 5 http requests with at
@@ -4195,7 +4500,7 @@ HTTP/1.1 302 Found
       <t>
         If client authentication is not demanded at the Resolve endpoint
         then incoming requests should not by default result in immediate
-        collection (metadata discovery process) and evaluation of Trust Chains.
+        collection (Federation Entity Discovery process) and evaluation of Trust Chains.
       </t>
     </section>
     </section>
@@ -4217,6 +4522,7 @@ HTTP/1.1 302 Found
       <?rfc include="https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.7638.xml"?>
       <?rfc include="https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.8414.xml"?>
       <?rfc include="https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.8705.xml"?>
+      <?rfc include="https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.9101.xml"?>
       <?rfc include="https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.9126.xml"?>
 
       <reference anchor="OpenID.Core"
@@ -4448,7 +4754,7 @@ HTTP/1.1 302 Found
       <section title="The LIGO Wiki Discovers the OP's Metadata"
                anchor="op_discovery">
         <t>
-          Metadata discovery is a sequence of steps that starts with the RP
+          Federation Entity Discovery is a sequence of steps that starts with the RP
           fetching the Entity Configuration of the Leaf Entity (in this case
           https://op.umu.se) using the process defined in
           <xref target="federation_configuration"/>.
@@ -4491,7 +4797,7 @@ HTTP/1.1 302 Found
                     target="federation_configuration"/>.
           </t>
           <figure>
-            <preamble>The result is this Entity Statement.</preamble>
+            <preamble>The result is this Entity Configuration.</preamble>
             <artwork><![CDATA[
 {
   "authority_hints": [
@@ -4500,6 +4806,7 @@ HTTP/1.1 302 Found
   "exp": 1568397247,
   "iat": 1568310847,
   "iss": "https://op.umu.se",
+  "sub": "https://op.umu.se",
   "jwks": {
     "keys": [
       {
@@ -4552,8 +4859,7 @@ HTTP/1.1 302 Found
         "private_key_jwt"
       ]
     }
-  },
-  "sub": "https://op.umu.se"
+  }
 }
 ]]></artwork>
           </figure>
@@ -4562,7 +4868,7 @@ HTTP/1.1 302 Found
             intermediate https://umu.se. So that is the next step.
           </t>
           <t>
-            This Entity Statement is the first link in the Trust Chain.
+            This Entity Configuration is the first link in the Trust Chain.
           </t>
         </section>
         <section title="Configuration Information for 'https://umu.se'">
@@ -4587,6 +4893,7 @@ Host: umu.se
   "exp": 1568397247,
   "iat": 1568310847,
   "iss": "https://umu.se",
+  "sub": "https://umu.se",
   "jwks": {
     "keys": [
       {
@@ -4604,8 +4911,7 @@ Host: umu.se
       "homepage_uri": "https://www.umu.se",
       "organization_name": "UmU"
     }
-  },
-  "sub": "https://umu.se"
+  }
 }
 ]]></artwork>
           </figure>
@@ -4835,6 +5141,7 @@ Host: edugain.geant.org
   "exp": 1568397247,
   "iat": 1568310847,
   "iss": "https://edugain.geant.org",
+  "sub": "https://edugain.geant.org",
   "jwks": {
     "keys": [
       {
@@ -4849,8 +5156,7 @@ Host: edugain.geant.org
     "federation_entity": {
       "federation_fetch_endpoint": "https://geant.org/edugain/api"
     }
-  },
-  "sub": "https://edugain.geant.org"
+  }
 }
 
 ]]></artwork>
@@ -4927,18 +5233,16 @@ Host: geant.org
             all,
             we have:
             <list style="numbers">
-              <t>Self-signed Entity Statement by the Leaf Entity (https://op.umu.se)
-              </t>
+              <t>Entity Configuration by the Leaf Entity (https://op.umu.se)</t>
+              <t>Entity Configuration by https://umu.se</t>
               <t>Statement issued by https://umu.se about https://op.umu.se</t>
+              <t>Entity Configuration by https://swamid.se</t>
               <t>Statement issued by https://swamid.se about https://umu.se</t>
+              <t>Entity Configuration by https://edugain.geant.org</t>
               <t>Statement issued by https://edugain.geant.org about
                 https://swamid.se
               </t>
             </list>
-          </t>
-          <t>We also have the Entity Configurations from https://umu.se,
-            https://swamid.se and https://edugain.geant.org about themselves but
-            those are not used in the Trust Chain verification.
           </t>
           <t>
             Using the public keys of the Trust Anchor that the LIGO Wiki RP has
@@ -5004,8 +5308,7 @@ Host: geant.org
   "token_endpoint_auth_methods_supported": [
     "private_key_jwt",
     "client_secret_jwt"
-  ],
-  "version": "3.0"
+  ]
 }
 
 ]]></artwork>
@@ -5445,6 +5748,7 @@ Host: op.umu.se
         Marcos Sanz,
         Peter Schober,
         Michael Schwartz,
+	Kristina Yasuda,
         and
         the JRA3T3 task force of GEANT4-2.
       </t>
@@ -5454,30 +5758,66 @@ Host: op.umu.se
       <t>[[ To be removed from the final specification ]]</t>
 
       <t>
+        -23
+        <list style="symbols">
+          <t>
+            Fixed #1634: Trust Chain explanatory text.
+          </t>
+          <t>
+            Federation Entity Discovery as defined term.
+          </t>
+          <t>
+            Fixed #1645: Federation Entity Keys as defined term.
+          </t>
+          <t>
+            Fixed #1633: Explaination text about who signs the Trust Mark and how.
+          </t>
+        </list>
+      </t>
+
+      <t>
         -22
         <list style="symbols">
           <t>
-            Rewritten text about metadata processing when doing explicit client registration.
+            Rewritten text about metadata processing when doing Explicit Client Registration.
+          </t>
+          <t>
+            Fixed #1581: OP metadata claims enabled for AS.
+          </t>
+          <t>
+            Fixed #1594: self-issued trust_chain in the Authorization Request.
+          </t>
+          <t>
+            Fixed #1583: metadata policy one_of operator, explanatory text for multiple values.
+          </t>
+          <t>
+            Fixed #1584: Stated that domain name constraints are as specified in Section 4.2.1.10 of <xref target="RFC5280"/>.
           </t>
           <t>
             Added more text on considerations when using the resolve endpoint.
           </t>
-      <t>
-        Removal of aud parameter in the fetch endpoint request.
-      </t>
-      <t>
-        General rewording with the terms Leaf Entity and Entity Configuration.
-      </t>
-      <t>
-        Fixed #1581: OP metadata claims enabled for AS.
-      </t>
-      <t>
-        Fixed #1583: metadata policy one_of operator, explanatory text for multiple values.
-      </t>
+          <t>
+            Removal of aud parameter in the fetch endpoint request.
+          </t>
+          <t>
+            General rewording with the terms Leaf Entity and Entity Configuration.
+          </t>
+          <t>
+            Fixed #1588: Explicitly described the differences between Automatic and Explicit Registration.
+          </t>
 	  <t>
-	    Fixed #1584: Stated that domain name constraints are as specified in Section 4.2.1.10 of <xref target="RFC5280"/>.
+	    Fixed #1606: Described situation in which the requirement for signed requests with Automatic Registration could be relaxed.
 	  </t>
-	    </list>
+          <t>
+            Fixed #1629: authz request object, audience explanatory text.
+          </t>
+          <t>
+            Fixed #1630: Resolve endpoint response content type.
+          </t>
+          <t>
+            Fixed #1608: submission of the Trust Chain in the Explicit Client Registration Request.
+          </t>
+	</list>
       </t>
 
       <t>
@@ -5738,7 +6078,8 @@ Host: op.umu.se
           </t>
           <t>
             An RP doing only explicit client registration are not required to
-            publish and support a .well-known/openid-federation endpoint.
+            publish and support a
+            <spanx style="verb">/.well-known/openid-federation</spanx>.
           </t>
           <t>
             Every key in a JWK Set in an entity statement MUST have a kid.

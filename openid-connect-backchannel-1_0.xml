@@ -19,11 +19,11 @@
   <?rfc sortrefs="yes"?>
   <?rfc strict="yes" ?>
   <?rfc iprnotified="no" ?>
-  <?rfc private="Draft" ?>
+  <?rfc private="Final" ?>
 
   <front>
     <title abbrev="OpenID Connect Back-Channel Logout 1.0">OpenID Connect
-    Back-Channel Logout 1.0 - draft 09</title>
+    Back-Channel Logout 1.0</title>
 
     <author fullname="Michael B. Jones" initials="M.B." surname="Jones">
       <organization abbrev="Microsoft">Microsoft</organization>
@@ -41,7 +41,7 @@
       </address>
     </author>
 
-    <date day="23" month="August" year="2022" />
+    <date day="12" month="September" year="2022" />
 
     <workgroup>OpenID Connect Working Group</workgroup>
 
@@ -935,11 +935,11 @@
           <title>OpenID Connect Core 1.0</title>
 
           <author fullname="Nat Sakimura" initials="N." surname="Sakimura">
-            <organization abbrev="NAT.Consulting (was at NRI)">NAT.Consulting</organization>
+	    <organization abbrev="NRI">Nomura Research Institute, Ltd.</organization>
           </author>
 
           <author fullname="John Bradley" initials="J." surname="Bradley">
-            <organization abbrev="Yubico (was at Ping Identity)">Yubico</organization>
+	    <organization abbrev="Ping Identity">Ping Identity</organization>
           </author>
 
           <author fullname="Michael B. Jones" initials="M.B." surname="Jones">
@@ -951,7 +951,7 @@
           </author>
 
 	  <author fullname="Chuck Mortimore" initials="C." surname="Mortimore">
-	    <organization abbrev="Stripe (was at Salesforce)">Stripe</organization>
+	    <organization abbrev="Salesforce">Salesforce</organization>
 	  </author>
 
           <date day="8" month="November" year="2014"/>
@@ -963,11 +963,11 @@
           <title>OpenID Connect Discovery 1.0</title>
 
           <author fullname="Nat Sakimura" initials="N." surname="Sakimura">
-            <organization abbrev="NAT.Consulting (was at NRI)">NAT.Consulting</organization>
+            <organization abbrev="NRI">Nomura Research Institute, Ltd.</organization>
           </author>
 
           <author fullname="John Bradley" initials="J." surname="Bradley">
-            <organization abbrev="Yubico (was at Ping Identity)">Yubico</organization>
+            <organization abbrev="Ping Identity">Ping Identity</organization>
           </author>
 
           <author fullname="Michael B. Jones" initials="M.B." surname="Jones">
@@ -987,11 +987,11 @@
           <title>OpenID Connect Dynamic Client Registration 1.0</title>
 
           <author fullname="Nat Sakimura" initials="N." surname="Sakimura">
-            <organization abbrev="NAT.Consulting (was at NRI)">NAT.Consulting</organization>
+            <organization abbrev="NRI">Nomura Research Institute, Ltd.</organization>
           </author>
 
           <author fullname="John Bradley" initials="J." surname="Bradley">
-            <organization abbrev="Yubico (was at Ping Identity)">Yubico</organization>
+            <organization abbrev="Ping Identity">Ping Identity</organization>
           </author>
 
           <author fullname="Michael B. Jones" initials="M.B." surname="Jones">
@@ -1026,7 +1026,7 @@
 	    <organization abbrev="Yubico">Yubico</organization>
 	  </author>
 
-	  <date day="18" month="April" year="2022" />
+	  <date day="12" month="September" year="2022" />
 	</front>
       </reference>
 
@@ -1038,7 +1038,7 @@
 	    <organization abbrev="Microsoft">Microsoft</organization>
 	  </author>
 
-	  <date day="18" month="April" year="2022" />
+	  <date day="12" month="September" year="2022" />
 	</front>
       </reference>
 
@@ -1066,7 +1066,7 @@
 	    <organization abbrev="Microsoft">Microsoft</organization>
 	  </author>
 
-	  <date day="18" month="April" year="2022" />
+	  <date day="12" month="September" year="2022" />
 	</front>
       </reference>
 
@@ -1290,7 +1290,7 @@
 	  <t>Vladimir Dzhuvinov (vladimir@connect2id.com), Connect2id</t>
 	  <t>Pedro Felix (pmhsfelix@gmail.com), individual</t>
 	  <t>Joseph Heenan (joseph@authlete.com), Authlete</t>
-	  <t>Phil Hunt (phil.hunt@oracle.com), Oracle</t>
+	  <t>Phil Hunt (phil.hunt@independentid.com), Independent</t>
           <t>Michael B. Jones (mbj@microsoft.com), Microsoft</t>
 	  <t>Todd Lainhart (lainhart@us.ibm.com), IBM</t>
 	  <t>Torsten Lodderstedt (torsten@lodderstedt.net), yes.com</t>
@@ -1338,180 +1338,5 @@
       specification.</t>
     </section>
 
-    <section anchor="History" title="Document History">
-      <t>[[ To be removed from the final specification ]]</t>
-
-      <t>
-	-09
-        <list style="symbols">
-	  <t>
-	    Fixed #1605 - Specified how to handle failed requests, using the same language as RFC 8935
-	    (Push-Based Security Event Token (SET) Delivery Using HTTP).
-	  </t>
-	</list>
-      </t>
-
-      <t>
-	-08
-        <list style="symbols">
-	  <t>
-	    Fixed #1484 - Described omission of the <spanx style="verb">application/</spanx>
-	    prefix in <spanx style="verb">typ</spanx> Header Parameter values.
-	  </t>
-	  <t>
-	    Fixed #1475 - Removed a note about possibly adding a mechanism to request revocation of
-	    <spanx style="verb">offline_access</spanx> refresh tokens.
-	  </t>
-	  <t>
-	    Fixed #1483 - Removed Pragma: no-cache and Cache-Control: no-cache,
-	    leaving only Cache-Control: no-store.
-	  </t>
-	  <t>
-	    Fixed #1476 - Described <spanx style="verb">alg</spanx> Header Parameter validation for Logout Tokens.
-	  </t>
-	  <t>
-	    Fixed #1486 - Added a note about an HTTP 204 No Content response
-	    being substituted for an HTTP 200 OK response when the HTTP body is empty.
-	  </t>
-	  <t>
-	    Fixed #1487 - Simplified error handing to use HTTP 400 Bad Request for all error cases,
-	    removing the use of HTTP 501 Not Implemented and HTTP 504 Gateway Timeout.
-	  </t>
-	  <t>
-	    Fixed #1491 - Added optional <spanx style="verb">error</spanx> and <spanx style="verb">error_description</spanx>
-	    parameters to error responses.
-	  </t>
-	</list>
-      </t>
-
-      <t>
-	-07
-        <list style="symbols">
-	  <t>
-	    Fixed #1468 - Support explicit typing of Logout Tokens.
-	    The nature of the support is intentionally parallel to
-	    the way that explicit typing of Request Objects is supported in RFC 9101.
-	  </t>
-	  <t>
-	    Updated contributor affiliations.
-	  </t>
-	  <t>
-	    Updated many spec URLs from http to https.
-	  </t>
-	</list>
-      </t>
-
-      <t>
-	-06
-	<list style="symbols">
-	  <t>
-	    Fixed #1030 - Specify the use of HTTPS URIs.
-	  </t>
-	  <t>
-	    Fixed #1031 - Specify <spanx style="verb">sid</spanx> ID Token claim for use in Back-Channel Logout.
-	  </t>
-	  <t>
-	    Fixed #1176 - Verify that the <spanx style="verb">sid</spanx> Logout Token claim matches this claim in an ID Token.
-	  </t>
-	  <t>
-	    Added Implementation Considerations section.
-	  </t>
-	  <t>
-	    Fixed #1049 - Include a reference to the OP when the Logout Token is encrypted.
-	  </t>
-        </list>
-      </t>
-
-      <t>
-	-05
-	<list style="symbols">
-          <t>
-	    Referenced the final Security Event Token (SET) <xref target="RFC8417"/> specification.
-	  </t>
-          <t>
-	    Fixed #1085 - Split RP-Initiated Logout into its own specification.
-	  </t>
-	  <t>
-	    Registered the AS metadata values <spanx style="verb">backchannel_logout_supported</spanx>
-	    and <spanx style="verb">backchannel_logout_session_supported</spanx>.
-	  </t>
-	  <t>
-	    Updated affiliations and acknowledgements.
-	  </t>
-        </list>
-      </t>
-
-      <t>
-	-04
-	<list style="symbols">
-	  <t>
-	    Stated that
-	    a Logout Token MUST contain either a <spanx style="verb">sub</spanx>
-	    or a <spanx style="verb">sid</spanx> Claim, and MAY contain both.
-	    If a <spanx style="verb">sid</spanx> Claim is not present,
-	    the intent is that all sessions at the RP
-	    for the End-User identified by the <spanx style="verb">iss</spanx>
-	    and <spanx style="verb">sub</spanx> Claims be logged out.
-	    This addresses issue #1000.
-	  </t>
-	  <t>
-	    Defined logout behaviors for refresh tokens issued with and without
-	    the <spanx style="verb">offline_access</spanx> property.
-	  </t>
-	  <t>
-	    Removed the requirement that the domain, port, and scheme of the
-	    <spanx style="verb">backchannel_logout_uri</spanx> URL
-	    MUST be the same as that of a registered Redirection URI value.
-	  </t>
-          <t>
-	    Updated the Logout Token syntax to match
-	    draft-ietf-secevent-token-00.
-	  </t>
-        </list>
-      </t>
-
-      <t>
-	-03
-	<list style="symbols">
-          <t>
-	    Changed from using a <spanx style="verb">logout_only</spanx> Claim
-	    to using a logout event in the Logout Token.
-	    The Logout Token is compatible with draft-hunt-idevent-token-03.
-	  </t>
-        </list>
-      </t>
-
-      <t>
-	-02
-	<list style="symbols">
-          <t>
-	    Renamed HTTP-Based Logout to Front-Channel Logout.
-	  </t>
-        </list>
-      </t>
-
-      <t>
-	-01
-	<list style="symbols">
-          <t>
-	    Cleaned up some text left over from the HTTP-Based Logout spec.
-	  </t>
-	  <t>
-	    Clarified the conditions under which HTTP 504 Gateway Timeout is returned.
-	  </t>
-        </list>
-      </t>
-
-      <t>
-	-00
-	<list style="symbols">
-          <t>
-	    Wrote the initial version based on working group discussions.
-	    The structure of this specification is intentionally similar
-	    to the OpenID Connect HTTP-Based Logout 1.0 specification.
-	  </t>
-        </list>
-      </t>
-    </section>
   </back>
 </rfc>
