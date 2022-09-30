@@ -615,21 +615,21 @@
         <t>
           A Trust Chain begins with a Leaf Entity Configuration,
           has zero or more Entity Statements
-          issued by intermediates about subordinates, 
-          including the Entity Statement issued by the 
-          Trust Anchor about the top-most intermediate 
-          (if there are intermediates) or the Leaf Entity 
-          (if there are no intermediates). 
+          issued by intermediates about subordinates,
+          including the Entity Statement issued by the
+          Trust Anchor about the top-most intermediate
+          (if there are intermediates) or the Leaf Entity
+          (if there are no intermediates).
           The Trust Chain MAY end with the
           Entity Configuration of the Trust Anchor.
         </t>
         <t>
-          If present, the Trust Anchor's Entity Configuration 
-          at the end of the chain contains configuration of the Federation, 
-          such as the public keys of the Trust Anchor and other parameters 
-          considered within the trust evaluation. 
+          If present, the Trust Anchor's Entity Configuration
+          at the end of the chain contains configuration of the Federation,
+          such as the public keys of the Trust Anchor and other parameters
+          considered within the trust evaluation.
           When this is this case, the Trust Chain
-          consequentially contains the configuration of the Federation 
+          consequentially contains the configuration of the Federation
           at the date of the evaluation of the chain.
         </t>
         <t>
@@ -644,10 +644,7 @@
               an Entity Statement about the RP published by Organization A,
             </t>
             <t>
-              an Entity Statement about Organization A published by Trust Anchor F,
-            </t>
-            <t>
-              the Entity Configuration about the Trust Anchor F.
+              an Entity Statement about Organization A published by Federation F.
             </t>
           </list>
         </t>
@@ -1917,8 +1914,7 @@ The example above uses a <spanx style="verb">signed_jwks_uri</spanx> element for
         <section title="Max Path Length" anchor="max_path_length">
           <t>
             The <spanx style="verb">max_path_length</spanx> constraint specifies
-            the
-            maximum number of
+            the maximum number of
             Entity Statements a Trust Chain can have between the Entity Statement
             that contains the constraint specification and the Leaf's Entity
             Statement.
@@ -1928,47 +1924,44 @@ The example above uses a <spanx style="verb">signed_jwks_uri</spanx> element for
             indicates that no
             intermediaries MAY appear between this Entity and the
             Leaf Entity. Where it appears, the
-        <spanx style="verb">max_path_length</spanx> constraint
+            <spanx style="verb">max_path_length</spanx> constraint
             MUST have a value that is greater than or equal to zero.
-            Where <spanx style="verb">max_path_length</spanx> does not appear,
-            no
-            limit is imposed.
           </t>
           <t>
-            Assuming that we have a Trust Chain with five Entity Statements:
+            Not adding a max_path_length constraint just means that there is
+            no additional constraints apart from those already in effect.
+          </t>
+          <t>
+            Assuming that we have a Trust Chain with four Entity Statements:
             <list style="numbers">
-              <t>Leaf Entity (LE) Entity Configuration</t>
-              <t>Intermediate 1 (I1-LE) Entity Statement issued for LE</t>
-              <t>Intermediate 2 (I2-I1) Entity Statement issued for I1</t>
-              <t>Trust Anchor (TA-I2) Entity Statement issued for I2</t>
-              <t>Trust Anchor (TA) Entity Configuration</t>
+              <t>Entity Configuration of the Leaf Entity (LE)</t>
+              <t>Entity Statement by Intermediate 1 (I1) about LE</t>
+              <t>Entity Statement by Intermediate 2 (I2) about I1</t>
+              <t>Entity Statement by Trust Anchor (TA) about I2</t>
             </list>
           </t>
           <t>
-            Then the Trust Chain fulfills the constraints if:
+            Then the Trust Chain fulfills the constraints if for instance:
             <list style="symbols">
               <t>
                 The TA specifies a <spanx style="verb">max_path_length</spanx> that
-                is equal to or bigger
-                than 2.
+                is equal to or bigger than 2.
               </t>
               <t>
                 TA specifies <spanx style="verb">max_path_length</spanx> of 2,
-                I2
-                specifies <spanx style="verb">max_path_length</spanx> of 1,
-                and I1 specifies no <spanx style="verb">max_path_length</spanx> constraint.
+                I2 specifies <spanx style="verb">max_path_length</spanx> of 1,
+                and I1 sets no <spanx style="verb">max_path_length</spanx> constraint.
               </t>
               <t>Neither TA nor I2 specifies any
-            <spanx style="verb">max_path_length</spanx> constraint
-                while I1 specifies <spanx style="verb">max_path_length</spanx> of
-                0.
+                <spanx style="verb">max_path_length</spanx> constraint
+                while I1 sets <spanx style="verb">max_path_length</spanx> to 0.
               </t>
             </list>
           </t>
           <t>
-            The Trust Chain does not fulfil the constraints if:
+            The Trust Chain does not fulfill the constraints if for instance the:
             <list style="symbols">
-              <t>TA has specified <spanx style="verb">max_path_length</spanx> of
+              <t>TA's Entity Statement has set the <spanx style="verb">max_path_length</spanx> to
                 1.
               </t>
             </list>
@@ -2615,7 +2608,7 @@ Host: openid.sunet.se
             sorted as shown in <xref target="trust_chain"/>.
             The key used by the resolver to sign the response MUST be one of its
             Federation Entity Keys.
-            The response SHOULD contain the 
+            The response SHOULD contain the
             <spanx style="verb">aud</spanx> claim only
             if the requesting client is authenticated.
           </t>
@@ -5760,6 +5753,9 @@ Host: op.umu.se
       <t>
         -23
         <list style="symbols">
+          <t>
+            Text on max_path_length
+          </t>
           <t>
             Fixed #1634: Trust Chain explanatory text.
           </t>
