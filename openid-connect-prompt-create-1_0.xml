@@ -23,14 +23,14 @@
   <?rfc private="Draft" ?>
 
   <front>
-    <title abbrev="OIDC Prompt Create">Initiating User Registration via OpenID Connect - draft 05</title>
+    <title abbrev="OpenID Connect Prompt Create">Initiating User Registration via OpenID Connect - draft 06</title>
 
     <author fullname="George Fletcher" initials="GFF" surname="Fletcher">
       <organization>Capital One</organization>
       <address><email>gffletch@aol.com</email></address>
     </author>
 
-    <date day="20" month="September" year="2022" />
+    <date day="27" month="September" year="2022" />
 
     <workgroup>OpenID Connect Working Group</workgroup>
 
@@ -42,9 +42,10 @@
       <t>
         An extension to the OpenID Connect Authentication Framework
         defining a new value for the <spanx style="verb">prompt</spanx>
-        parameter that instructs the OpenID Provider to start the user flow with
-        user registration and after the user account has been created return an
-        authorization code to the client to complete the authentication flow.
+        parameter that instructs the OpenID Provider to start the user
+        account creation experience and after the user account has been
+        created return the requested tokens to the client to complete
+        the authentication flow.
       </t>
     </abstract>
 
@@ -123,6 +124,12 @@
         the user authenticate an identity they already have is out of scope for
         this specification. The behavior is the same for all response types.
       </t>
+        <t>
+          This flow MUST NOT be considered successful without the return of a valid
+          <spanx style="verb">id_token</spanx> or <spanx style="verb">id_token</spanx> +
+          <spanx style="verb">access_token</spanx>. The client MUST NOT assume a
+          new identity has been created without the successful response.
+        </t>
       <t>
         For authorization requests sent as a JWT, such as when using
         Section 6 of <xref target="OpenID.Core">OpenID Connect Core 1.0</xref>,
@@ -197,7 +204,8 @@
 
     <section anchor="Security" title="Security Considerations">
       <t>
-        No known security considerations exist for this specification.
+        If integrity protecting the authorization request is required, please refer to
+        <xref target="RFC9101">RFC 9101</xref>.
       </t>
     </section>
 
@@ -207,6 +215,7 @@
     <references title="Normative References">
       <?rfc include='http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.2119.xml' ?>
       <?rfc include='http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.6749.xml' ?>
+      <?rfc include='http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.9101.xml' ?>
 
       <reference anchor="OpenID.Core" target="http://openid.net/specs/openid-connect-core-1_0.html">
         <front>
@@ -271,6 +280,7 @@
         individuals contributed ideas, feedback, and wording
         that helped shape this specification:
       <list style="symbols">
+        <t>Andrii Deinega</t>
         <t>Filip Skokan</t>
         <t>Joseph Heenan</t>
         <t>Michael Jones</t>
@@ -324,6 +334,13 @@
 
     <section anchor="History" title="Document History">
       <t>
+        -06 - 2022-09-27
+        <list style="symbols">
+          <t>
+            Address feedback from Andrii (issues 1644, 1647)
+          </t>
+        </list>
+      </t>      <t>
         -05 - 2022-09-20
         <list style="symbols">
           <t>
