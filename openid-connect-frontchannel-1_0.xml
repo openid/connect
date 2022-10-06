@@ -19,11 +19,11 @@
   <?rfc sortrefs="yes"?>
   <?rfc strict="yes" ?>
   <?rfc iprnotified="no" ?>
-  <?rfc private="Draft" ?>
+  <?rfc private="Final" ?>
 
   <front>
     <title abbrev="OpenID Connect Front-Channel Logout 1.0">OpenID Connect
-    Front-Channel Logout 1.0 - draft 06</title>
+    Front-Channel Logout 1.0</title>
 
     <author fullname="Michael B. Jones" initials="M.B." surname="Jones">
       <organization abbrev="Microsoft">Microsoft</organization>
@@ -33,7 +33,7 @@
       </address>
     </author>
 
-    <date day="2" month="May" year="2022" />
+    <date day="12" month="September" year="2022" />
 
     <workgroup>OpenID Connect Working Group</workgroup>
 
@@ -517,21 +517,81 @@
 
   <back>
     <references title="Normative References">
-      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.2119"?>
-      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.3986"?>
-      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.6749"?>
-      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.7230"?>
+      <!-- Reference from https://bib.ietf.org/public/rfc/bibxml/reference.RFC.2119.xml -->
+
+<reference anchor="RFC2119" target="https://www.rfc-editor.org/info/rfc2119">
+  <front>
+    <title>Key words for use in RFCs to Indicate Requirement Levels</title>
+    <author fullname="S. Bradner" initials="S" surname="Bradner"/>
+    <date month="March" year="1997"/>
+    <abstract>
+      <t>In many standards track documents several words are used to signify the requirements in the specification.  These words are often capitalized.  This document defines these words as they should be interpreted in IETF documents.  This document specifies an Internet Best Current Practices for the Internet Community, and requests discussion and suggestions for improvements.</t>
+    </abstract>
+  </front>
+  <seriesInfo name="BCP" value="14"/>
+  <seriesInfo name="RFC" value="2119"/>
+  <seriesInfo name="DOI" value="10.17487/RFC2119"/>
+</reference>
+
+      <!-- Reference from https://bib.ietf.org/public/rfc/bibxml/reference.RFC.3986.xml -->
+
+<reference anchor="RFC3986" target="https://www.rfc-editor.org/info/rfc3986">
+  <front>
+    <title>Uniform Resource Identifier (URI): Generic Syntax</title>
+    <author fullname="T. Berners-Lee" initials="T" surname="Berners-Lee"/>
+    <author fullname="R. Fielding" initials="R" surname="Fielding"/>
+    <author fullname="L. Masinter" initials="L" surname="Masinter"/>
+    <date month="January" year="2005"/>
+    <abstract>
+      <t>A Uniform Resource Identifier (URI) is a compact sequence of characters that identifies an abstract or physical resource.  This specification defines the generic URI syntax and a process for resolving URI references that might be in relative form, along with guidelines and security considerations for the use of URIs on the Internet.  The URI syntax defines a grammar that is a superset of all valid URIs, allowing an implementation to parse the common components of a URI reference without knowing the scheme-specific requirements of every possible identifier.  This specification does not define a generative grammar for URIs; that task is performed by the individual specifications of each URI scheme. [STANDARDS-TRACK]</t>
+    </abstract>
+  </front>
+  <seriesInfo name="STD" value="66"/>
+  <seriesInfo name="RFC" value="3986"/>
+  <seriesInfo name="DOI" value="10.17487/RFC3986"/>
+</reference>
+
+      <!-- Reference from https://bib.ietf.org/public/rfc/bibxml/reference.RFC.6749.xml -->
+
+<reference anchor="RFC6749" target="https://www.rfc-editor.org/info/rfc6749">
+  <front>
+    <title>The OAuth 2.0 Authorization Framework</title>
+    <author fullname="D. Hardt" initials="D" role="editor" surname="Hardt"/>
+    <date month="October" year="2012"/>
+    <abstract>
+      <t>The OAuth 2.0 authorization framework enables a third-party application to obtain limited access to an HTTP service, either on behalf of a resource owner by orchestrating an approval interaction between the resource owner and the HTTP service, or by allowing the third-party application to obtain access on its own behalf.  This specification replaces and obsoletes the OAuth 1.0 protocol described in RFC 5849. [STANDARDS-TRACK]</t>
+    </abstract>
+  </front>
+  <seriesInfo name="RFC" value="6749"/>
+  <seriesInfo name="DOI" value="10.17487/RFC6749"/>
+</reference>
+
+      <!-- Reference from https://bib.ietf.org/public/rfc/bibxml/reference.RFC.7230.xml -->
+
+<reference anchor="RFC7230" target="https://www.rfc-editor.org/info/rfc7230">
+  <front>
+    <title>Hypertext Transfer Protocol (HTTP/1.1): Message Syntax and Routing</title>
+    <author fullname="R. Fielding" initials="R" role="editor" surname="Fielding"/>
+    <author fullname="J. Reschke" initials="J" role="editor" surname="Reschke"/>
+    <date month="June" year="2014"/>
+    <abstract>
+      <t>The Hypertext Transfer Protocol (HTTP) is a stateless application-level protocol for distributed, collaborative, hypertext information systems.  This document provides an overview of HTTP architecture and its associated terminology, defines the "http" and "https" Uniform Resource Identifier (URI) schemes, defines the HTTP/1.1 message syntax and parsing requirements, and describes related security concerns for implementations.</t>
+    </abstract>
+  </front>
+  <seriesInfo name="RFC" value="7230"/>
+  <seriesInfo name="DOI" value="10.17487/RFC7230"/>
+</reference>
 
       <reference anchor="OpenID.Core" target="https://openid.net/specs/openid-connect-core-1_0.html">
         <front>
           <title>OpenID Connect Core 1.0</title>
 
           <author fullname="Nat Sakimura" initials="N." surname="Sakimura">
-            <organization abbrev="NAT.Consulting (was at NRI)">NAT.Consulting</organization>
+	    <organization abbrev="NRI">Nomura Research Institute, Ltd.</organization>
           </author>
 
           <author fullname="John Bradley" initials="J." surname="Bradley">
-            <organization abbrev="Yubico (was at Ping Identity)">Yubico</organization>
+	    <organization abbrev="Ping Identity">Ping Identity</organization>
           </author>
 
           <author fullname="Michael B. Jones" initials="M.B." surname="Jones">
@@ -543,7 +603,7 @@
           </author>
 
 	  <author fullname="Chuck Mortimore" initials="C." surname="Mortimore">
-	    <organization abbrev="Stripe (was at Salesforce)">Stripe</organization>
+	    <organization abbrev="Salesforce">Salesforce</organization>
 	  </author>
 
           <date day="8" month="November" year="2014"/>
@@ -555,11 +615,11 @@
           <title>OpenID Connect Discovery 1.0</title>
 
           <author fullname="Nat Sakimura" initials="N." surname="Sakimura">
-            <organization abbrev="NAT.Consulting (was at NRI)">NAT.Consulting</organization>
+            <organization abbrev="NRI">Nomura Research Institute, Ltd.</organization>
           </author>
 
           <author fullname="John Bradley" initials="J." surname="Bradley">
-            <organization abbrev="Yubico (was at Ping Identity)">Yubico</organization>
+            <organization abbrev="Ping Identity">Ping Identity</organization>
           </author>
 
           <author fullname="Michael B. Jones" initials="M.B." surname="Jones">
@@ -579,11 +639,11 @@
           <title>OpenID Connect Dynamic Client Registration 1.0</title>
 
           <author fullname="Nat Sakimura" initials="N." surname="Sakimura">
-            <organization abbrev="NAT.Consulting (was at NRI)">NAT.Consulting</organization>
+            <organization abbrev="NRI">Nomura Research Institute, Ltd.</organization>
           </author>
 
           <author fullname="John Bradley" initials="J." surname="Bradley">
-            <organization abbrev="Yubico (was at Ping Identity)">Yubico</organization>
+            <organization abbrev="Ping Identity">Ping Identity</organization>
           </author>
 
           <author fullname="Michael B. Jones" initials="M.B." surname="Jones">
@@ -618,7 +678,7 @@
 	    <organization abbrev="Microsoft">Microsoft</organization>
 	  </author>
 
-	  <date day="18" month="April" year="2022" />
+	  <date day="12" month="September" year="2022" />
 	</front>
       </reference>
 
@@ -646,7 +706,7 @@
 	    <organization abbrev="Yubico">Yubico</organization>
 	  </author>
 
-	  <date day="18" month="April" year="2022" />
+	  <date day="12" month="September" year="2022" />
 	</front>
       </reference>
 
@@ -662,7 +722,7 @@
             <organization abbrev="Yubico">Yubico</organization>
           </author>
 
-	  <date day="18" month="April" year="2022" />
+	  <date day="12" month="September" year="2022" />
 	</front>
       </reference>
 
@@ -689,8 +749,41 @@
     </references>
 
     <references title="Informative References">
-      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.7591"?>
-      <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.8414"?>
+      <!-- Reference from https://bib.ietf.org/public/rfc/bibxml/reference.RFC.7591.xml -->
+
+<reference anchor="RFC7591" target="https://www.rfc-editor.org/info/rfc7591">
+  <front>
+    <title>OAuth 2.0 Dynamic Client Registration Protocol</title>
+    <author fullname="J. Richer" initials="J" role="editor" surname="Richer"/>
+    <author fullname="M. Jones" initials="M" surname="Jones"/>
+    <author fullname="J. Bradley" initials="J" surname="Bradley"/>
+    <author fullname="M. Machulak" initials="M" surname="Machulak"/>
+    <author fullname="P. Hunt" initials="P" surname="Hunt"/>
+    <date month="July" year="2015"/>
+    <abstract>
+      <t>This specification defines mechanisms for dynamically registering OAuth 2.0 clients with authorization servers.  Registration requests send a set of desired client metadata values to the authorization server.  The resulting registration responses return a client identifier to use at the authorization server and the client metadata values registered for the client.  The client can then use this registration information to communicate with the authorization server using the OAuth 2.0 protocol.  This specification also defines a set of common client metadata fields and values for clients to use during registration.</t>
+    </abstract>
+  </front>
+  <seriesInfo name="RFC" value="7591"/>
+  <seriesInfo name="DOI" value="10.17487/RFC7591"/>
+</reference>
+
+      <!-- Reference from https://bib.ietf.org/public/rfc/bibxml/reference.RFC.8414.xml -->
+
+<reference anchor="RFC8414" target="https://www.rfc-editor.org/info/rfc8414">
+  <front>
+    <title>OAuth 2.0 Authorization Server Metadata</title>
+    <author fullname="M. Jones" initials="M" surname="Jones"/>
+    <author fullname="N. Sakimura" initials="N" surname="Sakimura"/>
+    <author fullname="J. Bradley" initials="J" surname="Bradley"/>
+    <date month="June" year="2018"/>
+    <abstract>
+      <t>This specification defines a metadata format that an OAuth 2.0 client can use to obtain the information needed to interact with an OAuth 2.0 authorization server, including its endpoint locations and authorization server capabilities.</t>
+    </abstract>
+  </front>
+  <seriesInfo name="RFC" value="8414"/>
+  <seriesInfo name="DOI" value="10.17487/RFC8414"/>
+</reference>
 
       <reference anchor="JWT" target="https://tools.ietf.org/html/rfc7519">
 	<front>
@@ -775,111 +868,5 @@
       specification.</t>
     </section>
 
-    <section anchor="History" title="Document History">
-      <t>[[ To be removed from the final specification ]]</t>
-
-      <t>
-	-06
-        <list style="symbols">
-	  <t>
-	    Fixed #1481 - Corrected example Front-Channel Logout URL.
-	  </t>
-	  <t>
-	    Fixed #1483 - Removed Pragma: no-cache and Cache-Control: no-cache,
-	    leaving only Cache-Control: no-store.
-	  </t>
-	</list>
-      </t>
-
-      <t>
-	-05
-        <list style="symbols">
-	  <t>
-	    Updated contributor affiliations.
-	  </t>
-	  <t>
-	    Updated many spec URLs from http to https.
-	  </t>
-	</list>
-      </t>
-
-      <t>
-	-04
-	<list style="symbols">
-	  <t>
-	    Fixed #1030 - Specify the use of HTTPS URIs.
-	  </t>
-	  <t>
-	    Fixed #1176 - Verify that the <spanx style="verb">sid</spanx> logout parameter matches this claim in an ID Token.
-	  </t>
-	  <t>
-	    Added Implementation Considerations section.
-	  </t>
-	  <t>
-	    Fixed #1003 - Document possible impacts of disabling access to third-party content.
-	  </t>
-	  <t>
-	    Fixed #1133 - Clarify that logout notifications to RPs are idempotent.
-	  </t>
-       </list>
-      </t>
-
-      <t>
-	-03
-	<list style="symbols">
-          <t>
-	    Fixed #1085 - Split RP-Initiated Logout into its own specification.
-	  </t>
-	  <t>
-	    Registered the AS metadata value <spanx style="verb">frontchannel_logout_supported</spanx>.
-	  </t>
-	  <t>
-	    Updated affiliations and acknowledgements.
-	  </t>
-        </list>
-      </t>
-
-      <t>
-	-02
-	<list style="symbols">
-          <t>
-	    Added explicit definitions for the <spanx style="verb">iss</spanx> (issuer)
-	    and <spanx style="verb">sid</spanx> (session ID) query parameters
-	    that are used with the logout URI.
-	  </t>
-        </list>
-      </t>
-
-      <t>
-	-01
-	<list style="symbols">
-          <t>
-	    Scoped Session ID to be Issuer-specific, aligning it with the back-channel logout usage.
-	  </t>
-	  <t>
-	    Finished changing uses of "logout_uri" to "frontchannel_logout_uri".
-	  </t>
-	  <t>
-	    Removed references to terms that are not used.
-	  </t>
-        </list>
-      </t>
-
-      <t>
-	-00
-	<list style="symbols">
-          <t>
-	    Renamed HTTP-Based Logout to Front-Channel Logout.
-	  </t>
-          <t>
-	    Created openid-connect-frontchannel-1_0 from openid-connect-logout-1_0 draft 04.
-	  </t>
-	  <t>
-	    Prefixed identifiers with "frontchannel_" to be parallel with
-	    the Back-Channel Logout specification.
-	  </t>
-        </list>
-      </t>
-    </section>
   </back>
 </rfc>
