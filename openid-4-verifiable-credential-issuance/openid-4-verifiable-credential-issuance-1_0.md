@@ -767,11 +767,13 @@ If the Credential Issuer is unable to perform discovery of the Issuance Initiati
 
 This section extends the server metadata [@!RFC8414] to allow the RP to obtain information about the Credentials an OP is capable of issuing.
 
-The well-known URI string used is "/.well-known/openid-credential-issuer". This path MUST use the "https" scheme.
+The well-known URI string used is "/.well-known/openid-credential-issuer". This path MUST use the "https" scheme and MUST follow the OpenID Connect way of appending the well-known string after the path parameter, if it is present.
 
 This specification defines the following new Server Metadata parameters for this purpose:
 
 * `credential_endpoint`: REQUIRED. URL of the OP's Credential Endpoint. This URL MUST use the `https` scheme and MAY contain port, path and query parameter components.
+
+Any client wishing to obtain a credential MUST use this `credential_endpoint` parameter and MUST NOT use any metadata parameter of the same name that may be found in an openid-configuration metadata or an oauth-authorization-server metadata.
 
 The following parameter MUST be used to communicates the specifics of the Credential that the Credential Issuer supports issuance of:
 
@@ -781,6 +783,18 @@ The following parameter MUST be used to communicates the specifics of the Creden
   * `display`: OPTIONAL. An array of objects, where each object contains display properties of a Credential Issuer for a certain language. Below is a non-exhaustive list of valid parameters that MAY be included:
     * `name`: OPTIONAL. String value of a display name for the Credential Issuer.
     * `locale`: OPTIONAL. String value that identifies language of this object represented as language tag values defined in BCP47 [@!RFC5646]. There MUST be only one object with the same language identifier
+
+The following example shows a non-normative example of the relevant entries in the OP metadata defined above
+
+```
+{
+	"issuer": "https://example.com",
+	"credential_endpoint": "https://example.com/issuer",
+	"token_endpoint": "https://example.com/token",
+	"jwks_url": "https://example.com/.well-known/did.json",
+	"credentials_supported": {}
+}
+```
 
 ### Credential Metadata Object {#credential-metadata-object}
 
