@@ -770,6 +770,7 @@ This section extends the server metadata [@!RFC8414] to allow the RP to obtain i
 This specification defines the following new Server Metadata parameters for this purpose:
 
 * `credential_endpoint`: REQUIRED. URL of the OP's Credential Endpoint. This URL MUST use the `https` scheme and MAY contain port, path and query parameter components.
+* `authorization_server`: CONDITIONAL. URL of the OAuth2 server. This URL MUST use the `https` scheme and MAY contain port and path parameters. This parameter MUST be present if the `token_endpoint` parameter is absent from the metadata. If the `token_endpoint` parameter is present then this parameter MUST NOT be present in the metadata.
 
 The following parameter MUST be used to communicates the specifics of the Credential that the Credential Issuer supports issuance of:
 
@@ -971,6 +972,17 @@ The Credential Endpoint can be accessed multiple times by a Wallet using the sam
 the Credential Issuer may also decide that the current Access Token is longer be valid and a re-authentication or Token Refresh (see [@!RFC6749, section 6]) may be required under the Credential Issuer's discretion. The policies between the Credential Endpoint and the Authorization Server that may change the behavior of what is returned with a new Access Token are beyond the scope of this specification (see [@!RFC6749, section 7]).
 
 The action leading to the Wallet performing another Credential Request can also be triggered by a background process, or by the Credential Issuer using an out-of-band mechanism (SMS, email, etc.) to inform the End-User.
+
+## One or two metadata files
+
+Some implementations may have a single metadata file containing the metadata for both the resource server (credential issuer) and the authorization server. Other implementations may have separate metadata files for the resource server and the authorization server. This section provides guidance to wallets and verifiers how to handle both situations.
+
+1. First, read in the credential issuer’s metadata from its well-known endpoint.
+1. If the `token_endpoint` property is present then there is just this metadata.
+1. If the `authorization_server` property is present, then read in the authorization server's metadata from its well-known endpoint.
+1. If both `token_endpoint` and `authorization_server` properties are present fail with an error invalid metadata.
+1. If neither are present then fail with an error invalid metadata.
+
 # Privacy Considerations
 
 TBD
