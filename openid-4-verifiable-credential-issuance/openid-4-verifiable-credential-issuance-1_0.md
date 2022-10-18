@@ -791,7 +791,7 @@ The following example shows a non-normative example of the relevant entries in t
 	"issuer": "https://example.com",
 	"credential_endpoint": "https://example.com/issuer",
 	"token_endpoint": "https://example.com/token",
-	"jwks_url": "https://example.com/.well-known/did.json",
+	"jwks_uri": "https://example.com/.well-known/did.json",
 	"credentials_supported": {}
 }
 ```
