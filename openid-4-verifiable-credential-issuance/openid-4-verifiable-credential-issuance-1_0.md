@@ -767,6 +767,8 @@ If the Credential Issuer is unable to perform discovery of the Issuance Initiati
 
 This section extends the server metadata [@!RFC8414] to allow the RP to obtain information about the Credentials an OP is capable of issuing.
 
+The well-known URI string used is "/.well-known/openid-credential-issuer". This path MUST use the "https" scheme.
+
 This specification defines the following new Server Metadata parameters for this purpose:
 
 * `credential_endpoint`: REQUIRED. URL of the OP's Credential Endpoint. This URL MUST use the `https` scheme and MAY contain port, path and query parameter components.
@@ -1094,6 +1096,8 @@ TBD
 # IANA Considerations
 
 register "urn:ietf:params:oauth:grant-type:pre-authorized_code"
+
+Register well-known "opened-credential-issuer"
 
 # Acknowledgements {#Acknowledgements}
 
