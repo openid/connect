@@ -6066,7 +6066,17 @@
 	      its <spanx style="verb">azp</spanx> Claim Value MUST be the same as
 	      in the ID Token issued when the original authentication occurred;
 	      if no <spanx style="verb">azp</spanx> Claim was present in the original
-	      ID Token, one MUST NOT be present in the new ID Token, and
+	      ID Token, one MUST NOT be present in the new ID Token,
+	    </t>
+	    <t>
+	      it SHOULD NOT have a <spanx style="verb">nonce</spanx> Claim,
+	      even when the ID Token issued
+	      at the time of the original authentication
+	      contained <spanx style="verb">nonce</spanx>;
+	      however, if it is present,
+	      its value MUST be the same as in the ID Token issued
+	      at the time of the original authentication,
+	      and
 	    </t>
 	    <t>
 	      otherwise, the same rules apply as apply when issuing an ID Token
@@ -9380,7 +9390,8 @@
 	-30
         <list style="symbols">
 	  <t>
-	    TBD
+	    Fixed #1025 - Clarified that "nonce" should not be present
+	    in ID Tokens issued in response to refresh requests.
 	  </t>
 	</list>
       </t>
