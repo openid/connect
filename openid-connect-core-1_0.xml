@@ -5337,8 +5337,7 @@
 	      The acceptable range is Client specific.
 	    </t>
 	    <t>
-	      If a nonce value was sent in the Authentication Request, 
-	      a <spanx style="verb">nonce</spanx> Claim MUST be present 
+	      A <spanx style="verb">nonce</spanx> Claim MUST be present
 	      and its value checked to verify that
 	      it is the same value as the one that was sent in the Authentication Request.
 	      The Client SHOULD check the <spanx style="verb">nonce</spanx> value
@@ -9380,7 +9379,7 @@
 	-30
         <list style="symbols">
 	  <t>
-	    TBD
+	    Fixed #1266 - Removed misleading self-issued language that seemed to imply that nonce is optional.
 	  </t>
 	</list>
       </t>
