@@ -648,13 +648,13 @@
 	    Authorized party - the party to which the ID Token was issued.
 	    If present, it MUST contain the OAuth 2.0
 	    Client ID of this party.
-	    This Claim is only needed when
-	    the ID Token has a single audience value
-	    and that audience is different than the authorized party.
-	    It MAY be included even when the authorized party is the same
-	    as the sole audience.
 	    The <spanx style="verb">azp</spanx> value is a case-sensitive string
 	    containing a StringOrURI value.
+	    Note that in practice, the <spanx style="verb">azp</spanx> Claim only occurs
+	    when extensions beyond the scope of this specification are used;
+	    therefore, implementations not using such extensions
+	    are encouraged to not use <spanx style="verb">azp</spanx>
+	    and to ignore it when it does occur.
 	  </t>
 
 	</list>
@@ -1930,11 +1930,16 @@
 		  the Client as a valid audience, or if it contains additional audiences not trusted by the Client.
 		</t>
 		<t>
-		  If the ID Token contains multiple audiences, the Client SHOULD verify
-		  that an <spanx style="verb">azp</spanx> Claim is present.
+		  If the implementation is using extensions
+		  (which are beyond the scope of this specification)
+		  that result in
+		  the <spanx style="verb">azp</spanx> (authorized party) Claim being present,
+		  it SHOULD validate the <spanx style="verb">azp</spanx> value
+		  as specified by those extensions.
 		</t>
 		<t>
-		  If an <spanx style="verb">azp</spanx> (authorized party) Claim is present,
+		  This validation MAY include that
+		  when an <spanx style="verb">azp</spanx> (authorized party) Claim is present,
 		  the Client SHOULD verify that its <spanx style="verb">client_id</spanx>
 		  is the Claim Value.
 		</t>
@@ -1967,9 +1972,7 @@
 		<spanx style="verb">aud</spanx> (audience) Claim are used as the key
 		to validate the signature.
 		For MAC based algorithms, the behavior is unspecified
-		if the <spanx style="verb">aud</spanx> is multi-valued or
-		if an <spanx style="verb">azp</spanx> value is present
-		that is different than the <spanx style="verb">aud</spanx> value.
+		if the <spanx style="verb">aud</spanx> is multi-valued.
 		</t> 
 		<t>
 		  The current time MUST be before the time represented by the 
@@ -6063,8 +6066,14 @@
 	      the time that the new ID token is issued,
 	    </t>
 	    <t>
+	      if the implementation is using extensions
+	      (which are beyond the scope of this specification)
+	      that result in
+	      the <spanx style="verb">azp</spanx> (authorized party) Claim being present,
+	      those extensions might specify that
 	      its <spanx style="verb">azp</spanx> Claim Value MUST be the same as
 	      in the ID Token issued when the original authentication occurred;
+	      likewise, they might specify that
 	      if no <spanx style="verb">azp</spanx> Claim was present in the original
 	      ID Token, one MUST NOT be present in the new ID Token, and
 	    </t>
@@ -6797,7 +6806,6 @@
 	  <spanx style="verb">iss</spanx> (issuer),
 	  <spanx style="verb">sub</spanx> (subject),
 	  <spanx style="verb">aud</spanx> (audience),
-	  <spanx style="verb">azp</spanx> (authorized party),
 	  <spanx style="verb">at_hash</spanx> (access token hash), and
 	  <spanx style="verb">c_hash</spanx> (code hash).  Using the ID Token,
 	  the Client is capable of detecting the Token Substitution Attack.
@@ -9380,7 +9388,8 @@
 	-30
         <list style="symbols">
 	  <t>
-	    TBD
+	    Fixed #973 and #1009 - Clarified that "azp" only occurs when
+	    extensions are used that are beyond the scope of this specification.
 	  </t>
 	</list>
       </t>
