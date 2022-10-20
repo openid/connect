@@ -3419,10 +3419,11 @@
 
 	<t>The UserInfo Endpoint MUST accept Access Tokens as
 	<xref target="RFC6750">OAuth 2.0 Bearer Token Usage</xref>.</t>
-	
-	<t>The UserInfo Endpoint SHOULD support the use of 
-	<xref target="CORS">Cross Origin Resource Sharing (CORS)</xref> and
-	or other methods as appropriate to enable Java Script Clients to access the endpoint.</t>
+
+	<t>The UserInfo Endpoint SHOULD support the use of
+	<xref target="CORS">Cross-Origin Resource Sharing (CORS)</xref>
+	and/or other methods as appropriate
+	to enable Java Script Clients to access it.</t>
 
 	<section anchor="UserInfoRequest" title="UserInfo Request">
 
@@ -9380,7 +9381,7 @@
 	-30
         <list style="symbols">
 	  <t>
-	    TBD
+	    Fixed #980 - Specified the use of CORS at additional endpoints.
 	  </t>
 	</list>
       </t>
