@@ -129,8 +129,10 @@ The parameters comprising a request for verifiable presentations are given in th
 * `presentation_definition`: CONDITIONAL. A string containing a `presentation_definition` JSON object as defined in Section 4 of [@!DIF.PresentationExchange]. See (#request_presentation_definition) for more details. 
 * `presentation_definition_uri`: CONDITIONAL. A string containing an HTTPS URL pointing to a resource where a `presentation_definition` JSON object as defined in Section 4 of [@!DIF.PresentationExchange] can be retrieved . See (#request_presentation_definition_uri) for more details.
 * `nonce`: REQUIRED. This parameter follows the definition given in [@!OpenID.Core]. It is used to securely bind the verifiable presentation(s) provided by the AS to the particular transaction.
+* `trust_methods_supported`: OPTIONAL. This parameter lists the trust methods that the verifier/RP supports. Each trust method is identified by a globally unique URI. The contents of the trust method object are determined by the specific trust method. For further details (see (#client_metadata_parameters))
+Note: A request MUST contain a `presentation_definition` or a `presentation_definition_uri` but both are mutually exclusive. 
 
-Note: A request MUST contain either a `presentation_definition` or a `presentation_definition_uri` or a single `scope` value representing a presentation definition, those three ways to request credential presentation are mutually exclusive. The wallet MUST refuse any request violating this requirement. 
+Note: A request MUST contain either a `presentation_definition` or a `presentation_definition_uri` or a single `scope` value representing a presentation definition, those three ways to request credential presentation are mutually exclusive. The wallet MUST refuse any request violating this requirement.
 
 This is an example request: 
 
@@ -140,7 +142,8 @@ This is an example request:
     &client_id=https%3A%2F%2Fclient.example.org%2Fcb
     &redirect_uri=https%3A%2F%2Fclient.example.org%2Fcb
     &presentation_definition=...
-    &nonce=n-0S6_WzA2Mj HTTP/1.1
+    &nonce=n-0S6_WzA2Mj
+    &trust_methods_supported=%5B%7Bhttp%3A%2F%2Fclient.example.org%7B..... HTTP/1.1
 ```
 
 ## presentation_definition {#request_presentation_definition}
@@ -376,7 +379,7 @@ Table in Section 6.7.3. of [@!OpenID.VCI] might be superceded by a registry in t
 
 # Metadata {#metadata}
 
-This specification introduces additional metadata to enable Client and AS to determine the verifiable presentation and verifiable credential formats, proof types and algorithms to be used in a protocol exchange.
+This specification introduces additional metadata to enable the Client and AS to determine the verifiable presentation and verifiable credential formats, proof types, algorithms and trust method(s) to be used in a protocol exchange.
 
 ## Authorization Server Metadata {#as_metadata_parameters}
 
@@ -470,6 +473,29 @@ Usage of `client_metadata` or `client_metadata_uri` parameters with `client_id` 
 
 This specification defines new client metadata parameters according to [@!RFC7591].
 
+#### Trust Methods
+
+Wallets can determine if it is possible to trust the Verifier (RP) or not by the RP including a new property `trust_methods_supported` in its metadata and in the request message.
+
+These are hints to the wallet's AS informing it how to programmatically determine if the RP can be trusted. If the AS supports (one of) the identified trust method(s), then it knows how to programmatically determine if the RP can be trusted by using the technique particular to the identified trust method. If the AS does not understand any of the identified trust methods, then it does not know how to programmatically determine if the RP can be trusted.
+
+   * `trust_methods_supported`: REQUIRED. A JSON object containing a list of key value pairs, where the key is a URI that unambiguously identifies one type of trust method that the RP supports, for example, `urn:ietf:params:oauth:federation` or `https://train.trust-scheme.de/info`. The precise contents of this JSON object are determined by the trust method itself.
+   
+
+The following is a non-normative example for an RP that says it supports the `trust.example.com` trust method. How the RP indicates which trusted federation(s) it is a member of is determined by the `trust.example.com` trust method.
+
+```
+{
+ "trust_methods_supported": [{
+    "https://trust.example.com/info": {
+   .....
+     }
+  }]
+}
+```
+
+The Verifier/RP may also include the trust_methods_supported parameter in its initial request to the wallet.
+
 #### vp_formats
 
 RPs indicate the supported formats using the new parameter `vp_formats`.
@@ -526,15 +552,17 @@ Below is a set of static configuration values that can be used with `vp_token` a
 }
 ```
 
-## Support for Federations/Trust Schemes
+## Issuer Support for Trusted Federations
 
-Often RPs will want to request verifiable credentials from an issuer who is a member of a federation or trust scheme, rather than from a specific issuer, for example, a "BSc Chemistry Degree" credential from a US University rather than from a specifically named university.
+Often RPs will want to request verifiable credentials from an issuer who is a member of a trusted federation, rather than from a specific issuer, for example, a "BSc Chemistry Degree" credential from a US University rather than from a specifically named university.
 
-In order to facilitate this, federations will need to determine how an issuer can indicate in a verifiable credential that they are a member of one or more federations/trust schemes. Once this is done, the RP will be able to create a `presentation_definition` that includes this filtering criteria. This will enable the wallet to select all the verifiable credentials that match this criteria and then by some means (for example, by asking the user) determine which matching verifiable credential to return to the RP. Upon receiving this verifiable credential, the RP will be able to call its federation API to determine if the issuer is indeed a member of the federation/trust scheme that it says it is.
+In order to facilitate this, federations will need to determine how an issuer can indicate in a verifiable credential that it is a member of one or more federations. Once this is done, the RP will be able to create a `presentation_definition` that includes this filtering criteria. This will enable the wallet to select all the verifiable credentials that match this criteria and then by some means (for example, by asking the user) determine which matching verifiable credential to return to the RP. Upon receiving this verifiable credential, the RP will be able to call its federation API to determine if the issuer is indeed a member of the federation that it says it is.
 
-Indicating the federations/trust schemes that an issuer is a member of may be achieved by defining a `termsOfUse` property [@!VC_DATA].
+Indicating the federations that an issuer is a member of may be achieved by defining a `termsOfUse` property [@!VC_DATA]. 
 
 Note: [@!VC_DATA] describes terms of use as "can be utilized by an issuer ... to communicate the terms under which a verifiable credential ... was issued."
+
+The terms of use comprises a type, followed by type-specific parameters. The type, which is a URI, is used to indicate the particular trust method used by the federation, and then the trust method determines how the trusted federations are identified.
 
 The following terms of use may be defined:
 
@@ -542,22 +570,58 @@ The following terms of use may be defined:
 {
    "termsOfUse":[
       {
-         "type":"<uri that identifies this type of terms of use>",
-         "federations":[
-            "<list of federations/trust schemes the issuer asserts it is a member of>"
+         "type":"<uri that identifies the trust method>",
+         "someProperty":[
+            "<list of trusted federations the issuer asserts it is a member of>"
          ]
       }
    ]
 }
 ```
 
-Federations that conform to those specified in [@OpenID.Federation] are identified by the `type` `urn:ietf:params:oauth:federation`. Individual federations are identified by the entity id of the trust anchor. If the federation decides to use trust marks as signs of whether an entity belongs to a federation or not then the federation is identified by the `type` `urn:ietf:params:oauth:federation_trust_mark` and individual federations are identified by the entity id of the trust mark issuer.
+Federations that conform to those specified in [@OpenID.Federation] may be identified by the `type` `urn:ietf:params:oauth:federation`. Individual federations may be identified by the property `federations` in which the values are the entity ids of the trust anchors. If the federation decides to use trust marks as signs of whether an entity belongs to a federation or not then the trust method may be identified by the `type` `urn:ietf:params:oauth:federation_trust_mark` and individual federations may be identified by the entity ids of the trust mark issuers.
 
-Trust schemes that conform to the TRAIN [@TRAIN] trust scheme are identified by the `type` `https://train.trust-scheme.de/info`. Individual federations are identified by their DNS names.
+Trust schemes that conform to the TRAIN [@TRAIN] trust scheme are identified by the `type` `https://train.trust-scheme.de/info`. Individual federations are identified by the property `trustScheme` with values of their DNS names.
 
-An example `claims` parameter containing a `presentation_definition` that filters VCs based on their federation memberships is given below.
+An example `claims` parameter containing a `presentation_definition` that filters VCs based on their TRAIN federation memberships is given below.
 
-<{{examples/request/vp_token_federation.json}}
+```
+{
+    "vp_token": {
+        "presentation_definition": {
+            "id": "32f54163-7166-48f1",
+            "input_descriptors": [
+                {
+                    "id": "federationExample",
+                    "purpose": "To pick a UK university that is a member of the UK academic federation",
+                    "constraints": {
+                        "fields": [
+                            {
+                                "path": [
+                                    "$.termsOfUse.type"
+                                ],
+                                "filter": {
+                                    "type": "string",
+                                    "const": "https://train.trust-scheme.de/info"
+                                }
+                            },
+                            {
+                                "path": [
+                                    "$.termsOfUse.trustScheme"
+                                ],
+                                "filter": {
+                                    "type": "string",
+                                    "const": "ukuniversities.ac.uk"
+                                }
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+    }
+}
+```
 
 This example will chose a VC that has been issued by a university that is a member of the `ukuniversities.ac.uk` federation and that uses the TRAIN terms of use specification for asserting federation memberships.
 
