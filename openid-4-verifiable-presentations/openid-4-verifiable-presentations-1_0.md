@@ -891,7 +891,7 @@ The following is an example of VP token response using BBS Signature proofs:
 
 A notable feature of BBS Signature scheme is its ability to sign multiple messages whilst producing a single output digital signature. The possessor of the signature is able to generate proofs that selectively disclose subsets of the originally signed set of messages whilst preserving the verifiable authenticity and integrity of the messages. 
 
-The unlinkable proof property of BBS Signature ensures that no correlation exists between proofs(subset of claims) generated from the same signature . 
+The unlinkable proof property of BBS Signature ensures that no correlation exists between proofs(subset of claims) generated from the same signature. 
 
 For instance, If the same verifier (used in the previous example) requests a new credential with a different subset of data for a new interaction, the same subject can present the requested credential without the fear of correlation of proof value. 
 
