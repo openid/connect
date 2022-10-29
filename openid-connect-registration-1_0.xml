@@ -127,6 +127,8 @@
 	  defined by <xref target="RFC6749">OAuth 2.0</xref>,
 	  the terms "JSON Web Token (JWT)" and "Nested JWT"
 	  defined by <xref target="JWT">JSON Web Token (JWT)</xref>,
+	  the term "Base64url Encoding"
+	  defined by <xref target="JWS">JSON Web Signature (JWS)</xref>,
 	  and the terms defined by
 	  <xref target="OpenID.Core">OpenID Connect Core 1.0</xref>.
 	</t>
@@ -2331,7 +2333,7 @@
 	-35
         <list style="symbols">
 	  <t>
-	    TBD
+	    Fixed #1251 - Referenced JWS definition of Base64url Encoding.
 	  </t>
 	</list>
       </t>
