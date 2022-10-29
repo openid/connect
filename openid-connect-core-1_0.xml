@@ -5964,12 +5964,12 @@
 	    value that would result in an Authorization Code being returned,
 	  </t>
 	  <t>
-	    MUST explicitly receive or have consent for all Clients when
+	    MUST explicitly receive or have consent for offline access when
 	    the registered <spanx style="verb">application_type</spanx>
 	    is <spanx style="verb">web</spanx>,
 	  </t>
 	  <t>
-	    SHOULD explicitly receive or have consent for all Clients when
+	    SHOULD explicitly receive or have consent for offline access when
 	    the registered <spanx style="verb">application_type</spanx>
 	    is <spanx style="verb">native</spanx>.
 	  </t>
@@ -9412,6 +9412,9 @@
 	  <t>
 	    Fixed #1025 - Clarified that "nonce" should not be present
 	    in ID Tokens issued in response to refresh requests.
+	  </t>
+	  <t>
+	    Fixed #1062 - Replaced confusing offline_access language.
 	  </t>
 	</list>
       </t>
