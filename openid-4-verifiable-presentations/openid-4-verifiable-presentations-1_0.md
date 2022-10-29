@@ -479,10 +479,10 @@ Wallets can determine if it is possible to trust the Verifier (RP) or not by the
 
 These are hints to the wallet's AS informing it how to programmatically determine if the RP can be trusted. If the AS supports (one of) the identified trust method(s), then it knows how to programmatically determine if the RP can be trusted by using the technique particular to the identified trust method. If the AS does not understand any of the identified trust methods, then it does not know how to programmatically determine if the RP can be trusted.
 
-   * `trust_methods_supported`: REQUIRED. A JSON object containing a list of key value pairs, where the key is a URI that unambiguously identifies one type of trust method that the RP supports, for example, `urn:ietf:params:oauth:federation` or `https://train.trust-scheme.de/info`. The precise contents of this JSON object are determined by the trust method itself.
+   * `trust_methods_supported`: OPTIONAL. A JSON object containing a list of key value pairs, where the key is a URI that unambiguously identifies one type of trust method that the RP supports, for example, `https://trust.example.com`. The precise contents of this JSON object are determined by the trust method itself.
    
 
-The following is a non-normative example for an RP that says it supports the `trust.example.com` trust method. How the RP indicates which trusted federation(s) it is a member of is determined by the `trust.example.com` trust method.
+The following is a non-normative example for an RP that says it supports the `trust.example.com` trust method. How the RP indicates which trusted federation(s) or trust schemes it is a member of is determined by the `trust.example.com` trust method.
 
 ```
 {
@@ -552,17 +552,17 @@ Below is a set of static configuration values that can be used with `vp_token` a
 }
 ```
 
-## Issuer Support for Trusted Federations
+## Issuer Support for Federations/Trust Schemes
 
-Often RPs will want to request verifiable credentials from an issuer who is a member of a trusted federation, rather than from a specific issuer, for example, a "BSc Chemistry Degree" credential from a US University rather than from a specifically named university.
+Often RPs will want to request verifiable credentials from an issuer who is a member of a federation or trust scheme, rather than from a specific issuer, for example, a "BSc Chemistry Degree" credential from a US University rather than from a specifically named university.
 
-In order to facilitate this, federations will need to determine how an issuer can indicate in a verifiable credential that it is a member of one or more federations. Once this is done, the RP will be able to create a `presentation_definition` that includes this filtering criteria. This will enable the wallet to select all the verifiable credentials that match this criteria and then by some means (for example, by asking the user) determine which matching verifiable credential to return to the RP. Upon receiving this verifiable credential, the RP will be able to call its federation API to determine if the issuer is indeed a member of the federation that it says it is.
+In order to facilitate this, federations or trust schemes will need to determine how an issuer can indicate in a verifiable credential that it is a member of one or more federations/trust schemes. Once this is done, the RP will be able to create a `presentation_definition` that includes this filtering criteria. This will enable the wallet to select all the verifiable credentials that match this criteria and then by some means (for example, by asking the user) determine which matching verifiable credential to return to the RP. Upon receiving this verifiable credential, the RP will be able to call its trust method API to determine if the issuer is indeed a member of the federation/trust scheme that it says it is.
 
-Indicating the federations that an issuer is a member of may be achieved by defining a `termsOfUse` property [@!VC_DATA]. 
+Indicating the federations/trust schemes that an issuer is a member of may be achieved by defining a `termsOfUse` property [@!VC_DATA]. 
 
 Note: [@!VC_DATA] describes terms of use as "can be utilized by an issuer ... to communicate the terms under which a verifiable credential ... was issued."
 
-The terms of use comprises a type, followed by type-specific parameters. The type, which is a URI, is used to indicate the particular trust method used by the federation, and then the trust method determines how the trusted federations are identified.
+The terms of use comprises a type, followed by type-specific parameters. The type, which is a URI, is used to indicate the particular trust method used by the federation/trust scheme, and then the trust method determines how the trusted federations are identified.
 
 The following terms of use may be defined:
 
@@ -571,15 +571,13 @@ The following terms of use may be defined:
    "termsOfUse":[
       {
          "type":"<uri that identifies the trust method>",
-         "someProperty":[
-            "<list of trusted federations the issuer asserts it is a member of>"
-         ]
+         ....
       }
    ]
 }
 ```
 
-Federations that conform to those specified in [@OpenID.Federation] may be identified by the `type` `urn:ietf:params:oauth:federation`. Individual federations may be identified by the property `federations` in which the values are the entity ids of the trust anchors. If the federation decides to use trust marks as signs of whether an entity belongs to a federation or not then the trust method may be identified by the `type` `urn:ietf:params:oauth:federation_trust_mark` and individual federations may be identified by the entity ids of the trust mark issuers.
+Federations that conform to those specified in [@OpenID.Federation] should be identified by the `type` `urn:ietf:params:oauth:federation`. Individual federations may be identified by the property `federations` in which the values are the entity ids of the trust anchors. If the federation decides to use trust marks as signs of whether an entity belongs to a federation or not then the trust method may be identified by the `type` `urn:ietf:params:oauth:federation_trust_mark` and individual federations may be identified by the entity ids of the trust mark issuers.
 
 Trust schemes that conform to the TRAIN [@TRAIN] trust scheme are identified by the `type` `https://train.trust-scheme.de/info`. Individual federations are identified by the property `trustScheme` with values of their DNS names.
 
