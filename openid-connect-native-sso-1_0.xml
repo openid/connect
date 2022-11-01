@@ -177,7 +177,7 @@
 		<t>After step 8, Native App #1 stores the device_secret and id_token
 		   in the protected device storage accessible only to Native App #2.</t>
 		<t>Native App #2 uses the stored data from the shared device storage
-		   to obtain tokens for the user then enabling SSO</t>
+		   to obtain tokens for the user then enables SSO</t>
 		<figure>
 			<artwork><![CDATA[
 +----------+     +----------+      +-----------+      +------------+
@@ -328,7 +328,7 @@
 			  same developer certificate.</t>
 		  <section anchor="TXProfile" title="OAuth2 Token Exchange Profile">
 			  <t>The client authenticates using its registered token endpoint
-          endpoint client authentication method. This could range from HTTP
+          client authentication method. This could range from HTTP
           Basic Authentication, to OpenID Connect defined private_key_jwt. The AS must
           be able to obtain the client_id of the requesting mobile app
           (mobile app #2) from the client authentication method.
@@ -444,7 +444,7 @@
 				  </list>
 			  </t>
 			  <t>Based on the AS definition of the device_secret, the AS may perform
-				  addition checks to ensure the security of the request. Provided the
+				  additional checks to ensure the security of the request. Provided the
 				  above criteria is met, the AS will issue a normal Token Response
 				  object containing a refresh_token, access_token and id_token issued
 				  to the client_id of the mobile app making the request. The session
