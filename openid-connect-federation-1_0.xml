@@ -6002,6 +6002,26 @@ Host: op.umu.se
 ]]></artwork>
           </figure>
           <t>
+            Furthermore the OP sets values on a number of claims that are
+            owned by the OP. Claims such as
+            <spanx style="verb">client_id</spanx> and
+            <spanx style="verb">client_secret</spanx>. This can easiest be
+            done using the <spanx style="verb">metadata</spanx> claim.
+          </t>
+          <figure>
+            <artwork><![CDATA[
+"metadata": {
+  "openid_relying_party": {
+    "client_id": "m3GyHw",
+    "client_secret_expires_at": 1604049619,
+    "client_secret":
+      "cb44eed577f3b5edf3e08362d47a0dc44630b3dc6ea99f7a79205"
+    "client_id_issued_at": 1601457619,
+  }
+}
+]]></artwork>
+          </figure>
+          <t>
             Thus, the Entity Statement returned by the OP to the RP MAY look
             like this:
           </t>
@@ -6080,6 +6100,11 @@ Host: op.umu.se
 {
   "application_type": "web",
   "client_name": "LIGO Wiki",
+  "client_id": "m3GyHw",
+  "client_secret_expires_at": 1604049619,
+  "client_secret":
+    "cb44eed577f3b5edf3e08362d47a0dc44630b3dc6ea99f7a79205"
+  "client_id_issued_at": 1601457619,
   "contacts": [
     "ops@edugain.geant.org",
     "ops@incommon.org",
