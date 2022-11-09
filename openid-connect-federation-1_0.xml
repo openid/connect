@@ -6174,6 +6174,9 @@ Host: op.umu.se
             Fixed #1684: disambiguation on the role federation_entity.
           </t>
           <t>
+            Added security consideration about unsigned error messages
+          </t>
+          <t>
             Fixed #1693: Trust mark status endpoint HTTP method changed to POST.
           </t>
           <t>
@@ -6211,6 +6214,9 @@ Host: op.umu.se
           </t>
           <t>
             Fixed #1680: removal of the claim operation in Generic Errors.
+          </t>
+          <t>
+            Fixed #1684: disambiguation on the role federation_entity.
           </t>
           <t>
             Fixed #1669: error types in the section Generic Error Response.
