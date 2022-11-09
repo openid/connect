@@ -339,7 +339,7 @@ The following is a non-normative example request object with response mode `post
 ```json
 {
    "client_id": "https://client.example.org/post",
-   "redirect_uris": ["https://client.example.org/post"],
+   "redirect_uri": "https://client.example.org/post",
    "response_types": "vp_token",
    "response_mode": "post"
    "presentation_definition": {...},
