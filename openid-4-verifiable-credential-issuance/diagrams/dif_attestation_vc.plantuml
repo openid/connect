@@ -17,7 +17,6 @@ participant us as "Holder"
 is <->  us: user dialog
 is -> wa: IIIR (credential offer - issuer) - deep link
 wa -> is: get credential metadata (incl. security requirements, e.g. key_mechanisms, user authentication, attestation vc)
-wa -> is: token request (pre-authz code): access_token, c_nonce
 group on-demand attestation
     wa -> ce : token request (client credential, attestation VC): access token, c_nonce
     wa -> wa : perform wallet attestation\n(e.g. Play Integrity, iOS DeviceChecker, ...)
@@ -26,8 +25,9 @@ group on-demand attestation
     ce -> ce : validate wallet attestation & key attestation
     ce -> wa : credential issuance response : wallet attestation VC
 end
+wa -> is: token request (pre-authz code): access_token, c_nonce
 wa -> wa: create wallet attestation VC VP (c_nonce)
-wa -> is : credential issuance request (wallet attestation VC VP, credential format, type)
+wa -> is : credential issuance request (access token, wallet attestation VC VP, credential format, type)
 is -> is : verify wallet attestation VC proof
 is -> tr : request information on wallet certification
 is -> wa : issue credential bound to wallet attestation VC
