@@ -6153,7 +6153,7 @@ Host: op.umu.se
             Fixed #1684: disambiguation on the role federation_entity.
           </t>
           <t>
-            Added security consideration about unsigned error messages
+            Fixed #1703: Unsigned error response
           </t>
           <t>
             Fixed #1693: Trust mark status endpoint HTTP method changed to POST.
