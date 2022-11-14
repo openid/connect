@@ -23,7 +23,7 @@
   <?rfc private="Draft" ?>
 
   <front>
-    <title abbrev="OpenID Connect Core 1.0">OpenID Connect Core 1.0 - draft 29 incorporating errata set 2</title>
+    <title abbrev="OpenID Connect Core 1.0">OpenID Connect Core 1.0 - draft 30 incorporating errata set 2</title>
 
     <author fullname="Nat Sakimura" initials="N." surname="Sakimura">
       <organization abbrev="NAT.Consulting (was at NRI)">NAT.Consulting</organization>
@@ -65,7 +65,7 @@
       </address>
     </author>
 
-    <date day="14" month="September" year="2022" />
+    <date day="1" month="November" year="2022" />
 
     <workgroup>OpenID Connect Working Group</workgroup>
 
@@ -183,7 +183,7 @@
 	  the terms "Claim Name", "Claim Value", "JSON Web Token (JWT)",
 	  "JWT Claims Set", and "Nested JWT"
 	  defined by <xref target="JWT">JSON Web Token (JWT)</xref>,
-	  the terms "Header Parameter" and "JOSE Header"
+	  the terms "Base64url Encoding", "Header Parameter", and "JOSE Header"
 	  defined by <xref target="JWS">JSON Web Signature (JWS)</xref>,
 	  the term "User Agent" defined by <xref target="RFC7230">RFC 7230</xref>,
 	  and the term "Response Mode" defined by
@@ -648,13 +648,13 @@
 	    Authorized party - the party to which the ID Token was issued.
 	    If present, it MUST contain the OAuth 2.0
 	    Client ID of this party.
-	    This Claim is only needed when
-	    the ID Token has a single audience value
-	    and that audience is different than the authorized party.
-	    It MAY be included even when the authorized party is the same
-	    as the sole audience.
 	    The <spanx style="verb">azp</spanx> value is a case-sensitive string
 	    containing a StringOrURI value.
+	    Note that in practice, the <spanx style="verb">azp</spanx> Claim only occurs
+	    when extensions beyond the scope of this specification are used;
+	    therefore, implementations not using such extensions
+	    are encouraged to not use <spanx style="verb">azp</spanx>
+	    and to ignore it when it does occur.
 	  </t>
 
 	</list>
@@ -1180,7 +1180,7 @@
 		  authenticated session with the Client.
 		  If the End-User identified by the ID Token is logged in or is logged in by the request,
 		  then the Authorization Server returns a positive response;
-		  otherwise, it SHOULD return
+		  otherwise, it MUST return
 		  an error, such as <spanx style="verb">login_required</spanx>.
 		  When possible, an <spanx style="verb">id_token_hint</spanx>
 		  SHOULD be present when <spanx style="verb">prompt=none</spanx> is used
@@ -1930,11 +1930,16 @@
 		  the Client as a valid audience, or if it contains additional audiences not trusted by the Client.
 		</t>
 		<t>
-		  If the ID Token contains multiple audiences, the Client SHOULD verify
-		  that an <spanx style="verb">azp</spanx> Claim is present.
+		  If the implementation is using extensions
+		  (which are beyond the scope of this specification)
+		  that result in
+		  the <spanx style="verb">azp</spanx> (authorized party) Claim being present,
+		  it SHOULD validate the <spanx style="verb">azp</spanx> value
+		  as specified by those extensions.
 		</t>
 		<t>
-		  If an <spanx style="verb">azp</spanx> (authorized party) Claim is present,
+		  This validation MAY include that
+		  when an <spanx style="verb">azp</spanx> (authorized party) Claim is present,
 		  the Client SHOULD verify that its <spanx style="verb">client_id</spanx>
 		  is the Claim Value.
 		</t>
@@ -1967,9 +1972,7 @@
 		<spanx style="verb">aud</spanx> (audience) Claim are used as the key
 		to validate the signature.
 		For MAC based algorithms, the behavior is unspecified
-		if the <spanx style="verb">aud</spanx> is multi-valued or
-		if an <spanx style="verb">azp</spanx> value is present
-		that is different than the <spanx style="verb">aud</spanx> value.
+		if the <spanx style="verb">aud</spanx> is multi-valued.
 		</t> 
 		<t>
 		  The current time MUST be before the time represented by the 
@@ -3419,10 +3422,11 @@
 
 	<t>The UserInfo Endpoint MUST accept Access Tokens as
 	<xref target="RFC6750">OAuth 2.0 Bearer Token Usage</xref>.</t>
-	
-	<t>The UserInfo Endpoint SHOULD support the use of 
-	<xref target="CORS">Cross Origin Resource Sharing (CORS)</xref> and
-	or other methods as appropriate to enable Java Script Clients to access the endpoint.</t>
+
+	<t>The UserInfo Endpoint SHOULD support the use of
+	<xref target="CORS">Cross-Origin Resource Sharing (CORS)</xref>
+	and/or other methods as appropriate
+	to enable Java Script Clients to access it.</t>
 
 	<section anchor="UserInfoRequest" title="UserInfo Request">
 
@@ -5337,8 +5341,7 @@
 	      The acceptable range is Client specific.
 	    </t>
 	    <t>
-	      If a nonce value was sent in the Authentication Request, 
-	      a <spanx style="verb">nonce</spanx> Claim MUST be present 
+	      A <spanx style="verb">nonce</spanx> Claim MUST be present
 	      and its value checked to verify that
 	      it is the same value as the one that was sent in the Authentication Request.
 	      The Client SHOULD check the <spanx style="verb">nonce</spanx> value
@@ -5962,12 +5965,12 @@
 	    value that would result in an Authorization Code being returned,
 	  </t>
 	  <t>
-	    MUST explicitly receive or have consent for all Clients when
+	    MUST explicitly receive or have consent for offline access when
 	    the registered <spanx style="verb">application_type</spanx>
 	    is <spanx style="verb">web</spanx>,
 	  </t>
 	  <t>
-	    SHOULD explicitly receive or have consent for all Clients when
+	    SHOULD explicitly receive or have consent for offline access when
 	    the registered <spanx style="verb">application_type</spanx>
 	    is <spanx style="verb">native</spanx>.
 	  </t>
@@ -6063,10 +6066,26 @@
 	      the time that the new ID token is issued,
 	    </t>
 	    <t>
+	      if the implementation is using extensions
+	      (which are beyond the scope of this specification)
+	      that result in
+	      the <spanx style="verb">azp</spanx> (authorized party) Claim being present,
+	      those extensions might specify that
 	      its <spanx style="verb">azp</spanx> Claim Value MUST be the same as
 	      in the ID Token issued when the original authentication occurred;
+	      likewise, they might specify that
 	      if no <spanx style="verb">azp</spanx> Claim was present in the original
-	      ID Token, one MUST NOT be present in the new ID Token, and
+	      ID Token, one MUST NOT be present in the new ID Token,
+	    </t>
+	    <t>
+	      it SHOULD NOT have a <spanx style="verb">nonce</spanx> Claim,
+	      even when the ID Token issued
+	      at the time of the original authentication
+	      contained <spanx style="verb">nonce</spanx>;
+	      however, if it is present,
+	      its value MUST be the same as in the ID Token issued
+	      at the time of the original authentication,
+	      and
 	    </t>
 	    <t>
 	      otherwise, the same rules apply as apply when issuing an ID Token
@@ -6797,7 +6816,6 @@
 	  <spanx style="verb">iss</spanx> (issuer),
 	  <spanx style="verb">sub</spanx> (subject),
 	  <spanx style="verb">aud</spanx> (audience),
-	  <spanx style="verb">azp</spanx> (authorized party),
 	  <spanx style="verb">at_hash</spanx> (access token hash), and
 	  <spanx style="verb">c_hash</spanx> (code hash).  Using the ID Token,
 	  the Client is capable of detecting the Token Substitution Attack.
@@ -9375,6 +9393,35 @@
 
     <section anchor="History" title="Document History">
       <t>[[ To be removed from the approved errata ]]</t>
+
+      <t>
+	-30
+        <list style="symbols">
+	  <t>
+	    Fixed #1266 - Removed misleading self-issued language that seemed to imply that nonce is optional.
+	  </t>
+	  <t>
+	    Fixed #1251 - Referenced JWS definition of Base64url Encoding.
+	  </t>
+	  <t>
+	    Fixed #968: Made id_token_hint error treatment consistent.
+	  </t>
+	  <t>
+	    Fixed #973 and #1009 - Clarified that "azp" only occurs when
+	    extensions are used that are beyond the scope of this specification.
+	  </t>
+	  <t>
+	    Fixed #1025 - Clarified that "nonce" should not be present
+	    in ID Tokens issued in response to refresh requests.
+	  </t>
+	  <t>
+	    Fixed #1062 - Replaced confusing offline_access language.
+	  </t>
+	  <t>
+	    Fixed #980 - Specified the use of CORS at additional endpoints.
+	  </t>
+	</list>
+      </t>
 
       <t>
 	-29

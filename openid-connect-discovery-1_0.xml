@@ -23,7 +23,7 @@
   <?rfc private="Draft" ?>
 
   <front>
-    <title abbrev="OpenID Connect Discovery 1.0">OpenID Connect Discovery 1.0 - draft 32 incorporating errata set 2</title>
+    <title abbrev="OpenID Connect Discovery 1.0">OpenID Connect Discovery 1.0 - draft 33 incorporating errata set 2</title>
 
     <author fullname="Nat Sakimura" initials="N." surname="Sakimura">
       <organization abbrev="NAT.Consulting (was at NRI)">NAT.Consulting</organization>
@@ -56,7 +56,7 @@
       </address>
     </author>
 
-    <date day="14" month="September" year="2022" />
+    <date day="1" month="November" year="2022" />
 
     <workgroup>OpenID Connect Working Group</workgroup>
 
@@ -230,6 +230,10 @@
       requested service.
       All WebFinger communication MUST utilize TLS
       in the manner described in <xref target="TLSRequirements"/>.
+      The WebFinger endpoint SHOULD support the use of
+      <xref target="CORS">Cross-Origin Resource Sharing (CORS)</xref>
+      and/or other methods as appropriate
+      to enable Java Script Clients to access it.
       </t>
 
       <t>
@@ -1018,6 +1022,20 @@
 	</list>
       </t>
       <t>
+	The
+	Token Endpoint,
+	UserInfo Endpoint,
+	<spanx style="verb">jwks_uri</spanx> endpoint,
+	Dynamic Client Registration Endpoint,
+	and any other endpoints directly accessed by Clients
+	SHOULD support the use of
+	<xref target="CORS">Cross-Origin Resource Sharing (CORS)</xref>
+	and/or other methods as appropriate
+	to enable Java Script Clients to access them.
+	The use of CORS at the Authorization Endpoint is NOT RECOMMENDED
+	as it is redirected to by the client and not directly accessed.
+      </t>
+      <t>
 	Additional OpenID Provider Metadata parameters MAY also be used.
 	Some are defined by other specifications,
 	such as
@@ -1047,6 +1065,10 @@
 	when it contains no path component. <spanx style="verb">openid-configuration</spanx>
 	MUST point to a JSON document compliant with this specification and
 	MUST be returned using the <spanx style="verb">application/json</spanx> content type.
+	The <spanx style="verb">openid-configuration</spanx> endpoint SHOULD support the use of
+	<xref target="CORS">Cross-Origin Resource Sharing (CORS)</xref>
+	and/or other methods as appropriate
+	to enable Java Script Clients to access it.
       </t>
 
       <section anchor="ProviderConfigurationRequest"
@@ -2151,6 +2173,16 @@
 	-->
       </reference>
 
+      <reference anchor="CORS" target="http://www.w3.org/TR/access-control/">
+        <front>
+	  <title>Cross-Origin Resource Sharing</title>
+	  <author fullname="Anne van Kesteren">
+	    <organization abbrev="Opera">Opera Software ASA</organization>
+	  </author>
+	  <date day="27" month="July" year="2010"></date>
+        </front>
+      </reference>
+
     </references>
 
     <references title="Informative References">
@@ -2310,6 +2342,15 @@
 
     <section anchor="History" title="Document History">
       <t>[[ To be removed from the approved errata ]]</t>
+
+      <t>
+	-33
+        <list style="symbols">
+	  <t>
+	    Fixed #980 - Specified the use of CORS at endpoints directly accessed by the Client.
+	  </t>
+	</list>
+      </t>
 
       <t>
 	-32

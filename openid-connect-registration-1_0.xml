@@ -24,7 +24,7 @@
 
   <front>
     <title abbrev="OpenID Connect Registration 1.0">OpenID Connect
-    Dynamic Client Registration 1.0 - draft 34 incorporating errata set 2</title>
+    Dynamic Client Registration 1.0 - draft 35 incorporating errata set 2</title>
 
     <author fullname="Nat Sakimura" initials="N." surname="Sakimura">
       <organization abbrev="NAT.Consulting (was at NRI)">NAT.Consulting</organization>
@@ -50,7 +50,7 @@
       </address>
     </author>
 
-    <date day="14" month="September" year="2022" />
+    <date day="1" month="November" year="2022" />
 
     <workgroup>OpenID Connect Working Group</workgroup>
 
@@ -127,6 +127,8 @@
 	  defined by <xref target="RFC6749">OAuth 2.0</xref>,
 	  the terms "JSON Web Token (JWT)" and "Nested JWT"
 	  defined by <xref target="JWT">JSON Web Token (JWT)</xref>,
+	  the term "Base64url Encoding"
+	  defined by <xref target="JWS">JSON Web Signature (JWS)</xref>,
 	  and the terms defined by
 	  <xref target="OpenID.Core">OpenID Connect Core 1.0</xref>.
 	</t>
@@ -737,7 +739,12 @@
       The OpenID Provider MAY require an Initial Access Token that is
       provisioned out-of-band (in a manner that is out of scope for
       this specification) to restrict registration requests
-      to only authorized Clients or developers.</t>
+      to only authorized Clients or developers.
+      The Client Registration Endpoint SHOULD support the use of
+      <xref target="CORS">Cross-Origin Resource Sharing (CORS)</xref>
+      and/or other methods as appropriate
+      to enable Java Script Clients to access it.
+      </t>
 
       <t>To support open Dynamic Registration, the Client
       Registration Endpoint SHOULD accept registration requests without OAuth 2.0
@@ -1023,7 +1030,12 @@
       that MAY be provisioned by the server for a specific Client to be able to
       view and update its registered information. The Client MUST use its
       Registration Access Token in all calls to this endpoint as an
-      OAuth 2.0 Bearer Token <xref target="RFC6750"/>.</t>
+      OAuth 2.0 Bearer Token <xref target="RFC6750"/>.
+      The Client Configuration Endpoint SHOULD support the use of
+      <xref target="CORS">Cross-Origin Resource Sharing (CORS)</xref>
+      and/or other methods as appropriate
+      to enable Java Script Clients to access it.
+      </t>
 
       <t>Operations on this endpoint are switched through the use of different
       HTTP methods <xref target="RFC7231"/>.
@@ -2188,6 +2200,16 @@
         </front>
       </reference>
 
+      <reference anchor="CORS" target="http://www.w3.org/TR/access-control/">
+        <front>
+	  <title>Cross-Origin Resource Sharing</title>
+	  <author fullname="Anne van Kesteren">
+	    <organization abbrev="Opera">Opera Software ASA</organization>
+	  </author>
+	  <date day="27" month="July" year="2010"></date>
+        </front>
+      </reference>
+
     </references>
 
     <references title="Informative References">
@@ -2326,6 +2348,18 @@
 
     <section anchor="History" title="Document History">
       <t>[[ To be removed from the approved errata ]]</t>
+
+      <t>
+	-35
+        <list style="symbols">
+	  <t>
+	    Fixed #1251 - Referenced JWS definition of Base64url Encoding.
+	  </t>
+	  <t>
+	    Fixed #980 - Specified the use of CORS at additional endpoints.
+	  </t>
+	</list>
+      </t>
 
       <t>
 	-34
