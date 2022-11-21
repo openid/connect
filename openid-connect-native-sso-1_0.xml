@@ -23,7 +23,7 @@
 
   <front>
     <title abbrev="Mobile App Native SSO">OpenID Connect
-    Native SSO for Mobile Apps 1.0 - draft 04</title>
+    Native SSO for Mobile Apps 1.0 - draft 05</title>
 
     <author fullname="George F. Fletcher" initials="G.F.F." surname="Fletcher">
       <organization abbrev="Capital One">Capital One</organization>
@@ -32,7 +32,7 @@
       </address>
     </author>
 
-    <date day="22" month="September" year="2022" />
+    <date day="3" month="November" year="2022" />
 
     <workgroup>OpenID Connect Working Group</workgroup>
 
@@ -177,7 +177,8 @@
 		<t>After step 8, Native App #1 stores the device_secret and id_token
 		   in the protected device storage accessible only to Native App #2.</t>
 		<t>Native App #2 uses the stored data from the shared device storage
-		   to obtain tokens for the user then enables SSO</t>
+		   to obtain tokens for the user thus enabling the app to access
+		   the user's resources (i.e. SSO)</t>
 		<figure>
 			<artwork><![CDATA[
 +----------+     +----------+      +-----------+      +------------+
@@ -605,6 +606,7 @@
 			<t>Filip Skokan</t>
 			<t>Joseph Heenan</t>
 			<t>Nat Sakimura</t>
+			<t>Naveen CM</t>
             <t>Nov Matake</t>
         </list>
       </t>
@@ -625,6 +627,10 @@
 		<t>
 			Draft-04 - Normative change to verify the id_token plus other edits based on feedback
 			from Joseph Heenan. Also updated Security Considerations section and general cleanup.
+		</t>
+		<t>
+			Draft-05 - Updated the draft version and tweaked some language based on updates from
+			Naveen CM.
 		</t>
         </list>
       </t>
