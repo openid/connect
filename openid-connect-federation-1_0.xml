@@ -749,7 +749,8 @@
               OPTIONAL. A human-readable
               name representing the organization owning the Entity.
               If the owner is a physical person
-              this MAY be, for example, the name of a person.
+              this MAY be, for example, the name of a person. Note 
+              that this information will be publicly available.
             </t>
             <t hangText="signed_jwks_uri">
               <vspace/>
@@ -1243,12 +1244,23 @@
               <xref target="resolve"/>. Any federation Entity MAY publish a
                 <spanx style="verb">federation_resolve_endpoint</spanx>.
             </t>
+            <t hangText="federation_trust_mark_status_endpoint">
+              <vspace/>
+              OPTIONAL.
+              The Trust Mark status endpoint described in
+              <xref target="status_endpoint"/>. Trust mark issuers SHOULD
+              publish a 
+              <spanx style="verb">federation_trust_mark_status_endpoint</spanx>.
+            </t>
             <t hangText="organization_name">
               <vspace/>
               OPTIONAL. A human-readable
               name representing the organization owning the Entity.
               If the owner is a physical person
-              this MAY be, for example, the name of a person.
+              this MAY be, for example, the name of a person. Note
+              that this information will be publicly available.
+              It is RECOMMENDED that each federation Entity 
+              expose this claim.
             </t>
             <t hangText="contacts">
               <vspace/>
@@ -1256,6 +1268,12 @@
               strings representing contact persons at the Entity.
               These MAY contain names, e-mail addresses, descriptions, phone
               numbers, etc.
+            </t>
+            <t hangText="logo_uri">
+              <vspace/>
+              OPTIONAL. String. A URL that points to the logo of this Entity.
+              The file containing the logo SHOULD be published 
+              in a format that can be viewed via the web.
             </t>
             <t hangText="policy_uri">
               <vspace/>
@@ -1277,46 +1295,14 @@
     "https://example.com/federation_fetch",
   "federation_list_endpoint":
     "https://example.com/federation_list",
+  "federation_trust_mark_status_endpoint": "https://example.com/status"
   "organization_name": "The example cooperation",
   "homepage_uri": "https://www.example.com"
 }
 ]]></artwork>
         </figure>
       </section>
-      <section title="Trust Mark Issuer">
-        <t>
-          The metadata type identifier is
-          <spanx style="verb">trust_mark_issuer</spanx>.
-        </t>
-        <t>
-          All entities participating in a federation may be of this type.
-        </t>
 
-        <t>
-          The following properties are allowed:
-          <list style="hanging">
-            <t hangText="federation_status_endpoint">
-              <vspace/>
-              OPTIONAL.
-              The Trust Mark status endpoint described in
-              <xref target="status_endpoint"/>. Trust mark issuers SHOULD
-              publish a <spanx style="verb">federation_status_endpoint</spanx>.
-            </t>
-          </list>
-        </t>
-        <t>Example</t>
-        <figure>
-          <artwork><![CDATA[
-"trust_mark_issuer": {
-  "federation_status_endpoint": "https://trust_marks_are_us.example.com/status"
-}
-]]></artwork>
-        </figure>
-        <t>
-          Communication with the status endpoint is described in
-          <xref target="status_endpoint"/>.
-        </t>
-      </section>
     </section>
     <section title="Federation Policy" anchor="federation_policy">
       <section title="Metadata Policy" anchor="metadata_policy">
@@ -2937,7 +2923,7 @@ Content-Type: application/json
                 <spanx style="verb">sub</spanx> and <spanx style="verb">id</spanx>:
               </preamble>
               <artwork><![CDATA[
-GET /federation_status_endpoint?
+GET /federation_trust_mark_status_endpoint?
 sub=https%3A%2F%2Fopenid.sunet.se%2FRP
 &id=https%3A%2F%2Frefeds.org%2Fsirtfi
 HTTP/1.1
@@ -3555,8 +3541,8 @@ Content-Type: application/json
           <list style="symbols">
             <t>
           In all interactions with the OP, the RP employs its Entity Identifier as the Client ID.
-              The Entity Identifier is the URL from which the OP can
-              fetch the RP's Entity Configuration using the process
+              The OP retrieves the RP's Entity Configuration
+	      from a URL derived from the Entity Identifier, as
               described in <xref target="federation_configuration"/>.
             </t>
             <t>
@@ -3633,9 +3619,12 @@ Content-Type: application/json
                   that compose the Trust Chain between the RP that makes
                   the request and the selected Trust Anchor,
                   sorted as shown in <xref target="trust_chain"/>.
-                  Due to the large size of a Trust Chain it could be necessary to use
-                  a <xref target="RFC9101">JWT-Secured Authorization Request (JAR)</xref> or
-                  <xref target="RFC9126">Pushed Authorization Request</xref>.
+                  Due to the large size of a Trust Chain it could be necessary 
+                  to use the HTTP POST method,
+                  <spanx style="verb">request_uri</spanx>
+                   or 
+                  <xref target="RFC9126">Pushed Authorization Request</xref>
+                  for the request.
                 </t>
               </list>
             </t>
@@ -4902,6 +4891,18 @@ HTTP/1.1 302 Found
         collection (Federation Entity Discovery process) and evaluation of Trust Chains.
       </t>
     </section>
+    <section title="Unsigned Error Messages" anchor="UnsignedError">
+      <t>
+	One of the fundamental design goals of this protocol is to
+	protect messages end-to-end. This can not be accomplished by demanding
+	TLS since TLS, in lots of cases, is not end-to-end but ends in a HTTPS
+	to HTTP Reverse Proxy.
+	Allowing unsigned error messages therefore opens up an attack
+	vector for someone who wants to run a Denial of Service attack.
+	This is not specific to OpenID Connect Federation but equally valid for
+	other protocols when HTTPS to HTTP reverse proxies are used.
+      </t>
+    </section>
     </section>
   </middle>
 
@@ -6161,6 +6162,9 @@ Host: op.umu.se
           <t>
             Fixed #1684: disambiguation on the role federation_entity.
           </t>
+	  <t>
+            Fixed #1703: Unsigned error response
+          </t>
           <t>
             Fixed #1693: Trust mark status endpoint HTTP method changed to POST.
           </t>
@@ -6168,7 +6172,19 @@ Host: op.umu.se
             Fixed #1681: RS256 is not mandatory anymore for federation operations signatures.
           </t>
           <t>
+            Fixed #1701: trust_chain parameter with PAR and redirect_uri.
+          </t>
+          <t>
             Fixed #1695: entity_type url paramenter for Listing endpoint. 
+          </t>
+          <t>
+            Fixed #1712: federation_entity claims: organization_name is recommended, logo_uri is added. 
+          </t>
+          <t>
+            Fixed #1702: removal of metadata type trust_mark_issuer, federation_status_endpoint moved in the federation_entity metadata and renamed to federation_trust_mark_status_endpoint. 
+          </t>
+          <t>
+            Fixed #1716: Clarified how to retrieve the RP's Entity Configuration when using Automatic Registration.
           </t>
         </list>
       </t>
