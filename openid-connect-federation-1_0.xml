@@ -385,7 +385,7 @@
             <t hangText="metadata">
               <vspace/>
               REQUIRED Conditional. JSON object including protocol
-              specific metadata claims that represent the Entity's metadata.
+              specific metadata claims.
               Each key of the JSON object represents a metadata type
               identifier, and each value MUST be a JSON object representing
               the metadata according to the metadata schema of that metadata
@@ -1376,6 +1376,15 @@
 ]]></artwork>
           </figure>
         </t>
+        </section>
+        <section title="Policy Metadata">
+          <t>
+          In some cases a superior may want to be explicit about what metadata
+          should be used for a subordinate. In that case
+          <spanx style="verb">metadata</spanx> can be used. If
+          <spanx style="verb">metadata</spanx> is used it is only valid for the
+          subject of the Entity statement and has no impact on its subordinates.
+          </t>
         </section>
         <section title="Operators">
           <t>
@@ -6083,6 +6092,11 @@ Host: op.umu.se
 {
   "application_type": "web",
   "client_name": "LIGO Wiki",
+  "client_id": "m3GyHw",
+  "client_secret_expires_at": 1604049619,
+  "client_secret":
+    "cb44eed577f3b5edf3e08362d47a0dc44630b3dc6ea99f7a79205"
+  "client_id_issued_at": 1601457619,
   "contacts": [
     "ops@edugain.geant.org",
     "ops@incommon.org",
@@ -6170,7 +6184,14 @@ Host: op.umu.se
 
     <section anchor="History" title="Document History">
       <t>[[ To be removed from the final specification ]]</t>
-
+      <t>
+        -26
+        <list style="symbols">
+          <t>
+            Added text about the usage of metadata besides metadata_policy.
+          </t>
+        </list>
+      </t>
       <t>
         -25
         <list style="symbols">
