@@ -87,7 +87,7 @@
       </address>
     </author>
 
-    <date day="9" month="November" year="2022"/>
+    <date day="2" month="December" year="2022"/>
 
     <workgroup>OpenID Connect Working Group</workgroup>
 
@@ -98,7 +98,8 @@
     <abstract>
       <t>
         A federation can be expressed as an agreement between parties that trust each other.
-        In bilateral federations, you can have direct trust between the parties.
+        In bilateral federations, direct trust can be established between 
+        two organizations belonging to the same federation.
         In a multilateral federation, bilateral agreements might not be practical,
         in which case, trust can be mediated by a third party.
         That is the model used in this specification.
@@ -111,7 +112,7 @@
     and that it adheres to the federation's policies.
       </t>
       <t>
-        This specification describes the basic components you will need to build
+        This specification describes the basic components to build
         a multilateral federation and it provides a guide on how to apply them when
         the underlying protocol used is OpenID Connect.
       </t>
@@ -244,41 +245,56 @@
       <t>
         The basic component is the Entity Statement, which is a cryptographically
         signed <xref target="RFC7519">JSON Web Token (JWT)</xref>.
+        
         A set of Entity Statements can form a path from a Leaf Entity to
         a Trust Anchor. Entity Configurations
         issued by Entities about themselves control the Trust Chain
-        resolution process.</t>
-      <t>Starting with the Entity Configuration of the Leaf Entity, you can find
-        the next level of Entity Configuration by following the authority hints.
-        And then repeat this until you hit a Trust Anchor. Using the federation APIs
-        exposed by the intermediate entities and the Trust Anchor, you can then
-        fetch the Entity Statements for the intermediate entities and the Leaf Entity.
+        resolution process.
       </t>
       <t>
-        Once you have followed a path, you have collected a set of Entity Statements
-        that forms a chain. You can verify that this chain has not been tampered
-        with by verifying the signature of each statement. How this is
-        done is described in <xref target="trust_chain"/>.
+        The Entity Configuration of a Leaf Entity contains one or more 
+        references to its superiors, found in the 
+        <xref target="authority_hints">authority_hints</xref> parameter. 
+        These references can be used to download the Entity Configuration of each superior.
+        One or more Entity Configurations can occur, during the Federation Entity Discovery,
+        until the Trust Anchor is reached. 
       </t>
       <t>
-        With a verified Trust Chain in hand, you can now apply federation
-        policy to the published metadata. How this is done is described in
-        <xref target="federation_policy"/>.
+        The Trust Anchor and its intermediaries issue Entity Statements
+        about their descendants. The sequence of Entity Configurations 
+        and Entity Statements that validate the relationship between 
+        a superior and a descendant, along a path towards the Trust Anchor,
+        forms the proof that a Leaf Entity is part of
+        the Federation configured by the Trust Anchor.
       </t>
       <t>
-        Note that this specification is only dealing with trust in that the
-        other party is part of the same federation as you and that you can
-        trust that the metadata you get that describes the other party is
-        what was sent. The specification does not touch protocol operations
-        outside those of metadata exchange. In OpenID Connect terms, these are protocol
-        operations other than discovery and registration.
+        The chain that links the statements to one another is verifiable with 
+        the signature of each statement, as described in <xref target="trust_chain"/>.
       </t>
       <t>
-        The fact that we use OpenID Connect in all the examples in this
-        specification does not mean that the specification can only be used
-        together with OpenID Connect. On the contrary, it can equally well be
-        used to build an OAuth 2.0 federations or for that matter, other protocols
-        that depend on dynamic exchange of Entity metadata.
+        With a verified Trust Chain, the federation policy is finally applied
+        and the metadata describing a Leaf Entity within the Federation is then 
+        derived.
+        How this is done is described in <xref target="federation_policy"/>.
+      </t>
+      <t>
+        This specification deals with trust operations; 
+        it doesn't cover or touch protocol operations
+        outside those of metadata derivation and exchange. 
+        In OpenID Connect terms, these are protocol
+        operations other than 
+        <xref target="OpenID.Discovery">OpenID Connect Discovery 1.0</xref>
+         and
+        <xref target="OpenID.Registration">OpenID Connect Dynamic Client
+          Registration 1.0
+        </xref>.
+      </t>
+      <t>
+        OpenID Connect is used in all of the examples in this
+        specification, however this doesn't mean that this specification can only be used
+        together with OpenID Connect. On the contrary, it can equally be
+        used to build OAuth 2.0 federations or other protocols
+        that depend on the dynamic exchange of Entity metadata.
       </t>
     </section>
     <section title="Components" anchor="components">
@@ -347,8 +363,8 @@
               from an OP when the client is doing Explicit Registration.
               In all other cases it is REQUIRED.
               Every JWK in the JWK Set MUST have a Key ID (<spanx style="verb">kid</spanx>).
-          It is RECOMMENDED that the Key ID be the JWK Thumbprint <xref target="RFC7638"/>
-          using the SHA-256 hash function of the key.
+              It is RECOMMENDED that the Key ID be the JWK Thumbprint <xref target="RFC7638"/>
+              using the SHA-256 hash function of the key.
             </t>
             <t hangText="aud">
               <vspace/>
@@ -356,7 +372,7 @@
               The Entity Statement MAY be specifically created for an Entity.
               The Entity Identifier for that Entity MUST appear in this claim.
             </t>
-            <t hangText="authority_hints">
+            <t hangText="authority_hints" anchor="authority_hints">
               <vspace/>
               OPTIONAL. Array of strings representing
               the Entity Identifiers of intermediate entities or Trust Anchors
@@ -515,9 +531,10 @@
               <vspace/>
               OPTIONAL.
               An OP MUST use this claim to tell the RP which Trust Anchor it
-              chose to use when responding to an explicit client registration.
-              The value of <spanx style="verb">trust_anchor_id</spanx> is the Entity Identifier of a trust
-              anchor.
+              chose to use when responding to an explicit client registration 
+              (<xref target="explicit">Explicit Client Registration</xref>).
+              The value of <spanx style="verb">trust_anchor_id</spanx> is the 
+              Entity Identifier of a Trust Anchor.
             </t>
           </list>
         </t>
@@ -619,8 +636,7 @@
           <list style="hanging">
             <t hangText="Trust anchor">
               <vspace/>
-              An Entity that represents a trusted
-              third party.
+              An Entity that represents a trusted third party.
             </t>
             <t hangText="Leaf">
               <vspace/>
@@ -989,7 +1005,7 @@
               to established standards and not in conflict with the operating
               principles of this specification.
               In OpenID Connect Core, no client authentication is performed at the authentication
-              endpoint. Instead, you can say that the request itself is authenticated.
+              endpoint. Instead, because the request itself is authenticated.
               What it amounts to is that the OP maps
               information in the request (like the redirect_uri) to information it has gained
               on the client, through static or dynamic registration.
@@ -1606,7 +1622,7 @@
             <list style="numbers">
               <t>
                 If there is a <spanx style="verb">value</spanx> operator in the
-                policy, apply that and you are done.
+                policy, its value would be applied without any additional action.
               </t>
               <t>
                 Add whatever value is specified in an <spanx style="verb">add</spanx>
@@ -2454,8 +2470,8 @@ Content-Type: application/entity-statement+jwt
         <t>
           To fetch an Entity Statement, an Entity needs to know the
           identifier of the Entity to ask (the issuer), the fetch
-          endpoint of that Entity and the identifier of the Entity that you
-          want the statement to be about (the subject).
+          endpoint of that Entity and the identifier of the 
+          Entity, that is the subject of the statement.
         </t>
 
         <section title="Fetch Entity Statements Request"
@@ -2471,17 +2487,17 @@ Content-Type: application/entity-statement+jwt
               <t hangText="iss">
                 <vspace/>
                 OPTIONAL. The Entity Identifier of the issuer
-                from which you want an Entity Statement issued. Because of the
+                from which the Entity Statement issued. Because of the
                 normalization of the URL, multiple issuers MAY resolve to a
                 shared fetch endpoint. This parameter makes it explicit exactly
-                which issuer you want Entity Statements from. Without this
+                which issuer the Entity Statements must come from. Without this
                 parameter, the issuer matches to the Entity at
                 which the request was made.
               </t>
               <t hangText="sub">
                 <vspace/>
                 OPTIONAL. The Entity Identifier of the subject
-                for which you would like an Entity Statement issued. If this
+                for which the Entity Statement is issued. If this
                 parameter is left out, it is considered to be the same as the
                 issuer and would indicate a request for a self-signed
                 statement.
@@ -4869,8 +4885,8 @@ HTTP/1.1 302 Found
         Automatic Client Registration (<xref target="automatic"/>), can
         be exploited as vectors of http propagation attacks.
 
-        If you plan to provide these endpoints, you should consider
-        applying some adequate defense methods, such as those described below and in
+        If these endpoints are provided, some adequate defense methods are required, 
+        such as those described below and in
         <xref target="RFC4732"/>.
       </t>
       <t>
@@ -5102,28 +5118,27 @@ HTTP/1.1 302 Found
 
       <section title="Setting Up a Federation" anchor="federation_intro">
         <t>
-          These are the steps you have to go through to set up your own federation.
-          What you minimally have to do is:
+          These are the steps to set up a federation infrastructure.
           <list style="symbols">
             <t>
-              Generate a signing key. This must be a public/private key pair.
+              Generation of signing keys. These must be public/private key pairs.
             </t>
             <t>
               Set up a signing service that can sign JWTs/Entity Statements
-              using the federation operator's signing key.
+              using the Federation Entity Keys.
             </t>
             <t>
-              Set up web services that can publish signed Entity Statements.
-              You need at least two:
+              Set up web services that can publish signed Entity Statements,
               one for the URL corresponding to the federation's Entity Identifier returning
               an Entity Configuration and the other one providing the fetch
-              Entity Statement request API, as described in
+              Entity Statement endpoint, as described in
               <xref target="fetch_statement"/>.
             </t>
           </list>
         </t>
         <t>
-          Once you have this, you can start adding entities to your federation.
+          Once the previous requirements have been satisfied, a Federation Operator 
+          can add Entities to the federation.
           Adding an Entity comes down to:
           <list style="symbols">
             <t>
@@ -5887,8 +5902,8 @@ Host: op.umu.se
               </list>
             </t>
             <t>
-              If you combine these and apply them to the metadata for
-              wiki.ligo.org :
+              Combining these and apply them to the metadata for
+              wiki.ligo.org:
             </t>
             <figure>
               <artwork><![CDATA[
@@ -5915,7 +5930,7 @@ Host: op.umu.se
 ]]></artwork>
             </figure>
             <t>
-              You will get
+              The final result is:
             </t>
             <figure>
               <artwork><![CDATA[
@@ -6162,7 +6177,7 @@ Host: op.umu.se
           <t>
             Fixed #1684: disambiguation on the role federation_entity.
           </t>
-	  <t>
+	      <t>
             Fixed #1703: Unsigned error response
           </t>
           <t>
@@ -6185,6 +6200,9 @@ Host: op.umu.se
           </t>
           <t>
             Fixed #1716: Clarified how to retrieve the RP's Entity Configuration when using Automatic Registration.
+          </t>
+          <t>
+            Fixed #1656: Introductionary text review.
           </t>
         </list>
       </t>
