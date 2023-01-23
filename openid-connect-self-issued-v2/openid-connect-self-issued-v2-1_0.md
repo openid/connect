@@ -205,7 +205,7 @@ The following is a non-normative example of a request with no specific `authoriz
 
 ```
     client_id=https%3A%2F%2Fclient.example.org%2Fcb
-    &request_uri=https%3A%2F%2Fclient.example.org%2Frequest
+    &request_uri=https%3A%2F%2Fclient.example.org%2Frequest%2FGkurKxf5T0Y-mnPFCHqWOMiZi4VS138cQO_V7PZHAdM
 ```
 
 # Self-Issued OpenID Provider Discovery {#siop-discovery}
@@ -216,7 +216,7 @@ RP can obtain `authorization_endpoint` of the Self-Issued OP to construct a requ
 
 As an alternative mechanism to the (#static-config), the RP can pre-obtain Self-Issued OP Discovery Metadata prior to the transaction, either using [@!OpenID.Discovery], or out-of-band mechanisms. 
 
-How the RP obtains Self-Issued OP's issuer identifier is out of scope of this specification. The RPs MAY skip Section 2 of [@!OpenID.Discovery].
+How the RP obtains Self-Issued OP's Issuer Identifier is out of scope of this specification. The RPs MAY skip Section 2 of [@!OpenID.Discovery].
 
 When [@!OpenID.Discovery] is used, the RP MUST obtain Self-Issued OP metadata from a JSON document that Self-Issued OP made available at the path formed by concatenating the string `/.well-known/openid-configuration` to the Self-Issued OP's Issuer Identifier.
 
@@ -253,7 +253,7 @@ The following is a non-normative example of a Self-Issued OP metadata obtained d
 
 ```json
 {
-  "authorization_endpoint": "https://wallet.example.org", 
+  "authorization_endpoint": "https://wallet.example.com", 
   "issuer": "https://example.org",
   "response_types_supported": [
     "id_token"
@@ -306,7 +306,7 @@ The following is a non-normative example of a same-device request when the RP is
 
 ```
   HTTP/1.1 302 Found
-  Location:  https://client.example.org/universal-link?
+  Location:  https://wallet.example.com/universal-link?
     response_type=id_token
     &client_id=s6BhdRkqt3
     &redirect_uri=https%3A%2F%2Fclient.example.org%2Fcb
@@ -334,18 +334,6 @@ The following is a non-normative example of a `client_id` resolvable using OpenI
 "client_id": "https://client.example.org"
 ```
 
-The following is a non-normative example of a signed cross-device request when the RP is not pre-registered with the Self-Issued OP and uses OpenID Federation 1.0 Automatic Registration. (with line wraps within values for display purposes only):
-
-```
-HTTP/1.1 302 Found
-  Location: https://client.example.org/universal-link?
-    response_type=id_token
-    &client_id=https%3A%2F%2Fclient.example.org%2F
-    &redirect_uri=https%3A%2F%2Fclient.example.org%2Fcb
-    &scope=openid%20profile
-    &nonce=n-0S6_WzA2Mj
-```
-
 ### Decentralized Identifiers
 
 As defined in Section X.X of [@!OpenID4VP].
@@ -356,19 +344,33 @@ The following is a non-normative example of a `client_id` resolvable using Decen
 "client_id": "did:example:EiDrihTRe0GMdc3K16kgJB3Xbl9Hb8oqVHjzm6ufHcYDGA"
 ```
 
-The following is a non-normative example of a signed cross-device request when the RP is not pre-registered with the Self-Issued OP and uses Decentralized Identifier Resolution. (with line wraps within values for display purposes only):
+The following is a non-normative example of a request when the RP is not pre-registered with the Self-Issued OP and uses Decentralized Identifier Resolution. (with line wraps within values for display purposes only):
 
 ```
-  siopv2://idtoken?
-    scope=openid%20profile
-    &response_type=id_token
-    &client_id=did%3Aexample%3AEiDrihTRe0GMdc3K16kgJB3Xbl9Hb8oqVHjzm6ufHcYDGA
-    &redirect_uri=https%3A%2F%2Fclient.example.org%2Fcb
-    &claims=...
-    &client_metadata=%7B%22subject_syntax_types_supported%22%3A
-    %5B%22did%3Aexample%22%5D%2C%0A%20%20%20%20
-    %22id_token_signing_alg_values_supported%22%3A%5B%22ES256%22%5D%7D
-    &nonce=n-0S6_WzA2Mj
+siopv2://?
+  client_id=did%3Aexample%3AEiDri
+  &request_uri=https%3A%2F%2Fclient.example.org%2Frequest%2FGkurKxf5T0Y-mnPFCHqWOMiZi4VS138cQO_V7PZHAdM
+```
+
+The following is a non-normative example of a Request Object referenced by the `request_uri`. It is signed with `ES256` algorithm, using the keys obtained from the DID Document before base64url encoding:
+
+```
+{
+  "alg": "ES256",
+  "kid": "did:example:EiDri#sign1",
+  "typ": "JWT"
+}.
+{
+  "client_id": "did:example:EiDri",
+  "scope": "openid profile",
+  "response_type": "id_token",
+  "redirect_uri": "https://client.example.org/cb",
+  "client_metadata": {
+    "subject_syntax_types_supported": "did:example",
+    "id_token_signing_alg_values_supported": "ES256"
+  },
+  nonce=n-0S6_WzA2Mj
+}.[signature]
 ```
 
 ## Relying Party Client Metadata parameter {#rp-registration-parameter}
@@ -379,7 +381,7 @@ The following is a non-normative example of an unsigned same-device request when
 
 ```
   HTTP/1.1 302 Found
-  Location: https://client.example.org/universal-link?
+  Location: https://wallet.example.com/universal-link?
     response_type=id_token
     &client_id=https%3A%2F%2Fclient.example.org%2Fcb
     &redirect_uri=https%3A%2F%2Fclient.example.org%2Fcb
@@ -447,9 +449,9 @@ This specification defines the following new authorization request parameters in
 
 This specification allows RPs to sent authorization request parameters by using "request by value" and "request by reference" as defined in [@!RFC9101] through the request parameters `request` or `request_uri`. 
 
-Note: When using the parameters `request` or `request_uri` the only further required parameter of the authorization request is the `client_id`. 
+When using the parameters `request` or `request_uri` the only further required parameter of the authorization request is the `client_id`. 
 
-When `request` or `request_uri` parameters are NOT present, and RP is NOT using OpenID Federation 1.0 Automatic Registration to pass entire RP metadata, `client_metadata` or `client_metadata_uri` parameters MUST be present in the request. `client_metadata` and `client_metadata_uri` are mutual exclusiv.
+When `request` or `request_uri` parameters are NOT present, and RP is NOT using OpenID Federation 1.0 Automatic Registration to pass entire RP metadata, `client_metadata` or `client_metadata_uri` parameters MUST be present in the request. `client_metadata` and `client_metadata_uri` are mutually exclusive.
 
 RPs MUST send a `nonce` parameter  with every Self-Issued OP Authorization Request as a basis for replay detection complying with the security considerations given in [@!OpenID.Core], Section 15.5.2.
 
@@ -475,7 +477,6 @@ The following is a non-normative example HTTP 302 redirect request by the RP whi
     &client_id=https%3A%2F%2Fclient.example.org%2Fcb
     &redirect_uri=https%3A%2F%2Fclient.example.org%2Fcb
     &id_token_type=subject_signed_id_token
-    &claims=...
     &client_metadata=%7B%22subject_syntax_types_supported%22%3A
     %5B%22urn%3Aietf%3Aparams%3Aoauth%3Ajwk-thumbprint%22%5D%2C%0A%20%20%20%20
     %22id_token_signing_alg_values_supported%22%3A%5B%22ES256%22%5D%7D
@@ -488,7 +489,7 @@ The following is a non-normative example of an authorization request utilizing a
   HTTP/1.1 302 Found
   Location: siopv2://?
     client_id=https%3A%2F%2Fclient.example.org%2Fcb
-    &request_uri=https%3A%2F%2Fclient.example.org%2Frequests%2FGkurKxf5T0Y-mnPFCHqWOMiZi4VS138cQO_V7PZHAdM
+    &request_uri=https%3A%2F%2Fclient.example.org%2Frequest%2FGkurKxf5T0Y-mnPFCHqWOMiZi4VS138cQO_V7PZHAdM
 ```
 
 ## `aud` of a Request Object
@@ -516,7 +517,6 @@ The following is a non-normative example of a Self-Issued Request URL in a cross
     &client_id=https%3A%2F%2Fclient.example.org%2Fpost_cb
     &redirect_uri=https%3A%2F%2Fclient.example.org%2Fpost_cb
     &response_mode=post
-    &claims=...
     &client_metadata=%7B%22subject_syntax_types_supported%22%3A
     %5B%22urn%3Aietf%3Aparams%3Aoauth%3Ajwk-thumbprint%22%5D%2C%0A%20%20%20%20
     %22id_token_signing_alg_values_supported%22%3A%5B%22ES256%22%5D%7D
@@ -525,7 +525,7 @@ The following is a non-normative example of a Self-Issued Request URL in a cross
 
 Note that the Authorization Request might only include request parameters and not be targeted to a particular `authorization_endpoint`, in which case, the End-User must use a particular Self-Issued OP application to scan the QR code with such request.
 
-Such an Authorization Request might result in a large QR code, especially when including a `claims` parameter and extensive registration data. A RP MAY consider using a `request_uri` in such a case.
+Such an Authorization Request might result in a large QR code, especially when including extensive `client_metadata`. A RP MAY consider using a `request_uri` in such a case.
 
 # Self-Issued OpenID Provider Authorization Response {#siop-authentication-response}
 
