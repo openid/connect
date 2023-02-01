@@ -139,7 +139,8 @@ The following are considered out of scope of this document.
 This specification extends Section 7 of [@!OpenID.Core] Self-Issued OpenID Provider in the following ways:
 
 - Added support for Decentralized Identifiers defined in [@!DID-Core] as Cryptographically Verifiable Identifiers in addition to the JWK thumbprint defined in Self-Issued OP v2. See (#sub-syntax-type).
-- Added support for Cross-Device Self-Issued OP model. See (#cross-device-siop).
+- Added support for a model, where the RP's user experience (website or an app) initiating the request resides on the on different devices than the Wallet from which the Self-Issued ID Token is returned. See (#cross_device_authentication).
+- Added support for a Response Mode where the response is sent not only using redirects but also using HTTP POST request. This enables sending the response across devices, or sending the response large in size that exceeds redirect URL character limitations. See (#response_mode_post).
 - Extended mechanisms how not-pre-registered RPs can pass their metadata in the Authorization Request. See (#rp-resolution).
 - Added support for Dynamic Self-Issued OpenID Provider Discovery. See (#dynamic-siop-metadata). 
 - Added support for claimed URLs (universal links, app links) in addition to the custom URL schemas as Self-Issued OP `authorization_endpoint`. See (#choice-of-authoriation-endpoint).
@@ -171,25 +172,6 @@ Self-Issued Request results in Self-Issued OP returning an ID Token to the Relyi
 ~~~
 Figure: Self-Issued OP Protocol Flow
 
-# Cross-Device Self-Issued OP {#cross-device-siop}
-
-There are two models of Self-Issued OP protocol flows:
-
-* Same-Device Self-Issued OP model: Self-Issued OP is on the same device on which the End-User’s user interactions are occurring. The RP might be a Web site on a different machine and still use the same-device Self-Issued OP protocol flow for authentication.
-* Cross-device Self-Issued OP model: Self-Issued OP is on a different device than the one on which the End-User’s user interactions are occurring.
-
-This section outlines how Self-Issued OP is used in cross-device scenarios, and its differences with the same device model. In contrast to same-device scenarios, neither RP nor Self-Issued OP can communicate to each other via HTTP redirects through a user agent. The protocol flow is therefore modified as follows:
-
-1. The RP prepares a Self-Issued Request and renders it as a QR code.
-1. The End-User scans the QR code with her smartphone's camera app.
-1. Self-Issued OP is invoked on the smartphone (custom URL scheme or claimed URLs).
-1. The Self-Issued OP processes the Authorization Request.
-1. Upon completion of the Authorization Request, the Self-Issued OP directly sends a HTTP POST request with the Authorization Response to an endpoint exposed by the RP.
-
-The request in Step 5 is not a form post request where the Self-Issued OP would respond to a user agent with a form, which automatically triggers a POST request to the RP. The Self-Issued OP sends this request directly to the RP's endpoint.
-
-For brevity, mainly the QR code method is discussed as a mechanism to initiate a cross-device protocol flow throughout this specification. However, other mechanisms to initiate a cross-device flow are possible.
-
 # Self-Issued OpenID Provider Invocation {#siop-invocation}
 
 When the End-user first interacts with the RP, there are currently no established, robust means for the RP to reliably determine a URI of the Self-Issued OP an End-user may have a relationship with or have installed. The RP is, therefore, responsible for selecting where to direct the request URL.
@@ -198,7 +180,7 @@ When the RP sends the request to the Self-Issued OP, there are two scenarios of 
 
 In the first scenario, the request is encoded in a QR code or a deep link, and the End-user scans it with the camera via the application that is intended to handle the request from the RP. In this scenario, the request does not need to be intended for a specific `authorization_endpoint` of a Self-Issued OP. Note that a QR code option will not work in a same-device Self-Issued OP protocol flow, when the RP and the Self-Issued OP are on the same device.
 
-In the second scenario, the request includes the `authorization_endpoint` of a Self-Issued OP and will open a target application. In this scenario, there are two ways of how RP can obtain `authorization_endpoint` of the Self-Issued OP to construct a targeted request as defined in (#siop-discovery), either using the static set of Self-Issued OP metadata, or by pre-obtaining `authorization_endpoint`. Note that this protocol flow would work both for the same-device Self-Issued OP protocol flow and the cross-device Self-Issued OP protocol flow.
+In the second scenario, the request includes the `authorization_endpoint` of a Self-Issued OP and will open a target application. In this scenario, there are two ways of how RP can obtain `authorization_endpoint` of the Self-Issued OP to construct a targeted request as defined in (#siop-discovery), either using the static set of Self-Issued OP metadata, or by pre-obtaining `authorization_endpoint`. Note that this protocol flow would work both for the redirect-based flows and Response Mode `direct_post` flow.
 
 The following is a non-normative example of a request with no specific `authorization_endpoint`, which must be scanned by the Self-Issued OP application manually opened by the End-user instead of an arbitrary camera application on a user-device. It is a request when the RP is pre-registered with the Self-Issued OP (line wraps within values are for display purposes only):
 
@@ -498,16 +480,26 @@ When an RP is sending a Request Object in a Self-Issued Request as defined in [@
 - the `aud` claim MUST equal to the `issuer` Claim value, when Dynamic Self-Issued OP Discovery is performed.
 - the `aud` claim MUST be "https://self-issued.me/v2", when Static Self-Issued OP Discovery Metadata is used.
 
-## Cross-Device Self-Issued OpenID Provider Request
+## Passing Authentication Request across Devices {#cross_device_authentication}
 
-The cross-device Authorization Request differs from the same-device variant (with response type `id_token`) as defined in (#siop_authentication_request) as follows:
+There are use-cases when Self-Issued OP is on a different device than the one on which the End-User’s user interactions are occurring. In those cases, an Authorization Request can be passed across devices by being rendered as a QR Code.
 
-* This specification introduces a new response mode `post` in accordance with [@!OAuth.Responses]. This response mode is used to request the Self-Issued OP to deliver the result of the authentication process to a certain endpoint using the HTTP `POST` method. The additional parameter `response_mode` is used to carry this value.
-* This endpoint to which the Self-Issued OP shall deliver the authentication result is conveyed in the standard parameter `redirect_uri`.
+The protocol flow would be as follows:
 
-Self-Issued OP is on a different device than the one on which the End-User’s user interactions are occurring.
+1. The RP prepares a Self-Issued Request and renders it as a QR code.
+1. The End-User scans the QR code with her smartphone's camera app.
+1. Self-Issued OP is invoked on the smartphone (custom URL scheme or claimed URLs).
+1. The Self-Issued OP processes the Authorization Request.
 
-The following is a non-normative example of a Self-Issued Request URL in a cross-device protocol flow (#cross-device-siop):
+The request in Step 5 is not a form post request where the Self-Issued OP would respond to a user agent with a form, which automatically triggers a POST request to the RP. The Self-Issued OP sends this request directly to the RP's endpoint.
+
+For brevity, throughout this specification, mainly the QR code method is discussed as a mechanism to initiate a protocol across devices. However, other mechanisms to initiate the flow across devices are possible.
+
+The usage of the `request_uri` is RECOMMENDED, since authorization request size might be too large to fit in a QR code.
+
+Response Mode `direct_post` defines in (#response_mode_post) MUST be used to send the response across devices.
+
+The following is a non-normative example of a Self-Issued Request URL with Response Mode `direct_post`:
 
 ```
   siopv2://?
@@ -515,7 +507,7 @@ The following is a non-normative example of a Self-Issued Request URL in a cross
     &response_type=id_token
     &client_id=https%3A%2F%2Fclient.example.org%2Fpost_cb
     &redirect_uri=https%3A%2F%2Fclient.example.org%2Fpost_cb
-    &response_mode=post
+    &response_mode=direct_post
     &client_metadata=%7B%22subject_syntax_types_supported%22%3A
     %5B%22urn%3Aietf%3Aparams%3Aoauth%3Ajwk-thumbprint%22%5D%2C%0A%20%20%20%20
     %22id_token_signing_alg_values_supported%22%3A%5B%22ES256%22%5D%7D
@@ -536,7 +528,7 @@ In a same-device protocol flow with `response_type` `id_token`, the response par
 
 In a same-device protocol flow with `response_type` `code`, the response parameters will be returned in HTTPS POST response body of the token response. 
 
-In a cross-device protocol flow, upon completion of the Authorization Request, the Self-Issued OP directly sends a HTTP POST request with the Authorization Response to an endpoint exposed by the RP.
+In Response Mode `direct_post`, upon completion of the Authorization Request, the Self-Issued OP directly sends a HTTP POST request with the Authorization Response to an endpoint exposed by the RP.
 
 The following is an informative example of a Self-Issued Response in a same-device protocol flow (`response_type=id_token`):
 
@@ -566,13 +558,17 @@ HTTP/1.1 200 OK
 
 Note: the SIOP MAY also provide end-user claims to the RP via the Userinfo endpoint. 
 
-## Cross-Device Self-Issued OpenID Provider Response
+## Response Mode "direct_post" {#response_mode_post}
 
-The Self-Issued OP sends the Authorization Response to the endpoint passed in the `redirect_uri` Authorization Request parameter using a HTTP POST request using "application/x-www-form-urlencoded" encoding. The Authorization Response contains the parameters as defined in (#siop-authentication-response).
+There are use-cases when neither RP nor Self-Issued OP can communicate to each other via HTTP redirects through a user agent.
+
+This specification defines the following Response Mode in accordance with [@!OAuth.Responses]
+
+* `direct_post`: In this Response Mode, Authentication Response parameters as defined in (#siop-authentication-response) are encoded in the body using the `application/x-www-form-urlencoded` content type and are sent using the HTTP `POST` method instead of redirecting back to the RP. This endpoint to which the Self-Issued OP shall deliver the authentication result is conveyed in the standard parameter `redirect_uri`. See Section 6.4 of [@!OpenID4VP] for more details. 
 
 The Self-Issued OP MUST NOT follow redirects on this request.
 
-The following is an informative example of a Self-Issued Response in a cross-device protocol flow: (#cross-device-siop):
+The following is an informative example of a Self-Issued Response with Response Mode `direct_post`:
 
 ```
 POST /post_cb HTTP/1.1
@@ -595,8 +591,6 @@ In addition to the error codes defined in Section 4.1.2.1 of OAuth 2.0 and Secti
 * **`invalid_client_metadata_object`**: the `client_metadata` parameter contains an invalid RP parameter Object.
 
 Other error codes MAY be used.
-
-Note that HTTP error codes do not work in the cross-device Self-Issued OP protocol flows. 
 
 The following is a non-normative example of an error response in the same-device Self-Issued OP protocol flow:
 
@@ -667,12 +661,6 @@ To validate the ID Token received, the RP MUST do the following:
 
 Any claim in the Self-Issued ID Token is considered to be self-attested. Verifying attestation by a third party requires additional artifacts and processing steps - see [@!OpenID4VP].
 
-## Cross-Device Self-Issued ID Token Validation
-
-The RP MUST perform all the check as defined in (#siop-id-token-validation).
-
-Additionally, the RP MUST check whether the `nonce` Claim value provided in the ID Token is known to the RP and was not used before in an Authorization Response.
-
 The following is a non-normative example of a base64url decoded Self-Issued ID Token body when the dynamic Self-Issued OP Discovery and Decentralized Identifier Subject Syntax type are used (with line wraps within values for display purposes only):
 
 ```json
@@ -715,19 +703,19 @@ RPs MUST consider that Verifiable Presentations can be revoked and that user dat
 
 The integrity and authenticity of Self-Issued OP and RP metadata is paramount for the security of the protocol flow. For example, a modified `authorization_endpoint` could be used by an attacker to launch phishing or mix-up-style attacks (see [@I-D.oauth-security-topics]). A modified `redirect_uri` could be used by an attacker to gather information that can then be used in replay attacks. The provisions defined in this specification ensure the authenticity and integrity of the metadata if all checks (signature validation, etc.) are performed as described.
 
-## Usage of Cross-Device Self-Issued OP for Authentication
+## Usage of Response Mode `direct_post` for Authentication
 
-A known attack in cross-device Self-Issued OP is an Authorization Request replay attack, where a victim is tricked to send a response to an Authorization Request that an RP has generated for an attacker. In other words, the attacker would trick a victim to respond to a request that the attacker has generated for him/herself at a good RP, for example, by showing the QR code encoding the Authorization Request that would normally be presented on the RP's website on the attacker's website. In this case, the victim might not be able to detect that the request was generated by the RP for the attacker. (Note that the same attack applies when methods other than a QR code are used to encode the Authorization Request. For brevity, only the QR code method will be discussed in the following, but the same considerations apply to other transport methods as well.)
+A known attack with Response Mode `direct_post` is an Authorization Request replay attack, where a victim is tricked to send a response to an Authorization Request that an RP has generated for an attacker. In other words, the attacker would trick a victim to respond to a request that the attacker has generated for him/herself at a good RP, for example, by showing the QR code encoding the Authorization Request that would normally be presented on the RP's website on the attacker's website. In this case, the victim might not be able to detect that the request was generated by the RP for the attacker. (Note that the same attack applies when methods other than a QR code are used to encode the Authorization Request. For brevity, only the QR code method will be discussed in the following, but the same considerations apply to other transport methods as well.)
 
-This attack is based on the fact that the Authorization Request is not tied to a specific channel, i.e., it can be used both in its original context (on the RP's website) as well as in a replay scenario (on the attacker's website, in an email, etc.). Such a binding cannot be established across devices with currently deployed technology. Therefore, in the cross-device protocol flow, the contents transported in the authentication (including any Verfiable Presentations) are not wrong, but do not necessarily come from the End-User the RP website thinks it is interacting with.
+This attack is based on the fact that the Authorization Request is not tied to a specific channel, i.e., it can be used both in its original context (on the RP's website) as well as in a replay scenario (on the attacker's website, in an email, etc.). Such a binding cannot be established across devices with currently deployed technology. Therefore, in the Response Mode `direct_post`, the contents transported in the authentication (including any Verfiable Presentations) are not wrong, but do not necessarily come from the End-User the RP website thinks it is interacting with.
 
-Implementers MUST take this fact into consideration when using cross-device Self-Issued OP. There are a number of measures that can be taken to reduce the risk of such an attack, but none of these can completely prevent the attack. For example:
+Implementers MUST take this fact into consideration when using Response Mode `direct_post`. There are a number of measures that can be taken to reduce the risk of such an attack, but none of these can completely prevent the attack. For example:
 
  * The Self-Issued OP can show the origin of the request (e.g., the domain where the response will be sent) and/or ask the End-User to confirm this origin. In an attack, this origin would be different from the attacker's origin where the QR code is displayed to the End-User. It cannot be expected that all End-Users will identify an attack in this way, but at least for some users it might help to detect the attack. Note that depending on the device on which the attacker is showing the QR code, there might be no indication of the origin, e.g., on a terminal devices that does not show a browser with a URL bar.
  * The Authorization Request can be made short-lived. An attacker would have to request a new Authorization Request (e.g., QR code) frequently and update it on its website as well. This requires more effort from the attacker.
  * Self-Issued OP can warn the End-User when logging in at a new RP for the first time.
 
-Implementors should be cautious when using cross-device Self-Issued OP model for authentication and should implement mitigations according to the desired security level.
+Implementors should be cautious when using Response Mode `direct_post` for authentication and should implement mitigations according to the desired security level.
 
 This attack does not apply for the same-device Self-Issued OP protocol flows as the RP checks that the Authorization Response comes from the same browser where the Authorization Request was sent to. Same-device Self-Issued OP protocol flows therefore can be used for authentication, given all other security measures are put in place.
 
@@ -850,9 +838,9 @@ When the RP wants to provide End-User choice to select from multiple possible Se
 
 Note that if Self-Issued OP implementations belong to a trust framework, the trust framework may dictate a common `authorization_endpoint` for a set of implementations. If `authorization_endpoint` is pre-registered with the underlying browser or operating system, invocation of this endpoint that leads to prompting the End-User to select a Self-Issued OP is handled by the underlying browser or operating system.
 
-## Receiving Cross-Device Responses
+## Receiving Responses when Response Mode `direct_post` is Used
 
-In case of the cross-device flow, the Self-Issued OPwill send the result as a HTTP POST message to the RP. This requires connectivity between Self-Issued OPand RP. There are different ways this can be achieved. The RP may, for example, expose a suitable endpoint from their backend. Alternatively, it may employ a separate service able to receive and store such messages, where the RP then queries the Self-Issued OPresponses.  
+In case of the Response Mode `direct_post`, the Self-Issued OP will send the result as a HTTP POST message to the RP. This requires connectivity between Self-Issued OP and RP. There are different ways this can be achieved. The RP may, for example, expose a suitable endpoint from their backend. Alternatively, it may employ a separate service able to receive and store such messages, where the RP then queries the Self-Issued OP responses.  
 
 # Relationships to Other Documents
 
@@ -1144,7 +1132,7 @@ With a hosted third-party provider, a user identifier used at the RP is assigned
 
 End-Users may decide to store their credentials in a cloud wallet, in order to be able to access her existing credentials across devices without hazzle (e.g. no need to re-obtain credentials after changing phone). A cloud wallet is an applicatication that is not hosted entirely locally on the End-User's device, but has cloud-based components and is capable of hosting backend endpoints. Such a wallet can protect the user's credental on a high security level. It may, for example, utilize hardware security modules to protect the user's keys from cloning and replay. Since there is a backend involved and endpoints can be exposed, a cloud wallet can utilize the OpenID Connect authorization code flow, which allows verifier and wallet to mutually authenticate and exchange date via a direct HTTPS protected connection. 
 
-A cloud wallet may utilize a native user experience, it may also (in addition or exclusively) offer a web based experience, which can be used on any device without the need for an app installation. This also means such a wallet can always use the more secure on-device flow instead of the cross-device flow. End-user authentication can be implemented using roaming authenticators or a private protocol with an authentication app.
+A cloud wallet may utilize a native user experience, it may also (in addition or exclusively) offer a web based experience, which can be used on any device without the need for an app installation. This also means such a wallet can always use the more secure redirect-based flows instead of the Response Mode `direct_post` flow. End-user authentication can be implemented using roaming authenticators or a private protocol with an authentication app.
 
 # Document History
 
@@ -1203,7 +1191,7 @@ A cloud wallet may utilize a native user experience, it may also (in addition or
 
    -04
 
-   * Added cross-device protocol flow
+   * Added Response Mode `direct_post`
    * Clarified handling for did-based sub and sub_jwk
    * Revising of introductory text and scope of Self-Issued OP v2
    * Corrected typos and reworked registration example data
