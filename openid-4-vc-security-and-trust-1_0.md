@@ -63,9 +63,6 @@ Presentation:
 Verifiable Presentation (VP):
 :  A Holder-signed Credential whose authenticity can be cryptographically verified to provide Cryptographic Holder Binding. Can be of any format used in the Issuer-Holder-Verifier Model, including, but not limited to those defined in [@VC_DATA], [@ISO.18013-5] (mdoc) and [@Hyperledger.Indy] (AnonCreds).
 
-W3C Verifiable Presentation:
-:  A Verifiable Presentations compliant to the [@VC_DATA] specification.
-
 Credential Issuer:
 :  An entity that issues Verifiable Credentials. Also called Issuer.
 
@@ -80,18 +77,6 @@ Issuer-Holder-Verifier Model:
 
 Holder Binding: 
 : Ability of the Holder to prove legitimate possession of a Verifiable Credential. 
-
-Cryptographic Holder Binding:
-:  Ability of the Holder to prove legitimate possession of a Verifiable Credential by proving control over the same private key during the issuance and presentation. Mechanism might depend on the Credential Format. For example, in `jwt_vc_json` Credential Format, a VC with Cryptographic Holder Binding contains a public key or a reference to a public key that matches to the private key controlled by the Holder. 
-
-Claim-based Holder Binding:
-:  Ability of the Holder to prove legitimate possession of a Verifiable Credential by proofing certain claims, e.g. name and date of birth, for example by presenting another Verifiable Credential. Claim-based Holder Binding allows long term, cross device use of a Credential as it does not depend on cryptographic key material stored on a certain device. One example of such a Verifiable Credential could be a Diploma.
-
-Biometrics-based holder Binding:
-:  Ability of the Holder to prove legitimate possession of a Verifiable Credential by demonstrating a certain biometric trait, such as finger print or face. One example of a Verifiable Credential with biometric holder binding is a mobile drivers license [@ISO.18013-5], which contains a portrait of the holder.
-
-VP Token:
-: An artifact defined in this specification that contains a single Verifiable Presentation or an array of Verifiable Presentations as defined in (#response-parameters).
 
 Wallet:
 :  An entity used by the Holder to receive, store, present, and manage Verifiable Credentials and key material. There is no single deployment model of a Wallet: Verifiable Credentials and keys can both be stored/managed locally, or by using a remote self-hosted service, or a remote third-party service. In the context of this specification, the Wallet acts as an OAuth 2.0 Authorization Server (see [@!RFC6749]) towards the Credential Verifier which acts as the OAuth 2.0 Client.
@@ -231,7 +216,7 @@ It is important that a Verifier does not make its security policy decisions base
 
 whether an Holder Binding JWT is present or not, as an attacker can remove the Holder Binding JWT from any Presentation and present it to the Verifier, or
 whether Holder Binding data is present in the SD-JWT or not, as the Issuer might have added the key to the SD-JWT in a format/claim that is not recognized by the Verifier.
-If a Verifier has decided that Holder Binding is required for a particular use case and the Holder Binding is not present, does not fulfill the requirements (e.g., on the signing algorithm), or no recognized Holder Binding data is present in the SD-JWT, the Verifier will reject the presentation, as described in (#verifier_verification).
+If a Verifier has decided that Holder Binding is required for a particular use case and the Holder Binding is not present, does not fulfill the requirements (e.g., on the signing algorithm), or no recognized Holder Binding data is present in the SD-JWT, the Verifier will reject the presentation, as described in (TODO).
 
 
 
@@ -246,7 +231,7 @@ Storage of Signed User Data
 
 Wherever End-User data is stored, it represents a potential target for an attacker. This target can be of particularly high value when the data is signed by a trusted authority like an official national identity service. For example, in OpenID Connect, signed ID Tokens can be stored by Relying Parties. In the case of SD-JWT, Holders have to store signed SD-JWTs and associated Disclosures, and Issuers and Verifiers may decide to do so as well.
 
-Not surprisingly, a leak of such data risks revealing private data of End-Users to third parties. Signed End-User data, the authenticity of which can be easily verified by third parties, further exacerbates the risk. As discussed in (#holder_binding_security), leaked SD-JWTs may also allow attackers to impersonate Holders unless Holder Binding is enforced and the attacker does not have access to the Holder's cryptographic keys. Altogether, leaked SD-JWT credentials may have a high monetary value on black markets.
+Not surprisingly, a leak of such data risks revealing private data of End-Users to third parties. Signed End-User data, the authenticity of which can be easily verified by third parties, further exacerbates the risk. As discussed in (TODO), leaked SD-JWTs may also allow attackers to impersonate Holders unless Holder Binding is enforced and the attacker does not have access to the Holder's cryptographic keys. Altogether, leaked SD-JWT credentials may have a high monetary value on black markets.
 
 Due to these risks, systems implementing SD-JWT SHOULD be designed to minimize the amount of data that is stored. All involved parties SHOULD store SD-JWTs only for as long as needed, including in log files.
 
@@ -256,15 +241,16 @@ Holders SHOULD store SD-JWTs and associated Disclosures only in encrypted form, 
 
 Verifiers SHOULD NOT store SD-JWTs after verification. It may be sufficient to store the result of the verification and any End-User data that is needed for the application.
 
-If reliable and secure key rotation and revocation is ensured according to (#issuer_signature_key_distribution), Issuers may MAY opt to publish expired or revoked private signing keys (after a grace period that ensures that the keys are not cached any longer at any Verifier). This reduces the value of any leaked credentials as the signatures on them can no longer be trusted to originate from the Issuer.
-
-# Attacker Model
-
-# Security and Privacy
+If reliable and secure key rotation and revocation is ensured according to (TODO), Issuers may MAY opt to publish expired or revoked private signing keys (after a grace period that ensures that the keys are not cached any longer at any Verifier). This reduces the value of any leaked credentials as the signatures on them can no longer be trusted to originate from the Issuer.
 
 ## Security and Privacy Requirements
 
-To implement a secure trust chain, a number of Security and Privacy Requirements must be met. In the following, the Security Requirements are described along the trust chain from Verifier to Issuer, then separately from the view of the End-User. All requirements are numbered for reference and are prefixed with the respective party or component that needs to implement the requirement:
+To implement a secure trust chain, a number of Security and Privacy
+Requirements must be met. In the following, the Security Requirements
+are described along the trust chain from Verifier to Issuer, then
+separately from the view of the End-User. All requirements are numbered
+for reference and are prefixed with the respective party or component
+that needs to implement the requirement:
 
   * V: Verifier
   * I: Issuer
@@ -272,7 +258,7 @@ To implement a secure trust chain, a number of Security and Privacy Requirements
 
   * CF: Credential Format
   * TF: Trust Framework
-  * P: Protocol
+  * P: Protocols (both for Issuance and Verification)
 
 Trust Framework here refers to the design of relationships of parties
 with each other, their roles and permissions within an ecosystem, the
@@ -281,30 +267,55 @@ and provided for key creation and distribution.
 
 ### Prerequisites
 
-> **Security Requirement V-00:** The Verifier must implement the protocol securely and correctly.
+As a prerequisite for operating in an Verifiable Credential ecosystem,
+Verifier, Issuer and Wallet need to implement the protocols and the
+credential formats securely and correctly, that is, according to the
+respective specifications, respecting the security and privacy
+requirements of the specifications, and following the best practices for
+application security.
 
-> **Security Requirement V-01:** The Verifier must implement the credential format securely and correctly.
+This includes, for example, the use of secure implementations of
+cryptographic algorithms, the proper verification of signatures and
+credentials wherever required by the protocols or credential formats,
+the use of secure random number generators, the secure use of
+hardware-based storage, and protection against injection attacks.
 
-It is assumed that the previous two requirements include, for example, a proper verification of signatures on credentials wherever the selected protocol or credential format requires it.
 
-> **Security Requirement I-00:** The Issuer must implement the protocol securely and correctly.
+> **Security Requirement V-00:** The Verifier must implement the
+> protocol securely and correctly.
 
-> **Security Requirement I-01:** The Issuer must implement the credential format securely and correctly.
+> **Security Requirement V-01:** The Verifier must implement the
+> credential format securely and correctly.
 
-> **Security Requirement W-00:** The Wallet must implement the protocol securely and correctly.
+> **Security Requirement I-00:** The Issuer must implement the protocol
+> securely and correctly.
 
-> **Security Requirement W-01:** The Wallet must implement the credential format securely and correctly.
+> **Security Requirement I-01:** The Issuer must implement the
+> credential format securely and correctly.
+
+> **Security Requirement W-00:** The Wallet must implement the protocol
+> securely and correctly.
+
+> **Security Requirement W-01:** The Wallet must implement the
+> credential format securely and correctly.
 
 ### Trust Chain from Verifier to Issuer
 
 The Verifier receives a presentation that is cryptographically tied to a
 credential that itself is cryptographically tied to a specific
-Credential Issuer.
+Credential Issuer. One of the most basic security requirements is that
+the Verifier can verify that the presentation is tied to the correct
+Issuer.
 
-> **Security Requirement CF-10/TF-10:** For any presentation, the credential format
-and trust framework must such that there is a secure way to determine
-the Issuer and to check that the original credential was issued by this
-issuer. (E.g., by using a cryptographic signature.)
+> **Security Requirement CF-10/TF-10:** For any presentation, the
+credential format and trust framework must be designed such that there
+is a secure way to determine the Issuer and to check that the original
+credential was issued by this issuer. (E.g., by using a cryptographic
+signature.)
+
+The data within the credential must be protected against tampering by
+an attacker. The Verifier must be able to verify that the data in the
+presentation is the same as the data in the original credential.
 
 > **Security Requirement CF-20:** For any presentation, the credential
 format must ensure that the data contained therein that is tied to the
@@ -315,7 +326,8 @@ The root of trust from the perspective of a Verifier is the Credential
 Issuer. The Verifier decides, based on policy, regulation, conformity
 assessment, and/or contracts, to trust a certain Issuer to issue
 Credentials of a certain type with the correct data to the legitimate
-End-Users.
+End-Users. This requires that the Issuer is identified uniquely and
+unambiguously.
 
 > **Security Requirement TF-20:** The trust framework must ensure that the
 identification of an Issuer is unique and unambiguous. If there are
@@ -327,10 +339,20 @@ app itself is most likely a bad idea - not all instances of this app are
 equally trustworthy, some might be hacked and the key material leaked to
 malicious parties.
 
+While the way in which the Verifier determines the trustworthiness of
+the Issuer defined in the trust framework is out of scope of this
+specification, this decision must not be influenced by a malicious
+party.
+
 > **Security Requirement TF-30:** The way in which the Verifier
 determines the trustworthiness of the Issuer defined in the trust
 framework must be secured from influence by a malicious party that can,
 for example, introduce untrustworthy entities into a directory.
+
+Any information that is used by the Verifier to determine the
+trustworthiness of the Issuer must be kept up to date. When an Issuer
+leaves the ecosystem or key material needs to be revoked or rotated,
+appropriate mechanisms must be in place.
 
 > **Security Requirement TF-40:** The trust framework must ensure that
 there is a way for Verifiers to keep their information on trusted
@@ -343,6 +365,9 @@ This means:
 End-User properly according to the expectations of the Verifier (which
 may be defined in a specification, trust framework, or by convention).
 
+The Verifier trusts in the Integrity of Claims as described above. It is
+obvious that the Issuer must not issue false claims about the End-User.
+
 > **Security Requirement I-20:** The Issuer must only put correct and
 up-to-date claims about the End-User into the Credential where verified
 data is expected.
@@ -351,15 +376,29 @@ data is expected.
 self-declared or otherwise "unverified" claims may be allowed in some
 places in some credentials.)
 
+#### Requirements on Issuance
+
+To ensure basic privacy and prevent abuse of stolen credentials on a
+very basic level, it must be ensured that credentials cannot be read by
+third parties during the issuance process.
+
 > **Security Requirement P-10:** The protocol must ensure that no third
 > party can extract the credential issued by the Issuer.
+
+It must be ensured that an attacker cannot introduce credentials into a
+Wallet that are not intended for the End-User.
 
 > **Security Requirement P-20:** The protocol must ensure that no third
 > party can interfere with the issuance process such that the Issuer
 > issues Credentials for the third party to the End-User.
 
+Finally, an Issuer that learns about potential abuse of a credential
+must be able to revoke it.
+
 > **Security Requirement I-30:** The Issuer must revoke a Credential
 once the Issuer learns about potential abuse of the Credential.
+
+#### Requirements on Presentation Process
 
 The Verifier trusts in the Integrity of the Interaction with the Holder,
 as described above. This means:
@@ -369,12 +408,22 @@ interaction between the Holder and Verifier is protected such that no
 third party can interfere with the interaction by modifying the
 information transmitted.
 
+An attacker could extract messages of the presentation process and
+forward them to an End-User. The End-User could be confused about the
+purpose of the interaction and complete the presentation process on the
+attacker's behalf, giving the attacker access to resources or a session
+that was authenticated using the End-Users identity. 
+
 > **Security Requirement P-40:** The protocol must ensure that the
 > interaction between an attacker and a Verifier cannot be forwarded to
 > and successfully completed by a user.
 
+Likewise, an attacker interacting directly with a Verifier must not be
+able to re-use parts extracted from an End-User's session to
+successfully complete the interaction.
+
 > **Security Requirement P-41:** The protocol must ensure that an
-> attacker cannot successfully forward an interaction between a Holder
+> attacker cannot successfully forward an interaction between a Wallet
 > and a Verifier to a Verifier under his own control.
 
 
@@ -388,6 +437,9 @@ means:
 holder-binding data into the credential that is tied to the actual
 End-User (and not, e.g., include a cryptographic key under control by a
 third party).  
+
+It must be ensured that during issuance, the correct holder-binding data
+ends up in the credential.
 
 > **Security Requirement P-50:** The protocol must ensure that third
 > parties cannot interfere with the binding process.
@@ -440,6 +492,9 @@ authenticate the wallet towards the Verifier.
 > **Security Requirement I-50 (conditional):** The Issuer must ensure that the
 credential was stored in a secure wallet.
 
+Then, the Verifier must check that the Issuer actually adheres to this
+policy.
+
 > **Security Requirement V-20 (conditional):** The Verifier must ensure that
 the credential was issued by an issuer that only issues credentials to
 trustworthy wallets.
@@ -454,16 +509,24 @@ privacy. The End-User trusts the wallet to validate the authenticity of
 Issuers and Verifiers and provide the End-User with trustworthy
 information about those.
 
+Therefore, the Wallet must provide trustworthy information about Issuers:
+
 > **Security Requirement W-20:** The Wallet must provide trustworthy and
 > complete information about Issuers to the End-User.
 
+Even more important for Verifiers:
+
 > **Security Requirement W-30:** The Wallet must provide trustworthy and
 > complete information about Verifiers to the End-User.
+
+Credentials must not be used without the End-Users consent.
 
 > **Privacy Requirement W-40:** The Wallet must ask the End-User for
 > meaningful consent before a Credential is used. The Wallet must
 > provide the End-User the opportunity to review any data that is shared
 > with a Verifier.
+
+The credential format must allow selective disclosure of data.
 
 > **Privacy Requirement CF-30:** The Credential Format must ensure that
 > there is a robust mechanism to ensure that data that is not to be
@@ -476,11 +539,13 @@ of the selected key management and protocols must be secure, but
 specifically the communication protocols must be designed such that an
 attacker cannot exfiltrate PII.
 
-> **Security/Privacy Requirement P-60:** The protocol must ensure that during an
-> interaction with a Verifier, an attacker cannot exfiltrate PII.
+> **Security/Privacy Requirement P-60:** The protocol must ensure that
+> during an interaction with a Verifier, an attacker cannot exfiltrate
+> PII.
 
-> **Security/Privacy Requirement P-70:** The protocol must ensure that during an
-> interaction with an Issuer, an attacker cannot exfiltrate PII.
+> **Security/Privacy Requirement P-70:** The protocol must ensure that
+> during an interaction with an Issuer, an attacker cannot exfiltrate
+> PII.
 
 If an Issuer, Wallet, or Verifier is compromised, the risk for End-Users
 must be minimized.
@@ -488,12 +553,16 @@ must be minimized.
 > **Security/Privacy Requirement W-50:** The Wallet must ensure that the
 > credentials and private keys are protected from unauthorized access.
 
+Since data leaks are hard to avoid completely in large ecosystems, the
+fallout of a compromise must be minimized.
+
 > **Security/Privacy Requirement TF-50:** The Trust Framework must
 > ensure that lifecycles of keys, certificates, and credentials are
 > designed such that the impact of a compromise is minimized.
 
 On the other hand, the End-User does not want the Issuer to learn where
-she uses the Credentials. 
+she uses the Credentials. This must be supported by the Issuer, the
+Wallet, and the Trust Framework.
 
 > **Privacy Requirement P-80:** The protocol must ensure that the Issuer
 > cannot learn where the End-User uses the Credential.
@@ -796,47 +865,147 @@ the previous case apply.
 > Verifier is protected such that no third party can interfere with the
 > interaction by modifying the information transmitted.
 
--> Redirect URIs?
--> Encryption
--> CSRF
--> Mix-Up?
+The target of this attack is the user's device. The attacker needs to be
+able to inject a presentation into a flow between the user and a
+Verifier. For this to work, the user has to have started a flow with the
+Verifier. This means that the Verifier then expects a presentation with
+a specific audience and nonce.
 
-> **Security Requirement P-40:** The protocol must ensure that the
-> interaction between an attacker and a Verifier cannot be forwarded to
-> and successfully completed by a user.
+Unless the attacker has access to the initial request between the
+Verifier and the wallet, the attacker cannot know the nonce that is
+expected in the flow. This works similar to the state value in classic
+OAuth flows.
 
--> MITM?
+If the attacker does have access to the initial request, the attacker
+would be able to replay the request on his own device and capture the
+presentation. The attacker could then use this presentation to inject it
+into the flow between the user and the Verifier. Similar attacks can
+happen in classic OAuth flows and are not mitigated by the use of
+"nonce" or state. However, for this (relatively weak) attack to succeed,
+a (relatively strong) attacker with access to the communication between
+the Verifier and the wallet is required. The likelihood of a successful
+attack can be reduced when, for the wallet, claimed URLs are used and
+custom schemes and endpoints on localhost addresses are avoided. 
+
+Note: An additional encryption of the request to the wallet at the
+application layer would not prevent this attack as the attacker could
+still replay the encrypted request to the wallet.
 
 
-> **Security Requirement P-41:** The protocol must ensure that an
-> attacker cannot successfully forward an interaction between a Holder
-> and a Verifier to a Verifier under his own control.
+## Security Requirement P-40
+
+> The protocol must ensure that the interaction between an attacker and
+> a Verifier cannot be forwarded to and successfully completed by a
+> user.
+
+For this attack, an attacker starts a presentation flow with a Verifier.
+The Verifier generates an authentication request that the attacker can
+now forward to their victim. The victim might be tricked into thinking
+that the completion of the flow is necessary and the attacker may or may
+not impersonate the Verifier for this purpose. The victim authenticates,
+authorizes the request and a presentation is created and sent to the
+Verifier. Without further countermeasures, Verifier would accept the
+presentation and apply it to the session between the attacker and the
+Verifier. The attacker can now impersonate the Victim. **TODO** More
+details for description.
+
+The countermeasures against this attack are different in the same-device
+flow and the cross-device flow.
+
+### Same-Device Flow
+
+In the same-device flow, the authentication response would be received
+by the Verifier in the victim's browser. The Verifier should maintain a
+mapping between user sessions and the nonce that is expected in the
+flow. The Verifier should only accept a presentation if the nonce in the
+presentation matches the nonce that is expected for the user session.
+With this countermeasure, the Verifier can detect if a presentation is
+sent to it that was not intended for the user session or if no user
+session exists at all, preventing the attack.
+
+**Note on web-to-app flows:** In the case of web-to-app flows (i.e., the
+Verifier is a website, but the wallet is an app), the authentication
+response needs to go back to the same browser where the user started the
+flow. This may require extra steps in the implementation.
+
+
+### Cross-Device Flow
+
+In the cross-device flow, the authentication response cannot be sent
+back to the same browser where the Verifier runs. Instead, the
+authentication response is sent using the direct post mode in the
+backend. This means that no session context exists for the Verifier to
+assure the binding between the browser where the user started the flow
+and the presentation that is sent to the Verifier.
+
+There is currently no widely-available, convenient way to fix this
+problem. A more detailed discussion including potential countermeasures
+can be found in the Cross-Device Security BCP.
+
+
+## Security Requirement P-41
+
+> The protocol must ensure that an attacker cannot successfully forward
+> an interaction between a Holder and a Verifier to a Verifier under his
+> own control.
 
 -> Injection
 -> MITM?
 
-> **Security Requirement P-50:** The protocol must ensure that third
-> parties cannot interfere with the binding process.
+## Security Requirement P-50
+
+> The protocol must ensure that third parties cannot interfere with the
+> binding process.
 
 -> MITM?
 -> Redirect URIs?
 
-> **Security/Privacy Requirement P-60:** The protocol must ensure that during an
-> interaction with a Verifier, an attacker cannot exfiltrate PII.
+## Security/Privacy Requirement P-60
+
+> The protocol must ensure that during an interaction with a Verifier,
+> an attacker cannot exfiltrate PII.
+
+As above, it can be assumed that all network connections are secured by TLS.
+
+On the level of the OAuth-based protocol, the PII in the form of the
+presentation is transferred during the authentication response (or,
+based on an authorization code sent in the authentication response,
+later in the token response).
+
+It is therefore important that the authentication response is not
+sent to an attacker-controlled endpoint.
+
+The authentication response is sent to the redirect URI specified in
+the request to the Wallet. 
+
+There are two options for the verification of the redirect URI:
+
+ 1. The Verifier specifies the redirect URI in the request to the
+    wallet. The request is signed using a key that the wallet can verify
+    and show the proper name of the Verifier to the user. 
+ 2. The redirect URI is registered beforehand and therefore guaranteed
+    to be authentic.
+
+If the authorization code flow is used, it must be ensured that the
+token endpoint URL is authentic as well (i.e., belongs to the same
+Issuer).
+
+**TODO** Check if the OID4VCI spec ensures authenticity of the token
+endpoint URL.
+
+## Security/Privacy Requirement P-70
+
+> The protocol must ensure that during an interaction with an Issuer, an
+> attacker cannot exfiltrate PII.
 
 -> Encryption
 -> MITM?
 -> Redirect URIs?
 
-> **Security/Privacy Requirement P-70:** The protocol must ensure that during an
-> interaction with an Issuer, an attacker cannot exfiltrate PII.
+## Privacy Requirement P-80
 
--> Encryption
--> MITM?
--> Redirect URIs?
-
-> **Privacy Requirement P-80:** The protocol must ensure that the Issuer
-> cannot learn where the End-User uses the Credential.
+> The protocol must ensure that the Issuer cannot learn where the
+> End-User uses the Credential.
 
 The interaction between the Holder and the Verifier is not inherently
 tied to any interaction between either the Holder and the Issuer or the
@@ -864,7 +1033,7 @@ example, by caching the data for a random period of time.
 
 Three types of attack are relevant here: 
 
- 1. Authentication Request MITM (attacker replays the initial request between itself and a Verifier in a flow between the attacker and a user)
+ 1. Authentication Request MITM ()
  1. CSRF (attacker uses a credential issued for themselves and tries to inject it into a flow on a user's device between the user and a Verifier),
  1. the exfiltration of personal data without the user's (proper) consent,
  1. injection (attacker uses a credential issued for a user and tries to inject it into a flow on the attacker's own device to mislead a Verifier).
@@ -873,46 +1042,9 @@ Note that exfiltration of a presentation on a user's device is a prerequisite fo
 
 Let's go through these one by one:
 
-## CSRF
-
-The target of this attack is the user's device. The attacker needs to be
-able to inject a presentation into a flow between the user and a
-Verifier. For this to work, the user has to have started a flow with the
-Verifier. This means that the Verifier then expects a presentation with
-a specific audience and nonce.
-
-Unless the attacker has access to the initial request between the
-Verifier and the wallet, the attacker cannot know the nonce that is
-expected in the flow. This works similar to the state value in classic
-OAuth flows.
-
-If the attacker does have access to the initial request, the attacker
-would be able to replay the request on his own device and capture the
-presentation. The attacker could then use this presentation to inject it
-into the flow between the user and the Verifier. Similar attacks can
-happen in classic OAuth flows and are not mitigated by the use of
-"nonce" or state. However, for this (relatively weak) attack to succeed,
-a (relatively strong) attacker with access to the communication between
-the Verifier and the wallet is required. The likelihood of a successful
-attack can be reduced when, for the wallet, claimed URLs are used and
-custom schemes and endpoints on localhost addresses are avoided. 
-
-Note: An additional encryption of the request to the wallet at the
-application layer would not prevent this attack as the attacker could
-still replay the encrypted request to the wallet.
 
 ## Exfiltration of Personal Data
 
-The target of this attack is for an attacker to get access to a
-presentation containing a user's data (without the user consenting to it).
-
-To avoid this, it is important that the redirect URI does not point to an 
-attacker-controlled endpoint. 
-
-There are two sources for the redirect URI:
-
-    1. The Verifier specifies the redirect URI in the request to the wallet. The request is signed using a key that the wallet can verify and show the proper name of the Verifier to the user. 
-    2. The redirect URI is registered beforehand and therefore guaranteed to be authentic.
 
 
 ## Credential Bound to Wrong Key
@@ -929,3 +1061,249 @@ There are two sources for the redirect URI:
 ## Difference Same-Device Cross-Device
 
 -> Security Considerations in OpenID 4 VP
+
+
+{backmatter}
+
+
+<reference anchor="VC_DATA" target="https://www.w3.org/TR/vc-data-model">
+  <front>
+    <title>Verifiable Credentials Data Model 1.0</title>
+    <author fullname="Manu Sporny">
+      <organization>Digital Bazaar</organization>
+    </author>
+    <author fullname="Grant Noble">
+      <organization>ConsenSys</organization>
+    </author>
+    <author fullname="Dave Longley">
+      <organization>Digital Bazaar</organization>
+    </author>
+    <author fullname="Daniel C. Burnett">
+      <organization>ConsenSys</organization>
+    </author>
+    <author fullname="Brent Zundel">
+      <organization>Evernym</organization>
+    </author>
+    <author fullname="David Chadwick">
+      <organization>University of Kent</organization>
+    </author>
+   <date day="19" month="Nov" year="2019"/>
+  </front>
+</reference>
+
+<reference anchor="SIOPv2" target="https://openid.bitbucket.io/connect/openid-connect-self-issued-v2-1_0.html">
+  <front>
+    <title>Self-Issued OpenID Provider V2</title>
+    <author fullname="Kristina Yasuda">
+      <organization>Microsoft</organization>
+    </author>
+    <author fullname="Michael B. Jones">
+      <organization>Microsoft</organization>
+    </author>
+    <author fullname="Tobias Looker">
+      <organization>Mattr</organization>
+    </author>
+   <date day="20" month="Jul" year="2021"/>
+  </front>
+</reference>
+
+<reference anchor="OpenID.Core" target="http://openid.net/specs/openid-connect-core-1_0.html">
+  <front>
+    <title>OpenID Connect Core 1.0 incorporating errata set 1</title>
+    <author initials="N." surname="Sakimura" fullname="Nat Sakimura">
+      <organization>NRI</organization>
+    </author>
+    <author initials="J." surname="Bradley" fullname="John Bradley">
+      <organization>Ping Identity</organization>
+    </author>
+    <author initials="M." surname="Jones" fullname="Michael B. Jones">
+      <organization>Microsoft</organization>
+    </author>
+    <author initials="B." surname="de Medeiros" fullname="Breno de Medeiros">
+      <organization>Google</organization>
+    </author>
+    <author initials="C." surname="Mortimore" fullname="Chuck Mortimore">
+      <organization>Salesforce</organization>
+    </author>
+   <date day="8" month="Nov" year="2014"/>
+  </front>
+</reference>
+
+<reference anchor="DIF.PresentationExchange" target="https://identity.foundation/presentation-exchange">
+        <front>
+          <title>Presentation Exchange 2.0.0</title>
+		  <author fullname="Daniel Buchner">
+            <organization>Microsoft</organization>
+          </author>
+          <author fullname="Brent Zundel">
+            <organization>Evernym</organization>
+          </author>
+          <author fullname="Martin Riedel">
+            <organization>Consensys Mesh</organization>
+          </author>
+          <author fullname="Kim Hamilton Duffy">
+            <organization>Centre Consortium</organization>
+          </author>
+        </front>
+</reference>
+
+<reference anchor="DID-Core" target="https://www.w3.org/TR/2021/PR-did-core-20210803/">
+        <front>
+        <title>Decentralized Identifiers (DIDs) v1.0</title>
+        <author fullname="Manu Sporny">
+            <organization>Digital Bazaar</organization>
+        </author>
+        <author fullname="Amy Guy">
+            <organization>Digital Bazaar</organization>
+        </author>
+        <author fullname="Markus Sabadello">
+            <organization>Danube Tech</organization>
+        </author>
+        <author fullname="Drummond Reed">
+            <organization>Evernym</organization>
+        </author>
+        <date day="3" month="Aug" year="2021"/>
+        </front>
+</reference>
+
+<reference anchor="TRAIN" target="https://oid2022.compute.dtu.dk/index.html">
+        <front>
+          <title>A novel approach to establish trust in Verifiable Credential
+issuers in Self-Sovereign Identity ecosystems using TRAIN</title>	  
+           <author fullname="Isaac Henderson Johnson Jeyakumar">
+            <organization>University of Stuttgart</organization>
+          </author>
+          <author fullname="David W Chadwick">
+            <organization>Crossword Cybersecurity</organization>
+          </author>
+          <author fullname="Michael Kubach">
+            <organization>Fraunhofer IAO</organization>
+          </author>
+   <date day="8" month="July" year="2022"/>
+        </front>
+</reference>
+
+<reference anchor="OpenID-Discovery" target="https://openid.net/specs/openid-connect-discovery-1_0.html">
+  <front>
+    <title>OpenID Connect Discovery 1.0 incorporating errata set 1</title>
+    <author initials="N." surname="Sakimura" fullname="Nat Sakimura">
+      <organization>NRI</organization>
+    </author>
+    <author initials="J." surname="Bradley" fullname="John Bradley">
+      <organization>Ping Identity</organization>
+    </author>
+    <author initials="B." surname="de Medeiros" fullname="Breno de Medeiros">
+      <organization>Google</organization>
+    </author>
+    <author initials="E." surname="Jay" fullname="Edmund Jay">
+      <organization> Illumila </organization>
+    </author>
+   <date day="8" month="Nov" year="2014"/>
+  </front>
+</reference>
+
+<reference anchor="OpenID.Registration" target="https://openid.net/specs/openid-connect-registration-1_0.html">
+        <front>
+          <title>OpenID Connect Dynamic Client Registration 1.0 incorporating errata set 1</title>
+		  <author fullname="Nat Sakimura">
+            <organization>NRI</organization>
+          </author>
+          <author fullname="John Bradley">
+            <organization>Ping Identity</organization>
+          </author>
+          <author fullname="Michael B. Jones">
+            <organization>Microsoft</organization>
+          </author>
+          <date day="8" month="Nov" year="2014"/>
+        </front>
+ </reference>
+
+<reference anchor="Hyperledger.Indy" target="https://www.hyperledger.org/use/hyperledger-indy">
+        <front>
+          <title>Hyperledger Indy Project</title>
+          <author>
+            <organization>Hyperledger Indy Project</organization>
+          </author>
+          <date year="2022"/>
+        </front>
+</reference>
+
+<reference anchor="JARM" target="https://openid.net/specs/oauth-v2-jarm-final.html">
+        <front>
+          <title>JWT Secured Authorization Response Mode for OAuth 2.0 (JARM)</title>
+		  <author fullname="Torsten Lodderstedt">
+            <organization>yes.com</organization>
+          </author>
+          <author fullname="Brian Campbell">
+            <organization>Ping Identity</organization>
+          </author>
+          <date day="9" month="Nov" year="2022"/>
+        </front>
+ </reference>
+
+<reference anchor="ISO.18013-5" target="https://www.iso.org/standard/69084.html">
+        <front>
+          <title>ISO/IEC 18013-5:2021 Personal identification — ISO-compliant driving licence — Part 5: Mobile driving licence (mDL)  application</title>
+          <author>
+            <organization> ISO/IEC JTC 1/SC 17 Cards and security devices for personal identification</organization>
+          </author>
+          <date year="2021"/>
+        </front>
+</reference>
+
+<reference anchor="OAuth.Responses" target="https://openid.net/specs/oauth-v2-multiple-response-types-1_0.html">
+        <front>
+        <title>OAuth 2.0 Multiple Response Type Encoding Practices</title>
+        <author initials="B." surname="de Medeiros" fullname="Breno de Medeiros">
+            <organization>Google</organization>
+        </author>
+        <author initials="M." surname="Scurtescu" fullname="M. Scurtescu">
+            <organization>Google</organization>
+        </author>        
+        <author initials="P." surname="Tarjan" fullname="Facebook">
+            <organization>Evernym</organization>
+        </author>
+        <author initials="M." surname="Jones" fullname="Michael B. Jones">
+            <organization>Microsoft</organization>
+        </author>
+        <date day="25" month="Feb" year="2014"/>
+        </front>
+</reference>
+
+<reference anchor="OpenID.VCI" target="https://openid.net/specs/openid-4-verifiable-credential-issuance-1_0.html">
+        <front>
+          <title>OpenID for Verifiable Credential Issuance</title>
+          <author initials="T." surname="Lodderstedt" fullname="Torsten Lodderstedt">
+            <organization>yes.com</organization>
+          </author>
+          <author initials="K." surname="Yasuda" fullname="Kristina Yasuda">
+            <organization>Microsoft</organization>
+          </author>
+          <author initials="T." surname="Looker" fullname="Tobias Looker">
+            <organization>Mattr</organization>
+          </author>
+          <date day="20" month="June" year="2022"/>
+        </front>
+</reference>
+
+<reference anchor="OpenID.Federation" target="https://openid.net/specs/openid-connect-federation-1_0.html">
+        <front>
+          <title>OpenID Connect Federation 1.0 - draft 17></title>
+		  <author fullname="R. Hedberg, Ed.">
+            <organization>Independent</organization>
+          </author>
+          <author fullname="Michael B. Jones">
+            <organization>Microsoft</organization>
+          </author>
+          <author fullname="A. Solberg">
+            <organization>Uninett</organization>
+          </author>
+          <author fullname="S. Gulliksson">
+            <organization>Schibsted</organization>
+          </author>
+          <author fullname="John Bradley">
+            <organization>Yubico</organization>
+          </author>
+          <date day="9" month="Sept" year="2021"/>
+        </front>
+ </reference>
