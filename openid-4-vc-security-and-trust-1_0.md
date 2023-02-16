@@ -125,7 +125,7 @@ Trust in the Issuer-Holder-Verifier Model means different things to different pa
       typically achieved by enforcing Holder Binding and trusting the
       Issuer to issue Credentials only to the End-Users they are about
       (see below).
-    * Integrity of Interaction: When interacting with a Holder, the
+    * Integrity of Interaction: When interacting with a Wallet, the
       Verifier can trust that it receives whatever data this Holder
       wants to release, not forged data from a third party. If there is
       an existing session between the Verifier and the Holder, the
@@ -203,45 +203,53 @@ second one.
 > **Security Requirement:** Issuers must only issue Credentials to the
 subject of the respective Credential. 
 
-**TODO: incorporate this into the text - taken from SD-JWT:**
-Verifiers MUST decide whether Holder Binding is required for a particular use case or not before verifying a credential. This decision can be informed by various factors including, but not limited to the following: business requirements, the use case, the type of binding between a Holder and its credential that is required for a use case, the sensitivity of the use case, the expected properties of a credential, the type and contents of other credentials expected to be presented at the same time, etc.
+**TODO: incorporate this into the text - taken from SD-JWT:** Verifiers
+MUST decide whether Holder Binding is required for a particular use case
+or not before verifying a credential. This decision can be informed by
+various factors including, but not limited to the following: business
+requirements, the use case, the type of binding between a Holder and its
+credential that is required for a use case, the sensitivity of the use
+case, the expected properties of a credential, the type and contents of
+other credentials expected to be presented at the same time, etc.
 
-This can be showcased based on two scenarios for a mobile driver's license use case for SD-JWT:
+This can be showcased based on two scenarios for a mobile driver's
+license use case for SD-JWT:
 
-Scenario A: For the verification of the driver's license when stopped by a police officer for exceeding a speed limit, Holder Binding may be necessary to ensure that the person driving the car and presenting the license is the actual Holder of the license. The Verifier (e.g., the software used by the police officer) will ensure that a Holder Binding JWT is present and signed with the Holder's private key. Claims-based Holder Binding may be used as well, e.g., by including a first name, last name and a date of birth that matches that of an insurance policy paper.
+Scenario A: For the verification of the driver's license when stopped by
+a police officer for exceeding a speed limit, Holder Binding may be
+necessary to ensure that the person driving the car and presenting the
+license is the actual Holder of the license. The Verifier (e.g., the
+software used by the police officer) will ensure that a Holder Binding
+JWT is present and signed with the Holder's private key. Claims-based
+Holder Binding may be used as well, e.g., by including a first name,
+last name and a date of birth that matches that of an insurance policy
+paper.
 
-Scenario B: A rental car agency may want to ensure, for insurance purposes, that all drivers named on the rental contract own a government-issued driver's license. The signer of the rental contract can present the mobile driver's license of all named drivers. In this case, the rental car agency does not need to check Holder Binding as the goal is not to verify the identity of the person presenting the license, but to verify that a license exists and is valid.
+Scenario B: A rental car agency may want to ensure, for insurance
+purposes, that all drivers named on the rental contract own a
+government-issued driver's license. The signer of the rental contract
+can present the mobile driver's license of all named drivers. In this
+case, the rental car agency does not need to check Holder Binding as the
+goal is not to verify the identity of the person presenting the license,
+but to verify that a license exists and is valid.
 
-It is important that a Verifier does not make its security policy decisions based on data that can be influenced by an attacker or that can be misinterpreted. For this reason, when deciding whether Holder binding is required or not, Verifiers MUST NOT take into account
+It is important that a Verifier does not make its security policy
+decisions based on data that can be influenced by an attacker or that
+can be misinterpreted. For this reason, when deciding whether Holder
+binding is required or not, Verifiers MUST NOT take into account
 
-whether an Holder Binding JWT is present or not, as an attacker can remove the Holder Binding JWT from any Presentation and present it to the Verifier, or
-whether Holder Binding data is present in the SD-JWT or not, as the Issuer might have added the key to the SD-JWT in a format/claim that is not recognized by the Verifier.
-If a Verifier has decided that Holder Binding is required for a particular use case and the Holder Binding is not present, does not fulfill the requirements (e.g., on the signing algorithm), or no recognized Holder Binding data is present in the SD-JWT, the Verifier will reject the presentation, as described in (TODO).
+whether an Holder qBinding JWT is present or not, as an attacker can
+remove the Holder Binding JWT from any Presentation and present it to
+the Verifier, or whether Holder Binding data is present in the SD-JWT or
+not, as the Issuer might have added the key to the SD-JWT in a
+format/claim that is not recognized by the Verifier. If a Verifier has
+decided that Holder Binding is required for a particular use case and
+the Holder Binding is not present, does not fulfill the requirements
+(e.g., on the signing algorithm), or no recognized Holder Binding data
+is present in the SD-JWT, the Verifier will reject the presentation, as
+described in (TODO).
 
 
-
-### Note on Lifetime of Credentials and Keys
-
-### Note on Selective Disclosure
-
-**TODO**
-
-### Note on Storage of Credentials
-Storage of Signed User Data
-
-Wherever End-User data is stored, it represents a potential target for an attacker. This target can be of particularly high value when the data is signed by a trusted authority like an official national identity service. For example, in OpenID Connect, signed ID Tokens can be stored by Relying Parties. In the case of SD-JWT, Holders have to store signed SD-JWTs and associated Disclosures, and Issuers and Verifiers may decide to do so as well.
-
-Not surprisingly, a leak of such data risks revealing private data of End-Users to third parties. Signed End-User data, the authenticity of which can be easily verified by third parties, further exacerbates the risk. As discussed in (TODO), leaked SD-JWTs may also allow attackers to impersonate Holders unless Holder Binding is enforced and the attacker does not have access to the Holder's cryptographic keys. Altogether, leaked SD-JWT credentials may have a high monetary value on black markets.
-
-Due to these risks, systems implementing SD-JWT SHOULD be designed to minimize the amount of data that is stored. All involved parties SHOULD store SD-JWTs only for as long as needed, including in log files.
-
-Issuers SHOULD NOT store SD-JWTs after issuance.
-
-Holders SHOULD store SD-JWTs and associated Disclosures only in encrypted form, and, wherever possible, use hardware-backed encryption in particular for the private Holder Binding key. Decentralized storage of data, e.g., on End-User devices, SHOULD be preferred for End-User credentials over centralized storage. Expired SD-JWTs SHOULD be deleted as soon as possible.
-
-Verifiers SHOULD NOT store SD-JWTs after verification. It may be sufficient to store the result of the verification and any End-User data that is needed for the application.
-
-If reliable and secure key rotation and revocation is ensured according to (TODO), Issuers may MAY opt to publish expired or revoked private signing keys (after a grace period that ensures that the keys are not cached any longer at any Verifier). This reduces the value of any leaked credentials as the signatures on them can no longer be trusted to originate from the Issuer.
 
 ## Security and Privacy Requirements
 
@@ -400,11 +408,11 @@ once the Issuer learns about potential abuse of the Credential.
 
 #### Requirements on Presentation Process
 
-The Verifier trusts in the Integrity of the Interaction with the Holder,
+The Verifier trusts in the Integrity of the Interaction with the Wallet,
 as described above. This means:
 
 > **Security Requirement P-30:** The protocol must ensure that the
-interaction between the Holder and Verifier is protected such that no
+interaction between the Wallet and Verifier is protected such that no
 third party can interfere with the interaction by modifying the
 information transmitted.
 
@@ -600,15 +608,15 @@ security number.
 
 # Security and Privacy Requirements on the Trust Framework {#security-requirements-on-the-trust-framework}
 
-| Security Requirement | How to achieve                                           |
-| -------------------- | -------------------------------------------------------- |
-| TF-10                | Selection of credential format                           |
-| TF-20                | Requirement on management of issuers                     |
-| TF-30                | Requirement on management of trust                       |
-| TF-40                | Requirement on management of trust                       |
-| TF-50                | Requirement on lifecycle management                      |
-| TF-60                | Requirement on lifecycle management and key distribution |
-| TF-70                | Requirement on lifecycle management and key distribution |
+| Security Requirement | How to achieve                                                                         |
+| -------------------- | -------------------------------------------------------------------------------------- |
+| TF-10                | Selection of credential format                                                         |
+| TF-20                | Requirement on management of issuers                                                   |
+| TF-30                | Requirement on management of trust                                                     |
+| TF-40                | Requirement on management of trust                                                     |
+| TF-50                | Requirement on lifecycle management; also see (#note-on-storage-of-credentials) below. |
+| TF-60                | Requirement on lifecycle management and key distribution                               |
+| TF-70                | Requirement on lifecycle management and key distribution                               |
 
 
 ## Distribution of Identifiers and Keys {#distribution-of-identifiers-and-keys}
@@ -624,14 +632,15 @@ of scope for OpenID 4 Verifiable Credential Issuance.
 
 | Security Requirement | How to achieve             |
 | -------------------- | -------------------------- |
-| P-10                 | see below (TODO reference) |
-| P-20                 | see below (TODO reference) |
-| P-30                 | see below (TODO reference) |
-| P-40                 | see below (TODO reference) |
-| P-50                 | see below (TODO reference) |
-| P-60                 | see below (TODO reference) |
-| P-70                 | see below (TODO reference) |
-| P-80                 | see below (TODO reference) |
+| P-10                 | see (#security-requirement-p-10) |
+| P-20                 | see (#security-requirement-p-20) |
+| P-30                 | see (#security-requirement-p-30) |
+| P-40                 | see (#security-requirement-p-40) |
+| P-41                 | see (#security-requirement-p-41) |
+| P-50                 | see (#security-requirement-p-50) |
+| P-60                 | see (#security-privacy-requirement-p-60) |
+| P-70                 | see (#security-privacy-requirement-p-70) |
+| P-80                 | see (#privacy-requirement-p-80) |
 
 # Security and Privacy Requirements on the Verifier {#security-requirements-on-the-verifier}
 
@@ -717,6 +726,9 @@ Mix-Up Type 2:
  - `credential_endpoint`: Honest Issuer's Credential Endpoint
  - `batch_credential_endpoint`: Honest Issuer's Batch Credential Endpoint
 
+Note that when an attacker-controlled Authorization Server is used, the
+attacker can also perform regular OAuth Mix-Up attacks unless prevented by
+the `iss` parameter according to [@RFC9207].
 
 These configurations will be used in the attack descriptions below.
 
@@ -738,7 +750,7 @@ and privacy requirements defined in the previous section. This is an
 informal analysis that may be incomplete or contain mistakes. A formal
 analysis to confirm the results is yet to be done.
 
-## Security Requirement P-10
+## Security Requirement P-10 {#security-requirement-p-10}
 
 > The issuance protocol must ensure that no third party can extract the
 > credential issued by the Issuer.
@@ -780,6 +792,8 @@ of the existing OAuth grant types or the new grant type
 `urn:ietf:params:oauth:grant-type:pre-authorized_code` defined in the
 specification.
 
+### Pre-Authorized Code Grant
+
 For the **pre-authorized code grant**, the Wallet obtaining the token
 needs to possess a pre-authorized code. This code is received directly
 from the credential issuer after an interaction between the user and the
@@ -795,10 +809,12 @@ application in order to avoid interception by third party applications.
 An additional PIN that is transferred from the issuer to the verifier
 can be used to protect the pre-authorized code.
 
+### Authorization Code Grant
+
 For all **other grant types**, the considerations in the OAuth Security
 BCP apply, as explicitly mentioned in the specification.
 
-## Security Requirement P-20
+## Security Requirement P-20 {#security-requirement-p-20}
 
 > The protocol must ensure that no third party can interfere with the
 > issuance process such that the Issuer issues Credentials for the third
@@ -859,9 +875,9 @@ In the second case (Mix-Up), other attacks are possible, but regarding
 interference with the issuance process, the same considerations as in
 the previous case apply.
 
-## Security Requirement P-30
+## Security Requirement P-30 {#security-requirement-p-30}
 
-> The protocol must ensure that the interaction between the Holder and
+> The protocol must ensure that the interaction between the Wallet and
 > Verifier is protected such that no third party can interfere with the
 > interaction by modifying the information transmitted.
 
@@ -892,7 +908,7 @@ application layer would not prevent this attack as the attacker could
 still replay the encrypted request to the wallet.
 
 
-## Security Requirement P-40
+## Security Requirement P-40 {#security-requirement-p-40}
 
 > The protocol must ensure that the interaction between an attacker and
 > a Verifier cannot be forwarded to and successfully completed by a
@@ -923,6 +939,9 @@ With this countermeasure, the Verifier can detect if a presentation is
 sent to it that was not intended for the user session or if no user
 session exists at all, preventing the attack.
 
+RECOMMENDATION: While this is expected from OAuth implementations, the
+importance of this measure should be highlighted in the specification.
+
 **Note on web-to-app flows:** In the case of web-to-app flows (i.e., the
 Verifier is a website, but the wallet is an app), the authentication
 response needs to go back to the same browser where the user started the
@@ -943,24 +962,56 @@ problem. A more detailed discussion including potential countermeasures
 can be found in the Cross-Device Security BCP.
 
 
-## Security Requirement P-41
+## Security Requirement P-41 {#security-requirement-p-41}
 
 > The protocol must ensure that an attacker cannot successfully forward
-> an interaction between a Holder and a Verifier to a Verifier under his
+> an interaction between a Wallet and a Verifier to a Verifier under his
 > own control.
+
+A prerequisite for a successful attack of this kind is that the attacker
+has access to some messages between the Wallet and the Verifier. 
+
+The attacker might have access to the authentication response. In this
+case, the attacker has access to the presentation contained in the VP
+Token. 
+
+The attacker can now start an interaction with the Verifier under his
+control. The attacker can then send the presentation to the Verifier
+instead of a presentation created by his own Wallet. The Verifier would
+then accept the presentation and apply it to the session between the
+attacker and the Verifier. The attacker can now impersonate the
+End-User.
+
+This is prevented by the nonce contained in the authorization request
+and the presentation. The Verifier can verify that the nonce in the
+presentation matches the nonce in the authorization request. However,
+the Verifier must also check that the audience of the presentation
+matches the Verifier's identifier. Without this check, an attacker could
+convince the End-User to start a new, independent flow with a Verifier
+und the attacker's control and re-use the nonce from the original flow
+in the authentication request. By checking the audience, this attack is
+prevented.
+
+(In the same-device flow, the Verifier usually associates the attacker's
+session with the selected nonce. In the cross-device flow, the nonce
+might be used as the single identifier for the flow to which a
+presentation belongs. In both cases, a nonce that is not the nonce the
+Verifier selected for the flow with the attacker would not work.)
 
 -> Injection
 -> MITM?
 
-## Security Requirement P-50
+## Security Requirement P-50 {#security-requirement-p-50}
 
 > The protocol must ensure that third parties cannot interfere with the
 > binding process.
 
+**TODO** Is the Wallet-provided nonce required?
+
 -> MITM?
 -> Redirect URIs?
 
-## Security/Privacy Requirement P-60
+## Security/Privacy Requirement P-60 {#security-privacy-requirement-p-60}
 
 > The protocol must ensure that during an interaction with a Verifier,
 > an attacker cannot exfiltrate PII.
@@ -993,7 +1044,7 @@ Issuer).
 **TODO** Check if the OID4VCI spec ensures authenticity of the token
 endpoint URL.
 
-## Security/Privacy Requirement P-70
+## Security/Privacy Requirement P-70 {#security-privacy-requirement-p-70}
 
 > The protocol must ensure that during an interaction with an Issuer, an
 > attacker cannot exfiltrate PII.
@@ -1002,21 +1053,21 @@ endpoint URL.
 -> MITM?
 -> Redirect URIs?
 
-## Privacy Requirement P-80
+## Privacy Requirement P-80 {#privacy-requirement-p-80}
 
 > The protocol must ensure that the Issuer cannot learn where the
 > End-User uses the Credential.
 
-The interaction between the Holder and the Verifier is not inherently
-tied to any interaction between either the Holder and the Issuer or the
+The interaction between the Wallet and the Verifier is not inherently
+tied to any interaction between either the Wallet and the Issuer or the
 Verifier and the Issuer, with the following (potential) exceptions:
 
- * The Holder may need to retrieve a new credential from the Issuer
+ * The Wallet may need to retrieve a new credential from the Issuer
    before presenting it to the Verifier. Reasons can include that the
-   credential has expired, that the Holder has removed the credential,
+   credential has expired, that the Wallet has removed the credential,
    or that the Wallet needs a new credential to present to the Verifier
    in order to avoid correlation. The point in time when such an
-   interaction happens may leak information about the Holder's actions,
+   interaction happens may leak information about the Wallet's actions,
    but is usually a weak correlation vector. 
  * The Verifier may need to retrieve a signature verification key,
    revocation information or other data from the Issuer before verifying
@@ -1029,39 +1080,59 @@ by refreshing credentials at a random point in time.
 RECOMMENDATION: The Verifier can be designed to avoid this by, for
 example, by caching the data for a random period of time.
 
-## Resistance against Attacks
 
-Three types of attack are relevant here: 
+**TODO** To be discussed: Difference Same-Device Cross-Device where not discussed already. 
 
- 1. Authentication Request MITM ()
- 1. CSRF (attacker uses a credential issued for themselves and tries to inject it into a flow on a user's device between the user and a Verifier),
- 1. the exfiltration of personal data without the user's (proper) consent,
- 1. injection (attacker uses a credential issued for a user and tries to inject it into a flow on the attacker's own device to mislead a Verifier).
-
-Note that exfiltration of a presentation on a user's device is a prerequisite for the second and third type of attack.
-
-Let's go through these one by one:
-
-
-## Exfiltration of Personal Data
+**TODO** Move sections to security Considerations in OpenID 4 VP/VCI where applicable
 
 
 
-## Credential Bound to Wrong Key
 
-> **Security Requirement:** The Issuer must get the correct key for binding the credential to it.
+# Note on Storage of Credentials and Presentations {#note-on-storage-of-credentials}
 
-## Session Context Attacks
+**TODO: Link this better to the requirements above.**
 
+Wherever End-User data is stored, it represents a potential target for
+an attacker. This target can be of particularly high value when the data
+is signed by a trusted authority like an official national identity
+service. For example, in OpenID Connect, signed ID Tokens can be stored
+by Relying Parties. In the Issuer-Holder-Verifier model, Wallets have to
+store signed credentials and associated data, and Issuers and Verifiers
+may decide to store credentials or presentation as well.
 
-## Request Encryption?
+Not surprisingly, a leak of such data risks revealing private data of
+End-Users to third parties. Signed End-User data, the authenticity of
+which can be easily verified by third parties, further exacerbates the
+risk. Leaked credentials or presentations may also allow attackers to
+impersonate Holders unless Holder Binding is enforced and the attacker
+does not have access to the Holder's cryptographic keys. Altogether,
+leaked credentials and presentations may have a high monetary value on
+black markets.
 
-## Wallet Provided Nonce?
+Due to these risks, systems implementing the Issuer-Holder-Verifier
+model SHOULD be designed to minimize the amount of data that is stored.
+All involved parties SHOULD store credentials or presentations only for
+as long as needed, including in log files.
 
-## Difference Same-Device Cross-Device
+Issuers SHOULD NOT store credentials after issuance.
 
--> Security Considerations in OpenID 4 VP
+Holders SHOULD store credentials and associated data only in encrypted
+form, and, wherever possible, use hardware-backed encryption in
+particular for the private Holder Binding key. Decentralized storage of
+data, e.g., on End-User devices, SHOULD be preferred for End-User
+credentials over centralized storage. Expired credentials and associated
+data SHOULD be deleted as soon as possible.
 
+Verifiers SHOULD NOT store presentations after verification. It may be
+sufficient to store the result of the verification and any End-User data
+that is needed for the application.
+
+If reliable and secure key rotation and revocation is ensured, Issuers
+may MAY opt to publish expired or revoked private signing keys (after a
+grace period that ensures that the keys are not cached any longer at any
+Verifier). This reduces the value of any leaked credentials as the
+signatures on them can no longer be trusted to originate from the
+Issuer.
 
 {backmatter}
 
