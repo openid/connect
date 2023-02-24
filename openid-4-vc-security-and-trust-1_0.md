@@ -31,12 +31,19 @@ organization="yes.com"
 
 .# Abstract
 
-This specification describes the trust architecture in OpenID Connect for Verifiable Credentials (VCs) and outlines security considerations for the use of VCs in OpenID Connect. 
+This specification describes the trust architecture in OpenID for
+Verifiable Credentials (VCs), outlines security considerations and
+requirements for the components in an ecosystem, and provides an
+informal security analysis of the OpenID 4 VC protocols.
 
 {mainmatter}
 
 # Introduction
 
+**Note:** This document is a work in progress. The security and trust
+considerations described here are not yet complete and may change
+without notice. The security analysis has not yet been verified by
+formal methods.
 
 # Terminology
 
@@ -44,18 +51,24 @@ This specification describes the trust architecture in OpenID Connect for Verifi
 **TODO: Check if all of the following terms are actually used.**
 
 
-This specification uses the terms "Access Token", "Authorization Request", "Authorization Response", "Authorization Server", "Client", "Client Authentication", "Client Identifier", "Grant Type", "Response Type", "Token Request" and "Token Response" defined by OAuth 2.0 [@!RFC6749], the terms "End-User", "Entity", "Request Object", "Request URI" as defined by OpenID Connect Core [@!OpenID.Core], the term "JSON Web Token (JWT)" defined by JSON Web Token (JWT) [@!RFC7519], the term "JOSE Header" and the term "Base64url Encoding" defined by JSON Web Signature (JWS) [@!RFC7515], and the term "Response Mode" defined by OAuth 2.0 Multiple Response Type Encoding Practices [@!OAuth.Responses].
+This specification uses the terms "Access Token", "Authorization
+Request", "Authorization Response", "Authorization Server", "Client",
+"Client Authentication", "Client Identifier", "Grant Type", "Response
+Type", "Token Request" and "Token Response" defined by OAuth 2.0
+[@!RFC6749], the terms "End-User", "Entity", "Request Object", "Request
+URI" as defined by OpenID Connect Core [@!OpenID.Core], the term "JSON
+Web Token (JWT)" defined by JSON Web Token (JWT) [@!RFC7519], the term
+"JOSE Header" and the term "Base64url Encoding" defined by JSON Web
+Signature (JWS) [@!RFC7515], and the term "Response Mode" defined by
+OAuth 2.0 Multiple Response Type Encoding Practices [@!OAuth.Responses].
 
-This specification also defines the following terms. In the case where a term has a definition that differs, the definition below is authoritative.
+This specification also uses the following terms defined in [todo]. 
 
 Credential:
 :  A set of one or more claims about a subject made by a Credential Issuer. Note that this definition of a term "Credential" in this specification is different from that in [@!OpenID.Core].
 
 Verifiable Credential (VC):
 :  An Issuer-signed Credential whose authenticity can be cryptographically verified. Can be of any format used in the Issuer-Holder-Verifier Model, including, but not limited to those defined in [@VC_DATA], [@ISO.18013-5] (mdoc) and [@Hyperledger.Indy] (AnonCreds).
-
-W3C Verifiable Credential:
-:  A Verifiable Credential compliant to the [@VC_DATA] specification.
 
 Presentation:
 :  Data that is shared with a specific Verifier, derived from one or more Verifiable Credentials that can be from the same or different issuers.
@@ -84,14 +97,16 @@ Wallet:
 
 # Trust Model
 
-Verifiable Credentials facilitate an indirect model to obtain and present authoritative claims about a subject. 
+Verifiable Credentials facilitate an indirect model to obtain and
+present authoritative claims about a subject. 
 
 **TODO: add diagram**
 
 In this model, the Issuer (the entity making an authoritative claim)
 creates a Verifiable Credential and delivers it to the End-User (or her
-Wallet, respectively). The Wallet/End-User can then present the Verifiable
-Credential to a Verifier (the entity that needs to know the claim).
+Wallet, respectively). The Wallet/End-User can then present the
+Verifiable Credential to a Verifier (the entity that needs to know the
+claim).
 
 A Credential can be presented various times during its lifecycle and
 multiple Credentials (or subsets of the claims in those Credentials) can
@@ -102,56 +117,57 @@ The Verifier decides what Credential to accept from the End-User.
 
 The involved parties need to access data about identifiers, keys, and
 Credentials as well as data about the acting parties themselves in order
-to securely implement the Credential exchange. The details of how this is achieved are defined in the Trust Framework.
+to securely implement the Credential exchange. The details of how this
+is achieved are defined in the Trust Framework.
 
 All parties communicate with each other using a set of protocols, or
-just "protocol" in the following. In the case of OpenID 4 VP, the protocols are
-OpenID 4 Verifiable Credential Issuance and OpenID 4 Verifiable Presentations, with an
-optional use of SIOP v2.
+just "protocol" in the following. In the case of OpenID 4 VP, the
+protocols are OpenID 4 Verifiable Credential Issuance and OpenID 4
+Verifiable Presentations, with an optional use of SIOP v2.
 
 ## Trust in the Issuer-Holder-Verifier Model
 
-Trust in the Issuer-Holder-Verifier Model means different things to different parties. 
+Trust in the Issuer-Holder-Verifier Model means different things to
+different parties. 
 
- * For Verifiers:
-    * Issuer Identification: The Verifier can identify the Issuer to
+ * **For Verifiers:**
+    * **Issuer Identification:** The Verifier can identify the Issuer to
       such a degree that it can trust that the Issuer is the entity it
       claims to be.
-    * Authenticity of Claims: A Verifier can trust that the set of
-      presented claims was issued by a specific Issuer and not altered
-      by a malicious party.
-    * Identity of Presenter: A Verifier can trust that the party presenting
-      the claims is (controlled by) the subject of the claims. This is
-      typically achieved by enforcing Holder Binding and trusting the
-      Issuer to issue Credentials only to the End-Users they are about
-      (see below).
-    * Integrity of Interaction: When interacting with a Wallet, the
+    * **Authenticity of Claims:** A Verifier can trust that the set of
+      presented claims was correctly issued by a specific Issuer and not
+      altered by the Holder or a malicious party.
+    * **Identity of Presenter:** A Verifier can trust that the party
+      presenting the claims in a session with the Verifier is
+      (controlled by) the subject of the claims. If this assurance is
+      required, it is typically achieved by enforcing Holder Binding and
+      trusting the Issuer to issue Credentials only to the End-Users
+      they are about (see below).
+    * **Integrity of Interaction:** When interacting with a Wallet, the
       Verifier can trust that it receives whatever data this Holder
-      wants to release, not forged data from a third party. If there is
-      an existing session between the Verifier and the Holder, the
-      Verifier can trust that the presented claims are intended for this
-      session.
- * For Holders/End-Users:
-    * Privacy (I): A Holder can trust that no party learns any claims
-      except Verifiers to whom the Holder has explicitly released the
-      claims. 
-    * Privacy (II): A Holder can trust that a Verifier only learns the
+      wants to release for the specific session, not forged data from a
+      third party and not data from a different session with the same
+      Holder.
+ * **For Holders/End-Users:**
+    * **Privacy (I):** A Holder can trust that no party learns any
+      claims except Verifiers to whom the Holder has explicitly released
+      the claims. 
+    * **Privacy (II):** A Holder can trust that a Verifier only learns the
       claims that it intends to release to the Verifier and not more.
-    * Context: A Holder can trust that if a Credential presentation is
-      started in a user session with a website (acting as Verifier),
-      this Website and this session is the receiver of the presented
-      claims. 
-      **TODO: Refine**
-    * Correctness of Claims: A Holder can trust that the claims in a
+    * **Context:** A Holder, when presenting Credentials, can identify
+      which Verifier receives the data and for which session the data is
+      released (if there is more than one). 
+    * **Correctness of Claims:** A Holder can trust that the claims in a
       Credential are correct and not altered or influenced by a
       malicious party.
- * For Issuers:
-   * ?
+ * **For Issuers:**
+   * **Wallet Integrity:** To protect the issuer-created Credentials,
+     the issuer trusts that wallet does not misuse the data of the user.
 
 
-### Note on Holder Binding
+## Trust and Holder Binding
 
-Depending on the use case, the Verifier also needs to trust the End-User
+Depending on the use case, the Verifier needs to trust the End-User
 to be the legitimate holder of a certain Credential. Accepting a
 Credential from every bearer is a security risk:
 
@@ -168,64 +184,106 @@ Therefore, Credentials are usually bound to the legitimate End-User,
 also known as "holder binding". There are three ways to bind the
 Credential to its legitimate holder:
 
- * biometric traits, e.g. a passport photograph. This method is well
-   known from physical Credentials such as passports or id cards. If
-   someone presents the Credential, the Verifier needs to compare the
-   data in the Credential with the respective biometric traits of the
-   presenter.  
- * holder claims, e.g. a diploma might be bound to a person named "Erika
-   Mustermann". This binding requires a primary Credential to prove the
-   presenter’s identity which in turn is bound to the legitimate holder
-   using either biometric or cryptographic holder binding or both.  
- * cryptographic binding, i.e. the Credential is directly or indirectly
-   bound to key material under the control of the legitimate holder.
-   Only if the presenter can prove possession of the private key
+ * **Biometric Holder Binding**, e.g., via a passport photo. This method
+   is well known from physical Credentials such as passports or id
+   cards. During presentation, the Verifier compares the data in the
+   Credential with the respective biometric traits of the presenter.  
+ * **Claim-based Binding** via holder-related claims. E.g. a diploma
+   might be bound to a person named "Erika Mustermann". This binding
+   requires a primary Credential to prove the presenter's identity which
+   in turn is bound to the legitimate holder using either biometric or
+   cryptographic holder binding or both.  
+ * **Cryptographic Binding**, i.e., the Credential is directly or
+   indirectly bound to key material under the control of the legitimate
+   holder. Only if the presenter can prove possession of the private key
    material, it is considered the legitimate holder of that Credential.
    Cryptographic binding is well suited for digital use cases and is
    more privacy preserving than biometric or claims-based binding since
    no or few (arbitrary) PII is required in order to implement the
    binding.
 
+### Holder Binding vs. Holder Identification
 
-**TODO: incorporate this into the text:**
+It is often assumed that the Holder of a Credential is the subject of
+the Credential. Depending on the ecosystem and types of credentials,
+this might not always be the case, e.g., when a parent presents a
+child's birth certificate to a school. In this case, the Holder and
+legitimate possessor is the parent and the subject is the child.
 
-Holder Binding can mean that
+At least in theory, a credential can also hold information about
+multiple subjects. 
 
- - the party that presents a credential (sends a presentation) is the
-   subject of the credential, or
- - the party that presents a credential (sends a presentation) is a
-   legitimate possessor of the credential.
- 
-Only with the assumption that an Issuer only issues a credential to the
-subject of the credential, the first definition is equivalent to the
-second one. 
+It is therefore important to distinguish between the information that
+the credential holds (about the subject) and the information that the
+credential is bound to (about the holder). For example, a given name and
+family name may be contained in a credential to be used for claim-based
+binding, even though the credential itself does not attest to the
+holder's identity.
 
-> **Security Requirement:** Issuers must only issue Credentials to the
-subject of the respective Credential. 
+When it is ensured that the credential is bound to the subject of the
+credential, and Holder Binding is enforced, Verifiers can trust that the
+presentation of a credential is done by the subject of the credential.
 
-**TODO: incorporate this into the text - taken from SD-JWT:** Verifiers
-MUST decide whether Holder Binding is required for a particular use case
-or not before verifying a credential. This decision can be informed by
-various factors including, but not limited to the following: business
-requirements, the use case, the type of binding between a Holder and its
-credential that is required for a use case, the sensitivity of the use
-case, the expected properties of a credential, the type and contents of
-other credentials expected to be presented at the same time, etc.
+
+### Holder Binding and Reuse of Credentials
+
+**Cryptographic holder binding** allows a Verifier to challenge the Holder
+to prove possession of the private key material. This is usually done by
+the Verifier sending a random nonce to the Holder and the Holder signing
+the nonce with the private key material. The Verifier can then verify
+the signature with the public key material contained in the Credential.
+The challenge must be augmented by the Verifier's identity to prevent
+replay attacks where an attacker, acting as a Verifier, can reuse a
+nonce from a session with a different Verifier running in parallel.
+
+**Note:** The nonce challenge at the same time serves as a CSRF
+protection. However, if cryptographic holder binding is not used, the
+nonce challenge cannot serve this function. Details are described in
+(#security-requirement-p-30).
+
+**Biometric holder binding** requires the Verifier to compare the
+biometric traits of the presenter with the biometric traits contained in
+the Credential. There is no built-in mechanism to ensure that prevents
+replay attacks: An attacker can attempt to forward not only a stolen
+credential, but also the biometric information of the legitimate holder,
+e.g., by replaying a video of the legitimate holder. Out-of-band
+mechanisms must be used to prevent such attacks, for example, by only
+accepting biometric data from trusted platforms or by challenging users
+to perform specific actions.
+
+**Claim-based holder binding** requires the Verifier to compare the
+claims contained in the Credential with claims form another source,
+usually a second credential or previously known information. As such, a
+credential that is only bound using claim-based information is not
+itself protected against replay attacks, but may be useless unless
+presented in conjunction with another credential that is holder-bound.
+
+
+### Enforcing Holder Binding
+
+Verifiers MUST decide whether Holder Binding is required for a
+particular use case or not before verifying a credential. This decision
+can be informed by various factors including, but not limited to the
+following: business requirements, the use case, the type of binding
+between a Holder and its credential that is required for a use case, the
+sensitivity of the use case, the expected properties of a credential,
+the type and contents of other credentials expected to be presented at
+the same time, etc.
 
 This can be showcased based on two scenarios for a mobile driver's
-license use case for SD-JWT:
+license:
 
-Scenario A: For the verification of the driver's license when stopped by
-a police officer for exceeding a speed limit, Holder Binding may be
+*Scenario A:* For the verification of the driver's license when stopped
+by a police officer for exceeding a speed limit, Holder Binding may be
 necessary to ensure that the person driving the car and presenting the
 license is the actual Holder of the license. The Verifier (e.g., the
 software used by the police officer) will ensure that a Holder Binding
-JWT is present and signed with the Holder's private key. Claims-based
+proof is present and signed with the Holder's private key. (Claims-based
 Holder Binding may be used as well, e.g., by including a first name,
 last name and a date of birth that matches that of an insurance policy
-paper.
+paper.)
 
-Scenario B: A rental car agency may want to ensure, for insurance
+*Scenario B:* A rental car agency may want to ensure, for insurance
 purposes, that all drivers named on the rental contract own a
 government-issued driver's license. The signer of the rental contract
 can present the mobile driver's license of all named drivers. In this
@@ -237,21 +295,56 @@ It is important that a Verifier does not make its security policy
 decisions based on data that can be influenced by an attacker or that
 can be misinterpreted. For this reason, when deciding whether Holder
 binding is required or not, Verifiers MUST NOT take into account
+whether an Holder Binding proof was presented or not, as an attacker can
+remove the Holder Binding proof from a Presentation and present it to
+the Verifier.
 
-whether an Holder qBinding JWT is present or not, as an attacker can
-remove the Holder Binding JWT from any Presentation and present it to
-the Verifier, or whether Holder Binding data is present in the SD-JWT or
-not, as the Issuer might have added the key to the SD-JWT in a
-format/claim that is not recognized by the Verifier. If a Verifier has
-decided that Holder Binding is required for a particular use case and
-the Holder Binding is not present, does not fulfill the requirements
-(e.g., on the signing algorithm), or no recognized Holder Binding data
-is present in the SD-JWT, the Verifier will reject the presentation, as
-described in (TODO).
+**Open Question:** Should a "presentation" always mean/require
+cryptographic holder binding? Should these use cases where it is not
+required covered by the protocol?
 
 
+## Storage of Credentials and Presentations {#note-on-storage-of-credentials}
 
-## Security and Privacy Requirements
+**TODO: Link this better to the requirements above.**
+
+Wherever End-User data is stored, it represents a potential target for
+an attacker. This target can be of particularly high value when the data
+is signed by a trusted authority like an official national identity
+service. For example, in OpenID Connect, signed ID Tokens can be stored
+by Relying Parties. In the Issuer-Holder-Verifier model, Wallets have to
+store signed credentials and associated data, and Issuers and Verifiers
+may decide to store credentials or presentation as well.
+
+Not surprisingly, a leak of such data risks revealing private data of
+End-Users to third parties. Signed End-User data, the authenticity of
+which can be easily verified by third parties, further exacerbates the
+risk. Leaked credentials or presentations may also allow attackers to
+impersonate Holders unless Holder Binding is enforced and the attacker
+does not have access to the Holder's cryptographic keys. Altogether,
+leaked credentials and presentations may have a high monetary value on
+black markets and a leak may have a severe impact on the affected users.
+
+Due to these risks, systems implementing the Issuer-Holder-Verifier
+model SHOULD be designed to minimize the amount of data that is stored.
+All involved parties SHOULD store credentials or presentations only for
+as long as needed, including in log files.
+
+Issuers SHOULD NOT store credentials after issuance.
+
+Holders SHOULD store credentials and associated data only in encrypted
+form, and, wherever possible, use hardware-backed encryption in
+particular for private Holder Binding keys. Decentralized storage of
+data, e.g., on End-User devices, SHOULD be preferred for End-User
+credentials over centralized storage. Expired credentials and associated
+data SHOULD be deleted as soon as possible.
+
+Verifiers SHOULD NOT store presentations after verification. It may be
+sufficient to store the result of the verification and any End-User data
+that is needed for the application.
+
+
+# Security and Privacy Requirements
 
 To implement a secure trust chain, a number of Security and Privacy
 Requirements must be met. In the following, the Security Requirements
@@ -265,15 +358,16 @@ that needs to implement the requirement:
   * W: Wallet
 
   * CF: Credential Format
-  * TF: Trust Framework
+  * E: Ecosystem
   * P: Protocols (both for Issuance and Verification)
 
-Trust Framework here refers to the design of relationships of parties
-with each other, their roles and permissions within an ecosystem, the
-verification of their real-world identities and the mechanisms selected
-and provided for key creation and distribution.
+Ecosystem here refers to a network of Verifiers, Issuers, and Wallets
+and the design of relationships of parties with each other in this
+network, their roles and permissions, the verification of their
+real-world identities and the mechanisms selected and provided for key
+creation and distribution.
 
-### Prerequisites
+## Prerequisites
 
 As a prerequisite for operating in an Verifiable Credential ecosystem,
 Verifier, Issuer and Wallet need to implement the protocols and the
@@ -307,7 +401,7 @@ hardware-based storage, and protection against injection attacks.
 > **Security Requirement W-01:** The Wallet must implement the
 > credential format securely and correctly.
 
-### Trust Chain from Verifier to Issuer
+## Trust Chain from Verifier to Issuer
 
 The Verifier receives a presentation that is cryptographically tied to a
 credential that itself is cryptographically tied to a specific
@@ -315,7 +409,7 @@ Credential Issuer. One of the most basic security requirements is that
 the Verifier can verify that the presentation is tied to the correct
 Issuer.
 
-> **Security Requirement CF-10/TF-10:** For any presentation, the
+> **Security Requirement CF-10/E-10:** For any presentation, the
 credential format and trust framework must be designed such that there
 is a secure way to determine the Issuer and to check that the original
 credential was issued by this issuer. (E.g., by using a cryptographic
@@ -337,7 +431,7 @@ Credentials of a certain type with the correct data to the legitimate
 End-Users. This requires that the Issuer is identified uniquely and
 unambiguously.
 
-> **Security Requirement TF-20:** The trust framework must ensure that the
+> **Security Requirement E-20:** The trust framework must ensure that the
 identification of an Issuer is unique and unambiguous. If there are
 multiple instances of the same Issuer sharing the same key material, the
 Verifier must trust all instances equally.
@@ -352,7 +446,7 @@ the Issuer defined in the trust framework is out of scope of this
 specification, this decision must not be influenced by a malicious
 party.
 
-> **Security Requirement TF-30:** The way in which the Verifier
+> **Security Requirement E-30:** The way in which the Verifier
 determines the trustworthiness of the Issuer defined in the trust
 framework must be secured from influence by a malicious party that can,
 for example, introduce untrustworthy entities into a directory.
@@ -362,7 +456,7 @@ trustworthiness of the Issuer must be kept up to date. When an Issuer
 leaves the ecosystem or key material needs to be revoked or rotated,
 appropriate mechanisms must be in place.
 
-> **Security Requirement TF-40:** The trust framework must ensure that
+> **Security Requirement E-40:** The trust framework must ensure that
 there is a way for Verifiers to keep their information on trusted
 Issuers up to date and that there is a way to revoke trust in an Issuer.
 
@@ -384,14 +478,16 @@ data is expected.
 self-declared or otherwise "unverified" claims may be allowed in some
 places in some credentials.)
 
-#### Requirements on Issuance
+### Requirements on Issuance
 
-To ensure basic privacy and prevent abuse of stolen credentials on a
-very basic level, it must be ensured that credentials cannot be read by
-third parties during the issuance process.
+It must be ensured that credentials cannot be read by third parties
+during the issuance process. This ensures basic privacy of the End-User
+and prevents abuse of stolen credentials. While enforcing holder binding
+is a more secure option to prevent abuse of stolen credentials, it is
+not always desired to enforce holder binding.
 
-> **Security Requirement P-10:** The protocol must ensure that no third
-> party can extract the credential issued by the Issuer.
+> **Privacy/Security Requirement P-10:** The protocol must ensure that
+> no third party can read the credential issued by the Issuer.
 
 It must be ensured that an attacker cannot introduce credentials into a
 Wallet that are not intended for the End-User.
@@ -406,7 +502,7 @@ must be able to revoke it.
 > **Security Requirement I-30:** The Issuer must revoke a Credential
 once the Issuer learns about potential abuse of the Credential.
 
-#### Requirements on Presentation Process
+### Requirements on Presentation Process
 
 The Verifier trusts in the Integrity of the Interaction with the Wallet,
 as described above. This means:
@@ -435,11 +531,11 @@ successfully complete the interaction.
 > and a Verifier to a Verifier under his own control.
 
 
-### Holder Binding
+## Holder Binding
 
-If Holder Binding is required by the use-case of the Verifier, the
-Verifier must trust the Issuer to bind credentials to the End-User. This
-means:
+If Holder Binding is required by the use-case of the Verifier (see open
+questions above), the Verifier must trust the Issuer to bind
+credentials to the End-User. This means:
 
 > **Security Requirement I-40:** The Issuer must only include
 holder-binding data into the credential that is tied to the actual
@@ -459,26 +555,33 @@ Verifier needs to trust in the wallet to implement the key management
 securely. 
 
 > **Security Requirement W-10:** The Wallet must implement the key
-management securely such that only the legitimate Holder can use a
-credential.
+management for cryptographic holder binding securely such that only the
+legitimate Holder can use a credential.
 
-This can be achieved, for example by using a secure enclave or similar technology.
+This can be achieved, for example by using a secure enclave or similar
+technology.
 
-### Ensuring Secure Storage of Credentials
+> **Security Requirement CF-21:** For cryptographic holder binding, the
+> presentation format must allow that a Holder must prove possession of
+> the private key that is bound to the credential, usually by signing
+> over a challenge consisting of a nonce and an identifier for the
+> Verifier.
 
-This can be achieved in one of two ways:
+## Ensuring Secure Storage of Credentials
+
+Ensuring secure credential storage can be achieved in one of two ways:
 
  * Direct: The Verifier checks the trustworthiness of the wallet
    directly by, for example, requiring an attested key management.
  * Indirect: The Verifier trusts the Issuer to only issue credentials to
    wallets that implement the key management securely. 
 
-#### Direct Model
+### Direct Model
 
 > **Security Requirement V-10 (conditional):** The Verifier must ensure
 that the credential was stored in a secure wallet.
 
-#### Indirect Model
+### Indirect Model
 
 Assuming this trust can be established by way of conformity assessment
 of some sort, the Issuer needs to make sure that it issues Credentials
@@ -497,19 +600,17 @@ trustworthy wallet. This change significantly simplifies the protocol
 and fosters privacy since the presentation process does not need to
 authenticate the wallet towards the Verifier. 
 
-> **Security Requirement I-50 (conditional):** The Issuer must ensure that the
-credential was stored in a secure wallet.
+> **Security Requirement I-50 (conditional):** The Issuer must ensure
+that the credential was stored in a secure wallet.
 
 Then, the Verifier must check that the Issuer actually adheres to this
 policy.
 
-> **Security Requirement V-20 (conditional):** The Verifier must ensure that
-the credential was issued by an issuer that only issues credentials to
-trustworthy wallets.
+> **Security Requirement V-20 (conditional):** The Verifier must ensure
+that the credential was issued by an issuer that only issues credentials
+to trustworthy wallets.
 
-### End-User's Perspective
-
-**TODO: Expand this section**
+## End-User's Perspective
 
 The End-User trusts the Issuer, the Wallet, and the Verifier to treat
 her data securely and only exchange data as needed preserving her
@@ -545,14 +646,14 @@ The End-User trusts the Issuer and the wallet provider to protect her
 from abuse of her Credentials. This mainly means that the implementation
 of the selected key management and protocols must be secure, but
 specifically the communication protocols must be designed such that an
-attacker cannot exfiltrate PII.
+attacker cannot read (see/exfiltrate) PII.
 
 > **Security/Privacy Requirement P-60:** The protocol must ensure that
-> during an interaction with a Verifier, an attacker cannot exfiltrate
+> during an interaction with a Verifier, an attacker cannot read
 > PII.
 
 > **Security/Privacy Requirement P-70:** The protocol must ensure that
-> during an interaction with an Issuer, an attacker cannot exfiltrate
+> during an interaction with an Issuer, an attacker cannot read
 > PII.
 
 If an Issuer, Wallet, or Verifier is compromised, the risk for End-Users
@@ -564,7 +665,7 @@ must be minimized.
 Since data leaks are hard to avoid completely in large ecosystems, the
 fallout of a compromise must be minimized.
 
-> **Security/Privacy Requirement TF-50:** The Trust Framework must
+> **Security/Privacy Requirement E-50:** The Trust Framework must
 > ensure that lifecycles of keys, certificates, and credentials are
 > designed such that the impact of a compromise is minimized.
 
@@ -578,7 +679,7 @@ Wallet, and the Trust Framework.
 > **Privacy Requirement W-60:** The Wallet must ensure that the Issuer
 > cannot learn where the End-User uses the Credential.
 
-> **Privacy Requirement TF-60:** The Trust Framework must ensure that
+> **Privacy Requirement E-60:** The Trust Framework must ensure that
 > the Issuer cannot learn where the End-User uses the Credential.
 
 When using a Credential at multiple Verifiers, the End-User might not
@@ -591,81 +692,86 @@ security number.
 > **Privacy Requirement W-70:** The Wallet must ensure that the Verifier
 > cannot learn that the same End-User is using other Verifiers.
 
-> **Privacy Requirement TF-70:** The Trust Framework must support
+> **Privacy Requirement E-70:** The Trust Framework must support
 > correlation protection.
 
 > **Privacy Requirement CF-40:** The Credential Format must support
 > correlation protection.
 
-# Security and Privacy Requirements on the Credential Format {#security-requirements-on-the-credential-format}
+# Fulfilling Security and Privacy Requirements {#overview-of-security-and-privacy-requirements}
+
+The following table lists the security and privacy requirements and how
+they can be fulfilled. Except for the protocol-related requirements,
+this document does not provide details on how the requirements can be
+met.
+
+## Credential Format {#security-requirements-on-the-credential-format}
 
 | Security Requirement | How to achieve                       |
 | -------------------- | ------------------------------------ |
 | CF-10                | Requirement on the credential format |
 | CF-20                | Requirement on the credential format |
+| CF-21                | Requirement on the credential format |
 | CF-30                | Requirement on the credential format |
 | CF-40                | Requirement on the credential format |
 
-# Security and Privacy Requirements on the Trust Framework {#security-requirements-on-the-trust-framework}
+## Trust Framework {#security-requirements-on-the-trust-framework}
 
 | Security Requirement | How to achieve                                                                         |
 | -------------------- | -------------------------------------------------------------------------------------- |
-| TF-10                | Selection of credential format                                                         |
-| TF-20                | Requirement on management of issuers                                                   |
-| TF-30                | Requirement on management of trust                                                     |
-| TF-40                | Requirement on management of trust                                                     |
-| TF-50                | Requirement on lifecycle management; also see (#note-on-storage-of-credentials) below. |
-| TF-60                | Requirement on lifecycle management and key distribution                               |
-| TF-70                | Requirement on lifecycle management and key distribution                               |
+| E-10                 | Selection of credential format                                                         |
+| E-20                 | Requirement on management of issuers                                                   |
+| E-30                 | Requirement on management of trust                                                     |
+| E-40                 | Requirement on management of trust                                                     |
+| E-50                 | Requirement on lifecycle management; also see (#note-on-storage-of-credentials) below. |
+| E-60                 | Requirement on lifecycle management and key distribution                               |
+| E-70                 | Requirement on lifecycle management and key distribution                               |
+
+**Note:** The involved parties need to access data about identifiers,
+keys, and Credentials as well as data about the acting parties
+themselves in order to securely implement the Credential exchange. The
+way this works is out of scope for OpenID 4 Verifiable Credential
+Issuance.
 
 
-## Distribution of Identifiers and Keys {#distribution-of-identifiers-and-keys}
+## Protocol {#security-requirements-on-the-protocol}
 
-
-The involved parties need to access data about identifiers, keys, and
-Credentials as well as data about the acting parties themselves in order
-to securely implement the Credential exchange. The way this works is out
-of scope for OpenID 4 Verifiable Credential Issuance.
-
-
-# Security and Privacy Requirements on the Protocol {#security-requirements-on-the-protocol}
-
-| Security Requirement | How to achieve             |
-| -------------------- | -------------------------- |
-| P-10                 | see (#security-requirement-p-10) |
-| P-20                 | see (#security-requirement-p-20) |
-| P-30                 | see (#security-requirement-p-30) |
-| P-40                 | see (#security-requirement-p-40) |
-| P-41                 | see (#security-requirement-p-41) |
-| P-50                 | see (#security-requirement-p-50) |
+| Security Requirement | How to achieve                           |
+| -------------------- | ---------------------------------------- |
+| P-10                 | see (#security-requirement-p-10)         |
+| P-20                 | see (#security-requirement-p-20)         |
+| P-30                 | see (#security-requirement-p-30)         |
+| P-40                 | see (#security-requirement-p-40)         |
+| P-41                 | see (#security-requirement-p-41)         |
+| P-50                 | see (#security-requirement-p-50)         |
 | P-60                 | see (#security-privacy-requirement-p-60) |
 | P-70                 | see (#security-privacy-requirement-p-70) |
-| P-80                 | see (#privacy-requirement-p-80) |
+| P-80                 | see (#privacy-requirement-p-80)          |
 
-# Security and Privacy Requirements on the Verifier {#security-requirements-on-the-verifier}
+## Verifier {#security-requirements-on-the-verifier}
 
-| Security Requirement | How to achieve                             |
-| -------------------- | ------------------------------------------ |
-| V-00                 | Implementation requirement                 |
-| V-01                 | Implementation requirement                 |
-| V-10                 | TODO add more details in appropriate place |
-| V-20                 | TODO add more details in appropriate place |
+| Security Requirement | How to achieve                                 |
+| -------------------- | ---------------------------------------------- |
+| V-00                 | Implementation requirement                     |
+| V-01                 | Implementation requirement                     |
+| V-10                 | **TODO** add more details in appropriate place |
+| V-20                 | **TODO** add more details in appropriate place |
 
-# Security and Privacy Requirements on the Wallet {#security-requirements-on-the-wallet}
+## Wallet {#security-requirements-on-the-wallet}
 
-| Security Requirement | How to achieve                                                      |
-| -------------------- | ------------------------------------------------------------------- |
-| W-00                 | Implementation requirement                                          |
-| W-01                 | Implementation requirement                                          |
-| W-10                 | Out of scope                                                        |
-| W-20                 | Implementation and operation requirement                            |
-| W-30                 | Implementation and operation requirement                            |
-| W-40                 | Implementation and operation requirement                            |
-| W-50                 | Implementation and operation requirement  (TODO see secure storage) |
-| W-60                 | Implementation and operation requirement                            |
-| W-70                 | Implementation and operation requirement                            |
+| Security Requirement | How to achieve                                                          |
+| -------------------- | ----------------------------------------------------------------------- |
+| W-00                 | Implementation requirement                                              |
+| W-01                 | Implementation requirement                                              |
+| W-10                 | Out of scope                                                            |
+| W-20                 | Implementation and operation requirement                                |
+| W-30                 | Implementation and operation requirement                                |
+| W-40                 | Implementation and operation requirement                                |
+| W-50                 | Implementation and operation requirement  (see (#note-on-storage-of-credentials)) |
+| W-60                 | Implementation and operation requirement                                |
+| W-70                 | Implementation and operation requirement                                |
 
-# Security and Privacy Requirements on the Issuer {#security-requirements-on-the-issuer}
+## Issuer {#security-requirements-on-the-issuer}
 
 | Security Requirement | How to achieve                                         |
 | -------------------- | ------------------------------------------------------ |
@@ -675,10 +781,29 @@ of scope for OpenID 4 Verifiable Credential Issuance.
 | I-20                 | Implementation and End-User authentication requirement |
 | I-30                 | Implementation and operation requirement               |
 | I-40                 | Implementation and operation requirement               |
-| I-50                 | TODO add more details in appropriate place             |
+| I-50                 | **TODO** add more details in appropriate place         |
 
 
-# Attacker Model
+
+# Protocol Analysis OpenID 4 VC
+
+OpenID 4 VC consists of three protocols:
+
+ * OpenID for Verifiable Credential Issuance – Defines an API and
+   corresponding OAuth-based authorization mechanisms for issuance of
+   Verifiable Credentials
+ * OpenID for Verifiable Presentations – Defines a mechanism on top of
+   OAuth 2.0 to allow presentation of claims in the form of Verifiable
+   Credentials as part of the protocol flow
+ * Self-Issued OpenID Provider v2 – Enables End-Users to use OpenID
+   Providers (OPs) that they control
+
+The following analysis aims to show that OpenID 4 VC meets the security
+and privacy requirements defined in the previous section. This is an
+informal analysis that may be incomplete or contain mistakes. A formal
+analysis to confirm the results is yet to be done.
+
+## Attacker Model
 
 For this analysis, the Web Attacker and Network Attacker models defined
 as (A1) and (A2) in the OAuth Security BCP are assumed. In the context
@@ -693,14 +818,14 @@ Special considerations are made where requests are forwarded between
 devices (cross-device) and between mobile apps on the same device
 (app-to-app).
 
-## Malicious Credential Issuer Metadata Configurations {#malicious-credential-issuer-metadata-configurations}
+### Malicious Credential Issuer Metadata Configurations {#malicious-credential-issuer-metadata-configurations}
 
 Since it is assumed that the attacker can operate Issuers, the attacker
 can attempt to perform mix-up type attacks by configuring the credential
 issuer metadata (cf. Section 10.2. in OID4VCI) under their control
 according to the following list:
 
-**TODO**: Deferred Credential Endpoint metadata not defined in OID4VCI spec.
+**TODO**: Deferred Credential Endpoint metadata needs to be defined in OID4VCI spec.
 
 No Mix-Up:
 
@@ -732,27 +857,14 @@ the `iss` parameter according to [@RFC9207].
 
 These configurations will be used in the attack descriptions below.
 
-# Protocol Analysis OpenID 4 VC
+**Important:** Not in all real-world ecosystems will attackers have enough
+control to set up configurations necessary for mix-up attacks. (For example,
+if there is only a single hard-coded Issuer in the ecosystem.)
 
-OpenID 4 VC consists of three protocols:
 
- * OpenID for Verifiable Credential Issuance – Defines an API and
-   corresponding OAuth-based authorization mechanisms for issuance of
-   Verifiable Credentials
- * OpenID for Verifiable Presentations – Defines a mechanism on top of
-   OAuth 2.0 to allow presentation of claims in the form of Verifiable
-   Credentials as part of the protocol flow
- * Self-Issued OpenID Provider v2 – Enables End-Users to use OpenID
-   Providers (OPs) that they control
+## Privacy/Security Requirement P-10 {#security-requirement-p-10}
 
-The following analysis aims to show that OpenID 4 VC meets the security
-and privacy requirements defined in the previous section. This is an
-informal analysis that may be incomplete or contain mistakes. A formal
-analysis to confirm the results is yet to be done.
-
-## Security Requirement P-10 {#security-requirement-p-10}
-
-> The issuance protocol must ensure that no third party can extract the
+> The issuance protocol must ensure that no third party can read the
 > credential issued by the Issuer.
 
 On the network level, this is achieved by TLS encrypted connections. 
@@ -776,16 +888,16 @@ endpoint a protected resource? Can DPoP or MTLS be enforced?
 
 **ATTACK**: An attacker can configure Mix-Up 1a. The attacker receives
 an acceptance token from the Wallet's request to the deferred credential
-endpoint and  uses it to obtain a credential from the deferred credential
-endpoint of the honest server.
-
-The credential endpoint and batch credential endpoint can only be
-accessed by using an access token. **TODO** Can DPoP or MTLS be
-enforced?
+endpoint and  uses it to obtain a credential from the deferred
+credential endpoint of the honest server. *Potential solution:* The
+credential endpoint and batch credential endpoint can only be accessed
+by using an access token. Can DPoP or MTLS be enforced for an acceptance
+token? Better to use access token instead.
 
 **ATTACK**: With Mix-Up 1, the attacker can obtain a credential from the
 honest server by using the access token it receives via the call to its own
-credential endpoint.
+credential endpoint. *Solution:* MTLS or DPoP must be used to prevent this kind of attack if
+Mix-Up configurations are a concern.
 
 An access token can only be obtained from the token endpoint using one
 of the existing OAuth grant types or the new grant type
@@ -800,7 +912,7 @@ from the credential issuer after an interaction between the user and the
 credential issuer, for example, via a QR code or a deeplink. The
 pre-authorized code MUST (by definition) be short-lived and single-use.
 
-RECOMMENDATION: Measures must be in place to avoid that the
+**Recommendation:** Measures must be in place to avoid that the
 pre-authorized code is intercepted by a third party. For a QR code, it
 is recommended that the code is not displayed to the user in public
 environments. Deeplinks should, if possible, aim to target a specific
@@ -866,14 +978,15 @@ In the first case (No Mix-Up), the attacker has full control over the
 flow. The attacker can return, for example, a credential created for 
 an End-User obtained from a completely different Issuer. 
 
-RECOMMENDATION: The Wallet MUST verify that the Issuer of the received
+**Recommendation:** The Wallet MUST verify that the Issuer of the received
 credential is the expected Credential Issuer. This means that the
 credential format needs to encode sufficient information to allow the
-Wallet to verify this relationship.
+Wallet to verify this relationship. (New requirement on CF.)
 
 In the second case (Mix-Up), other attacks are possible, but regarding
 interference with the issuance process, the same considerations as in
-the previous case apply.
+the previous case apply. Using the iss parameter from RFC9207 should
+help to prevent standard OAuth mix-up attacks.
 
 ## Security Requirement P-30 {#security-requirement-p-30}
 
@@ -906,6 +1019,11 @@ custom schemes and endpoints on localhost addresses are avoided.
 Note: An additional encryption of the request to the wallet at the
 application layer would not prevent this attack as the attacker could
 still replay the encrypted request to the wallet.
+
+**PROBLEM:** If no holder binding is used, right now, there is no way to
+transport the nonce. I.e., an attacker might inject a presentation. In
+direct post mode, the Verifier might not even find the session. Just
+having an unsigned nonce would help here - i.e., `state`.
 
 
 ## Security Requirement P-40 {#security-requirement-p-40}
@@ -998,23 +1116,21 @@ might be used as the single identifier for the flow to which a
 presentation belongs. In both cases, a nonce that is not the nonce the
 Verifier selected for the flow with the attacker would not work.)
 
--> Injection
--> MITM?
+**TODO:** Analyze -> Injection and -> MITM
 
 ## Security Requirement P-50 {#security-requirement-p-50}
 
 > The protocol must ensure that third parties cannot interfere with the
 > binding process.
 
-**TODO** Is the Wallet-provided nonce required?
+**Open Question:** Is the Wallet-provided nonce required?
 
--> MITM?
--> Redirect URIs?
+**TODO:** Analyze -> MITM and the role of redirect URIs.
 
 ## Security/Privacy Requirement P-60 {#security-privacy-requirement-p-60}
 
 > The protocol must ensure that during an interaction with a Verifier,
-> an attacker cannot exfiltrate PII.
+> an attacker cannot read PII.
 
 As above, it can be assumed that all network connections are secured by TLS.
 
@@ -1047,11 +1163,9 @@ endpoint URL.
 ## Security/Privacy Requirement P-70 {#security-privacy-requirement-p-70}
 
 > The protocol must ensure that during an interaction with an Issuer, an
-> attacker cannot exfiltrate PII.
+> attacker cannot read PII.
 
--> Encryption
--> MITM?
--> Redirect URIs?
+**TODO:* Analyze -> Encryption, -> MITM, the role of redirect URIs.
 
 ## Privacy Requirement P-80 {#privacy-requirement-p-80}
 
@@ -1074,68 +1188,17 @@ Verifier and the Issuer, with the following (potential) exceptions:
    the credential. This is not a privacy concern, but may leak
    information about the Wallet's actions.
 
-RECOMMENDATION: Wallets can be designed to avoid this by, for example,
+**Recommendation:** Wallets can be designed to avoid this by, for example,
 by refreshing credentials at a random point in time.
 
-RECOMMENDATION: The Verifier can be designed to avoid this by, for
+**Recommendation:** The Verifier can be designed to avoid this by, for
 example, by caching the data for a random period of time.
 
 
 **TODO** To be discussed: Difference Same-Device Cross-Device where not discussed already. 
 
-**TODO** Move sections to security Considerations in OpenID 4 VP/VCI where applicable
-
-
-
-
-# Note on Storage of Credentials and Presentations {#note-on-storage-of-credentials}
-
-**TODO: Link this better to the requirements above.**
-
-Wherever End-User data is stored, it represents a potential target for
-an attacker. This target can be of particularly high value when the data
-is signed by a trusted authority like an official national identity
-service. For example, in OpenID Connect, signed ID Tokens can be stored
-by Relying Parties. In the Issuer-Holder-Verifier model, Wallets have to
-store signed credentials and associated data, and Issuers and Verifiers
-may decide to store credentials or presentation as well.
-
-Not surprisingly, a leak of such data risks revealing private data of
-End-Users to third parties. Signed End-User data, the authenticity of
-which can be easily verified by third parties, further exacerbates the
-risk. Leaked credentials or presentations may also allow attackers to
-impersonate Holders unless Holder Binding is enforced and the attacker
-does not have access to the Holder's cryptographic keys. Altogether,
-leaked credentials and presentations may have a high monetary value on
-black markets.
-
-Due to these risks, systems implementing the Issuer-Holder-Verifier
-model SHOULD be designed to minimize the amount of data that is stored.
-All involved parties SHOULD store credentials or presentations only for
-as long as needed, including in log files.
-
-Issuers SHOULD NOT store credentials after issuance.
-
-Holders SHOULD store credentials and associated data only in encrypted
-form, and, wherever possible, use hardware-backed encryption in
-particular for the private Holder Binding key. Decentralized storage of
-data, e.g., on End-User devices, SHOULD be preferred for End-User
-credentials over centralized storage. Expired credentials and associated
-data SHOULD be deleted as soon as possible.
-
-Verifiers SHOULD NOT store presentations after verification. It may be
-sufficient to store the result of the verification and any End-User data
-that is needed for the application.
-
-If reliable and secure key rotation and revocation is ensured, Issuers
-may MAY opt to publish expired or revoked private signing keys (after a
-grace period that ensures that the keys are not cached any longer at any
-Verifier). This reduces the value of any leaked credentials as the
-signatures on them can no longer be trusted to originate from the
-Issuer.
 
 {backmatter}
-
 
 <reference anchor="VC_DATA" target="https://www.w3.org/TR/vc-data-model">
   <front>
