@@ -12,9 +12,9 @@ participant "Wallet" as w
 
 u --> r : use
 activate r
-r --> u: presentation invite request\n(client_id, invite_uri)
+r --> u: presentation invite request\n(client_id, invite_uri, nonce)
 deactivate r
-u --> w: presentation invite request\n(client_id, invite_uri)
+u --> w: presentation invite request\n(client_id, invite_uri, nonce)
 activate w
 w -> rb: reply to invite (wallet_issuer, ephm enc key, ...)
 rb -> w: presentation request (client_id, presentation_definition, ...) 
