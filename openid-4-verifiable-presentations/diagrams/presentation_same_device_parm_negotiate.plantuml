@@ -1,0 +1,38 @@
+@startuml
+
+autonumber
+
+participant "User Agent" as u
+
+participant "Verifier" as r
+
+participant "Verifier Backend" as rb
+
+participant "Wallet" as w
+
+u --> r : use
+activate r
+r --> u: presentation invite request\n(client_id, invite_uri)
+deactivate r
+u --> w: presentation invite request\n(client_id, invite_uri)
+activate w
+w -> rb: reply to invite (wallet_issuer, ephm enc key, ...)
+rb -> w: presentation request (client_id, presentation_definition, ...) 
+w -> w: authenticate and authorize Verifier
+w -> w: authenticate user
+
+w --> u: show matching credential(s)
+u --> w: select/confirm credential
+w -> w: create verifiable presentation (credential)
+w -> w: create response_secret
+w -> w: encrypt response (response_secret, nonce)
+w -> rb: post response (encrypted presentation response, nonce)
+w --> u: authorization response (response_secret)
+deactivate w
+u --> r: authorization response (response_secret)
+activate r
+r -> rb: get presentation response(nonce)
+r -> r: decrypt presentation response (response_secret, nonce)
+r -> r: validate presentation
+r -> r: use presented credential 
+@enduml
