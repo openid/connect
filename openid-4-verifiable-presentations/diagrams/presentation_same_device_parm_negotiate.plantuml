@@ -10,13 +10,16 @@ participant "Verifier Backend" as rb
 
 participant "Wallet" as w
 
+participant "Wallet Provider Metadata" as b
+
 u --> r : use
 activate r
-r --> u: presentation invite request\n(client_id, invite_uri, nonce)
+r --> u: presentation invite request\n(invite_uri, nonce)
 deactivate r
-u --> w: presentation invite request\n(client_id, invite_uri, nonce)
+u --> w: presentation invite request\n(invite_uri, nonce)
 activate w
 w -> rb: reply to invite (wallet_issuer, ephm enc key, ...)
+rb -> b: get Wallet Metadata
 rb -> w: presentation request (client_id, presentation_definition, ...) 
 w -> w: authenticate and authorize Verifier
 

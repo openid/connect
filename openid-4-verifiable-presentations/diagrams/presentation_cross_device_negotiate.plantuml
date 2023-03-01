@@ -15,17 +15,18 @@ participant "Wallet Frontend" as w
 participant "Wallet Provider Metadata" as b
 
 u --> r : use
-
-r -> b: get metadata
 activate r
-b -> r: metadata
 
-r -> r: create request_uri (client_id,\n nonce, redirect_uri, presentation_definition)
-r -> r: render QR code with signed presentation request
+r --> r: create invite request\n(invite_uri, nonce)
+deactivate r
+r -> r: render QR code 
 
 u --> w: scan QR code 
 activate w
-w -> rb: fetch request object 
+w -> rb: reply to invite (wallet_issuer, ephm enc key, ...)
+rb -> b: get Wallet Metadata
+rb -> w: presentation request (client_id, presentation_definition, ...) 
+
 w -> w: authenticate and authorize Verifier
 
 r -> rb : get presentation response (nonce)

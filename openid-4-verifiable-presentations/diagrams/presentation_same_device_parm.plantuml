@@ -13,7 +13,9 @@ participant "Verifier Backend" as rb
 participant "Wallet" as w
 
 u --> r : use
+r -> w: get metadata
 activate r
+w -> r: metadata
 r -> r: create request_uri (client_id,\n nonce, redirect_uri, presentation_definition)
 r --> u: authorization request\n(client_id, request_uri)
 deactivate r
