@@ -1,5 +1,8 @@
 @startuml
 
+
+title "Issuance: Authentication to Credential Issuer through Wallet Backend"
+
 autonumber
 
 participant "User Agent" as ua
@@ -36,17 +39,16 @@ note over ua, i: user authentication and consent
 i --> ua : authorize response (code)
 ua --> w : authorize response (code)
 
-w -> w : gen DPoP key
-
+w -> w : generate DPoP key
 w -> w : gen DPoP proof for issuer token endpoint
 
 w -> b : get nonce
 
 b -> w : return nonce
 
-w -> w : sign attestation assertion (nonce)
+w -> w : sign app attestation assertion (nonce)
 
-w -> b : get access token (client_id, code, code_verifier,\ndpop, assertion, redirect_uri, token_endpoint)
+w -> b : get access token (client_id, code, code_verifier,\ndpop, app_attestation, redirect_uri, token_endpoint)
 
 b -> b : check assertion
 

@@ -1,0 +1,34 @@
+@startuml
+
+title "Issuance: Authentication to Credential Issuer using Wallet Attestation VC"
+
+autonumber
+participant "User Agent" as u
+participant "Wallet Frontend" as w
+participant "Credential Issuer" as i
+
+u --> w: get credential
+w -> i: get metadata
+i -> w: credential types, key requirements, endpoints
+w -> w : create PKCE code verifier
+w -> i: get nonce
+w -> w: create wallet attestation presentation
+w -> i : par (response_type, client_id, code_challenge,\ncode_challenge_method, authorization_details, redirect_uri\nwallet_attestation)
+note over w, i: wallet frontend authenticates with WalletAttestation VC issued by wallet provider (or any other trusted 3rd party) as OAuth Client\ncredential issuer checks assertion issuer (wallet provider) with trust registry
+i --> w : request_uri
+w -> u: authorize (client_id, request_uri)
+u -> i: authorize (client_id, request_uri) 
+note over u, i: user authenticatation/identification + consent
+i --> u : authorize response (code)
+u --> w: authorize response (code)
+w -> w : generate DPoP key
+w -> w : gen DPoP proof for issuer token endpoint
+w -> i : token (code, client_id, dpop, wallet_attestation)
+note over w, i: wallet frontend authenticates with WalletAttestation VC issued by wallet provider (or any other trusted 3rd party) as OAuth Client\ncredential issuer checks assertion issuer (wallet provider) with trust registry\naccess token is bound to DPoP key
+i -> w : access_token, c_nonce
+w -> w : gen key
+w -> w : create proof (key, c_nonce)
+w -> w : gen DPoP proof for credential issuance endpoint
+w -> i : issue credential (access_token, credential_type, format, proof)
+i -> w : credential
+@enduml

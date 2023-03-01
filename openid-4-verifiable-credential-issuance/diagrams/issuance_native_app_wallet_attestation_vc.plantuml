@@ -1,0 +1,23 @@
+@startuml
+
+title "Issuance of Wallet Attestation VC (On Demand or In Advance)"
+
+autonumber
+participant "Wallet Frontend" as wa
+participant "Wallet Backend" as ce
+
+wa -> ce : get nonce
+ce -> wa : nonce
+wa -> wa : perform wallet attestation\n(e.g. Play Integrity, iOS DeviceChecker, ...)
+wa -> wa : generate hardware-backed key (TEE, SE, ...)
+wa -> wa : create DPoP proof for wallet backend's token endpoint
+wa -> ce : token request (OS specific attestation as client credential, dpop)
+ce -> ce : validate wallet attestation
+ce -> wa : refresh_token, access token, c_nonce
+wa -> wa : create proof
+note over ce, wa: could also be batch issuance
+wa -> ce : credential issuance request\n(access_token, proof, format, type=WalletAttestation)
+ce -> ce : validate proof
+ce -> wa : credential issuance response : format, credential
+
+@enduml
