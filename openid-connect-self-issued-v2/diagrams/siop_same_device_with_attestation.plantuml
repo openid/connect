@@ -1,0 +1,36 @@
+@startuml
+
+autonumber
+
+title "SIOP: Same Device, Well-Known Wallet provider, WalletAttestation Requested"
+
+participant "User Agent" as u
+
+participant "Verifier" as r
+
+participant "Verifier Backend" as rb
+
+participant "Wallet" as w
+
+u --> r : use
+activate r
+r -> r: create request_uri (client_id,scope=openid,\n nonce, redirect_uri, presentation_definition)
+r --> u: authorization request\n(client_id, request_uri)
+deactivate r
+u --> w: authorization request\n(client_id, request_uri)
+activate w
+w -> rb: fetch request object 
+w -> w: authenticate and authorize Verifier
+
+note over u, w: user authentication
+
+w -> w: create and sign id_token
+w -> w: create verifiable presentation of \nWalletAttestation VC (obtained in advance)
+w --> u: authorization response (id_token, vp_token)
+deactivate w
+u --> r: authorization response (id_token, vp_token)
+activate r
+r -> r: validate presentation of WalletAttestation VC \nand check with Trusted List
+r -> r: validate id_token
+r -> r: use `sub` claim to authenticate use at Verifier 
+@enduml
