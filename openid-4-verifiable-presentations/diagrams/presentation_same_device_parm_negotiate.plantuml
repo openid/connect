@@ -1,6 +1,6 @@
 @startuml
 
-autonumber
+title "Presentation: Same Device, Unknown Wallet provider, Large Response Payload"
 
 participant "User Agent" as u
 
@@ -19,20 +19,20 @@ activate w
 w -> rb: reply to invite (wallet_issuer, ephm enc key, ...)
 rb -> w: presentation request (client_id, presentation_definition, ...) 
 w -> w: authenticate and authorize Verifier
-w -> w: authenticate user
 
-w --> u: show matching credential(s)
-u --> w: select/confirm credential
+note over u, w: user authentication and credential selection/confirmation
+
 w -> w: create verifiable presentation (credential)
-w -> w: create response_secret
-w -> w: encrypt response (response_secret, nonce)
-w -> rb: post response (encrypted presentation response, nonce)
-w --> u: authorization response (response_secret)
+w -> w: create response_code
+w -> rb: post response (presentation response, hash(nonce,response_code))
+w --> u: authorization response (response_code)
 deactivate w
-u --> r: authorization response (response_secret)
+u --> r: authorization response (response_code)
 activate r
-r -> rb: get presentation response(nonce)
-r -> r: decrypt presentation response (response_secret, nonce)
-r -> r: validate presentation
+r -> rb: get presentation response(response_code, nonce)
+rb -> rb: lookup presentation response (hash(nonce,response_code))
+note left: combination of response_code and nonce ensures binding of verifier and wallet transactions
+rb -> r: presentation response
+r -> r: validate presentation (incl. nonce binding)
 r -> r: use presented credential 
 @enduml

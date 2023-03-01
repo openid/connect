@@ -2,7 +2,7 @@
 
 autonumber
 
-title "Presentation: Same Device, Well-Known Wallet provider, Large Response Payload"
+title "Presentation: Same Device, Well-Known Wallet provider, Small Response Payload"
 
 participant "User Agent" as u
 
@@ -25,16 +25,10 @@ w -> w: authenticate and authorize Verifier
 note over u, w: user authentication and credential selection/confirmation
 
 w -> w: create verifiable presentation (credential)
-w -> w: create response_code
-w -> rb: post response (presentation response, hash(nonce,response_code))
-w --> u: authorization response (response_code)
+w --> u: authorization response (vp_token, presentation_submission)
 deactivate w
-u --> r: authorization response (response_code)
+u --> r: authorization response (vp_token, presentation_submission)
 activate r
-r -> rb: get presentation response(response_code, nonce)
-rb -> rb: lookup presentation response (hash(nonce,response_code))
-note left: combination of response_code and nonce ensures binding of verifier and wallet transactions
-rb -> r: presentation response
-r -> r: validate presentation (incl. nonce binding)
+r -> r: validate presentation
 r -> r: use presented credential 
 @enduml
