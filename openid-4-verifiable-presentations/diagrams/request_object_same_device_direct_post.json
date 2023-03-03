@@ -1,0 +1,11 @@
+{
+    "response_type": "vp_token",
+    "response_mode": "direct_post",
+    "client_id": "example_verifier",
+    "redirect_uri": "https://verifier.example.com/cb",
+    "response_uri": "https://verifier.example.com/response",
+    "nonce": "22456608037449564223",
+    "code_challenge": "K2-ltc83acc4h0c9w6ESC_rEMTJ3bwc-uCHaoeK1t8U",
+    "code_challenge_method": "S256",
+    "presentation_definition": {}
+}
