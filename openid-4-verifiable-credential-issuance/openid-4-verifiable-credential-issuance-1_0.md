@@ -113,7 +113,7 @@ This specification defines an API for credential issuance provided by a Credenti
 * A mandatory Credential Endpoint from which Credentials can be issued.  See (#credential-endpoint).
 * An optional Batch Credential Endpoint from which multiple Credentials can be issued in one request. See (#batch-credential-endpoint).
 * An optional Deferred Credential Endpoint to allow for the deferred delivery of credentials (#deferred-credential-issuance). 
-* An optional mechanism for the Credential Issuer to make a Credential Offer to the Wallet to encourage the Wallet to start the issuance flow. See (#credential_offer_endpoint).
+* An optional mechanism for the Credential Issuer to make a Credential Offer to the Wallet to encourage the Wallet to start the issuance flow. See (#credential_offer_request).
 * A mechanism for the Credential Issuer to publish metadata about the Credentials it is capable of issuing. See (#credential-issuer-metadata)
 
 Both the Credential and the Batch Credential Endpoints have the (optional) ability to bind an issued Credential to certain cryptographic key material. Both requests therefore allow to convey a proof of posession for the key material. Multiple proof types are supported. 
@@ -281,28 +281,32 @@ One such mechanism defined in this specification is the usage of PIN. If in the 
 
 For more details and concrete mitigations, see (#security_considerations_pre-authz-code).
 
-# Credential Offer Endpoint {#credential_offer_endpoint}
+# Credential Offer Request {#credential_offer_request}
 
-This endpoint is used by a Credential Issuer in case it is already in an interaction with a user that wishes to initate a Credential issuance. It is used to pass available information relevant for the Credential issuance to ensure a convenient and secure process. 
+This request is used to pass to a wallet the pre-requisite information relevant for the issuance of one or more verifiable credentials. A wallet in receipt of this information can then use it to execute a request for the issuance of the verifiable credentials communicated in the offer.
 
 ## Credential Offer {#credential_offer}
 
-The Credential Issuer sends Credential Offer as an HTTP GET request or an HTTP redirect to the Credential Offer Endpoint URL defined in (#client-metadata).
+A Credential Offer can be sent to a wallet through multiple different means, including:
 
-Credential Offer object which is a JSON object with the Credential Offer parameters, can be sent by value or by reference.
+- QR Code
+- Via an app link
+- As an HTTP request to an endpoint managed by the wallet
 
-Credential Offer contains a single URI query parameter `credential_offer` or `credential_offer_uri`:
+A Credential Offer always takes the form of a URL where the scheme and structure differs based upon how it is being sent to the wallet.
 
-* `credential_offer`: CONDITIONAL. A JSON object with the Credential Offer parameters. MUST NOT be present when `credential_offer_uri` parameter is present.
+The contents of a Credential Offer can be sent either by value or by reference.
+
+In all forms, a Credential Offer contains a single URL query parameter either `credential_offer` or `credential_offer_uri`:
+
+* `credential_offer`: A JSON object with the Credential Offer parameters. MUST NOT be present when `credential_offer_uri` parameter is present.
 * `credential_offer_uri`: A URL using the `https` scheme referencing a resource containing a JSON object with the Credential Offer parameters. MUST NOT be present when `credential_offer` parameter is present.
-
-The Credential Issuer MAY render a QR code containing the Credential Offer that can be scanned by the End-User using a Wallet, or a deeplink that the End-User can click.
 
 For security considerations, see (#credential-offer-security).
 
 ### Credential Offer Parameters {#credential_offer_parameters}
 
-Credential Offer object MAY contain the following parameters: 
+The Credential Offer object MAY contain the following parameters: 
 
 * `credential_issuer`: REQUIRED. The URL of the Credential Issuer, the Wallet is requested to obtain one or more Credentials from as defined in (#credential-issuer-identifier). The Wallet uses it to obtain the Credential Issuer's Metadata following the steps defined in (#credential-issuer-wellknown).
 * `credentials`: REQUIRED. A JSON array, where every entry is a JSON object or a JSON string. If the entry is an object, the object contains the data related to a certain credential type the Wallet MAY request. Each object MUST contain a `format` Claim determining the format of the credential to be requested and further parameters characterising the type of the credential to be requested as defined in (#format_profiles). If the entry is a string, the string value MUST be one of the `id` values in one of the objects in the `credentials_supported` Credential Issuer metadata parameter. When processing, the Wallet MUST resolve this string value to the respective object.
