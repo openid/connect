@@ -147,7 +147,6 @@ OpenID for Verifiable Presentations extends existing OAuth 2.0 mechanisms as fol
 * New Response Types `vp_token` and `id_token vp_token` are defined to request Verifiable Credentials to be returned in the Authorization Response (standalone or along with an OpenID Connect ID Token [@!OpenID.Core]). See (#response) for more details.
 * A new OAuth 2.0 Response Mode `direct_post` is defined to support sending the response across devices, or when the size of the response exceeds the redirect URL character size limitation. See (#response_mode_post) for more detials.
 * The [@!DIF.PresentationExchange] `format` parameter is used throughout the protocol in order to enable customization according to the specific needs of a particular Credential format. Examples in (#alternative_credential_formats) are given for credential formats as specified in [@VC_DATA], [@ISO.18013-5], and [@Hyperledger.Indy].
-* A new `client_id_scheme` Authorization Request parameter is defined to enable deployments of this specification to use different mechanisms to obtain and validate metadata of the Verifier beyond the scope of [@!RFC6749].
 
 Presentation of Credentials using OpenID for Verifiable Presentations can be combined with the user authentication using [@SIOPv2], and the issuance of OAuth 2.0 Access Tokens.
 
@@ -171,15 +170,11 @@ This specification defines the following new parameters:
 `client_metadata_uri`: 
 : OPTIONAL. This parameter enables Verifier's metadata to be passed by reference, rather than by value. The value is a URL referencing a resource containing a Verifier's metadata object. The scheme used in the `client_metadata_uri` value MUST be https. The `client_metadata_uri` value MUST be reachable by the Wallet. MUST NOT be present if `client_metadata` parameter is present.
 
-`client_id_scheme`: 
-: OPTIONAL. A string identifying the scheme of the value in the `client_id` Authorization Request parameter (Client Identifier scheme). The Verifier uses this parameter to indicate how the Wallet is supposed to interpret the Client Identifier and associated data in the process of Client identification, authentication, and authorization. A certain Client Identifier scheme MAY require the Verifier to sign the request as means of authentication and/or pass additional request parameters and require the Wallet to process those additional request parameters. The `client_id_scheme` parameter enables deployments of this specification to use different mechanisms to obtain and validate Client metadata beyond the scope of [@!RFC6749]. If the parameter is not present, the Wallet MUST behave as specified in [@!RFC6749]. See (#client_metadata_management) for the values defined by this specification. 
-The `client_id_scheme` parameter namespaces the respective Client Identifier. This means if a request uses the `client_id_scheme` parameter, the Wallet MUST interpret the Client Identifier of the Verifier in the context of the Client Identifier scheme. If the same Client Identifier is used with different Client Identifier schemes, those occurences MUST be treated as different Verifiers. Note that the Verifier needs determine which client id schemes the Wallet supports prior to sending the Authorisation Request in order to choose a supported scheme.
-
 Presentation Definition is a JSON Object that articulates what Verifiable Presentation(s) the Verifier is requesting to be presented as defined in Section 5 of [@!DIF.PresentationExchange].
 
 Claims to be included in `client_metadata` and `client_metadata_uri` parameters are defined in Section 4.3 and Section 2.1 of the OpenID Connect Dynamic Client Registration 1.0 [@!OpenID.Registration] specification as well as [@!RFC7591]. 
 
-A public key to be used by the Wallet as an input to the key agreement to encrypt Authorization Response (see (#jarm)) MAY be passed by the Verifier using `jwks` or `jwks_uri` claim within the `client_metadata` or `client_metadata_uri` request parameter. 
+A public key to be used by the Wallet as an input to the key agreement to encrypt Authorization Response (see (#jarm)) MAY be passed by the Verifier using `jwks` or `jwks_uri` claim within the `client_metadata` request parameter (see (#client_metadata_parameters)). 
 
 The following additional considerations are given for pre-existing Authorization Request parameters:
 
@@ -332,51 +327,6 @@ When the Verifier is sending a Request Object as defined in Section 6.1 of [@!Op
 - the `aud` Claim MUST be "https://self-issued.me/v2", when Static Discovery metadata is used.
 
 Note: "https://self-issued.me/v2" is a symbolic string and can be used as an `aud` Claim value even when this specification is used standalone, without SIOPv2. 
-
-## Client Metadata Management {#client_metadata_management}
-
-The `client_id_scheme` enables deployments of this specification to use different mechanisms to obtain and validate metadata of the Verifier beyond the scope of [@!RFC6749].
-
-This specification defines the following values for the `client_id_scheme` parameter, followed by the examples where applicable: 
-
-* `pre-registered`: This value represents the [@!RFC6749] default behavior, i.e., the Client Identifier needs to be known to the Wallet in advance of the Authorization Request. The Verifier's metadata is obtained using [@!RFC7591] or through out-of-band mechanisms.
-
-* `redirect_uri`: This value indicates that the Verifier's Redirect URI is also the value of the Client Identifier. In this case, the Authorization Request MUST NOT be signed, the Verifier MAY omit the `redirect_uri` Authorization Request parameter, and all Client metadata parameters MUST be passed using the `client_metadata` or `client_metadata_uri` parameter defined in (#vp_token_request). 
-
-Below is a non-normative example of a request when `client_id` equals `redirect_uri`.
-
-```
-  HTTP/1.1 302 Found
-  Location: https://client.example.org/universal-link?
-    response_type=vp_token
-    &client_id=https%3A%2F%2Fclient.example.org%2Fcb
-    &client_id_scheme=redirect_uri
-    &redirect_uri=https%3A%2F%2Fclient.example.org%2Fcb
-    &presentation_definition=...
-    &nonce=n-0S6_WzA2Mj
-    &client_metadata=%7B%22vp_formats%22:%7B%22jwt_vp%22:%
-    7B%22alg%22:%5B%22EdDSA%22,%22ES256K%22%5D%7D,%22ldp
-    _vp%22:%7B%22proof_type%22:%5B%22Ed25519Signature201
-    8%22%5D%7D%7D%7D
-```
-
-* `entity_id`: This value indicates that the Client Identifier is an Entity Identifier defined in OpenID Connect Federation [@!OpenID.Federation]. Processing rules given in [@!OpenID.Federation] MUST be followed. Automatic Registration as defined in [@!OpenID.Federation] MUST be used. The Authorization Request MAY also contain a `trust_chain` parameter. The Wallet MUST obtain Client metadata only from the Entity Statement(s). The `client_metadata` or `client_metadata_uri` parameter MUST NOT be present in the Authorization Request when this Client Identifier scheme is used.
-
-* `did`: This value indicates that the Client Identifier is a DID defined in [@!DID-Core]. The request MUST be signed with a private key associated with the DID. A public key to verify the signature MUST be obtained from the `verificationMethod` property of a DID Document. Since DID Document may include multiple public keys, a particular public key used to sign the request in question MUST be identified by the `kid` in the JOSE Header. To obtain the DID Document, the Wallet MUST use DID Resolution defined by the DID method used by the Verifier. All Verifier metadata other than the public key MUST be obtained from the `client_metadata` or the `client_metadata_uri` parameter as defined in (#vp_token_request). 
-
-Below is a non-normative example of a signed request when `client_id` is a DID:
-
-Header
-
-<{{examples/request/request_header_client_id_did.json}}
-
-Body
-
-<{{examples/request/request_object_client_id_did.json}}
-
-Note that to use `client_id_scheme` values `entity_id` and `did`, Verifiers MUST be confidential clients. This might require changes to the technical design of native apps as such apps are typically public clients.
-
-Other specifications can define further values for the `client_id_scheme` parameter. It is RECOMMENDED to use collision-resistant names for such values.
 
 # Response {#response}
 
@@ -582,13 +532,11 @@ The error response follows the rules as defined in [@!RFC6749], with the followi
 
 - The request contains more than one out of the following three options to communicate a requested credential: a `presentation_definition` parameter, a `presentation_definition_uri` parameter, or a scope value representing a Presentation Definition.
 - Requested Presentation Definition does not conform to the DIF PEv2 specification [@!DIF.PresentationExchange].
-- The Wallet does not support the `client_id_scheme` value passed in the Authorization Request.
-- The Client Identifier passed in the request did not belong to the Client Identifier scheme indicated in the Authorization Request, or requirements of a certain scheme was violated, for example an unsigned request was sent with Client Identifier scheme `entity_id`.  
 
 `invalid_client`:
 
-- `client_metadata` or `client_metadata_uri` parameter defined in (#vp_token_request) is present, but the Wallet recognizes Client Identifier and knows metadata associated with it.
-- Verifier's pre-registered metadata has been found based on the Client Identifier, but `client_metadata` parameter is also present.
+- `client_metadata` or `client_metadata_uri` parameters defined in (#client_metadata_parameters) are present, but the Wallet recognizes `client_id` and knows metadata associated with it.
+- Verifier's pre-registered metadata has been found based on the `client_id`, but `client_metadata` parameter is also present.
 
 Usage of `client_metadata` or `client_metadata_uri` parameters with `client_id` that the Wallet might be seeing for the first time is mutually exclusive with the registration mechanism where Self-Issued OP assigns `client_id` to the Verifier after receiving Verifier's metadata.
 
@@ -645,9 +593,6 @@ vp_formats_supported": {
 }
 ```
 
-`client_id_schemes_supported`:
-: OPTIONAL. Array of JSON Strings containing the values of the Client Identifier schemes that the Wallet supports. The values defined by this specification are `pre-registered`, `redirect_uri`, `entity_id`, `did`. If omitted, the default value is `pre-registered`. Other values may be used when defined in the profiles of this specification.
-
 ## Obtaining Wallet's Metadata
 
 Verifier utilizing this specification has multiple options to obtain Wallet's metadata:
@@ -655,9 +600,9 @@ Verifier utilizing this specification has multiple options to obtain Wallet's me
 * Verifier obtains Wallet's metadata prior to a transaction, e.g. using [@!RFC8414] or out-of-band mechanisms. See (#as_metadata_parameters) for the details.
 * Verifier has pre-obtained static set of Wallet's metadata. See (#openid4vp-profile) for the example.
 
-# Verifier Metadata (Client Metadata) {#client_metadata}
+# Verifier Metadata (Client Metadata)
 
-Client metadata defined in Section 2 of [@!RFC7591] is used to convey Verifier's metadata. 
+Client metadata defined in Section 2 of [@!RFC7591] is used to convery Verifier's metadata. 
 
 This specification defines how the Wallet can determine Credential formats, proof types and algorithms supported by the Verifier to be used in a protocol exchange.
 
@@ -668,8 +613,74 @@ This specification defines the following new metadata parameters according to [@
 `vp_formats`:
 : REQUIRED. An object defining the formats and proof types of Verifiable Presentations and Verifiable Credentials that a Verifier supports. Valid format identifier values are defined in Annex E of [@!OpenID.VCI] and include `jwt_vc_json`, `jwt_vc_json-ld`, `ldp_vc`, `jwt_vp_json`, `jwt_vp_json-ld`, `ldp_vp`, and `mso_mdoc`. Deployments can extend the formats supported, provided Issuers, Holders and Verifiers all understand the new format.
 
-`client_id_scheme`:
-: OPTIONAL. JSON String identifying the client's id scheme. The value range defined by this specification is `pre-registered`, `redirect_uri`, `entity_id`, `did`. If omitted, the default value is `pre-registered`. 
+## Obtaining Verifier's Metadata 
+
+Wallet utilizing this specification have multiple options to obtain Verifier's metadata:
+
+* The Wallet obtains Verifier's metadata prior to a transaction, e.g. using [@!RFC7591] or out-of-band mechanisms. See (#pre-registered-rp) for the details.
+* Verifier provides metadata to the Wallet just-in-time in the Authorization Request using one of the following mechanisms defined in this specification:
+    * `client_metadata` or `client_metadata_uri` parameter when `client_id` equals `redirect_uri` (see (#simplest-registration) for the details), or `client_id` is a Decentralized Identifier (see (#DID) for the details).
+    * Entity Statement when OpenID Federation 1.0 Automatic Registration is used (see (#openid-federation) for the details).
+
+Just-in-time metadata exchange allows OpenID4VP to be used in deployments models where the Wallet does not or cannot support pre-registration of Verifier's metadata.
+
+### Pre-Registered Verifier {#pre-registered-rp}
+
+When the Wallet has obtained Verifier's metadata prior to a transaction, e.g. using [@!RFC7591] or out-of-band mechanisms, `client_id` MUST equal to the Client ID the Verifier has obtained from the Wallet during pre-registration. When the Authorization Request is signed, the public key for signature verification MUST be (re-)obtained using pre-registration process.
+
+In this case, `client_metadata` and `client_metadata_uri` parameters defined in (#client_metadata_parameters) MUST NOT be present in the Authorization Request. 
+
+Below is an example for a Verifier registering using Dynamic Client Registration:
+
+<{{examples/client_metadata/client_code_format.json}}
+
+### Non-Pre-Registered Verifier {#non-pre-registered-rp} 
+
+When the Verifier has not pre-registered, it may pass its metadata to the Wallet in the Authorization Request.
+
+A successful Authorization Response implicitly indicates that the Verifier's metadata parameters were accepted.
+
+#### `client_id` equals `redirect_uri` {#simplest-registration}
+
+In the simplest option, the Verifier can proceed without registration and set the `client_id` value to the `redirect_uri` value.
+
+In this case, the Authorization Request cannot be signed and all metadata parameters MUST be passed using `client_metadata` or `client_metadata_uri` parameter defined in (#client_metadata_parameters).
+
+Below is a non-normative example of a request when `client_id` equals `redirect_uri`.
+
+```
+  HTTP/1.1 302 Found
+  Location: https://client.example.org/universal-link?
+    response_type=vp_token
+    &client_id=https%3A%2F%2Fclient.example.org%2Fcb
+    &redirect_uri=https%3A%2F%2Fclient.example.org%2Fcb
+    &presentation_definition=...
+    &nonce=n-0S6_WzA2Mj
+    &client_metadata=%7B%22vp_formats%22:%7B%22jwt_vp_json%22:%
+    7B%22alg%22:%5B%22EdDSA%22,%22ES256K%22%5D%7D,%22ldp
+    _vp%22:%7B%22proof_type%22:%5B%22Ed25519Signature201
+    8%22%5D%7D%7D%7D
+```
+
+#### Decentralized Identifiers {#DID}
+
+The `client_id` MAY be expressed as a Decentralized Identifier as defined in [@!DID-Core].
+
+The Authorization Request MUST be signed. A public key to verify the signature MUST be obtained from the `verificationMethod` property of a DID Document. Since DID Document may include multiple public keys, a particular public key used to sign the request in question MUST be identified by the `kid` in the header. To obtain the DID Document, the Wallet MUST use DID Resolution defined by the DID method used by the Client.
+
+All Verifier's metadata other than the public key MUST be obtained from the `client_metadata` parameter as defined in (#client_metadata_parameters).
+
+Below is a non-normative example of a request when `client_id` is a DID, sent as a Request Object using `request_uri`:
+
+<{{examples/client_metadata/client_client_id_did.json}}
+
+#### OpenID Federation 1.0 Automatic Registration {#openid-federation}
+
+When Verifier's `client_id` is expressed as an `https` URI, and does not equal to a `redirect_uri` value when using simple string comparison ([@!RFC3986] section 6.2.1), Automatic Registration defined in [@!OpenID.Federation] MUST be used. The Verifier's Entity Identifier defined in Section 1.2 of [@!OpenID.Federation] MUST be `client_id`. 
+
+The Authorization Request MUST be signed. The Wallet MUST obtain the public key from the `jwks` property in the Verifier's Entity Statement defined in Section 3.1 of [@!OpenID.Federation]. Metadata other than the public keys MUST also be obtained from the Entity Statement.
+
+Note that to use Automatic Registration, clients would be required to have an individual identifier and an associated public key(s), which is not always the case for the public/native app clients.
 
 # Implementation Considerations
 
@@ -1381,7 +1392,6 @@ The technology described in this specification was made available from contribut
 
    * Added definition of VP Token 
    * Editorial improvements for better readability (restructered request and response section, consistent terminology and casing)
-   * Added `client_id_scheme` parameter
 
    -14
 
