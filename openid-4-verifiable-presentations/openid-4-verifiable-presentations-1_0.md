@@ -58,6 +58,11 @@ This specification defines a protocol for requesting and presenting Verifiable C
 
 {mainmatter}
 
+# Version
+
+- The Editor's copy is here:
+- The WG version is here:
+
 # Introduction
 
 This specification defines a mechanism on top of OAuth 2.0 [@!RFC6749] that enables presentation of Verifiable Credentials as Verifiable Presentations. Verifiable Credentials and Verifiable Presentations can be of any format, including, but not limited to W3C Verifiable Credentials Data Model [@VC_DATA], ISO mdoc [@ISO.18013-5], and AnonCreds [@Hyperledger.Indy].

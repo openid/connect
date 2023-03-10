@@ -46,6 +46,11 @@ Self-Issued OPs can also present cryptographically verifiable claims issued by t
 
 {mainmatter}
 
+# Version
+
+- The Editor's copy is here:
+- The WG version is here:
+
 # Introduction
 
 This specification extends OpenID Connect with the concept of a _Self-Issued OpenID Provider_ (Self-Issued OP), an OpenID Provider (OP) which is within the End-User’s control. Using Self-Issued OPs, End-Users can authenticate themselves with Self-Issued ID Tokens and present self-attested claims directly to the RPs. Self-Issued OPs can also present cryptographically verifiable claims issued by the third parties trusted by the RPs, when used with separate specifications such as [@!OpenID4VP], or Aggregated and Distributed Claims defined in Section 5.6.2 of [@!OpenID.Core]. This allows End-Users to interact with RPs, without RPs interacting with claims issuers.

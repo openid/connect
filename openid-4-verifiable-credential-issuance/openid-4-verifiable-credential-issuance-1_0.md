@@ -42,6 +42,11 @@ This specification defines an API for the issuance of Verifiable Credentials.
 
 {mainmatter}
 
+# Version
+
+- The Editor's copy is here:
+- The WG version is here:
+
 # Introduction
 
 This specification defines an API that is used to issue verifiable credentials. W3C formats [@VC_DATA] as well as other Credential formats, like [@ISO.18013-5], are supported. 
