@@ -113,7 +113,7 @@ This specification defines an API for credential issuance provided by a Credenti
 * A mandatory Credential Endpoint from which Credentials can be issued.  See (#credential-endpoint).
 * An optional Batch Credential Endpoint from which multiple Credentials can be issued in one request. See (#batch-credential-endpoint).
 * An optional Deferred Credential Endpoint to allow for the deferred delivery of credentials (#deferred-credential-issuance). 
-* An optional mechanism for the Credential Issuer to make a Credential Offer to the Wallet to encourage the Wallet to start the issuance flow. See (#credential_offer_request).
+* An optional mechanism for the Credential Issuer to make a Credential Offer to the Wallet to encourage the Wallet to start the issuance flow. See (#credential_offer).
 * A mechanism for the Credential Issuer to publish metadata about the Credentials it is capable of issuing. See (#credential-issuer-metadata)
 
 Both the Credential and the Batch Credential Endpoints have the (optional) ability to bind an issued Credential to certain cryptographic key material. Both requests therefore allow to convey a proof of posession for the key material. Multiple proof types are supported. 
@@ -281,11 +281,9 @@ One such mechanism defined in this specification is the usage of PIN. If in the 
 
 For more details and concrete mitigations, see (#security_considerations_pre-authz-code).
 
-# Credential Offer Request {#credential_offer_request}
+# Credential Offer {#credential_offer}
 
-This request is used to pass to a wallet the pre-requisite information relevant for the issuance of one or more verifiable credentials. A wallet in receipt of this information can then use it to execute a request for the issuance of the verifiable credentials communicated in the offer.
-
-## Credential Offer {#credential_offer}
+A Credential Offer is used to pass to a wallet the pre-requisite information relevant for the issuance of one or more verifiable credentials. A wallet in receipt of this information can then use it to execute a request for the issuance of the verifiable credentials communicated in the offer.
 
 A Credential Offer can be sent to a wallet through multiple different means, including:
 
@@ -295,7 +293,7 @@ A Credential Offer can be sent to a wallet through multiple different means, inc
 
 A Credential Offer always takes the form of a URL where the scheme and structure differs based upon how it is being sent to the wallet.
 
-The contents of a Credential Offer can be sent either by value or by reference.
+The contents of a Credential Offer, the Credential Offer object, can be sent either by value or by reference.
 
 In all forms, a Credential Offer contains a single URL query parameter either `credential_offer` or `credential_offer_uri`:
 
@@ -304,7 +302,7 @@ In all forms, a Credential Offer contains a single URL query parameter either `c
 
 For security considerations, see (#credential-offer-security).
 
-### Credential Offer Parameters {#credential_offer_parameters}
+## Credential Offer Parameters {#credential_offer_parameters}
 
 The Credential Offer object MAY contain the following parameters: 
 
@@ -326,7 +324,7 @@ The following non-normative example shows a Credential Offer object where the Cr
 
 Note that the examples throughout the specification use Credential Format specific parameters defined in the Credential Format Profiles that can be found in (#format_profiles).
 
-### Sending Credential Offer by Value Using `credential_offer` Parameter
+### Sending a Credential Offer by Value Using `credential_offer` Parameter
 
 Below is a non-normative example of a Credential Offer passed by value:
 
@@ -346,7 +344,7 @@ edential%22,%22UniversityDegreeCredential%22%5D%7D%5D,%22issuer_state%22:%22eyJh
 FYUaBy%22%7D
 ```
 
-### Sending Credential Offer by Reference Using `credential_offer_uri` Parameter
+### Sending a Credential Offer by Reference Using `credential_offer_uri` Parameter
 
 Upon receipt of the `credential_offer_uri`, the Wallet MUST send an HTTP GET request to URI to retrieve the referenced Credential Offer Object, unless it is already cached, and parse it to recreate the Credential Offer parameters.
 
@@ -377,10 +375,6 @@ Below is a non-normative example of a response from the Credential Issuer that c
 Below is a non-normative example how a Credential Offer Object might look like for a Pre-Authorized Code Flow (with a credential type reference):
 
 <{{examples/credential_offer_by_reference.json}}
-
-## Credential Offer Response
-
-The Wallet is not supposed to create a response. UX control stays with the Wallet after completion of the process. 
 
 # Authorization Endpoint {#authorization_endpoint}
 
