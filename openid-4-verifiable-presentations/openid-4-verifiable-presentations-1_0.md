@@ -491,7 +491,7 @@ that could be used in a Request URI like this (either directly or as QR Code).
 
 ```
 https://wallet.example.com?
-    client_id=https%3A%2F%2Fclient.example.org%2Fcb
+    client_id=https%3A%2F%2Fclient.example.org%2Fpost
     &request_uri=https%3A%2F%2Fclient.example.org%2F567545564
 ```
 
