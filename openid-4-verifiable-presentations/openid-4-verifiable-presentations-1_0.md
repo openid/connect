@@ -469,7 +469,7 @@ If the `redirect_uri` Authorization Rquest parameter is present when the Respons
 
 The Response URI receives all parameters as defined by the respective Response Type.
 
-Additionally, the following Authorization Request parameters are defined to be returned in the Authorization Response from the Wallet to the Verifier upon receiving Authorization Response at the Response URI:
+Additionally, the following Authorization Request parameters are defined to be returned in the Authorization Response from the Wallet to the Verifier at the Response URI:
 
 `nonce`:
 : The value as received by the Wallet in the `nonce` Authorization Request parameter.  
