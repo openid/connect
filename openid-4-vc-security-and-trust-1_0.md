@@ -921,6 +921,8 @@ application in order to avoid interception by third party applications.
 An additional PIN that is transferred from the issuer to the verifier
 can be used to protect the pre-authorized code.
 
+Todo: Whats the role of the PIN precisely? Should it be invalidated after a couple of attempts?
+
 ### Authorization Code Grant
 
 For all **other grant types**, the considerations in the OAuth Security
