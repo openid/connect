@@ -487,7 +487,7 @@ The following is a non-normative example of the payload of an Authorization Requ
 }
 ```
 
-The Authorization Requeset Object from above could be used in a Request URI as follows (either directly or as QR Code). 
+The Authorization Request Object from above could be used in a Request URI as follows (either directly or as QR Code). 
 
 ```
 https://wallet.example.com?
