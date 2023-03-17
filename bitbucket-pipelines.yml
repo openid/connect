@@ -9,7 +9,7 @@ pipelines:
             - docker
           script:
             - docker run -v `pwd`/openid-4-verifiable-presentations:/data danielfett/markdown2rfc openid-4-verifiable-presentations-1_0.md
-            - mv openid-4-verifiable-presentations-*.html openid-4-verifiable-presentations-1_0.html
+            - mv openid-4-verifiable-presentations-1_0.html
           artifacts:
             - '*.html'
             - '*.xml'
