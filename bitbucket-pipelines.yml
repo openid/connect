@@ -1,0 +1,46 @@
+image: atlassian/default-image:2
+
+pipelines:
+  default:
+    - step:
+        name: build
+        services:
+          - docker
+        script:
+          - docker run -v `pwd`/openid-4-verifiable-presentations:/data danielfett/markdown2rfc openid-4-verifiable-presentations-1_0.md
+          - docker run -v `pwd`/openid-4-verifiable-credential-issuance:/data danielfett/markdown2rfc openid-4-verifiable-credential-issuance-1_0.md
+          - docker run -v `pwd`/openid-connect-self-issued-v2:/data danielfett/markdown2rfc openid-connect-self-issued-v2-1_0.md
+          - mv openid-4-verifiable-presentations/openid-4-verifiable-presentations-*.html openid-4-verifiable-presentations-1_0.html
+          - mv openid-4-verifiable-credential-issuance/openid-4-verifiable-credential-issuance-*.html openid-4-verifiable-credential-issuance-1_0.html
+          - mv openid-connect-self-issued-v2/openid-connect-self-issued-v2-*.html openid-connect-self-issued-v2-1_0.html
+        artifacts:
+          - '*.html'
+          - '*.xml'
+  branches:
+    oid4vc-pipeline-test:
+      - step:
+          name: build
+          services:
+            - docker
+          script:
+            - docker run -v `pwd`/openid-4-verifiable-presentations:/data danielfett/markdown2rfc openid-4-verifiable-presentations-1_0.md
+            - mv openid-4-verifiable-presentations/openid-4-verifiable-presentations-*.html openid-4-verifiable-presentations-1_0.html
+          artifacts:
+            - '*.html'
+            - '*.xml'
+      - step:
+          name: publish
+          deployment: publish
+          clone:
+            enabled: false
+          script:
+            - git config --global user.email "pipeline@bitbucket.org"
+            - git config --global user.name "Bitbucket AB/Connect Pipeline"
+            - git config --global push.default simple
+            - git clone git@bitbucket.org:openid/openid.bitbucket.io.git
+            - mkdir -p openid.bitbucket.io/connect/
+            - cp *.html openid.bitbucket.io/connect/
+            - cd openid.bitbucket.io/connect
+            - git add *
+            - git commit -m "Update AB/Connect drafts"
+            - git push origin master
