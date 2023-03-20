@@ -17,7 +17,7 @@ pipelines:
           - '*.html'
           - '*.xml'
   branches:
-    oid4vc-pipeline-test:
+    master:
       - step:
           name: build
           services:
