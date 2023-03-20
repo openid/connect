@@ -42,10 +42,8 @@ pipelines:
             - git config --global user.name "Bitbucket AB/Connect Pipeline"
             - git config --global push.default simple
             - git clone git@bitbucket.org:openid/openid.bitbucket.io.git
-            - mkdir -p openid.bitbucket.io/connect/
-            - mkdir -p openid.bitbucket.io/connect/editors-draft            
+            - mkdir -p openid.bitbucket.io/connect/        
             - cp *.html openid.bitbucket.io/connect/
-            - cp *.html openid.bitbucket.io/connect/editors-draft
             - cd openid.bitbucket.io/connect
             - git add *
             - git commit -m "Update OID4VC drafts"
