@@ -1,0 +1,22 @@
+@startuml
+
+title "Issuance: Authentication to Credential Issuer using Wallet Attestation VC"
+
+autonumber
+participant "User Agent" as u
+participant "Wallet Frontend" as w
+participant "Credential Issuer" as i
+
+i -> w: credential offer (issuer URL, pre-authz-code, pin required)
+w -> i: get metadata
+i -> w: credential types, key requirements, endpoints
+w -> w: select or obtain attestation VC
+w -> w: create wallet_attestation_vp (pre-authz-code as nonce)
+w -> i : token (pre-authz-code, pin, client_id, wallet_attestation_vp)
+note over w, i: wallet frontend authenticates with WalletAttestation VC issued by wallet provider (or any other trusted 3rd party) as OAuth Client\ncredential issuer checks assertion issuer (wallet provider) with trust registry
+i -> w : access_token, c_nonce
+w -> w : gen key
+w -> w : create proof (key, c_nonce)
+w -> i : issue credential (access_token, credential_type, format, proof)
+i -> w : credential
+@enduml
