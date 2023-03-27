@@ -767,16 +767,20 @@
       </section>
     </section>
 
-    <section anchor="metadata" title="Metadata">
+    <section anchor="metadata" title="Metadata Type Identifiers">
       <t>
       </t>
       <t>
-	This specification defines metadata types for OpenID Connect and OAuth2 objects.
-        The metadata type identifier uniquely identifies the Entity Type
-        of the participant and the format of metadata for that Entity Type.
-	It reuses existing OpenID Connect and OAuth metadata standards
-	that are applicable to each metadata type.
-        Each metadata document is a JSON object.
+	      The metadata type identifier uniquely identifies the Entity Type
+        of the participant and the format of metadata defined in Section 3.1
+        for that Entity Type. Each metadata document is a JSON object.
+      </t>
+      <t>        
+        This section defines metadata type identifiers to express metadata
+        of OpenID Connect and OAuth2 entities, when for those use-cases when implementations
+        need to use mechanisms defined in this specification instead of using
+        RFC8414, RFC7519, OpenID Connect Dynamic Client Registration,
+        or OpenID Connect Discovery.
       </t>
       <t>
         This specification also allows new metadata types to be defined to
