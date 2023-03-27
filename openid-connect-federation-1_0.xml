@@ -767,491 +767,19 @@
       </section>
     </section>
 
-    <section anchor="metadata" title="Metadata">
+    <section title="Metadata Type Identifiers" anchor="metadata">
       <t>
-      </t>
-      <t>
-	This specification defines metadata types for OpenID Connect and OAuth2 objects.
         The metadata type identifier uniquely identifies the Entity Type
         of the participant and the format of metadata for that Entity Type.
-	It reuses existing OpenID Connect and OAuth metadata standards
-	that are applicable to each metadata type.
-        Each metadata document is a JSON object.
+	      Each metadata document is a JSON object.
       </t>
       <t>
-        This specification also allows new metadata types to be defined to
-	support use cases outside OpenID Connect and OAuth2 federations.
+        This specification also allows new metadata types to be defined.
       </t>
-
-      <section title="OpenID Connect and OAuth2 Metadata Extensions" anchor="common_metadata">
-        <t>
-	  For the OpenID Connect and OAuth2 metadata types below,
-	  the following additional metadata properties are defined,
-	  which MAY be used with all those metadata types:
-        </t>
-        <t>
-          <list style="hanging">
-            <t hangText="organization_name">
-              <vspace/>
-              OPTIONAL. A human-readable
-              name representing the organization owning the Entity.
-              If the owner is a physical person,
-              this MAY be, for example, the person's name. Note
-              that this information will be publicly available.
-            </t>
-            <t hangText="signed_jwks_uri">
-              <vspace/>
-              OPTIONAL. A URI pointing to a signed JWT having the Entity's
-              JWK Set as its payload. The JWT MUST be signed using a Federation
-              Entity Key.
-              A signed JWT can contain the following claims, all except
-              <spanx style="verb">keys</spanx> defined in
-              <xref target="RFC7519"/>:
-              <list style="hanging">
-                <t hangText="keys">
-                  <vspace/>
-                  REQUIRED. List of JWK values.
-                </t>
-                <t hangText="iss">
-                  <vspace/>
-                  REQUIRED. The "iss" (issuer) claim identifies the principal
-                  that issued the JWT.
-                </t>
-                <t hangText="sub">
-                  <vspace/>
-                  REQUIRED. This claim identifies the owner of the keys.
-                  It SHOULD be the same as the issuer.
-                </t>
-                <t hangText="iat">
-                  <vspace/>
-                  OPTIONAL. This claim identifies the time at which the JWT was
-                  issued.
-                </t>
-                <t hangText="exp">
-                  <vspace/>
-                  OPTIONAL. This claim identifies the time at which the JWT is
-                  no longer valid.
-                </t>
-              </list>
-              More claims are defined in <xref target="RFC7519"/>; of
-              these, <spanx style="verb">aud</spanx> SHOULD NOT be used since
-              the issuer cannot know who the audience is.
-              <spanx style="verb">nbf</spanx> and <spanx style="verb">jti</spanx>
-              are deemed to not be very useful in this context and are
-              to be omitted.
-
-              <figure>
-                <preamble>
-                  The following is a non-normative example of a signed JWKS
-                  before serialization and adding a signature.
-                </preamble>
-                <artwork>
-                  <![CDATA[
-    {
-      "keys": [
-        {
-          "kty": "RSA",
-          "kid": "SUdtUndEWVY2cUFDeDV5NVlBWDhvOXJodVl2am1mNGNtR0pmd",
-          "n": "y_Zc8rByfeRIC9fFZrDZ2MGH2ZnxLrc0ZNNwkNet5rwCPYeRF3Sv
-                5nihZA9NHkDTEX97dN8hG6ACfeSo6JB2P7heJtmzM8oOBZbmQ90n
-                EA_JCHszkejHaOtDDfxPH6bQLrMlItF4JSUKua301uLB7C8nzTxm
-                tF3eAhGCKn8LotEseccxsmzApKRNWhfKDLpKPe9i9PZQhhJaurwD
-                kMwbWTAeZbqCScU1o09piuK1JDf2PaDFevioHncZcQO74Obe4nN3
-                oNPNAxrMClkZ9s9GMEd5vMqOD4huXlRpHwm9V3oJ3LRutOTxqQLV
-                yPucu7eHA7her4FOFAiUk-5SieXL9Q",
-          "e": "AQAB"
-        },
-        {
-          "kty": "EC",
-          "kid": "MFYycG1raTI4SkZvVDBIMF9CNGw3VEZYUmxQLVN2T21nSWlkd3",
-          "crv": "P-256",
-          "x": "qAOdPQROkHfZY1daGofOmSNQWpYK8c9G2m2Rbkpbd4c",
-          "y": "G_7fF-T8n2vONKM15Mzj4KR_shvHBxKGjMosF6FdoPY"
-        }
-      ],
-      "iss": "https://example.org/op",
-      "iat": 1618410883
-    }
-]]>
-                </artwork>
-              </figure>
-
-              <figure>
-                <preamble>
-                  The following is a non-normative example of an RP's Entity Configuration:
-                </preamble>
-
-                <artwork>
-                  <![CDATA[
-    {
-      "iss": "https://openid.sunet.se",
-      "sub": "https://openid.sunet.se",
-      "iat": 1516239022,
-      "exp": 1516298022,
-      "metadata": {
-        "openid_relying_party": {
-          "application_type": "web",
-          "redirect_uris": [
-            "https://openid.sunet.se/rp/callback"
-          ],
-          "organization_name": "SUNET",
-          "logo_uri": "https://www.sunet.se/sunet/images/32x32.png",
-          "grant_types": [
-            "authorization_code",
-            "implicit"
-          ],
-          "signed_jwks_uri":"https://openid.sunet.se/rp/signed_jwks.jose",
-          "jwks_uri": "https://openid.sunet.se/rp/jwks.json"
-        }
-      },
-      "jwks": {
-        "keys": [
-          {
-            "alg": "RS256",
-            "e": "AQAB",
-            "key_ops": [
-              "verify"
-            ],
-            "kid": "key1",
-            "kty": "RSA",
-            "n": "pnXBOusEANuug6ewezb9J_...",
-            "use": "sig"
-          }
-        ]
-      },
-      "authority_hints": [
-        "https://edugain.org/federation"
-      ]
-    }
-    ]]>
-                </artwork>
-              </figure>
-            </t>
-
-            <t hangText="jwks">
-              <vspace/>
-              OPTIONAL. JSON Web Key Set document, passed by value, as
-              defined in <xref target="RFC7517"/>.
-              This parameter is intended
-              to be used by participants that, for some reason,
-              cannot use the <spanx style="verb">signed_jwks_uri</spanx>
-              parameter.
-              One significant downside of <spanx style="verb">jwks</spanx>
-              is that it does not enable key rotation
-              (which <spanx style="verb">signed_jwks_uri</spanx> and
-              <spanx style="verb">jwks_uri</spanx> do).
-            </t>
-
-          </list>
-        </t>
-
-	<section title="Usage of jwks, jwks_uri, and signed_jwks_uri" anchor="jwks_usage">
-	  <t>
-	    It is RECOMMENDED that an Entity Configuration
-	    use only one of
-	    <spanx style="verb">jwks</spanx>,
-	    <spanx style="verb">jwks_uri</spanx>, and
-	    <spanx style="verb">signed_jwks_uri</spanx> in its OpenID Connect or OAuth2 metadata.
-	    However, there may be circumstances in which is it desirable to use multiple
-	    JWK Set representations, such as when an Entity is in multiple federations and the
-	    federations have different policies about the JWK Set representation to be used.
-	    When multiple JWK Set representations are used, the keys present in each
-	    representation SHOULD be the same.  Even if they are not completely the
-	    same at a given instant in time (which may be the case during key rollover operations),
-	    implementations MUST make them consistent in a timely manner.
-	  </t>
-	</section>
-      </section>
-
-      <section title="RP Metadata" anchor="RP_metadata">
-        <t>
-          The metadata type identifier is
-          <spanx style="verb">openid_relying_party</spanx>.
-        </t>
-        <t>
-          All parameters defined in Section 2 of
-          <xref target="OpenID.Registration">OpenID Connect Dynamic Client Registration 1.0</xref>
-          and <xref target="common_metadata"/> are applicable,
-	  as well as additional parameters registered in the
-	  IANA "OAuth Dynamic Client Registration Metadata" registry
-	  <xref target="IANA.OAuth.Parameters"/>.
-        </t>
-        <t>
-          In addition, the following RP metadata parameter is defined:
-          <list style="hanging">
-            <t hangText="client_registration_types">
-              <vspace/>
-              REQUIRED. An array of strings specifying the client registration
-              types the RP wants to use. Values defined by this specification
-              are
-              <spanx style="verb">automatic</spanx>
-              and <spanx style="verb">explicit</spanx>.
-            </t>
-          </list>
-        </t>
-      </section>
-
-      <section title="OP Metadata" anchor="OP_metadata">
-        <t>
-          The metadata type identifier is
-          <spanx style="verb">openid_provider</spanx>.
-        </t>
-        <t>
-          All parameters defined in Section 3 of
-          <xref target="OpenID.Discovery">OpenID Connect Discovery 1.0</xref>
-          and <xref target="common_metadata"/> are applicable,
-	  as well as additional parameters registered in the
-	  IANA "OAuth Authorization Server Metadata" registry
-	  <xref target="IANA.OAuth.Parameters"/>.
-        </t>
-        <t>
-          In addition, the following OP metadata parameters are defined:
-        </t>
-        <t>
-          <list style="hanging">
-            <t hangText="client_registration_types_supported">
-              <vspace/>
-              REQUIRED. Array specifying the federation types supported.
-              Federation-type values defined by this specification are
-              <spanx style="verb">automatic</spanx>
-              and <spanx style="verb">explicit</spanx>.
-            </t>
-            <t hangText="federation_registration_endpoint">
-              <vspace/>
-              OPTIONAL.
-              URL of the OP's federation-specific Dynamic Client Registration
-              Endpoint. If the OP supports explicit client
-              registration as described in <xref target="explicit"/>,
-              then this claim is REQUIRED.
-            </t>
-            <t hangText="request_authentication_methods_supported">
-              <vspace/>
-              OPTIONAL.
-              A JSON Object defining the client authentications supported for each endpoint.
-              The endpoint names are defined in the IANA
-              "OAuth Authorization Server Metadata" registry
-              <xref target="IANA.OAuth.Parameters"/>.
-              Other endpoints and authentication methods are possible if made
-              recognizable according
-              to established standards and not in conflict with the operating
-              principles of this specification.
-              In OpenID Connect Core, no client authentication is performed at the authentication
-              endpoint. Instead, the request itself is authenticated.
-              The OP maps
-              information in the request (like the redirect_uri) to information it has gained
-              on the client through static or dynamic registration.
-              If the mapping is successful, the request can be processed.
-              If the RP uses Automatic Registration, as defined in <xref target="automatic"/>,
-              the OP has no prior knowledge
-              of the RP. Therefore, the OP must start by gathering
-              information about the RP using the process outlined in
-              <xref target="federation_configuration"/>. Once it has the RP's
-              metadata, the OP can verify the request in the same way
-              as if it had known the RP's metadata beforehand.
-              To make the request verification more secure, we demand the use of
-              a client authentication or verification method that proves that
-              the RP is in possession of a key that appears in the RP's metadata.
-              <vspace/>
-              Client authentication methods that MAY be used include:
-              <list style="hanging">
-                <t hangText="private_key_jwt">
-                  <vspace/>
-                  <spanx style="verb">private_key_jwt</spanx>.
-                  This authentication process is described in Section 9 of
-                  <xref target="OpenID.Core">OpenID Connect Core 1.0</xref>.
-                  Note that if <spanx style="verb">private_key_jwt</spanx> is
-                  used, the audience of the signed JWT MUST be either the URL of
-                  the Authorization Server's Authorization Endpoint or the
-                  Authorization Server's Entity Identifier.
-                </t>
-                <t hangText="tls_client_auth">
-                  <vspace/>
-                  Section 2.1 of
-                  <xref target="RFC8705"/>.
-                </t>
-                <t hangText="self_signed_tls_client_auth">
-                  <vspace/>
-                  Section 2.2 of
-                  <xref target="RFC8705"/>.
-                </t>
-              </list>
-              <vspace/>
-              A client verification method, on the other hand,
-              is something like:
-              <list style="hanging">
-                <t hangText="request_object">
-                  <vspace/>
-                  A Request Object, as described in
-                  <xref target="OpenID.Core">OpenID Connect Core 1.0</xref>.
-                  There is more about this in
-                  <xref target="automatic"/>.
-                  Here the verification is based on the fact that the request
-                  object is signed with a key the RP controls.
-                </t>
-              </list>
-              <vspace/>
-              The claim value of this parameter is a JSON object with members representing
-              authentication request methods and as values lists of client
-              authentication/verification methods that can be used together with the
-              authentication request method.
-              <vspace/>
-              Examples of authentication request methods are
-              <list style="symbols">
-                <t>
-                  Authentication Request (AR), as described in Section 3 of
-                  <xref target="OpenID.Core">OpenID Connect Core 1.0</xref>, and
-                </t>
-                <t>
-                  Pushed Authorization Request (PAR), as described in <xref target="RFC9126"/>.
-                </t>
-              </list>
-              <vspace/>
-              If AR is used, then a client verification method like
-              <spanx style="verb">request_object</spanx> can be used.
-              If PAR is used, then client authentication methods like
-              <spanx style="verb">private_key_jwt</spanx>,
-              <spanx style="verb">tls_client_auth</spanx> and
-              <spanx style="verb">self_signed_tls_client_auth</spanx>
-              can be used.
-            </t>
-
-            <t hangText="request_authentication_signing_alg_values_supported">
-              <vspace/>
-              OPTIONAL.
-              JSON array containing a list of the JWS signing algorithms
-              (<spanx style="verb">alg</spanx> values)
-              supported for the signature on the JWT <xref target="RFC7519" />
-              used in the <spanx style="verb">request_object</spanx>
-              contained in the request parameter of an authorization request or
-              in the <spanx style="verb">private_key_jwt</spanx> of a pushed authorization request.
-              This entry MUST be present if either of these authentication methods are specified
-              in the <spanx style="verb">request_authentication_methods_supported</spanx> entry.
-              No default algorithms are implied if this entry is omitted.
-              Servers SHOULD support <spanx style="verb">RS256</spanx>.
-              The value <spanx style="verb">none</spanx> MUST NOT be used.
-            </t>
-          </list>
-        </t>
-
-        <t>
-          The following is a non-normative example of an OP's Entity Configuration:
-        </t>
-        <figure>
-          <artwork><![CDATA[
-{
-   "iss":"https://op.umu.se",
-   "sub":"https://op.umu.se",
-   "exp":1568397247,
-   "iat":1568310847,
-   "metadata":{
-      "openid_provider":{
-         "issuer":"https://op.umu.se/openid",
-         "signed_jwks_uri":"https://op.umu.se/openid/signed_jwks.jose",
-         "authorization_endpoint":"https://op.umu.se/openid/authorization",
-         "client_registration_types_supported":[
-            "automatic",
-            "explicit"
-         ],
-         "grant_types_supported":[
-            "authorization_code",
-            "implicit",
-            "urn:ietf:params:oauth:grant-type:jwt-bearer"
-         ],
-         "id_token_signing_alg_values_supported":[
-            "ES256",
-            "RS256"
-         ],
-         "logo_uri":"https://www.umu.se/img/umu-logo-left-neg-SE.svg",
-         "op_policy_uri":"https://www.umu.se/en/legal-information/",
-         "response_types_supported":[
-            "code",
-            "code id_token",
-            "token"
-         ],
-         "subject_types_supported":[
-            "pairwise",
-            "public"
-         ],
-         "token_endpoint":"https://op.umu.se/openid/token",
-         "federation_registration_endpoint":"https://op.umu.se/openid/fedreg",
-         "token_endpoint_auth_methods_supported":[
-            "client_secret_post",
-            "client_secret_basic",
-            "client_secret_jwt",
-            "private_key_jwt"
-         ],
-         "pushed_authorization_request_endpoint":"https://op.umu.se/openid/par",
-         "request_authentication_methods_supported": {
-            "authorization_endpoint": [
-                "request_object"
-            ],
-            "pushed_authorization_request_endpoint": [
-                "request_object",
-                "private_key_jwt",
-                "tls_client_auth",
-                "self_signed_tls_client_auth"
-            ]
-        }
-      }
-   },
-   "authority_hints":[
-      "https://umu.se"
-   ],
-   "jwks":{
-      "keys":[
-         {
-            "e":"AQAB",
-            "kid":"dEEtRjlzY3djcENuT01wOGxrZlkxb3RIQVJlMTY0...",
-            "kty":"RSA",
-            "n":"x97YKqc9Cs-DNtFrQ7_vhXoH9bwkDWW6En2jJ044yH..."
-         }
-      ]
-   },
-}
-]]></artwork>
-        </figure>
-
-      </section>
-      <section title="OAuth Authorization Server">
-        <t>
-          The metadata type identifier is
-          <spanx style="verb">oauth_authorization_server</spanx>.
-        </t>
-        <t>
-          All parameters defined in Section 2 of
-          <xref target="RFC8414">RFC 8414</xref>
-          and <xref target="common_metadata"/> are applicable,
-	  as well as additional parameters registered in the
-	  IANA "OAuth Dynamic Client Registration Metadata" registry
-	  <xref target="IANA.OAuth.Parameters"/>.
-        </t>
-      </section>
-
-      <section title="OAuth Client">
-        <t>
-          The metadata type identifier is
-          <spanx style="verb">oauth_client</spanx>.
-        </t>
-        <t>
-          All parameters defined in Section 2 of
-          <xref target="RFC7591">OAuth 2.0 Dynamic Client Registration Protocol</xref>
-          and <xref target="common_metadata"/> are applicable,
-	  as well as additional parameters registered in the
-	  IANA "OAuth Dynamic Client Registration Metadata" registry
-	  <xref target="IANA.OAuth.Parameters"/>.
-        </t>
-      </section>
-
-      <section title="OAuth Protected Resource">
-        <t>
-          The metadata type identifier is
-          <spanx style="verb">oauth_resource</spanx>.
-	  The parameters defined in <xref target="common_metadata"/> are applicable.
-	  In addition, while it is not presently a standard,
-	  some deployments are using the protected resource metadata parameters
-	  defined in <xref target="I-D.jones-oauth-resource-metadata"/>.
-        </t>
-      </section>
+      <t>
+        For how existing OpenID Connect and OAuth metadata standards
+        can be reused, see Annex A.
+      </t>
 
       <section title="Federation Entity">
         <t>
@@ -5407,6 +4935,486 @@ HTTP/1.1 302 Found
       <?rfc include="https://xml2rfc.tools.ietf.org/public/rfc/bibxml3/reference.I-D.draft-jones-oauth-resource-metadata-01.xml" ?>
 
     </references>
+
+    <section anchor="metadata" title="Metadata">
+      <t>
+      	Metadata for OpenID Connect and OAuth2 entities can be expressed using
+        a metadata claim defined in Section 3.1. This section defines 
+        metadata type identifiers for those use-cases when implementations
+        need to use mechanisms defined in this specification insteam of using
+        RFC8414, RFC7519, OpenID Connect Dynamic Client Registration,
+        or OpenID Connect Discovery.
+      </t>
+
+      <section title="OpenID Connect and OAuth2 Metadata Extensions" anchor="common_metadata">
+        <t>
+	  For the OpenID Connect and OAuth2 metadata types below,
+	  the following additional metadata properties are defined,
+	  which MAY be used with all those metadata types:
+        </t>
+        <t>
+          <list style="hanging">
+            <t hangText="organization_name">
+              <vspace/>
+              OPTIONAL. A human-readable
+              name representing the organization owning the Entity.
+              If the owner is a physical person,
+              this MAY be, for example, the person's name. Note
+              that this information will be publicly available.
+            </t>
+            <t hangText="signed_jwks_uri">
+              <vspace/>
+              OPTIONAL. A URI pointing to a signed JWT having the Entity's
+              JWK Set as its payload. The JWT MUST be signed using a Federation
+              Entity Key.
+              A signed JWT can contain the following claims, all except
+              <spanx style="verb">keys</spanx> defined in
+              <xref target="RFC7519"/>:
+              <list style="hanging">
+                <t hangText="keys">
+                  <vspace/>
+                  REQUIRED. List of JWK values.
+                </t>
+                <t hangText="iss">
+                  <vspace/>
+                  REQUIRED. The "iss" (issuer) claim identifies the principal
+                  that issued the JWT.
+                </t>
+                <t hangText="sub">
+                  <vspace/>
+                  REQUIRED. This claim identifies the owner of the keys.
+                  It SHOULD be the same as the issuer.
+                </t>
+                <t hangText="iat">
+                  <vspace/>
+                  OPTIONAL. This claim identifies the time at which the JWT was
+                  issued.
+                </t>
+                <t hangText="exp">
+                  <vspace/>
+                  OPTIONAL. This claim identifies the time at which the JWT is
+                  no longer valid.
+                </t>
+              </list>
+              More claims are defined in <xref target="RFC7519"/>; of
+              these, <spanx style="verb">aud</spanx> SHOULD NOT be used since
+              the issuer cannot know who the audience is.
+              <spanx style="verb">nbf</spanx> and <spanx style="verb">jti</spanx>
+              are deemed to not be very useful in this context and are
+              to be omitted.
+
+              <figure>
+                <preamble>
+                  The following is a non-normative example of a signed JWKS
+                  before serialization and adding a signature.
+                </preamble>
+                <artwork>
+                  <![CDATA[
+    {
+      "keys": [
+        {
+          "kty": "RSA",
+          "kid": "SUdtUndEWVY2cUFDeDV5NVlBWDhvOXJodVl2am1mNGNtR0pmd",
+          "n": "y_Zc8rByfeRIC9fFZrDZ2MGH2ZnxLrc0ZNNwkNet5rwCPYeRF3Sv
+                5nihZA9NHkDTEX97dN8hG6ACfeSo6JB2P7heJtmzM8oOBZbmQ90n
+                EA_JCHszkejHaOtDDfxPH6bQLrMlItF4JSUKua301uLB7C8nzTxm
+                tF3eAhGCKn8LotEseccxsmzApKRNWhfKDLpKPe9i9PZQhhJaurwD
+                kMwbWTAeZbqCScU1o09piuK1JDf2PaDFevioHncZcQO74Obe4nN3
+                oNPNAxrMClkZ9s9GMEd5vMqOD4huXlRpHwm9V3oJ3LRutOTxqQLV
+                yPucu7eHA7her4FOFAiUk-5SieXL9Q",
+          "e": "AQAB"
+        },
+        {
+          "kty": "EC",
+          "kid": "MFYycG1raTI4SkZvVDBIMF9CNGw3VEZYUmxQLVN2T21nSWlkd3",
+          "crv": "P-256",
+          "x": "qAOdPQROkHfZY1daGofOmSNQWpYK8c9G2m2Rbkpbd4c",
+          "y": "G_7fF-T8n2vONKM15Mzj4KR_shvHBxKGjMosF6FdoPY"
+        }
+      ],
+      "iss": "https://example.org/op",
+      "iat": 1618410883
+    }
+]]>
+                </artwork>
+              </figure>
+
+              <figure>
+                <preamble>
+                  The following is a non-normative example of an RP's Entity Configuration:
+                </preamble>
+
+                <artwork>
+                  <![CDATA[
+    {
+      "iss": "https://openid.sunet.se",
+      "sub": "https://openid.sunet.se",
+      "iat": 1516239022,
+      "exp": 1516298022,
+      "metadata": {
+        "openid_relying_party": {
+          "application_type": "web",
+          "redirect_uris": [
+            "https://openid.sunet.se/rp/callback"
+          ],
+          "organization_name": "SUNET",
+          "logo_uri": "https://www.sunet.se/sunet/images/32x32.png",
+          "grant_types": [
+            "authorization_code",
+            "implicit"
+          ],
+          "signed_jwks_uri":"https://openid.sunet.se/rp/signed_jwks.jose",
+          "jwks_uri": "https://openid.sunet.se/rp/jwks.json"
+        }
+      },
+      "jwks": {
+        "keys": [
+          {
+            "alg": "RS256",
+            "e": "AQAB",
+            "key_ops": [
+              "verify"
+            ],
+            "kid": "key1",
+            "kty": "RSA",
+            "n": "pnXBOusEANuug6ewezb9J_...",
+            "use": "sig"
+          }
+        ]
+      },
+      "authority_hints": [
+        "https://edugain.org/federation"
+      ]
+    }
+    ]]>
+                </artwork>
+              </figure>
+            </t>
+
+            <t hangText="jwks">
+              <vspace/>
+              OPTIONAL. JSON Web Key Set document, passed by value, as
+              defined in <xref target="RFC7517"/>.
+              This parameter is intended
+              to be used by participants that, for some reason,
+              cannot use the <spanx style="verb">signed_jwks_uri</spanx>
+              parameter.
+              One significant downside of <spanx style="verb">jwks</spanx>
+              is that it does not enable key rotation
+              (which <spanx style="verb">signed_jwks_uri</spanx> and
+              <spanx style="verb">jwks_uri</spanx> do).
+            </t>
+
+          </list>
+        </t>
+
+	<section title="Usage of jwks, jwks_uri, and signed_jwks_uri" anchor="jwks_usage">
+	  <t>
+	    It is RECOMMENDED that an Entity Configuration
+	    use only one of
+	    <spanx style="verb">jwks</spanx>,
+	    <spanx style="verb">jwks_uri</spanx>, and
+	    <spanx style="verb">signed_jwks_uri</spanx> in its OpenID Connect or OAuth2 metadata.
+	    However, there may be circumstances in which is it desirable to use multiple
+	    JWK Set representations, such as when an Entity is in multiple federations and the
+	    federations have different policies about the JWK Set representation to be used.
+	    When multiple JWK Set representations are used, the keys present in each
+	    representation SHOULD be the same.  Even if they are not completely the
+	    same at a given instant in time (which may be the case during key rollover operations),
+	    implementations MUST make them consistent in a timely manner.
+	  </t>
+	</section>
+      </section>
+
+      <section title="RP Metadata" anchor="RP_metadata">
+        <t>
+          The metadata type identifier is
+          <spanx style="verb">openid_relying_party</spanx>.
+        </t>
+        <t>
+          All parameters defined in Section 2 of
+          <xref target="OpenID.Registration">OpenID Connect Dynamic Client Registration 1.0</xref>
+          and <xref target="common_metadata"/> are applicable,
+	  as well as additional parameters registered in the
+	  IANA "OAuth Dynamic Client Registration Metadata" registry
+	  <xref target="IANA.OAuth.Parameters"/>.
+        </t>
+        <t>
+          In addition, the following RP metadata parameter is defined:
+          <list style="hanging">
+            <t hangText="client_registration_types">
+              <vspace/>
+              REQUIRED. An array of strings specifying the client registration
+              types the RP wants to use. Values defined by this specification
+              are
+              <spanx style="verb">automatic</spanx>
+              and <spanx style="verb">explicit</spanx>.
+            </t>
+          </list>
+        </t>
+      </section>
+
+      <section title="OP Metadata" anchor="OP_metadata">
+        <t>
+          The metadata type identifier is
+          <spanx style="verb">openid_provider</spanx>.
+        </t>
+        <t>
+          All parameters defined in Section 3 of
+          <xref target="OpenID.Discovery">OpenID Connect Discovery 1.0</xref>
+          and <xref target="common_metadata"/> are applicable,
+	  as well as additional parameters registered in the
+	  IANA "OAuth Authorization Server Metadata" registry
+	  <xref target="IANA.OAuth.Parameters"/>.
+        </t>
+        <t>
+          In addition, the following OP metadata parameters are defined:
+        </t>
+        <t>
+          <list style="hanging">
+            <t hangText="client_registration_types_supported">
+              <vspace/>
+              REQUIRED. Array specifying the federation types supported.
+              Federation-type values defined by this specification are
+              <spanx style="verb">automatic</spanx>
+              and <spanx style="verb">explicit</spanx>.
+            </t>
+            <t hangText="federation_registration_endpoint">
+              <vspace/>
+              OPTIONAL.
+              URL of the OP's federation-specific Dynamic Client Registration
+              Endpoint. If the OP supports explicit client
+              registration as described in <xref target="explicit"/>,
+              then this claim is REQUIRED.
+            </t>
+            <t hangText="request_authentication_methods_supported">
+              <vspace/>
+              OPTIONAL.
+              A JSON Object defining the client authentications supported for each endpoint.
+              The endpoint names are defined in the IANA
+              "OAuth Authorization Server Metadata" registry
+              <xref target="IANA.OAuth.Parameters"/>.
+              Other endpoints and authentication methods are possible if made
+              recognizable according
+              to established standards and not in conflict with the operating
+              principles of this specification.
+              In OpenID Connect Core, no client authentication is performed at the authentication
+              endpoint. Instead, the request itself is authenticated.
+              The OP maps
+              information in the request (like the redirect_uri) to information it has gained
+              on the client through static or dynamic registration.
+              If the mapping is successful, the request can be processed.
+              If the RP uses Automatic Registration, as defined in <xref target="automatic"/>,
+              the OP has no prior knowledge
+              of the RP. Therefore, the OP must start by gathering
+              information about the RP using the process outlined in
+              <xref target="federation_configuration"/>. Once it has the RP's
+              metadata, the OP can verify the request in the same way
+              as if it had known the RP's metadata beforehand.
+              To make the request verification more secure, we demand the use of
+              a client authentication or verification method that proves that
+              the RP is in possession of a key that appears in the RP's metadata.
+              <vspace/>
+              Client authentication methods that MAY be used include:
+              <list style="hanging">
+                <t hangText="private_key_jwt">
+                  <vspace/>
+                  <spanx style="verb">private_key_jwt</spanx>.
+                  This authentication process is described in Section 9 of
+                  <xref target="OpenID.Core">OpenID Connect Core 1.0</xref>.
+                  Note that if <spanx style="verb">private_key_jwt</spanx> is
+                  used, the audience of the signed JWT MUST be either the URL of
+                  the Authorization Server's Authorization Endpoint or the
+                  Authorization Server's Entity Identifier.
+                </t>
+                <t hangText="tls_client_auth">
+                  <vspace/>
+                  Section 2.1 of
+                  <xref target="RFC8705"/>.
+                </t>
+                <t hangText="self_signed_tls_client_auth">
+                  <vspace/>
+                  Section 2.2 of
+                  <xref target="RFC8705"/>.
+                </t>
+              </list>
+              <vspace/>
+              A client verification method, on the other hand,
+              is something like:
+              <list style="hanging">
+                <t hangText="request_object">
+                  <vspace/>
+                  A Request Object, as described in
+                  <xref target="OpenID.Core">OpenID Connect Core 1.0</xref>.
+                  There is more about this in
+                  <xref target="automatic"/>.
+                  Here the verification is based on the fact that the request
+                  object is signed with a key the RP controls.
+                </t>
+              </list>
+              <vspace/>
+              The claim value of this parameter is a JSON object with members representing
+              authentication request methods and as values lists of client
+              authentication/verification methods that can be used together with the
+              authentication request method.
+              <vspace/>
+              Examples of authentication request methods are
+              <list style="symbols">
+                <t>
+                  Authentication Request (AR), as described in Section 3 of
+                  <xref target="OpenID.Core">OpenID Connect Core 1.0</xref>, and
+                </t>
+                <t>
+                  Pushed Authorization Request (PAR), as described in <xref target="RFC9126"/>.
+                </t>
+              </list>
+              <vspace/>
+              If AR is used, then a client verification method like
+              <spanx style="verb">request_object</spanx> can be used.
+              If PAR is used, then client authentication methods like
+              <spanx style="verb">private_key_jwt</spanx>,
+              <spanx style="verb">tls_client_auth</spanx> and
+              <spanx style="verb">self_signed_tls_client_auth</spanx>
+              can be used.
+            </t>
+
+            <t hangText="request_authentication_signing_alg_values_supported">
+              <vspace/>
+              OPTIONAL.
+              JSON array containing a list of the JWS signing algorithms
+              (<spanx style="verb">alg</spanx> values)
+              supported for the signature on the JWT <xref target="RFC7519" />
+              used in the <spanx style="verb">request_object</spanx>
+              contained in the request parameter of an authorization request or
+              in the <spanx style="verb">private_key_jwt</spanx> of a pushed authorization request.
+              This entry MUST be present if either of these authentication methods are specified
+              in the <spanx style="verb">request_authentication_methods_supported</spanx> entry.
+              No default algorithms are implied if this entry is omitted.
+              Servers SHOULD support <spanx style="verb">RS256</spanx>.
+              The value <spanx style="verb">none</spanx> MUST NOT be used.
+            </t>
+          </list>
+        </t>
+
+        <t>
+          The following is a non-normative example of an OP's Entity Configuration:
+        </t>
+        <figure>
+          <artwork><![CDATA[
+{
+   "iss":"https://op.umu.se",
+   "sub":"https://op.umu.se",
+   "exp":1568397247,
+   "iat":1568310847,
+   "metadata":{
+      "openid_provider":{
+         "issuer":"https://op.umu.se/openid",
+         "signed_jwks_uri":"https://op.umu.se/openid/signed_jwks.jose",
+         "authorization_endpoint":"https://op.umu.se/openid/authorization",
+         "client_registration_types_supported":[
+            "automatic",
+            "explicit"
+         ],
+         "grant_types_supported":[
+            "authorization_code",
+            "implicit",
+            "urn:ietf:params:oauth:grant-type:jwt-bearer"
+         ],
+         "id_token_signing_alg_values_supported":[
+            "ES256",
+            "RS256"
+         ],
+         "logo_uri":"https://www.umu.se/img/umu-logo-left-neg-SE.svg",
+         "op_policy_uri":"https://www.umu.se/en/legal-information/",
+         "response_types_supported":[
+            "code",
+            "code id_token",
+            "token"
+         ],
+         "subject_types_supported":[
+            "pairwise",
+            "public"
+         ],
+         "token_endpoint":"https://op.umu.se/openid/token",
+         "federation_registration_endpoint":"https://op.umu.se/openid/fedreg",
+         "token_endpoint_auth_methods_supported":[
+            "client_secret_post",
+            "client_secret_basic",
+            "client_secret_jwt",
+            "private_key_jwt"
+         ],
+         "pushed_authorization_request_endpoint":"https://op.umu.se/openid/par",
+         "request_authentication_methods_supported": {
+            "authorization_endpoint": [
+                "request_object"
+            ],
+            "pushed_authorization_request_endpoint": [
+                "request_object",
+                "private_key_jwt",
+                "tls_client_auth",
+                "self_signed_tls_client_auth"
+            ]
+        }
+      }
+   },
+   "authority_hints":[
+      "https://umu.se"
+   ],
+   "jwks":{
+      "keys":[
+         {
+            "e":"AQAB",
+            "kid":"dEEtRjlzY3djcENuT01wOGxrZlkxb3RIQVJlMTY0...",
+            "kty":"RSA",
+            "n":"x97YKqc9Cs-DNtFrQ7_vhXoH9bwkDWW6En2jJ044yH..."
+         }
+      ]
+   },
+}
+]]></artwork>
+        </figure>
+
+      </section>
+      <section title="OAuth Authorization Server">
+        <t>
+          The metadata type identifier is
+          <spanx style="verb">oauth_authorization_server</spanx>.
+        </t>
+        <t>
+          All parameters defined in Section 2 of
+          <xref target="RFC8414">RFC 8414</xref>
+          and <xref target="common_metadata"/> are applicable,
+	  as well as additional parameters registered in the
+	  IANA "OAuth Dynamic Client Registration Metadata" registry
+	  <xref target="IANA.OAuth.Parameters"/>.
+        </t>
+      </section>
+
+      <section title="OAuth Client">
+        <t>
+          The metadata type identifier is
+          <spanx style="verb">oauth_client</spanx>.
+        </t>
+        <t>
+          All parameters defined in Section 2 of
+          <xref target="RFC7591">OAuth 2.0 Dynamic Client Registration Protocol</xref>
+          and <xref target="common_metadata"/> are applicable,
+	  as well as additional parameters registered in the
+	  IANA "OAuth Dynamic Client Registration Metadata" registry
+	  <xref target="IANA.OAuth.Parameters"/>.
+        </t>
+      </section>
+
+      <section title="OAuth Protected Resource">
+        <t>
+          The metadata type identifier is
+          <spanx style="verb">oauth_resource</spanx>.
+	  The parameters defined in <xref target="common_metadata"/> are applicable.
+	  In addition, while it is not presently a standard,
+	  some deployments are using the protected resource metadata parameters
+	  defined in <xref target="I-D.jones-oauth-resource-metadata"/>.
+        </t>
+      </section>
 
     <section
             title="Provider Information Discovery and Client Registration in a Federation">
