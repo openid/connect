@@ -2,42 +2,30 @@
 
 autonumber
 
-title "Presentation: Cross Device, Well-known Wallet"
-
 participant User as u
 
 participant "Verifier" as r
 
-participant "RP Backend" as rb
+participant "Verfier Response Endpoint" as rb
 
 participant "Wallet Frontend" as w
 
-participant "Wallet Provider Metadata" as b
-
 u --> r : use
 
-r -> b: get metadata
-activate r
-b -> r: metadata
-
-r -> r: create request_uri (client_id,\n nonce, redirect_uri, presentation_definition)
+r -> r: create transaction_id & state
 r -> r: render QR code with signed presentation request
 
 u --> w: scan QR code 
 activate w
-w -> rb: fetch request object 
 w -> w: authenticate and authorize Verifier
-
-r -> rb : get presentation response (nonce)
-rb -> r : no response yet
 
 note over u, w: user authentication and credential selection/confirmation
 
 w -> w: create presentation (credential)
-w -> rb: presentation response \n(vp_token, presentation_submission, hash(nonce))
+w -> rb: presentation response \n(vp_token, presentation_submission, state)
 deactivate w
-r -> rb: get presentation response (nonce)
-rb -> r: presentation response \n(vp_token, presentation_submission)
-r -> r: validate presentation
+r --> rb: get presentation response (transaction_id)
+rb --> r: presentation response \n(vp_token, presentation_submission)
+r -> r: validate presentation (including nonce)
 r -> r: use presented credential 
 @enduml

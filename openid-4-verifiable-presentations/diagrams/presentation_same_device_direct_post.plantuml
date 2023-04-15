@@ -2,8 +2,6 @@
 
 autonumber
 
-title "Presentation: Same Device, Well-Known Wallet provider, Large Response Payload"
-
 participant "User Agent" as u
 
 participant "Verifier" as r
@@ -13,31 +11,24 @@ participant "Verifier Backend" as rb
 participant "Wallet" as w
 
 u --> r : use
-r -> w: get metadata (authorization_endpoint, ...)
 activate r
-r --> u: authorization request\n(client_id, request_uri)
-note right: verifier creates nonce and code_challenge and stores them in its session
+r -> r: create transaction_id & state
+r --> u: authorization request\n(client_id, nonce, response_uri, presentation_definition, state)
 deactivate r
-u --> w: authorization request\n(client_id, request_uri)
+u --> w: authorization request\n(client_id, nonce, response_uri, presentation_definition, state)
 activate w
-w -> rb: get request object : \n(client_id, response_type, response_mode, \nredirect_uri, response_uri, nonce, \ncode_challenge, code_challenge_method, presentation_definition)
-w -> w: authenticate and authorize Verifier
+w -> w: authenticate and\n authorize Verifier
 
 note over u, w: user authentication and credential selection/confirmation
 
-w -> w: create verifiable presentation (credential)
-w -> rb: post response (vp_token, presentation_subission, code_challenge) : code
-note left: verifier creates code, stores it with presentation response and returns it to wallet
-w --> u: authorization response (code)
+w -> w: create verifiable\npresentation (credential)
+w -> rb: post response \n(vp_token, presentation_submission, state) : redirect_uri
+w --> u: response (response_code)
 deactivate w
-u --> r: authorization response (code)
-note right: wallet sends code with redirect
+u --> r: response (response_code)
 activate r
-r -> rb: get presentation response(code, code_verifier)
-note right: verifier frontend retrieves presentation response with code and code_verifier
-rb -> rb: lookup presentation response (hash(nonce,response_code))
-note left: combination of code and code_verifier ensures binding of verifier and wallet transactions
+r -> rb: get presentation response\n (transaction_id)
 rb -> r: presentation response
-r -> r: validate presentation (incl. nonce binding)
+r -> r: validate presentation \n(incl. nonce binding)
 r -> r: use presented credential 
 @enduml

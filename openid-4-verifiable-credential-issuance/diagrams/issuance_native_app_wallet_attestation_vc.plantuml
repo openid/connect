@@ -4,7 +4,7 @@ title "Issuance of Wallet Attestation VC (On Demand or In Advance)"
 
 autonumber
 participant "Wallet Frontend" as wa
-participant "Wallet Backend" as ce
+participant "Wallet Provider" as ce
 
 wa -> ce : get nonce
 ce -> wa : nonce

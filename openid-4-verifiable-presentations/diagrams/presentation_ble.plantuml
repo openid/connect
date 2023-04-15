@@ -1,0 +1,32 @@
+@startuml
+
+autonumber
+
+participant "User" as u
+
+participant "Verifier" as v
+
+participant "Wallet" as w
+
+activate v
+v -> v: setup BLE (as peripheral)
+v -> v: display QR Code
+deactivate v
+u -> w: scan QR Code
+activate w
+w -> v: scan QR Code
+w -> v: set up connection (ephm key, nonce)
+activate v
+note over u, w: sub sequent requests are encrypted
+
+v -> w: authorization request as signed request object\n(client_id, nonce, presentation_definition)
+w -> w: authenticate and authorize Verifier
+
+note over u, w: credential selection/confirmation
+
+w -> w: create verifiable presentation (credential)
+w -> v: authorization response (vp_token, presentation_submission)
+deactivate w
+v -> v: validate presentation
+v -> v: use presented credential 
+@enduml
