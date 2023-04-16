@@ -87,7 +87,7 @@
       </address>
     </author>
 
-    <date day="10" month="February" year="2023"/>
+    <date day="24" month="March" year="2023"/>
 
     <workgroup>OpenID Connect Working Group</workgroup>
 
@@ -1299,6 +1299,13 @@
               publish a
               <spanx style="verb">federation_trust_mark_status_endpoint</spanx>.
             </t>
+            <t hangText="federation_trust_mark_list_endpoint">
+              <vspace/>
+              OPTIONAL.
+              The endpoint described in
+              <xref target="tm_listing"/>. Trust Mark issuers MAY publish a
+              <spanx style="verb">federation_trust_mark_list_endpoint</spanx>.
+            </t>
             <t hangText="organization_name">
               <vspace/>
               OPTIONAL. A human-readable
@@ -1343,6 +1350,7 @@
   "federation_list_endpoint":
     "https://example.com/federation_list",
   "federation_trust_mark_status_endpoint": "https://example.com/status",
+  "federation_trust_mark_list_endpoint": "https://example.com/trust_marked_list",
   "organization_name": "The example cooperation",
   "homepage_uri": "https://www.example.com"
 }
@@ -1425,8 +1433,6 @@
                 parameter has no value, then the parameter MUST be initialized
                 with the specified value(s).
               </t>
-
-
               <t hangText="default">
                 <vspace/>
                 If the metadata parameter has no value, then it MUST be set to
@@ -1447,35 +1453,56 @@
               </t>
               <t hangText="one_of">
                 <vspace/>
-                The value of the metadata parameter MUST be one of those listed
-                in the directive. The presence of the metadata parameter becomes
-                optional when the directive occurs in conjunction with an
-                <spanx style="verb">essential</spanx> set to
-                <spanx style="verb">false</spanx>.
+                If the metadata parameter has no value and is voluntary 
+                (<spanx style="verb">essential</spanx> policy is missing or set to 
+                <spanx style="verb">false</spanx>), then 
+                the <spanx style="verb">one_of</spanx> check MUST be ignored.
+                Otherwise the value of the metadata parameter MUST be 
+                one of those listed in the directive.
               </t>
               <t hangText="subset_of">
                 <vspace/>
-                The resulting value of the metadata parameter MUST be the
-                intersection of the values in the directive and the values of
-                the parameter. The presence of the metadata parameter becomes
-                optional when the directive occurs in conjunction with an
-                <spanx style="verb">essential</spanx> set to
-                <spanx style="verb">false</spanx>.
+                If the metadata parameter has no value and is voluntary 
+                (<spanx style="verb">essential</spanx> policy is missing or set to 
+                <spanx style="verb">false</spanx>), then 
+                the <spanx style="verb">subset_of</spanx> check MUST be ignored.
+                Otherwise, this operator MUST compute the intersection of the 
+                values in the directive and the values of the parameter. 
+                If the resulting intersection is non-empty the parameter 
+                MUST be set to the values in the intersection. 
+                Note that this behavior makes <spanx style="verb">subset_of</spanx> 
+                a potential value modifier and thus it is not a pure value check.
+                If the 
+                intersection is empty the outcome depends on the 
+                <spanx style="verb">essential</spanx> parameter
+                : when the value is defined as essential, 
+                the parameter MUST be rejected with a policy error, 
+                else the parameter MUST be removed 
+                (implying a <spanx style="verb">null</spanx> value).
+                
               </t>
               <t hangText="superset_of">
                 <vspace/>
-                The values of the metadata parameter MUST contain those
-                specified in the directive. We mathematically define superset;
-                equality is included. The presence of the metadata parameter
-                becomes optional when the directive occurs in conjunction with
-                an <spanx style="verb">essential</spanx> set to
-                <spanx style="verb">false</spanx>.
+                If the metadata parameter has no value and is voluntary 
+                (<spanx style="verb">essential</spanx> policy is missing or set to 
+                <spanx style="verb">false</spanx>), then 
+                the <spanx style="verb">superset_of</spanx> check MUST be ignored.
+                Otherwise the values of the metadata parameter MUST contain those
+                specified in the directive. By mathematically defining 
+                supersets, equality is included.
               </t>
             </list>
           </t>
+
+          <t>
+            A "set equals" value check can be expressed by combining a
+            <spanx style="verb">subset_of</spanx> and a
+            <spanx style="verb">superset_of</spanx> with identical string
+            list values.
+          </t>
           <t>
             Note that when a parameter is defined as a space-separated
-            list of strings like for <spanx style="verb">grant_types</spanx> in
+            list of strings like for <spanx style="verb">scope</spanx> in
             <xref target="RFC7591"/> <spanx style="verb">subset_of</spanx>,
             <spanx style="verb">superset_of</spanx> and
             <spanx style="verb">default</spanx> are still expressed as lists of strings.
@@ -1483,6 +1510,67 @@
             "If the value contains multiple space-delimited strings, their order does not matter,
             and each string adds an additional access range to the requested scope."
           </t>
+          
+        <table>
+          <name>Map of the outputs produced by combining metadata policies with different input values.</name>
+          <thead>
+            <tr>
+              <td colspan="2">Policy</td>
+              <td colspan="2">Metadata parameter</td>
+            </tr>
+            <tr>
+              <td colspan="">essential</td>
+              <td colspan="">subset_of</td>
+              <td colspan="">input</td>
+              <td colspan="">output</td>
+            </tr>
+          </thead>
+        
+          <tbody>
+            <tr>
+              <td>true</td>
+              <td>[a,b,c]</td>
+              <td>[a,e]</td>
+              <td>[a]</td>
+            </tr>
+        
+            <tr>
+              <td>false</td>
+              <td>[a,b,c]</td>
+              <td>[a,e]</td>
+              <td>[a]</td>
+            </tr>
+        
+            <tr>
+              <td>true</td>
+              <td>[a,b,c]</td>
+              <td>[d,e]</td>
+              <td>error</td>
+            </tr>
+        
+            <tr>
+              <td>false</td>
+              <td>[a,b,c]</td>
+              <td>[d,e]</td>
+              <td>no parameter</td>
+            </tr>
+        
+            <tr>
+              <td>true</td>
+              <td>[a,b,c]</td>
+              <td>null or no parameter</td>
+              <td>error</td>
+            </tr>
+        
+            <tr>
+              <td>false</td>
+              <td>[a,b,c]</td>
+              <td>null or no parameter</td>
+              <td>no parameter</td>
+            </tr>
+          </tbody>
+        </table>
+        
         </section>
         <section title="Restrictions on Policy Entries" anchor="policy_restr">
           <t>
@@ -1662,7 +1750,8 @@
             <list style="numbers">
               <t>
                 If there is a <spanx style="verb">value</spanx> operator in the
-                policy, its value would be applied without any additional action.
+                policy, its value MUST be applied to the parameter and 
+                further action stopped.
               </t>
               <t>
                 Add whatever value is specified in an <spanx style="verb">add</spanx>
@@ -1674,11 +1763,11 @@
               </t>
               <t>
                 Do the essential check.
-                If <spanx style="verb">essential</spanx> is
-                <spanx style="verb">true</spanx>,
-                then the claim
-                MUST have a value. Otherwise, applying the operator MUST
-                fail.
+                If <spanx style="verb">essential</spanx> is 
+                <spanx style="verb">true</spanx> the parameter 
+                MUST have a value, else the operator MUST fail.
+                If the parameter is voluntary and has no value
+                any other value checks MUST be skipped.
               </t>
               <t>
                 Do the other checks. Verify that the value is
@@ -1691,10 +1780,9 @@
               <t>
                 If more than one value is specified in
                 <spanx style="verb">one_of</spanx> and the Leaf Entity
-                does not specify the metadata claim for which
-                <spanx style="verb">one_of</spanx> is referred to,
-                it is an implementation choice which of the values in
-                the <spanx style="verb">one_of</spanx> array will be used.
+                does not specify a metadata parameter value,
+                it is an implementation choice which value in the 
+                <spanx style="verb">one_of</spanx> array to use.
               </t>
             </list>
           </t>
@@ -2852,13 +2940,26 @@ Host: openid.sunet.se
 
       <section title="Entity Listings" anchor="entity_listing">
         <t>
-          An Entity MAY query another Entity for a list of all the
-          Entities immediately Subordinate to that Entity and about which
-          that Entity is prepared to issue statements.
-          (In some cases, this MAY be a very large list.)
+		  The listing endpoint is exposed by Federation Entities 
+		  acting as Trust Anchor, Intermediates or Trust Mark issuers. 
+		</t>
+		<t>
+		  The endpoint lists the Subordinates, about which
+          the Trust Anchor or Intermediate issues Entity Statements. 
+        </t>
+        <t>
+		  As Trust Mark issuer,
+          the endpoint MAY list the Subordinates for which Trust Marks 
+          have been issued and are still valid, if the issuer
+          exposing this endpoint supports Trust Mark filtering, as 
+          defined below.
+        </t>
+        <t>
+          In both cases, the list contained in the result
+          MAY be a very large list.
         </t>
 
-        <section title="Entity Listings Request">
+        <section title="Subordinate Listing Request">
           <t>
             The request MUST be an HTTP request using the GET method and
             the <spanx style="verb">https</spanx> scheme to a list endpoint with the
@@ -2870,7 +2971,7 @@ Host: openid.sunet.se
               <t hangText="entity_type">
                 <vspace/>
                 OPTIONAL. If the responder knows the
-                metadata type identifier of all its Subordinates,
+                Entity Type of all its Subordinates,
                 the result MUST be filtered accordingly.
                 If the responder does not support this feature it MUST
                 use the HTTP status code 400 and set the content type to
@@ -2878,12 +2979,42 @@ Host: openid.sunet.se
                 the error code set to
                 <spanx style="verb">unsupported_parameter</spanx>.
               </t>
+              <t hangText="trust_marked">
+				<vspace/>
+                OPTIONAL. Boolean. 
+               
+                If the parameter 
+                <spanx style="verb">trust_marked</spanx> is present and 
+                set to <spanx style="verb">true</spanx>, 
+                the result contains only the Subordinates for which 
+                at least one Trust Mark have been issued and is still valid.
+                
+                If the responder does not support this feature it MUST 
+                use the HTTP status code 400 and set the content type to 
+                <spanx style="verb">application/json</spanx>, with 
+                the error code set to 
+                <spanx style="verb">unsupported_parameter</spanx>.
+			  </t>
+              <t hangText="trust_mark_id">
+                <vspace/>
+                OPTIONAL. If the responder has issued Trust Marks with the
+                <spanx style="verb">trust_mark_id</spanx>,
+                the list obtained in the response MUST be filtered with 
+                the Subordinates for which that Trust Mark identifier has been 
+                issued and is still valid. 
+                
+                If the responder does not support this feature it MUST 
+                use the HTTP status code 400 and set the content type to 
+                <spanx style="verb">application/json</spanx>, with 
+                the error code set to 
+                <spanx style="verb">unsupported_parameter</spanx>.
+              </t>
             </list>
           </t>
           <figure>
             <preamble>
               The following is a non-normative example of an API
-              request for a list of Entities:
+              request for a list of Subordinates:
             </preamble>
             <artwork><![CDATA[
 GET /list HTTP/1.1
@@ -2892,11 +3023,11 @@ Host: openid.sunet.se
           </figure>
         </section>
 
-        <section title="Entity Listing Response">
+        <section title="Subordinate Listing Response">
           <t>
             A successful response MUST use the HTTP status code 200
             and the content type set to <spanx style="verb">application/json</spanx>,
-            containing a JSON list with the known Entity Identifiers.
+            containing a JSON array with the known Entity Identifiers.
           </t>
 
           <t>
@@ -2907,7 +3038,8 @@ Host: openid.sunet.se
 
           <figure>
             <preamble>
-              The following is a non-normative example of a response:
+              The following is a non-normative example of a response, containing
+              the Subordinate Entities:
             </preamble>
             <artwork><![CDATA[
 200 OK
@@ -3024,6 +3156,76 @@ Content-Type: application/json
 ]]></artwork>
             </figure>
           </t>
+        </section>
+      </section>
+
+     <section title="Trust Marked Entities Listing" anchor="tm_listing">
+        <t>
+		  The Trust Marked Entities listing endpoint is exposed by 
+          Trust Mark issuers 
+          and lists all the Entities for which Trust Marks 
+          have been issued and are still valid.
+        </t>
+
+        <section title="Trust Marked Entities Listing Request">
+          <t>
+            The request MUST be an HTTP request using the GET method and
+            the <spanx style="verb">https</spanx> scheme to a list endpoint with the
+            following query parameters, encoded in
+            <spanx style="verb">application/x-www-form-urlencoded</spanx> format.
+          </t>
+          <t>
+            <list style="hanging">
+              <t hangText="trust_mark_id">
+                <vspace/>
+                REQUIRED. If the responder has issued Trust Marks with the
+                <spanx style="verb">trust_mark_id</spanx>,
+                the list obtained in the response MUST be filtered with 
+                the Entities for which that Trust Mark identifier has been 
+                issued and is still valid.
+              </t>
+            </list>
+          </t>
+          <figure>
+            <preamble>
+              The following is a non-normative example of an API
+              request for a list of Trust Marked Entities:
+            </preamble>
+            <artwork><![CDATA[
+GET /trust_marked_list?trust_mark_id=https%3A%2F%2Ffederation.example.org%2Fopenid_relying_party%2Fprivate%2Funder-age HTTP/1.1
+Host: trust-mark-issuer.example.org
+]]></artwork>
+          </figure>
+        </section>
+
+        <section title="Trust Marked Entities Listing Response">
+          <t>
+            A successful response MUST use the HTTP status code 200
+            and the content type set to <spanx style="verb">application/json</spanx>,
+            containing a JSON array with Entity Identifiers.
+          </t>
+
+          <t>
+            If the response is negative, the response
+            should be produced in accordance with what is defined in
+            <xref target="error_response"/>.
+          </t>
+
+          <figure>
+            <preamble>
+              The following is a non-normative example of a response, containing
+              the Trust Marked Entities:
+            </preamble>
+            <artwork><![CDATA[
+200 OK
+Content-Type: application/json
+
+[
+  "https://blackboard.ntnu.no/openid/rp",
+  "https://that-rp.example.org"
+]
+]]></artwork>
+          </figure>
         </section>
       </section>
 
@@ -6328,14 +6530,19 @@ Host: op.umu.se
       <t>
         The authors wish to acknowledge the contributions of the following
         individuals and organizations to this specification:
+        Michele D'Amico,
+        Andrii Deinega,
         Heather Flanagan,
         Samuel Gulliksson,
         Takahiko Kawasaki,
         Torsten Lodderstedt,
+        Francesco Marino,
         Roberto Polli,
         Jouke Roorda,
         Mischa Sallé,
         Marcos Sanz,
+        Amir Sharif,
+        Giada Sciarretta,
         Peter Schober,
         Michael Schwartz,
         Kristina Yasuda,
@@ -6351,7 +6558,16 @@ Host: op.umu.se
         -28
         <list style="symbols">
           <t>
+            Fixed #1823: Metadata policy clarification text on essential term and sub_set, one_of, superset_of.
+          </t>
+          <t>
+            Listing endpoint - added the parameters <spanx style="verb">trust_marked</spanx> and <spanx style="verb">trust_mark_id</spanx>.
+          </t>
+          <t>
             Historical keys endpoint, references to rfc7517 and use of claim keys, correction in the normative text.
+          </t>
+          <t>
+            Added the endpoint <spanx style="verb">federation_trust_mark_list_endpoint</spanx> for Trust Mark issuers.
           </t>
         </list>
       </t>
