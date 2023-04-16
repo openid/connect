@@ -10,11 +10,11 @@ pipelines:
           - docker run -v `pwd`/openid-4-verifiable-presentations:/data danielfett/markdown2rfc openid-4-verifiable-presentations-1_0.md
           - docker run -v `pwd`/openid-4-verifiable-credential-issuance:/data danielfett/markdown2rfc openid-4-verifiable-credential-issuance-1_0.md
           - docker run -v `pwd`/openid-connect-self-issued-v2:/data danielfett/markdown2rfc openid-connect-self-issued-v2-1_0.md
-          - docker run -v `pwd`/openid-for-verifiable-presentations-over-ble:/data danielfett/markdown2rfc openid-for-verifiable-presentations-over-ble.md
+          - docker run -v `pwd`/openid-4-verifiable-presentations-over-ble:/data danielfett/markdown2rfc openid-4-verifiable-presentations-over-ble.md
           - mv openid-4-verifiable-presentations/openid-4-verifiable-presentations-*.html openid-4-verifiable-presentations-1_0.html
           - mv openid-4-verifiable-credential-issuance/openid-4-verifiable-credential-issuance-*.html openid-4-verifiable-credential-issuance-1_0.html
           - mv openid-connect-self-issued-v2/openid-connect-self-issued-v2-*.html openid-connect-self-issued-v2-1_0.html
-          - mv openid-for-verifiable-presentations-over-ble/openid-for-verifiable-presentations-over-ble-*.html openid-for-verifiable-presentations-over-ble.html
+          - mv openid-4-verifiable-presentations-over-ble/openid-for-verifiable-presentations-over-ble-*.html openid-4-verifiable-presentations-over-ble.html
         artifacts:
           - '*.html'
           - '*.xml'
@@ -28,11 +28,11 @@ pipelines:
             - docker run -v `pwd`/openid-4-verifiable-presentations:/data danielfett/markdown2rfc openid-4-verifiable-presentations-1_0.md
             - docker run -v `pwd`/openid-4-verifiable-credential-issuance:/data danielfett/markdown2rfc openid-4-verifiable-credential-issuance-1_0.md
             - docker run -v `pwd`/openid-connect-self-issued-v2:/data danielfett/markdown2rfc openid-connect-self-issued-v2-1_0.md
-            - docker run -v `pwd`/openid-for-verifiable-presentations-over-ble:/data danielfett/markdown2rfc openid-for-verifiable-presentations-over-ble.md
+            - docker run -v `pwd`/openid-4-verifiable-presentations-over-ble:/data danielfett/markdown2rfc openid-4-verifiable-presentations-over-ble.md
             - mv openid-4-verifiable-presentations/openid-4-verifiable-presentations-*.html openid-4-verifiable-presentations-1_0.html
             - mv openid-4-verifiable-credential-issuance/openid-4-verifiable-credential-issuance-*.html openid-4-verifiable-credential-issuance-1_0.html
             - mv openid-connect-self-issued-v2/openid-connect-self-issued-v2-*.html openid-connect-self-issued-v2-1_0.html
-            - mv openid-for-verifiable-presentations-over-ble/openid-for-verifiable-presentations-over-ble-*.html openid-for-verifiable-presentations-over-ble-1_0.html
+            - mv openid-4-verifiable-presentations-over-ble/openid-for-verifiable-presentations-over-ble-*.html openid-4-verifiable-presentations-over-ble-1_0.html
           artifacts:
             - '*.html'
             - '*.xml'
