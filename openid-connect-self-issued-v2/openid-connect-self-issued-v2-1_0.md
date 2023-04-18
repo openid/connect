@@ -855,7 +855,11 @@ Note that if Self-Issued OP implementations belong to a trust framework, the tru
 
 ## Receiving Cross-Device Responses
 
-In case of the cross-device flow, the Self-Issued OPwill send the result as an HTTP POST message to the RP. This requires connectivity between Self-Issued OPand RP. There are different ways this can be achieved. The RP may, for example, expose a suitable endpoint from their backend. Alternatively, it may employ a separate service able to receive and store such messages, where the RP then queries the Self-Issued OPresponses.  
+In case of the cross-device flow, the Self-Issued OP will send the result as an HTTP POST message to the RP. This requires connectivity between Self-Issued OPand RP. There are different ways this can be achieved. The RP may, for example, expose a suitable endpoint from their backend. Alternatively, it may employ a separate service able to receive and store such messages, where the RP then queries the Self-Issued OP Responses.
+
+## Same Subject Identifier across Devices
+
+The End-User may desire to use the same Subject identifier value across devices. This is not possible unless there is a way to sync a private key used to self-sign the Self-Issued ID Token across devices. This will be impossible if the private key is HW-bound.
 
 # Relationships to Other Documents
 
