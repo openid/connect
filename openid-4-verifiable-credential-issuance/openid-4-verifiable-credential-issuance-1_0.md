@@ -133,7 +133,10 @@ Existing OAuth 2.0 mechanisms are extended as following:
 * A new Grant Type "Pre-Authorized Code" along with additional token response parameters `authorization_pending` and `interval` is defined to facilitate flows where the preparation of the credential issuance is conducted before the actual OAuth 2.0 flow starts (#pre-authz-code-flow).
 * A new authorization details [@!I-D.ietf-oauth-rar] type `openid_credential` is defined to convey the details about the Credentials (including formats and types) the Wallet wants to obtain (#authorization-details). 
 * Client metadata is used to convey Wallet's metadata. A new metadata parameter `credential_offer_endpoint` is added to allow a Wallet (acting as OAuth 2.0 client) to publish its Credential Offer Endpoint (#client-metadata).
-* Authorization Endpoint: An additional parameter `issuer_state` is added to convey state in the context of processing an issuer-initiated credential offer (#credential-authz-request). Additional parameters `wallet_issuer` and `user_hint` are added to enable the Credential Issuer to request Verifiable Presentations from the calling Wallet in the course of Authorization Request processing. 
+* Authorization Endpoint: 
+  * An additional parameter `issuer_state` is added to convey state in the context of processing an issuer-initiated credential offer (#credential-authz-request). 
+  * Additional parameters `wallet_issuer` and `user_hint` are added to enable the Credential Issuer to request Verifiable Presentations from the calling Wallet in the course of Authorization Request processing.
+  * An additional parameter `client_id_scheme` is added to enable deployments of this specification to use different mechanisms to obtain and validate metadata of the Verifier beyond the scope of [@!RFC6749].
 * Token Endpoint: optional response parameters `c_nonce` and `c_nonce_expires_in` are added to the Token Endpoint, Credential Endpoint and Batch Credential Endpoint to provide the client with a nonce to be used for proof of possession of key material in a subsequent request to the Credential Endpoint (#token-response). 
 
 ## Core Concepts
@@ -459,19 +462,22 @@ Host: https://server.example.com
 
 If a scope value related to credential issuance and the `authorization_details` request parameter containing objects of type `openid_credential` are both present in a single request, the Credential Issuer MUST interpret these individually. However, if both request the same Credential type, then the Credential Issuer MUST follow the request as given by the authorization details object.
 
-### Additional Request Parameters
+### Additional Request Parameters {#additional-authz-req-parameters}
 
 This specification defines the following request parameters that can be supplied in an Authorization Request:
 
 * `wallet_issuer`: OPTIONAL. JSON String containing the Wallet's OpenID Connect issuer URL. The Credential Issuer will use the discovery process as defined in [@!SIOPv2] to determine the Wallet's capabilities and endpoints. RECOMMENDED in Dynamic Credential Request.
 * `user_hint`: OPTIONAL. JSON String containing an opaque user hint the Wallet MAY use in subsequent callbacks to optimize the user's experience. RECOMMENDED in Dynamic Credential Request.
-* `issuer_state`: OPTIONAL. String value identifying a certain processing context at the Credential Issuer. A value for this parameter is typically passed in a Credential Offer from the Credential Issuer to the Wallet (see ((#credential_offer)). This request parameter is used to pass the `issuer_state` value back to the Credential Issuer. 
+* `issuer_state`: OPTIONAL. String value identifying a certain processing context at the Credential Issuer. A value for this parameter is typically passed in a Credential Offer from the Credential Issuer to the Wallet (see (#credential_offer)). This request parameter is used to pass the `issuer_state` value back to the Credential Issuer.
+* `client_id_scheme`: OPTIONAL. A string identifying the scheme of the value in the `client_id` Authorization Request parameter (Client Identifier scheme). The `client_id_scheme` parameter namespaces the respective Client Identifier. If an Authorization Request uses the `client_id_scheme` parameter, the Issuer MUST interpret the Client Identifier of the Wallet in the context of the Client Identifier scheme. If the parameter is not present, the Wallet MUST behave as specified in [@!RFC6749]. See Section 5.7 of [@OpenID4VP] for the values that canbe used by this specification. If the same Client Identifier is used with different Client Identifier schemes, those occurrences MUST be treated as different Wallets. Note that the Wallet needs to determine which Client Identifier schemes the Issuer supports prior to sending the Authorization Request in order to choose a supported scheme.
 
 Note: When processing the Authorization Request, the Credential Issuer MUST take into account that the `issuer_state` is not guaranteed to originate from this Credential Issuer in all circumstances. It could have been injected by an attacker. 
 
 ### Pushed Authorization Request
 
-Use of Pushed Authorization Requests is RECOMMENDED to ensure confidentiality, integrity, and authenticity of the request data and to avoid issues due to large requests sizes.
+Use of Pushed Authorization Requests (PAR) [@RFC9126] is RECOMMENDED to ensure confidentiality, integrity, and authenticity of the request data and to avoid issues due to large requests sizes.
+
+Any of the parameters defined in (#additional-authz-req-parameters) can be present when PAR is used.
 
 Below is a non-normative example of a Pushed Authorization Request:
 
@@ -498,7 +504,14 @@ To enable dynamic callbacks of the Credential Issuer to the End-User's Wallet, t
 
 For non-normative examples of request and response, see section 11.6 in [@OpenID4VP].
 
-Note to the editors: need to sort out Credential Issuer's client_id with Wallet and potentially add example with `wallet_issuer` and `user_hint` 
+Note to the editors: need to sort out Credential Issuer's client_id with Wallet and potentially add example with `wallet_issuer` and `user_hint`.
+
+### Wallet Metadata Management {#wallet-metadata-management}
+
+This specification defines the following values for the `client_id_scheme` parameter, followed by the examples where applicable:
+
+* `pre-registered`: This value represents the [@!RFC6749] default behavior, i.e., the Client Identifier needs to be known to the Wallet in advance of the Authorization Request. The Verifier metadata is obtained using [@!RFC7591] or through out-of-band mechanisms.
+* `wallet-instance-attestation`: 
 
 ## Successful Authorization Response
 
