@@ -7,7 +7,7 @@ keyword = ["security", "openid", "verifiable credential"]
 
 [seriesInfo]
 name = "Internet-Draft"
-value = "oidc-userinfo-vc-00"
+value = "openid-connect-userinfo-vc-1_0-00"
 status = "standard"
 
 [[author]]
