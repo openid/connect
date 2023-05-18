@@ -44,11 +44,11 @@ This specification defines an API for the issuance of Verifiable Credentials.
 
 # Introduction
 
-This specification defines an API that is used to issue verifiable credentials. W3C formats [@VC_DATA] as well as other Credential formats, like [@ISO.18013-5], are supported. 
+This specification defines an API that is used to issue Verifiable Credentials. W3C formats [@VC_DATA] as well as other Credential formats, like [@ISO.18013-5], are supported. 
 
-Verifiable Credentials are very similar to identity assertions, like ID Tokens in OpenID Connect [@OpenID.Core], in that they allow a Credential Issuer to assert End-User claims. However, in contrast to the identity assertions, a verifiable credential follows a pre-defined schema (the Credential type) and is bound to a certain holder, e.g. through cryptographic holder binding. This allows secure direct presentation of the Credential from the End-User to the RP, without involvement of the Credential Issuer. This specification caters for those differences.
+Verifiable Credentials are very similar to identity assertions, like ID Tokens in OpenID Connect [@OpenID.Core], in that they allow a Credential Issuer to assert End-User claims. However, in contrast to the identity assertions, a Verifiable Credential follows a pre-defined schema (the Credential type) and is bound to a certain holder, e.g. through Cryptographic Holder Binding. This allows secure direct presentation of the Credential from the End-User to the RP, without involvement of the Credential Issuer. This specification caters for those differences.
 
-Access to this API is authorized using OAuth 2.0 [@!RFC6749], i.e. the Wallet uses OAuth 2.0 to obtain authorization to receive verifiable credentials. This way the issuance process can benefit from the proven security, simplicity, and flexibility of OAuth 2.0 and existing OAuth 2.0 deployments and OpenID Connect OPs (see [@OpenID.Core]) can be extended to become Credential Issuers. 
+Access to this API is authorized using OAuth 2.0 [@!RFC6749], i.e. the Wallet uses OAuth 2.0 to obtain authorization to receive Verifiable Credentials. This way the issuance process can benefit from the proven security, simplicity, and flexibility of OAuth 2.0 and existing OAuth 2.0 deployments and OpenID Connect OPs (see [@OpenID.Core]) can be extended to become Credential Issuers. 
 
 ## Requirements Notation and Conventions
 
@@ -100,7 +100,7 @@ Claim-based Holder Binding:
 :  Ability of the Holder to prove legitimate possession of a Verifiable Credential by proofing certain claims, e.g. name and date of birth, for example by presenting another Verifiable Credential. Claim-based Holder Binding allows long term, cross-device use of a credential as it does not depend on cryptographic key material stored on a certain device. One example of such a Verifiable Credential could be a Diploma.
 
 Biometrics-based Holder Binding:
-:  Ability of the Holder to prove legitimate possession of a Verifiable Credential by demonstrating a certain biometric trait, such as finger print or face. One example of a Verifiable Credential with biometric holder binding is a mobile drivers license [@ISO.18013-5], which contains a portrait of the holder.
+:  Ability of the Holder to prove legitimate possession of a Verifiable Credential by demonstrating a certain biometric trait, such as finger print or face. One example of a Verifiable Credential with Biometrics-based Holder Binding is a mobile drivers license [@ISO.18013-5], which contains a portrait of the holder.
 
 Wallet:
 :  An entity used by the Holder to receive, store, present, and manage Verifiable Credentials and key material. There is no single deployment model of a Wallet: Verifiable Credentials and keys can both be stored/managed locally, or by using a remote self-hosted service, or a remote third-party service. In the context of this specification, the Wallet acts as an OAuth 2.0 Authorization Server (see [@!RFC6749]) towards the Credential Verifier which acts as the OAuth 2.0 Client.
@@ -130,7 +130,7 @@ All OAuth 2.0 Grant Types and extensions mechanisms can be used in conjunction w
 
 Existing OAuth 2.0 mechanisms are extended as following:
 
-* A new Grant Type "Pre-Authorized Code" along with additional token response paramters `authorization_pending` and `interval` is defined to facilitate flows where the preparation of the credential issuance is conducted before the actual OAuth flow starts (#pre-authz-code-flow).
+* A new Grant Type "Pre-Authorized Code" along with additional token response parameters `authorization_pending` and `interval` is defined to facilitate flows where the preparation of the credential issuance is conducted before the actual OAuth 2.0 flow starts (#pre-authz-code-flow).
 * A new authorization details [@!I-D.ietf-oauth-rar] type `openid_credential` is defined to convey the details about the Credentials (including formats and types) the Wallet wants to obtain (#authorization-details). 
 * Client metadata is used to convey Wallet's metadata. A new metadata parameter `credential_offer_endpoint` is added to allow a Wallet (acting as OAuth 2.0 client) to publish its Credential Offer Endpoint (#client-metadata).
 * Authorization Endpoint: An additional parameter `issuer_state` is added to convey state in the context of processing an issuer-initiated credential offer (#credential-authz-request). Additional parameters `wallet_issuer` and `user_hint` are added to enable the Credential Issuer to request Verifiable Presentations from the calling Wallet in the course of Authorization Request processing. 
@@ -208,7 +208,7 @@ The diagram shows how a Wallet initiated flow as described in use case (#use-cas
 !---
 Figure: Issuance using Authorization code flow 
 
-(1) The Wallet uses the Credential Issuer's metadata (#credential-issuer-metadata) to learn what credential types and formats the Credential Issuer supports and to determine the issuer URL of the OAuth authorization server the Credential Issuer relies on. Note in this example, the Credential Issuer also provides the OAuth Authorization Server. This specification enables deployments where the Credential Issuer API and the Authorization Server are different services, perhaps even provided by different entities.  
+(1) The Wallet uses the Credential Issuer's metadata (#credential-issuer-metadata) to learn what credential types and formats the Credential Issuer supports and to determine the issuer URL of the OAuth 2.0 Authorization Server the Credential Issuer relies on. Note in this example, the Credential Issuer also provides the OAuth 2.0 Authorization Server. This specification enables deployments where the Credential Issuer API and the Authorization Server are different services, perhaps even provided by different entities.  
 
 (2) The Wallet sends an Authorization Request to the Authorization Endpoint. The Authorization Endpoint processes the Authorization Request, which typically includes user authentication and gathering of user consent. 
 
@@ -226,7 +226,7 @@ If the Issuer wants to issue multiple Credentials in one response, the Issuer MA
 
 With grant type `authorization_code`, it is RECOMMENDED to use PKCE as defined in [@!RFC7636] to prevent authorization code interception attacks and Pushed Authorization Requests [@RFC9126] to ensure integrity and authenticity of the authorization request.
 
-Note: this flow is based on OAuth 2.0 and the Authorization Code Grant type, but this specification can be used with other OAuth grant types as well. 
+Note: this flow is based on OAuth 2.0 and the Authorization Code Grant type, but this specification can be used with other OAuth 2.0 grant types as well. 
 
 ## Pre-Authorized Code Flow {#pre-authz-code-flow}
 
@@ -696,16 +696,18 @@ Authorization: BEARER czZCaGRSa3F0MzpnWDFmQmF0M2JW
 ### Proof Types {#proof_types}
 
 This specification defines the following values for `proof_type`: 
+
 * `jwt`: A JWT [@!RFC7519] is used as proof of possession. When `proof_type` is `jwt`, a `proof` object MUST include a `jwt` claim containing a JWT defined in (#jwt-proof-type).
 * `cwt`: A CWT [@!RFC8392] is used as proof of possession. When `proof_type` is `cwt`, a `proof` object MUST include a `cwt` claim containing a CWT defined in (#cwt-proof-type).
 
 #### `jwt` Proof Type {#jwt-proof-type}
 
 The JWT MUST contain the following elements:
+
   * in the JOSE header,
     * `typ`: REQUIRED. MUST be `openid4vci-proof+jwt`, which explicitly types the proof JWT as recommended in Section 3.11 of [@!RFC8725].
     * `alg`: REQUIRED. A digital signature algorithm identifier such as per IANA "JSON Web Signature and Encryption Algorithms" registry. MUST NOT be `none` or an identifier for a symmetric algorithm (MAC).
-    * `kid`: `kid`: CONDITIONAL. JOSE Header containing the key ID. If the Credential shall be bound to a DID, the `kid` refers to a DID URL which identifies a particular key in the DID Document that the Credential shall be bound to. MUST NOT be present if `jwk` or `x5c` is present.
+    * `kid`: CONDITIONAL. JOSE Header containing the key ID. If the Credential shall be bound to a DID, the `kid` refers to a DID URL which identifies a particular key in the DID Document that the Credential shall be bound to. MUST NOT be present if `jwk` or `x5c` is present.
     * `jwk`: CONDITIONAL. JOSE Header containing the key material the new Credential shall be bound to. MUST NOT be present if `kid` or `x5c` is present.
     * `x5c`: CONDITIONAL. JOSE Header containing a certificate or certificate chain corresponding to the key used to sign the JWT. This element MAY be used to convey a key attestation. In such a case, the actual key certificate will contain attributes related to the key properties. MUST NOT be present if `kid` or `jwk` is present.
   * in the JWT body, 
@@ -761,6 +763,7 @@ Here is another example JWT not only proving possession of a private key but als
 #### `cwt` Proof Type {#cwt-proof-type}
 
 The CWT MUST contain the following elements :
+
   * in the COSE protected header (see [@!RFC8152], Section 3.1.),
     * Label 1 (`alg`): REQUIRED. A digital signature algorithm identifier such as per IANA "COSE Algorithms" registry. MUST NOT be an identifier for a symmetric algorithm (MAC).
     * Label 3 (`content type`): REQUIRED. MUST be `openid4vci-proof+cwt`, which explicitly types the proof CWT.
@@ -1435,7 +1438,7 @@ An End-User comes across a verifier app that is requesting the End-User to prese
 
 An End-User comes across a verifier app that is requesting the End-User to present a Credential, e.g., a university diploma. The Wallet determines the requested Credential type(s) from the presentation request and notifies the End-User that there is currently no matching Credential in the Wallet. The Wallet then offers the End-User a list of Credential Issuers, which might be based on a Credential Issuer list curated by the Wallet provider. The End-User picks the university she graduated from and is sent to that university's user experience (web site or app).  
 
-The End-User logs in to the university, which determines that the respective user account is not verified yet. Among multiple identification options, the End-User chooses to present identity Credential from her Wallet. The End-User is sent back to the Wallet where she consents to present requested Credential(s) to the university. The End-User is sent back to the university user experience. Based on the presented Credential, the university completes the user verification, looks up user data in its database, and offers to issue a diploma as a verifiable Credential. 
+The End-User logs in to the university, which determines that the respective user account is not verified yet. Among multiple identification options, the End-User chooses to present identity Credential from her Wallet. The End-User is sent back to the Wallet where she consents to present requested Credential(s) to the university. The End-User is sent back to the university user experience. Based on the presented Credential, the university completes the user verification, looks up user data in its database, and offers to issue a diploma as a Verifiable Credential. 
 
 Upon providing consent, the End-User is sent back to the Wallet. The Wallet informs the user Credential was successfully issued into the Wallet and is ready to be presented to the verifier app that originally requested presentation of that Credential.
 
