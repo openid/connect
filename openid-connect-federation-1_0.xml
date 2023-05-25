@@ -24,7 +24,7 @@
 
   <front>
     <title abbrev="OpenID Connect Federation">OpenID Connect Federation 1.0 -
-      draft 28
+      draft 29
     </title>
 
     <author fullname="Roland Hedberg" initials="R." role="editor"
@@ -87,7 +87,7 @@
       </address>
     </author>
 
-    <date day="24" month="March" year="2023"/>
+    <date day="22" month="May" year="2023"/>
 
     <workgroup>OpenID Connect Working Group</workgroup>
 
@@ -123,16 +123,15 @@
     <section anchor="Introduction" title="Introduction">
       <t>
         This specification describes how two Entities that would like to
-        interact can dynamically fetch and resolve trust and metadata for a
-        given protocol using a third-party Trust Anchor. A trust
-        anchor is an Entity whose main purpose is to issue statements
-        about Entities, such as OpenID Connect Relying Parties, OpenID
-        Providers, and participating organizations.
+        interact can resolve trust between them, by means of a third trusted party 
+        called Trust Anchor.
+        A Trust Anchor is an Entity whose main purpose is to issue statements
+        about Entities.
         An identity federation can be realized using this specification using
         one or more levels of authorities.
-	Examples of authorities are federation operators, organizations,
-	departments within organizations, and individual sites.
-	This specification does not mandate
+        Examples of authorities are federation operators, organizations,
+        departments within organizations, and individual sites.
+        This specification does not mandate
         a specific way or restrict how a federation may be built. Instead, the
         specification provides the basic technical trust infrastructure building
         blocks needed to create a dynamic and distributed trust network, such as a
@@ -144,15 +143,6 @@
         Furthermore, note that an organization
         MAY be represented by more than one Entity in a federation.
         It is also true that an Entity can be part of more than one federation.
-      </t>
-      <t>
-        OpenID Connect Federation Trust Chains rely on
-        cryptographically signed
-        <xref target="RFC7519">JSON Web Token (JWT)</xref>
-        documents, and the Trust Chain does not at
-        all rely on TLS
-        <xref target="RFC8446"/>
-        to establish trust.
       </t>
 
       <section title="Requirements Language">
@@ -314,9 +304,7 @@
         OpenID Connect is used in all of the examples in this
         specification, however this doesn't mean that this specification can only be used
         together with OpenID Connect. On the contrary, it can also be
-        used to build federations based on any other protocols
-        that depend on the dynamic exchange of Entity metadata
-        (e.g., OAuth 2.0).
+        used to build federations based on any other protocols.
       </t>
 
       <section title="Cryptographic Trust Mechanism" anchor="CryptographicTrustMechanism">
@@ -396,12 +384,11 @@
             </t>
             <t hangText="jwks">
               <vspace/>
-              REQUIRED Conditional. A
-              <xref target="RFC7517">JSON Web Key Set (JWKS)</xref>
-              representing the public part of the subject
-              Entity's signing keys. The corresponding private key is
-              used by Leaf Entities to sign Entity Configurations about themselves,
-              and Intermediate Entities to sign Entity Statements about other Entities.
+              REQUIRED. A <xref target="RFC7517">JSON Web Key Set (JWKS)</xref>
+              representing the public part of the subject Federation
+              Entity signing keys. The corresponding private key is
+              used by Entities to sign Entity Configurations about themselves,
+              and Intermediate Entities to sign Entity Statements about their Subordinates.
               The keys that can be found here are intended to verify the signature of the
               issued Entity Statements and Trust Marks and SHOULD NOT be used in other protocols. Keys
               to be used in other protocols, such as OpenID Connect, are conveyed
@@ -432,7 +419,7 @@
             </t>
             <t hangText="metadata">
               <vspace/>
-              REQUIRED Conditional. JSON object that includes
+              REQUIRED. JSON object that includes
               protocol-specific metadata claims that represent the
               Entity's Type and metadata.
 
@@ -443,7 +430,7 @@
               An Entity Statement MAY contain multiple
               metadata statements, but only one for each metadata type.
               If the Entity Statement is an Entity Configuration,
-              then the Entity Statement MUST contain a
+              then the Entity Statement SHOULD contain a
               <spanx style="verb">metadata</spanx> claim.
               In some cases, a superior may want to be explicit about what metadata
               should be used for a Subordinate. In that case
@@ -458,8 +445,7 @@
             </t>
             <t hangText="metadata_policy">
               <vspace/>
-              REQUIRED Conditional. JSON object that describes
-              a metadata policy.
+              OPTIONAL. JSON object that describes a metadata policy.
               A <spanx style="verb">metadata_policy</spanx> applies to the Entity described in this
               Entity Statement as well as to all Entities that appear beneath the
               Entity described in this Entity Statement.
@@ -678,8 +664,7 @@
 
       <section title="Trust Chain" anchor="trust_chain">
         <t>
-          In an OpenID Connect identity federation, Entities that together build
-          a Trust Chain can be categorized as:
+          Entities whose statements build a Trust Chain are categorized as: 
           <list style="hanging">
             <t hangText="Trust anchor">
               <vspace/>
@@ -764,30 +749,54 @@
           Trust Chain in some secure out-of-band way not described in this
           document.
         </t>
+        
+        <section title="Trust Chain Header Parameter" anchor="trust_chain_head_param">
+          <t>
+            This <xref target="RFC7515">JWS</xref> 
+            header parameter is registered in the IANA 
+            "JSON Web Signature and Encryption Header Parameters"
+            registry established by <xref target="JwsHeaderRegistry"/>.
+          </t>
+          <t>
+          The <xref target="trust_chain"/> header parameter is a
+          JSON array containing the sequence of the statements
+          that proves the trust relationship between the issuer of the 
+          <xref target="RFC7515">JWS</xref>
+          and the selected Trust Anchor, sorted as shown in <xref target="trust_chain"/>.
+          The Trust Chain contains the public key used to verify the 
+          <xref target="RFC7515">JWS</xref>.
+          The issuer of the JWS SHOULD select the Trust Anchor that it has in common 
+          with the audience of the JWS, otherwise the issuer is free to select the 
+          Trust Anchor it deems most significant.
+          Use of this header parameter is OPTIONAL.
+          </t>
+        </section>
+        
       </section>
     </section>
 
-    <section anchor="metadata" title="Metadata">
+    <section anchor="metadata" title="Metadata Type Identifiers">
       <t>
       </t>
       <t>
-	This specification defines metadata types for OpenID Connect and OAuth2 objects.
+	    This specification defines metadata type identifiers
+        for OpenID Connect and OAuth 2.0 objects.
         The metadata type identifier uniquely identifies the Entity Type
         of the participant and the format of metadata for that Entity Type.
-	It reuses existing OpenID Connect and OAuth metadata standards
-	that are applicable to each metadata type.
+        It reuses existing OpenID Connect and OAuth 2.0 metadata standards
+        that are applicable to each metadata type.
         Each metadata document is a JSON object.
       </t>
       <t>
         This specification also allows new metadata types to be defined to
-	support use cases outside OpenID Connect and OAuth2 federations.
+        support use cases outside OpenID Connect and OAuth 2.0 federations.
       </t>
 
-      <section title="OpenID Connect and OAuth2 Metadata Extensions" anchor="common_metadata">
+      <section title="OpenID Connect and OAuth 2.0 Metadata Extensions" anchor="common_metadata">
         <t>
-	  For the OpenID Connect and OAuth2 metadata types below,
-	  the following additional metadata properties are defined,
-	  which MAY be used with all those metadata types:
+        For the OpenID Connect and OAuth 2.0 metadata types below,
+        the following additional metadata properties are defined,
+        which MAY be used with all those metadata types:
         </t>
         <t>
           <list style="hanging">
@@ -951,7 +960,7 @@
 	    use only one of
 	    <spanx style="verb">jwks</spanx>,
 	    <spanx style="verb">jwks_uri</spanx>, and
-	    <spanx style="verb">signed_jwks_uri</spanx> in its OpenID Connect or OAuth2 metadata.
+	    <spanx style="verb">signed_jwks_uri</spanx> in its OpenID Connect or OAuth 2.0 metadata.
 	    However, there may be circumstances in which is it desirable to use multiple
 	    JWK Set representations, such as when an Entity is in multiple federations and the
 	    federations have different policies about the JWK Set representation to be used.
@@ -963,7 +972,7 @@
 	</section>
       </section>
 
-      <section title="RP Metadata" anchor="RP_metadata">
+      <section title="OpenID Connect Relying Party" anchor="RP_metadata">
         <t>
           The metadata type identifier is
           <spanx style="verb">openid_relying_party</spanx>.
@@ -991,7 +1000,7 @@
         </t>
       </section>
 
-      <section title="OP Metadata" anchor="OP_metadata">
+      <section title="OpenID Provider" anchor="OP_metadata">
         <t>
           The metadata type identifier is
           <spanx style="verb">openid_provider</spanx>.
@@ -1118,10 +1127,11 @@
             <t hangText="request_authentication_signing_alg_values_supported">
               <vspace/>
               OPTIONAL.
-              JSON array containing a list of the JWS signing algorithms
+              JSON array containing a list of the supported 
+              <xref target="RFC7515">JWS</xref> algorithms
               (<spanx style="verb">alg</spanx> values)
-              supported for the signature on the JWT <xref target="RFC7519" />
-              used in the <spanx style="verb">request_object</spanx>
+              for signing the <xref target="RFC7519">JWT</xref>
+              used in the Request Object
               contained in the request parameter of an authorization request or
               in the <spanx style="verb">private_key_jwt</spanx> of a pushed authorization request.
               This entry MUST be present if either of these authentication methods are specified
@@ -1790,7 +1800,7 @@
         <section title="Policy Combination Example">
           <figure>
             <preamble>
-              A federation's policy for OAuth2 clients:
+              A federation's policy for OAuth 2.0 clients:
             </preamble>
             <artwork><![CDATA[
 {
@@ -1816,7 +1826,7 @@
           </figure>
           <figure>
             <preamble>
-              An organization's policy for OAuth2 clients:
+              An organization's policy for OAuth 2.0 clients:
             </preamble>
             <artwork><![CDATA[
 {
@@ -2938,7 +2948,7 @@ Host: openid.sunet.se
         </section>
       </section>
 
-      <section title="Entity Listings" anchor="entity_listing">
+      <section title="Subordinate Listings" anchor="entity_listing">
         <t>
 		  The listing endpoint is exposed by Federation Entities 
 		  acting as Trust Anchor, Intermediates or Trust Mark issuers. 
@@ -3471,7 +3481,7 @@ Content-Type: application/jwk-set+jwt
               in the Entity Statement issued for the Leaf. The result is
               a Trust Chain that contains the Leaf's OIDC Core jwks,
               needed to verify historical signature on
-              request objects, ID Tokens and any other signed JWT issued by the Leaf,
+              Request Objects, ID Tokens and any other signed JWT issued by the Leaf,
               if it is an RP or an OP.
 
               <list style="numbers">
@@ -3925,6 +3935,7 @@ Content-Type: application/json
             or using pushed authorization as described in
             <xref target="RFC9126">Pushed Authorization Requests</xref>.
           </t>
+
           <section title="Using a Request Object" anchor="UsingAuthzRequestObject">
 
             <t>
@@ -3934,7 +3945,8 @@ Content-Type: application/json
               specified in Section 3.1.2 in
               <xref target="OpenID.Core">OpenID Connect Core 1.0</xref>.
               The JWT MUST be signed and MAY be encrypted.
-              The following restrictions apply to the JWT:
+              The following parameters apply to the JWT:
+            
               <list style="hanging">
                 <t hangText="aud">
                   <vspace/>
@@ -3977,21 +3989,61 @@ Content-Type: application/json
                   that compose the Trust Chain between the RP that makes
                   the request and the selected Trust Anchor,
                   sorted as shown in <xref target="trust_chain"/>.
-                  Due to the large size of a Trust Chain, it could be necessary
-                  to use the HTTP POST method,
-                  <spanx style="verb">request_uri</spanx>
-                  or
-                  <xref target="RFC9126">Pushed Authorization Request</xref>
-                  for the request.
+                  When the RP and the OP are part of the same federation 
+                  the RP MUST select the Trust Anchor that it has in common 
+                  with the OP, otherwise the RP is free to select the 
+                  Trust Anchor it deems most significant.
                 </t>
               </list>
             </t>
+
+            <section title="Authorization Request with a Trust Chain" anchor="trust_chain_authz">
+
+              <t>
+              When the 
+              <spanx style="verb">trust_chain</spanx> 
+              <xref target="RFC7515">JWS</xref> header parameter is
+              used in conjunction with the <spanx style="verb">trust_chain</spanx> 
+              request parameter, 
+              both contents MUST be identical, otherwise the request MUST be rejected.
+              </t>
+              
+              <t>
+              When the <spanx style="verb">trust_chain</spanx> 
+              <xref target="RFC7515">JWS</xref> header parameter or the
+              <spanx style="verb">trust_chain</spanx> 
+              request parameter
+              is used in the Authorization Request Object, the Relying Party
+              informs the OP about the sequence of the statements
+              that proves the trust relationship between it 
+              and the selected Trust Anchor.
+              </t>
+              
+              <t>
+              Due to the large size of a Trust Chain, it could be necessary
+              to use the HTTP POST method,
+              <spanx style="verb">request_uri</spanx>
+              or
+              <xref target="RFC9126">Pushed Authorization Request</xref>
+              for the request.
+              </t>
+
             <figure>
               <preamble>
                 The following is a non-normative example of the Claims in a
                 Request Object before base64url encoding and signing:
               </preamble>
               <artwork><![CDATA[
+{
+  "alg": "RS256",
+  "kid": "that-kid-which-points-to-a-jwk-contained-in-the-trust-chain",
+  "trust_chain" : [
+    "eyJhbGciOiJSUzI1NiIsImtpZCI6Ims1NEhRdERpYnlHY3M5WldWTWZ2aUhm ...",
+    "eyJhbGciOiJSUzI1NiIsImtpZCI6IkJYdmZybG5oQU11SFIwN2FqVW1BY0JS ...",
+    "eyJhbGciOiJSUzI1NiIsImtpZCI6IkJYdmZybG5oQU11SFIwN2FqVW1BY0JS ..."
+  ]
+}
+.                  
 {
   "aud": "https://op.example.org",
   "client_id": "https://rp.example.com",
@@ -4003,12 +4055,7 @@ Content-Type: application/json
   "redirect_uri": "https://rp.example.com/authz_cb",
   "response_type": "code",
   "scope": "openid profile email address phone",
-  "state": "YmX8PM9I7WbNoMnnieKKBiptVW0sP2OZ",
-  "trust_chain" : [
-    "eyJhbGciOiJSUzI1NiIsImtpZCI6Ims1NEhRdERpYnlHY3M5WldWTWZ2aUhm ...",
-    "eyJhbGciOiJSUzI1NiIsImtpZCI6IkJYdmZybG5oQU11SFIwN2FqVW1BY0JS ...",
-    "eyJhbGciOiJSUzI1NiIsImtpZCI6IkJYdmZybG5oQU11SFIwN2FqVW1BY0JS ..."
-  ]
+  "state": "YmX8PM9I7WbNoMnnieKKBiptVW0sP2OZ"
 }
 ]]></artwork>
             </figure>
@@ -4024,28 +4071,30 @@ https://server.example.com/authorize?
     &scope=openid+profile+email+address+phone
     &response_type=code
     &client_id=https%3A%2F%2Frp.example.com
-    &request=eyJhbGciOiJSUzI1NiIsImtpZCI6IlVyMTBiTkt3TXBRSUZvTnQtTkp4RE9PY1hh
-      bHppMHNQLWdMSjAwZFJaalEifQ.eyJhdWQiOiJodHRwczovL29wLmV4YW1wbGUub
-      3JnIiwiY2xpZW50X2lkIjoiaHR0cHM6Ly9ycC5leGFtcGxlLmNvbSIsImV4cCI6M
-      TU4OTY5OTE2MiwiaWF0IjoxNTg5Njk5MTAyLCJpc3MiOiJodHRwczovL3JwLmV4Y
-      W1wbGUuY29tIiwianRpIjoiNGQzZWMwZjgxZjEzNGVlOWE5N2UwNDQ5YmU2ZDMyY
-      mUiLCJub25jZSI6IjRMWDBtRk14ZEJqa0dtdHg3YThXSU9uQiIsInJlZGlyZWN0X
-      3VyaSI6Imh0dHBzOi8vcnAuZXhhbXBsZS5jb20vYXV0aHpfY2IiLCJyZXNwb25zZ
-      V90eXBlIjoiY29kZSIsInNjb3BlIjoib3BlbmlkIHByb2ZpbGUgZW1haWwgYWRkc
-      mVzcyBwaG9uZSIsInN0YXRlIjoiWW1YOFBNOUk3V2JOb01ubmllS0tCaXB0Vlcwc
-      1AyT1oiLCJzdWIiOiJodHRwczovL3JwLmV4YW1wbGUuY29tIiwidHJ1c3RfY2hha
-      W4iOlsiZXlKaGJHY2lPaUpTVXpJMU5pSXNJbXRwWkNJNkltczFORWhSZEVScFlub
-      EhZM001V2xkV1RXWjJhVWhtIC4uLiIsImV5SmhiR2NpT2lKU1V6STFOaUlzSW10c
-      FpDSTZJa0pZZG1aeWJHNW9RVTExU0ZJd04yRnFWVzFCWTBKUyAuLi4iLCJleUpoY
-      kdjaU9pSlNVekkxTmlJc0ltdHBaQ0k2SWtKWWRtWnliRzVvUVUxMVNGSXdOMkZxV
-      lcxQlkwSlMgLi4uIl19.GQyzPEdaJ4qOzeUJyh-wU04GfiyFZTa2afk_VPX3mFmd
-      gLl1VTzlapbSipyNLGNu6M_iQup6zYsAdfZSBWjNN-ARws0A6qJfb06uaR2ILoE-
-      UtIKYJ_4NSnh3SLA_rW_MFS-flmZOf-YDvarbShh0-ashcH5L_D7ZGwDSTMlw4ll
-      laiELKqggdXpVG6vz6itYOvTLo-2vipFeTSK0bZYs22ozAv6-npZlQO2_IZbvyXv
-      S6IAgyw9dRIYZSUXoS2g0nJgBIMsnor2CFY79VH2iRMwi34K2R3hGA9jHqDtom5R
-      DR5NraOtD06F5gPgB4vORG567hFkTq7uhtnz0W_21A
+    &request=eyJ0cnVzdF9jaGFpbiI6WyJleUpoYkdjaU9pSlNVekkxTmlJc0ltdHBaQ0k2SW1z
+      MU5FaFJkRVJwWW5sSFkzTTVXbGRXVFdaMmFVaG0gLi4uIiwiZXlKaGJHY2lPaUpT
+      VXpJMU5pSXNJbXRwWkNJNklrSllkbVp5Ykc1b1FVMTFTRkl3TjJGcVZXMUJZMEpT
+      IC4uLiIsImV5SmhiR2NpT2lKU1V6STFOaUlzSW10cFpDSTZJa0pZZG1aeWJHNW9R
+      VTExU0ZJd04yRnFWVzFCWTBKUyAuLi4iXSwiYWxnIjoiUlMyNTYiLCJraWQiOiI2
+      X2VGcGNoNXpTYm1QT3hMdGRGLXlrM1dqVFJvUGpBMll6UTd5YnJmV2dvIn0.eyJh
+      dWQiOiJodHRwczovL29wLmV4YW1wbGUub3JnIiwiY2xpZW50X2lkIjoiaHR0cHM6
+      Ly9ycC5leGFtcGxlLmNvbSIsImV4cCI6MTU4OTY5OTE2MiwiaWF0IjoxNTg5Njk5
+      MTAyLCJpc3MiOiJodHRwczovL3JwLmV4YW1wbGUuY29tIiwianRpIjoiNGQzZWMw
+      ZjgxZjEzNGVlOWE5N2UwNDQ5YmU2ZDMyYmUiLCJub25jZSI6IjRMWDBtRk14ZEJq
+      a0dtdHg3YThXSU9uQiIsInJlZGlyZWN0X3VyaSI6Imh0dHBzOi8vcnAuZXhhbXBs
+      ZS5jb20vYXV0aHpfY2IiLCJyZXNwb25zZV90eXBlIjoiY29kZSIsInNjb3BlIjoi
+      b3BlbmlkIHByb2ZpbGUgZW1haWwgYWRkcmVzcyBwaG9uZSIsInN0YXRlIjoiWW1Y
+      OFBNOUk3V2JOb01ubmllS0tCaXB0Vlcwc1AyT1oiLCJzdWIiOiJodHRwczovL3Jw
+      LmV4YW1wbGUuY29tIn0.Gjo1NSYAx5PIllnUJhRCzZT-ezqyofU95pnGsgzclTfj
+      cYCwSef_g2cniIWX4-35cAYR-NcAGEzaDIvQgzQ90O_24HlCtZ6yvUlb65uhZGGt
+      O1TvsI7bl-92yrYCKD8fmaWH73R7qXZ8uLNspRy0L4emGXdUrFJ8RozE5asEdY_L
+      _1orhot6uwWWrYE5cSyxJqCk_G1ackqKRmOlHB3EX3pNmVZodz6DQyONLeBqiMId
+      xpvVALEkmpAQavEwrfpA-s4K3QIJrKAbEVQ1AfyQR0cGDd7fF4bju-wigYhBura0
+      Pv4PrEFSNYG22b5ZPoubTPoFe-7W5Ypec_Io1aXNDA
 ]]></artwork>
             </figure>
+            </section>
+            
             <section title="Processing the Authentication Request" anchor="AuthzRequestProcessing">
               <t>
                 When the OP receives an incoming Authentication Request,
@@ -4059,7 +4108,10 @@ https://server.example.com/authorize?
               <t>
                 An RP MAY present to the OP a Trust Chain related to itself,
                 using the <xref target="trust_chain_param">trust_chain</xref>
-                parameter.
+                request parameter or the
+                <xref target="trust_chain_head_param">trust_chain</xref>
+                <xref target="RFC7515">JWS</xref> header parameter 
+                in the Request Object.
 
                 If the OP doesn't have a valid registration for the RP or
                 its registration has expired, the OP MAY use the received
@@ -4081,12 +4133,17 @@ https://server.example.com/authorize?
                 all of its statements. This is true whether these statements
                 are retrieved from their URLs or whether they
                 are provided via the <spanx style="verb">trust_chain</spanx>
-                parameter.
+                request parameter or the
+                <xref target="RFC7515">JWS</xref> header parameter 
+                in the Request Object.
               </t>
               <t anchor="TrustChainParamAbsent">
                 If the RP doesn't include the
                 <xref target="trust_chain_param">trust_chain</xref>
-                in the request or the OP doesn't support this feature, it then MUST
+                request parameter or the
+                <xref target="RFC7515">JWS</xref> header parameter 
+                in the Request Object,
+                or the OP doesn't support this feature, it then MUST
                 validate the possible Trust Chains, starting with the RP's Entity
                 Configuration as described in <xref target="fetching-es"/>,
                 and resolve the RP metadata with type
@@ -4142,7 +4199,7 @@ https://server.example.com/authorize?
                   based on public key infrastructure (PKI).
                 </t>
                 <t>
-                  A request object as described in Section 6 of
+                  A Request Object as described in Section 6 of
                   <xref target="OpenID.Core">OpenID Connect Core 1.0</xref>
                 </t>
               </list>
@@ -4583,8 +4640,10 @@ HTTP/1.1 302 Found
             This stale data may occur when the OP uses cached RP metadata from a Trust Chain
             that hasn't reached its expiration time yet. 
             The RP MAY notify the OP that a change has taken place by passing 
-            the <xref target="trust_chain_param">trust_chain</xref> 
-            in the Request, thus letting the OP update its client
+            in the request the <xref target="trust_chain_head_param">trust_chain</xref> header parameter
+            or the <spanx style="verb">trust_chain</spanx> 
+            request parameter
+            , thus letting the OP update its client
             registration and prevent potential temporary faults due to stale metadata.
           </t>
 
@@ -5211,6 +5270,39 @@ HTTP/1.1 302 Found
             </list>
           </t>
         </section>
+      
+      </section>
+      
+      <section anchor="JwsHeaderRegistry" title="JWS Header Registry">
+        <t>
+          This specification registers the following JWS header name in the IANA "JSON Web Signature and
+          Encryption Header Parameters" registry <xref target="IANA.JOSE"/> established
+          by <xref target="RFC7515"/>.
+        </t>
+
+        <section anchor="HeaderContents" title="Registry Contents">
+          <t>
+            <?rfc subcompact="yes"?>
+            <list style='symbols'>
+              <t>
+                Header Parameter Name:
+                <spanx style="verb">trust_chain</spanx>
+              </t>
+              <t>
+                Header Parameter Description: OpenID Connect Federation Trust Chain
+              </t>
+              <t>
+                Header Parameter Usage Location: JWS
+              </t>
+              <t>
+                Change Controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net
+              </t>
+              <t>
+                Specification Document(s): Section <xref target="trust_chain"/> of [[ this specification ]]
+              </t>
+            </list>
+          </t>
+        </section>
 
       </section>
 
@@ -5280,7 +5372,6 @@ HTTP/1.1 302 Found
       <?rfc include="https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.8174.xml"?>
       <?rfc include="https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.8414.xml"?>
       <?rfc include="https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.8705.xml"?>
-      <?rfc include="https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.9101.xml"?>
       <?rfc include="https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.9126.xml"?>
 
       <reference anchor="OpenID.Core"
@@ -5372,7 +5463,6 @@ HTTP/1.1 302 Found
       <?rfc include="https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.6749.xml"?>
       <?rfc include="https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.6838.xml"?>
       <?rfc include="https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.8725.xml"?>
-      <?rfc include="https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.8446.xml"?>
 
       <reference anchor="IANA.Language" target="https://www.iana.org/assignments/language-subtag-registry">
         <front>
@@ -5384,7 +5474,7 @@ HTTP/1.1 302 Found
         </front>
       </reference>
 
-      <reference anchor="IANA.OAuth.Parameters" target="http://www.iana.org/assignments/oauth-parameters">
+      <reference anchor="IANA.OAuth.Parameters" target="https://www.iana.org/assignments/oauth-parameters">
         <front>
           <title>OAuth Parameters</title>
           <author>
@@ -5394,9 +5484,19 @@ HTTP/1.1 302 Found
         </front>
       </reference>
 
-      <reference anchor="IANA.MediaTypes" target="http://www.iana.org/assignments/media-types">
+      <reference anchor="IANA.MediaTypes" target="https://www.iana.org/assignments/media-types">
         <front>
           <title>Media Types</title>
+          <author>
+            <organization>IANA</organization>
+          </author>
+          <date/>
+        </front>
+      </reference>
+
+      <reference anchor="IANA.JOSE" target="https://www.iana.org/assignments/jose/">
+        <front>
+          <title>JSON Web Signature and Encryption Header Parameters</title>
           <author>
             <organization>IANA</organization>
           </author>
@@ -6555,6 +6655,18 @@ Host: op.umu.se
       <t>[[ To be removed from the final specification ]]</t>
 
       <t>
+        -29
+        <list style="symbols">
+          <t>
+            Fixed #1921: brand new JWS Header parameter, <spanx style="verb">trust_chain</spanx>.
+          </t>
+          <t>
+            Fixed #1879, #1881, #1883, #1885: introductionary text, metadata section, editorials.
+          </t>
+        </list>
+      </t>
+
+      <t>
         -28
         <list style="symbols">
           <t>
@@ -6770,7 +6882,7 @@ Host: op.umu.se
             Fixed #1606: Described situation in which the requirement for signed requests with Automatic Registration could be relaxed.
           </t>
           <t>
-            Fixed #1629: authz request object, audience explanatory text.
+            Fixed #1629: authz Request Object, audience explanatory text.
           </t>
           <t>
             Fixed #1630: Resolve endpoint response content type.
@@ -6797,7 +6909,7 @@ Host: op.umu.se
             Resolve endpoint: Removed iss paramenter in the request and specified the usage of the aud claim in the response.
           </t>
           <t>
-            Fixed #1513: request_authentication_methods_supported according to IANA OAuth2 AS metadata registered names.
+            Fixed #1513: request_authentication_methods_supported according to IANA OAuth 2.0 AS metadata registered names.
           </t>
           <t>
             Fixed #1527: Defined the Trust Mark term and added non-normative examples.
