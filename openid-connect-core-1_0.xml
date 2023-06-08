@@ -23,7 +23,7 @@
   <?rfc private="Draft" ?>
 
   <front>
-    <title abbrev="OpenID Connect Core 1.0">OpenID Connect Core 1.0 - draft 30 incorporating errata set 2</title>
+    <title abbrev="OpenID Connect Core 1.0">OpenID Connect Core 1.0 - draft 31 incorporating errata set 2</title>
 
     <author fullname="Nat Sakimura" initials="N." surname="Sakimura">
       <organization abbrev="NAT.Consulting (was at NRI)">NAT.Consulting</organization>
@@ -42,9 +42,9 @@
     </author>
 
     <author fullname="Michael B. Jones" initials="M.B." surname="Jones">
-      <organization abbrev="Microsoft">Microsoft</organization>
+      <organization abbrev="independent (was at Microsoft)">independent</organization>
       <address>
-        <email>mbj@microsoft.com</email>
+        <email>michael_b_jones@hotmail.com</email>
 	<uri>https://self-issued.info/</uri>
       </address>
     </author>
@@ -65,7 +65,7 @@
       </address>
     </author>
 
-    <date day="1" month="November" year="2022" />
+    <date day="30" month="May" year="2023" />
 
     <workgroup>OpenID Connect Working Group</workgroup>
 
@@ -8287,7 +8287,7 @@
 	  </author>
 
 	  <author fullname="Michael B. Jones" initials="M.B." surname="Jones">
-	    <organization abbrev="Microsoft">Microsoft</organization>
+	    <organization abbrev="independent (was at Microsoft)">independent</organization>
 	  </author>
 
 	  <author fullname="Edmund Jay" initials="E." surname="Jay">
@@ -8311,7 +8311,7 @@
 	  </author>
 
 	  <author fullname="Michael B. Jones" initials="M.B." surname="Jones">
-	    <organization abbrev="Microsoft">Microsoft</organization>
+	    <organization abbrev="independent (was at Microsoft)">independent</organization>
 	  </author>
 
           <date day="8" month="November" year="2014"/>
@@ -8674,7 +8674,7 @@
 	  </author>
 
 	  <author fullname="Michael B. Jones" initials="M.B." surname="Jones">
-	    <organization abbrev="Microsoft">Microsoft</organization>
+	    <organization abbrev="independent">independent</organization>
 	  </author>
 
 	  <author fullname="Breno de Medeiros" initials="B." surname="de Medeiros">
@@ -8702,7 +8702,7 @@
 	  </author>
 
 	  <author fullname="Michael B. Jones" initials="M.B." surname="Jones">
-	    <organization abbrev="Microsoft">Microsoft</organization>
+	    <organization abbrev="independent">independent</organization>
 	  </author>
 
 	  <author fullname="Breno de Medeiros" initials="B." surname="de Medeiros">
@@ -8790,7 +8790,7 @@
 	  <title>OpenID Connect Back-Channel Logout 1.0</title>
 
 	  <author fullname="Michael B. Jones" initials="M.B." surname="Jones">
-	    <organization abbrev="Microsoft">Microsoft</organization>
+	    <organization abbrev="independent (was at Microsoft)">independent</organization>
 	  </author>
 
           <author fullname="John Bradley" initials="J." surname="Bradley">
@@ -9320,26 +9320,26 @@
 	  <t>Amanda Anganes (aanganes@mitre.org), MITRE</t>
 	  <t>Casper Biering (cb@peercraft.com), Peercraft</t>
 	  <t>John Bradley (ve7jtb@ve7jtb.com), Yubico (was at Ping Identity)</t>
-	  <t>Tim Bray (tbray@textuality.com), Independent (was at Google)</t>
-	  <t>Johnny Bufu (johnny.bufu@gmail.com), Independent (was at Janrain)</t>
+	  <t>Tim Bray (tbray@textuality.com), independent (was at Google)</t>
+	  <t>Johnny Bufu (johnny.bufu@gmail.com), independent (was at Janrain)</t>
 	  <t>Brian Campbell (bcampbell@pingidentity.com), Ping Identity</t>
-	  <t>Blaine Cook (romeda@gmail.com), Independent</t>
+	  <t>Blaine Cook (romeda@gmail.com), independent</t>
 	  <t>Breno de Medeiros (breno@google.com), Google</t>
 	  <t>Pamela Dingle (Pamela.Dingle@microsoft.com), Microsoft (was at Ping Identity)</t>
 	  <t>Vladimir Dzhuvinov (vladimir@connect2id.com), Connect2id (was at Nimbus Directory Services)</t>
 	  <t>George Fletcher (gffletch@aol.com), Capital One (was at AOL)</t>
-	  <t>Roland Hedberg (roland@catalogix.se), Independent (was at University of Ume&aring;)</t>
+	  <t>Roland Hedberg (roland@catalogix.se), independent (was at University of Ume&aring;)</t>
 	  <t>Ryo Ito (ryo.ito@mixi.co.jp), mixi, Inc.</t>
 	  <t>Edmund Jay (ejay@mgi1.com), Illumila</t>
-	  <t>Michael B. Jones (mbj@microsoft.com), Microsoft</t>
+	  <t>Michael B. Jones (michael_b_jones@hotmail.com), independent (was at Microsoft)</t>
 	  <t>Torsten Lodderstedt (torsten@lodderstedt.net), yes.com (was at Deutsche Telekom)</t>
 	  <t>James Manger (James.H.Manger@team.telstra.com), Telstra</t>
-	  <t>Nov Matake (nov@matake.jp), Independent</t>
+	  <t>Nov Matake (nov@matake.jp), independent</t>
 	  <t>Chuck Mortimore (charliemortimore@gmail.com), Disney (was at Salesforce)</t>
-	  <t>Anthony Nadalin (nadalin@prodigy.net), Independent (was at Microsoft)</t>
+	  <t>Anthony Nadalin (nadalin@prodigy.net), independent (was at Microsoft)</t>
 	  <t>Hideki Nara (hdknr@ic-tact.co.jp), Tact Communications</t>
 	  <t>Axel Nennker (axel.nennker@telekom.de), Deutsche Telekom</t>
-	  <t>David Recordon (recordond@gmail.com), Independent (was at Facebook)</t>
+	  <t>David Recordon (recordond@gmail.com), independent (was at Facebook)</t>
 	  <t>Justin Richer (justin@bspk.io), Bespoke Engineering (was at MITRE)</t>
 	  <t>Nat Sakimura (nat@nat.consulting), NAT.Consulting (was at NRI)</t>
 	  <t>Luke Shepard (luke@lukeshepard.com), Facebook</t>
@@ -9350,7 +9350,7 @@
     </section>
 
     <section anchor="Notices" title="Notices">
-      <t>Copyright (c) 2022 The OpenID Foundation.</t>
+      <t>Copyright (c) 2023 The OpenID Foundation.</t>
       <t>
 	The OpenID Foundation (OIDF) grants to any Contributor, developer, 
 	implementer, or other interested party a non-exclusive, royalty free, 
@@ -9393,6 +9393,15 @@
 
     <section anchor="History" title="Document History">
       <t>[[ To be removed from the approved errata ]]</t>
+
+      <t>
+	-31
+        <list style="symbols">
+	  <t>
+	    Updated contributor affiliations.
+	  </t>
+	</list>
+      </t>
 
       <t>
 	-30
