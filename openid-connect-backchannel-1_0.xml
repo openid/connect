@@ -19,16 +19,16 @@
   <?rfc sortrefs="yes"?>
   <?rfc strict="yes" ?>
   <?rfc iprnotified="no" ?>
-  <?rfc private="Final" ?>
+  <?rfc private="Draft" ?>
 
   <front>
     <title abbrev="OpenID Connect Back-Channel Logout 1.0">OpenID Connect
-    Back-Channel Logout 1.0</title>
+    Back-Channel Logout 1.0 - draft 11 incorporating errata set 1</title>
 
     <author fullname="Michael B. Jones" initials="M.B." surname="Jones">
-      <organization abbrev="Microsoft">Microsoft</organization>
+      <organization abbrev="independent (was at Microsoft)">independent</organization>
       <address>
-        <email>mbj@microsoft.com</email>
+        <email>michael_b_jones@hotmail.com</email>
 	<uri>https://self-issued.info/</uri>
       </address>
     </author>
@@ -41,7 +41,7 @@
       </address>
     </author>
 
-    <date day="12" month="September" year="2022" />
+    <date day="30" month="May" year="2023" />
 
     <workgroup>OpenID Connect Working Group</workgroup>
 
@@ -935,15 +935,15 @@
           <title>OpenID Connect Core 1.0</title>
 
           <author fullname="Nat Sakimura" initials="N." surname="Sakimura">
-	    <organization abbrev="NRI">Nomura Research Institute, Ltd.</organization>
+            <organization abbrev="NAT.Consulting (was at NRI)">NAT.Consulting</organization>
           </author>
 
           <author fullname="John Bradley" initials="J." surname="Bradley">
-	    <organization abbrev="Ping Identity">Ping Identity</organization>
+            <organization abbrev="Yubico (was at Ping Identity)">Yubico</organization>
           </author>
 
           <author fullname="Michael B. Jones" initials="M.B." surname="Jones">
-            <organization abbrev="Microsoft">Microsoft</organization>
+            <organization abbrev="independent (was at Microsoft)">independent</organization>
           </author>
 
           <author fullname="Breno de Medeiros" initials="B." surname="de Medeiros">
@@ -951,7 +951,7 @@
           </author>
 
 	  <author fullname="Chuck Mortimore" initials="C." surname="Mortimore">
-	    <organization abbrev="Salesforce">Salesforce</organization>
+	    <organization abbrev="Disney (was at Salesforce)">Disney</organization>
 	  </author>
 
           <date day="8" month="November" year="2014"/>
@@ -959,47 +959,47 @@
       </reference>
 
       <reference anchor="OpenID.Discovery" target="https://openid.net/specs/openid-connect-discovery-1_0.html">
-        <front>
-          <title>OpenID Connect Discovery 1.0</title>
+	<front>
+	  <title>OpenID Connect Discovery 1.0</title>
 
-          <author fullname="Nat Sakimura" initials="N." surname="Sakimura">
-            <organization abbrev="NRI">Nomura Research Institute, Ltd.</organization>
-          </author>
+	  <author fullname="Nat Sakimura" initials="N." surname="Sakimura">
+	    <organization abbrev="NAT.Consulting (was at NRI)">NAT.Consulting</organization>
+	  </author>
 
-          <author fullname="John Bradley" initials="J." surname="Bradley">
-            <organization abbrev="Ping Identity">Ping Identity</organization>
-          </author>
+	  <author fullname="John Bradley" initials="J." surname="Bradley">
+	    <organization abbrev="Yubico (was at Ping Identity)">Yubico</organization>
+	  </author>
 
-          <author fullname="Michael B. Jones" initials="M.B." surname="Jones">
-            <organization abbrev="Microsoft">Microsoft</organization>
-          </author>
+	  <author fullname="Michael B. Jones" initials="M.B." surname="Jones">
+	    <organization abbrev="independent (was at Microsoft)">independent</organization>
+	  </author>
 
-          <author fullname="Edmund Jay" initials="E." surname="Jay">
-            <organization abbrev="Illumila">Illumila</organization>
-          </author>
+	  <author fullname="Edmund Jay" initials="E." surname="Jay">
+	    <organization abbrev="Illumila">Illumila</organization>
+	  </author>
 
           <date day="8" month="November" year="2014"/>
-        </front>
+	</front>
       </reference>
 
       <reference anchor="OpenID.Registration" target="https://openid.net/specs/openid-connect-registration-1_0.html">
-        <front>
-          <title>OpenID Connect Dynamic Client Registration 1.0</title>
+	<front>
+	  <title>OpenID Connect Dynamic Client Registration 1.0</title>
 
-          <author fullname="Nat Sakimura" initials="N." surname="Sakimura">
-            <organization abbrev="NRI">Nomura Research Institute, Ltd.</organization>
-          </author>
+	  <author fullname="Nat Sakimura" initials="N." surname="Sakimura">
+	    <organization abbrev="NAT.Consulting (was at NRI)">NAT.Consulting</organization>
+	  </author>
 
-          <author fullname="John Bradley" initials="J." surname="Bradley">
-            <organization abbrev="Ping Identity">Ping Identity</organization>
-          </author>
+	  <author fullname="John Bradley" initials="J." surname="Bradley">
+	    <organization abbrev="Yubico (was at Ping Identity)">Yubico</organization>
+	  </author>
 
-          <author fullname="Michael B. Jones" initials="M.B." surname="Jones">
-            <organization abbrev="Microsoft">Microsoft</organization>
-          </author>
+	  <author fullname="Michael B. Jones" initials="M.B." surname="Jones">
+	    <organization abbrev="independent (was at Microsoft)">independent</organization>
+	  </author>
 
           <date day="8" month="November" year="2014"/>
-        </front>
+	</front>
       </reference>
 
       <reference anchor="OpenID.RPInitiated" target="https://openid.net/specs/openid-connect-rpinitiated-1_0.html">
@@ -1290,8 +1290,8 @@
 	  <t>Vladimir Dzhuvinov (vladimir@connect2id.com), Connect2id</t>
 	  <t>Pedro Felix (pmhsfelix@gmail.com), individual</t>
 	  <t>Joseph Heenan (joseph@authlete.com), Authlete</t>
-	  <t>Phil Hunt (phil.hunt@independentid.com), Independent</t>
-          <t>Michael B. Jones (mbj@microsoft.com), Microsoft</t>
+	  <t>Phil Hunt (phil.hunt@independentid.com), independent</t>
+          <t>Michael B. Jones (michael_b_jones@hotmail.com), independent (was at Microsoft)</t>
 	  <t>Todd Lainhart (lainhart@us.ibm.com), IBM</t>
 	  <t>Torsten Lodderstedt (torsten@lodderstedt.net), yes.com</t>
 	  <t>Nat Sakimura (nat@nat.consulting), NAT.Consulting</t>
@@ -1302,7 +1302,7 @@
     </section>
 
     <section anchor="Notices" title="Notices">
-      <t>Copyright (c) 2022 The OpenID Foundation.</t>
+      <t>Copyright (c) 2023 The OpenID Foundation.</t>
 
       <t>The OpenID Foundation (OIDF) grants to any Contributor, developer,
       implementer, or other interested party a non-exclusive, royalty free,
@@ -1336,6 +1336,29 @@
       copyrights, patents, patent applications, or other proprietary rights
       that may cover technology that may be required to practice this
       specification.</t>
+    </section>
+
+    <section anchor="History" title="Document History">
+      <t>[[ To be removed from the approved errata ]]</t>
+
+      <t>
+	-11
+        <list style="symbols">
+	  <t>
+	    Updated contributor affiliations.
+	  </t>
+	</list>
+      </t>
+
+      <t>
+	-10
+        <list style="symbols">
+	  <t>
+	    Final specification.
+	  </t>
+	</list>
+      </t>
+
     </section>
 
   </back>

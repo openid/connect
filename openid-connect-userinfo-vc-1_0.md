@@ -1,5 +1,5 @@
 %%%
-title = "OpenID Connect UserInfo Verifiable Credentials 1.0"
+title = "OpenID Connect UserInfo Verifiable Credentials - Draft 00"
 abbrev = "UserInfo VC"
 ipr = "none"
 workgroup = "OpenID Connect"
@@ -7,7 +7,7 @@ keyword = ["security", "openid", "verifiable credential"]
 
 [seriesInfo]
 name = "Internet-Draft"
-value = "openid-vc-core-latest"
+value = "openid-connect-userinfo-vc-1_0-00"
 status = "standard"
 
 [[author]]
