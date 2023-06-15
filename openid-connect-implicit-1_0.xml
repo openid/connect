@@ -66,7 +66,7 @@
       </address>
     </author>
 
-    <date day="30" month="May" year="2023" />
+    <date day="13" month="June" year="2023" />
 
     <workgroup>OpenID Connect Working Group</workgroup>
 
@@ -943,9 +943,12 @@
                    title="End-User Denies Authorization or Invalid Request">
 
             <t>
-	      If the End-User denies the authorization or the End-User authentication
-	      fails, the Authorization Server MUST return the error
-	      Authorization Response as defined in 4.2.2.1 of 
+	      Whenever Error Response parameters are returned,
+	      such as when End-User denies the authorization or the End-User authentication fails,
+	      the Authorization Server MUST return the error
+	      Authorization Response in the
+	      fragment component of the Redirection URI,
+	      as defined in 4.2.2.1 of
 	      <xref target="RFC6749">OAuth 2.0</xref>.
 	      (HTTP errors unrelated to RFC 6749 are returned to the User Agent using the
 	      appropriate HTTP status code.)
@@ -3276,6 +3279,9 @@
       <t>
 	-26
         <list style="symbols">
+	  <t>
+	    Fixed #1048: Clarified how Implicit Error Response parameters are returned.
+	  </t>
 	  <t>
 	    Updated contributor affiliations.
 	  </t>
