@@ -2287,8 +2287,9 @@
 	      with the exception of the differences specified in this section.
 	    </t>
             <t>
-	      If the End-User denies the request or the End-User authentication
-	      fails, the Authorization Server MUST return the error
+	      Whenever Error Response parameters are returned,
+	      such as when End-User denies the authorization or the End-User authentication fails,
+	      the Authorization Server MUST return the error
 	      Authorization Response in the
 	      fragment component of the Redirection URI,
 	      as defined in 4.2.2.1 of 
@@ -2647,8 +2648,9 @@
 	      with the exception of the differences specified in this section.
 	    </t>
             <t>
-	      If the End-User denies the request or the End-User authentication
-	      fails, the Authorization Server MUST return the error
+	      Whenever Error Response parameters are returned,
+	      such as when End-User denies the authorization or the End-User authentication fails,
+	      the Authorization Server MUST return the error
 	      Authorization Response in the
 	      fragment component of the Redirection URI,
 	      as defined in 4.2.2.1 of 
@@ -9405,6 +9407,9 @@
       <t>
 	-31
         <list style="symbols">
+	  <t>
+	    Fixed #1048: Clarified how Implicit and Hybrid Error Response parameters are returned.
+	  </t>
 	  <t>
 	    Fixed #977: Return HTTP 400 (Bad Request) when the Response Mode is not supported.
 	  </t>
