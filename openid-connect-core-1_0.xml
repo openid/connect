@@ -65,7 +65,7 @@
       </address>
     </author>
 
-    <date day="30" month="May" year="2023" />
+    <date day="13" month="June" year="2023" />
 
     <workgroup>OpenID Connect Working Group</workgroup>
 
@@ -1473,6 +1473,14 @@
 	      If the Redirection URI is invalid,
 	      the Authorization Server MUST NOT redirect
 	      the User Agent to the invalid Redirection URI.
+	    </t>
+	    <t>
+	      If the Response Mode value is not supported,
+	      the Authorization Server returns
+	      an HTTP response code of 400 (Bad Request)
+	      without Error Response parameters,
+	      since understanding the Response Mode is necessary
+	      to know how to return those parameters.
 	    </t>
 	    <t>
 	      In addition to the error codes defined in Section 4.1.2.1 of
@@ -9397,6 +9405,9 @@
       <t>
 	-31
         <list style="symbols">
+	  <t>
+	    Fixed #977: Return HTTP 400 (Bad Request) when the Response Mode is not supported.
+	  </t>
 	  <t>
 	    Updated contributor affiliations.
 	  </t>
