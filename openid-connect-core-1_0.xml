@@ -65,7 +65,7 @@
       </address>
     </author>
 
-    <date day="30" month="May" year="2023" />
+    <date day="13" month="June" year="2023" />
 
     <workgroup>OpenID Connect Working Group</workgroup>
 
@@ -1475,6 +1475,14 @@
 	      the User Agent to the invalid Redirection URI.
 	    </t>
 	    <t>
+	      If the Response Mode value is not supported,
+	      the Authorization Server returns
+	      an HTTP response code of 400 (Bad Request)
+	      without Error Response parameters,
+	      since understanding the Response Mode is necessary
+	      to know how to return those parameters.
+	    </t>
+	    <t>
 	      In addition to the error codes defined in Section 4.1.2.1 of
 	      OAuth 2.0, this specification also defines the following error codes:
 	    </t>
@@ -2279,8 +2287,9 @@
 	      with the exception of the differences specified in this section.
 	    </t>
             <t>
-	      If the End-User denies the request or the End-User authentication
-	      fails, the Authorization Server MUST return the error
+	      Whenever Error Response parameters are returned,
+	      such as when End-User denies the authorization or the End-User authentication fails,
+	      the Authorization Server MUST return the error
 	      Authorization Response in the
 	      fragment component of the Redirection URI,
 	      as defined in 4.2.2.1 of 
@@ -2639,8 +2648,9 @@
 	      with the exception of the differences specified in this section.
 	    </t>
             <t>
-	      If the End-User denies the request or the End-User authentication
-	      fails, the Authorization Server MUST return the error
+	      Whenever Error Response parameters are returned,
+	      such as when End-User denies the authorization or the End-User authentication fails,
+	      the Authorization Server MUST return the error
 	      Authorization Response in the
 	      fragment component of the Redirection URI,
 	      as defined in 4.2.2.1 of 
@@ -9397,6 +9407,12 @@
       <t>
 	-31
         <list style="symbols">
+	  <t>
+	    Fixed #1048: Clarified how Implicit and Hybrid Error Response parameters are returned.
+	  </t>
+	  <t>
+	    Fixed #977: Return HTTP 400 (Bad Request) when the Response Mode is not supported.
+	  </t>
 	  <t>
 	    Updated contributor affiliations.
 	  </t>

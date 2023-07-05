@@ -41,7 +41,7 @@
       </address>
     </author>
 
-    <date day="30" month="May" year="2023" />
+    <date day="13" month="June" year="2023" />
 
     <workgroup>OpenID Connect Working Group</workgroup>
 
@@ -325,6 +325,12 @@
 	      Issued at time, as specified in Section 2 of <xref target="OpenID.Core"/>.
 	    </t>
 
+	    <t hangText="exp">
+	      <vspace/>
+	      REQUIRED.
+	      Expiration time, as specified in Section 2 of <xref target="OpenID.Core"/>.
+	    </t>
+
 	    <t hangText="jti">
 	      <vspace/>
 	      REQUIRED.
@@ -415,6 +421,7 @@
    "sub": "248289761001",
    "aud": "s6BhdRkqt3",
    "iat": 1471566154,
+   "exp": 1471569754,
    "jti": "bWJq",
    "sid": "08a5019c-17e1-4977-8f42-65a12843ea02",
    "events": {
@@ -499,7 +506,8 @@
 	    <t>
 	      Validate the <spanx style="verb">iss</spanx>,
 	      <spanx style="verb">aud</spanx>,
-	      and <spanx style="verb">iat</spanx>
+	      <spanx style="verb">iat</spanx>,
+	      and <spanx style="verb">exp</spanx>
 	      Claims in the same way they are validated in ID Tokens.
 	    </t>
 	    <t>
@@ -1344,6 +1352,9 @@
       <t>
 	-11
         <list style="symbols">
+	  <t>
+	    Fixed #1664: Added <spanx style="verb">exp</spanx> claim to Logout Token.
+	  </t>
 	  <t>
 	    Updated contributor affiliations.
 	  </t>
