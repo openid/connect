@@ -388,6 +388,8 @@ Below is a non-normative example how a Credential Offer Object might look like f
 
 <{{examples/credential_offer_by_reference.json}}
 
+Note: When retrieving Credential Offer from the Credential Offer URL, `application/json` media type MUST used for simplicity, and to avoid using `"alg": "none"`. [@RFC9101] might suggest the usage of `application/jwt` media type in the response so that the URL-safe claims representation and processing can be the same in both the signed and unsigned cases as described in [@RFC8725]. However, Credential Offer cannot be signed.
+
 ## Credential Offer Response
 
 The Wallet is not supposed to create a response. UX control stays with the Wallet after completion of the process. 
