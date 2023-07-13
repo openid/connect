@@ -724,7 +724,7 @@ Authorization: BEARER czZCaGRSa3F0MzpnWDFmQmF0M2JW
 
 The Client MAY request encrypted responses by providing its Client Metadata, which includes encryption parameters, either during the registration process or in the Credential Request.
 
-The Credential Issuer MUST ignore the Client Metadata for subsequent Credential Requests. The Credential Issuer MUST ignore Client Metadata parameters other than `jwks`, `jwks_uri`, `credential_encrypted_response_alg` and `credential_encrypted_response_enc`.
+The Credential Issuer MUST ignore the Client Metadata provided in the Credential Request for subsequent Credential Requests. The Credential Issuer MUST only consider the following parameters in the Client Metadata in the Credential Request: `jwks`, `jwks_uri`, `credential_encrypted_response_alg`, and `credential_encrypted_response_enc`.
 
 ### Proof Types {#proof_types}
 
