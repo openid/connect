@@ -3539,7 +3539,7 @@ Host: trust-anchor.example.com
                     </t>
                     <t hangText="iat">
                       <vspace/>
-                      REQUIRED. Time at which the key was issued,
+                      OPTIONAL. Time at which the key was issued,
                       using the time format defined for the
                       <spanx style="verb">iat</spanx> claim in
                       <xref target="RFC7519"/>.
@@ -6940,6 +6940,9 @@ Host: op.umu.se
 	  </t>
           <t>
             Fixed #1947: Added <spanx style="verb">source_endpoint</spanx> as OPTIONAL in Entity Statement JWS.
+          </t>
+          <t>
+            Historical keys response: <spanx style="verb">iat</spanx> is OPTIONAL.
           </t>
           <t>
 	    Added text on Trust Mark delegation.
