@@ -50,7 +50,7 @@
       </address>
     </author>
 
-    <date day="30" month="May" year="2023" />
+    <date day="17" month="July" year="2023" />
 
     <workgroup>OpenID Connect Working Group</workgroup>
 
@@ -802,7 +802,7 @@
      "https://other.example.net/file_of_redirect_uris.json",
    "token_endpoint_auth_method": "client_secret_basic",
    "jwks_uri": "https://client.example.org/my_public_keys.jwks",
-   "userinfo_encrypted_response_alg": "RSA1_5",
+   "userinfo_encrypted_response_alg": "RSA-OAEP-256",
    "userinfo_encrypted_response_enc": "A128CBC-HS256",
    "contacts": ["ve7jtb@example.org", "mary@example.org"],
    "request_uris":
@@ -938,7 +938,7 @@
    "sector_identifier_uri":
      "https://other.example.net/file_of_redirect_uris.json",
    "jwks_uri": "https://client.example.org/my_public_keys.jwks",
-   "userinfo_encrypted_response_alg": "RSA1_5",
+   "userinfo_encrypted_response_alg": "RSA-OAEP-256",
    "userinfo_encrypted_response_enc": "A128CBC-HS256",
    "contacts": ["ve7jtb@example.org", "mary@example.org"],
    "request_uris":
@@ -1158,7 +1158,7 @@
    "sector_identifier_uri":
      "https://other.example.net/file_of_redirect_uris.json",
    "jwks_uri": "https://client.example.org/my_public_keys.jwks",
-   "userinfo_encrypted_response_alg": "RSA1_5",
+   "userinfo_encrypted_response_alg": "RSA-OAEP-256",
    "userinfo_encrypted_response_enc": "A128CBC-HS256",
    "contacts": ["ve7jtb@example.org", "mary@example.org"],
    "request_uris":
@@ -2352,6 +2352,9 @@
       <t>
 	-36
         <list style="symbols">
+	  <t>
+	    Fixed #974: Replaced uses of <spanx style="verb">RSA1_5</spanx> with <spanx style="verb">RSA-OAEP-256</spanx>.
+	  </t>
 	  <t>
 	    Updated contributor affiliations.
 	  </t>

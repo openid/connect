@@ -65,7 +65,7 @@
       </address>
     </author>
 
-    <date day="13" month="June" year="2023" />
+    <date day="17" month="July" year="2023" />
 
     <workgroup>OpenID Connect Working Group</workgroup>
 
@@ -5160,13 +5160,7 @@
 	      OPTIONAL.
 	      <spanx style="verb">id_token_hint</spanx> parameter value,
 	      as specified in <xref target="AuthorizationEndpoint"/>.
-	      If the ID Token is encrypted to the Self-Issued OP,
-	      the <spanx style="verb">sub</spanx> (subject)
-	      of the signed ID Token MUST be sent as the
-	      <spanx style="verb">kid</spanx> (key ID) of the JWE.
-	      Encrypting content to Self-Issued OPs is currently only supported when
-	      the OP's JWK key type is <spanx style="verb">RSA</spanx> and the encryption
-	      algorithm used is <spanx style="verb">RSA1_5</spanx>.
+	      Encrypting content to Self-Issued OPs is not supported.
 	    </t>
 	    <t hangText="claims">
 	      <vspace/>
@@ -5186,13 +5180,7 @@
 	      <vspace/>
 	      OPTIONAL.
 	      Request Object value, as specified in <xref target="RequestObject"/>.
-	      The Request Object MAY be encrypted to the Self-Issued OP by the Client.
-	      In this case, the <spanx style="verb">sub</spanx> (subject) of
-	      a previously issued ID Token for this Client
-	      MUST be sent as the <spanx style="verb">kid</spanx> (key ID) of the JWE.
-	      Encrypting content to Self-Issued OPs is currently only supported when
-	      the OP's JWK key type is <spanx style="verb">RSA</spanx> and the encryption
-	      algorithm used is <spanx style="verb">RSA1_5</spanx>.
+	      Encrypting content to Self-Issued OPs is not supported.
 	    </t>
 	  </list>
 	</t>
@@ -9412,6 +9400,9 @@
 	  </t>
 	  <t>
 	    Fixed #977: Return HTTP 400 (Bad Request) when the Response Mode is not supported.
+	  </t>
+	  <t>
+	    Fixed #974: Removed use of <spanx style="verb">RSA1_5</spanx>.
 	  </t>
 	  <t>
 	    Updated contributor affiliations.
