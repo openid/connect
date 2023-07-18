@@ -56,7 +56,7 @@
       </address>
     </author>
 
-    <date day="30" month="May" year="2023" />
+    <date day="17" month="July" year="2023" />
 
     <workgroup>OpenID Connect Working Group</workgroup>
 
@@ -100,6 +100,14 @@
 	is retrieved from a well-known location as a JSON <xref target="RFC7159"/> document,
 	including its OAuth 2.0 endpoint locations.
 	This process is described in <xref target="ProviderConfig"/>.
+      </t>
+
+      <t>
+	The previous versions of this specification are:
+	<list style="symbols">
+	  <t><xref target="OpenID.Discovery.Errata1">OpenID Connect Discovery 1.0 incorporating errata set 1</xref></t>
+	  <t><xref target="OpenID.Discovery.Final">OpenID Connect Discovery 1.0 (final)</xref></t>
+	</list>
       </t>
 
       <section anchor="rnc" title="Requirements Notation and Conventions">
@@ -2187,6 +2195,54 @@
 
     <references title="Informative References">
 
+      <reference anchor="OpenID.Discovery.Errata1" target="http://openid.net/specs/openid-connect-discovery-1_0-errata1.html">
+	<front>
+	  <title>OpenID Connect Discovery 1.0 incorporating errata set 1</title>
+
+	  <author fullname="Nat Sakimura" initials="N." surname="Sakimura">
+	    <organization abbrev="NRI">Nomura Research Institute, Ltd.</organization>
+	  </author>
+
+	  <author fullname="John Bradley" initials="J." surname="Bradley">
+	    <organization abbrev="Ping Identity">Ping Identity</organization>
+	  </author>
+
+	  <author fullname="Michael B. Jones" initials="M.B." surname="Jones">
+	    <organization abbrev="Microsoft">Microsoft</organization>
+	  </author>
+
+	  <author fullname="Edmund Jay" initials="E." surname="Jay">
+	    <organization abbrev="Illumila">Illumila</organization>
+	  </author>
+
+	  <date day="8" month="November" year="2014"/>
+	</front>
+      </reference>
+
+      <reference anchor="OpenID.Discovery.Final" target="http://openid.net/specs/openid-connect-discovery-1_0-final.html">
+	<front>
+	  <title>OpenID Connect Discovery 1.0 (final)</title>
+
+	  <author fullname="Nat Sakimura" initials="N." surname="Sakimura">
+	    <organization abbrev="NRI">Nomura Research Institute, Ltd.</organization>
+	  </author>
+
+	  <author fullname="John Bradley" initials="J." surname="Bradley">
+	    <organization abbrev="Ping Identity">Ping Identity</organization>
+	  </author>
+
+	  <author fullname="Michael B. Jones" initials="M.B." surname="Jones">
+	    <organization abbrev="Microsoft">Microsoft</organization>
+	  </author>
+
+	  <author fullname="Edmund Jay" initials="E." surname="Jay">
+	    <organization abbrev="Illumila">Illumila</organization>
+	  </author>
+
+	  <date day="25" month="February" year="2014"/>
+	</front>
+      </reference>
+
       <!-- Reference from https://bib.ietf.org/public/rfc/bibxml/reference.RFC.8414.xml -->
 
 <reference anchor="RFC8414" target="https://www.rfc-editor.org/info/rfc8414">
@@ -2346,6 +2402,9 @@
       <t>
 	-34
         <list style="symbols">
+	  <t>
+	    Fixed #978: Referenced previous versions.
+	  </t>
 	  <t>
 	    Updated contributor affiliations.
 	  </t>

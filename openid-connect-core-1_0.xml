@@ -65,7 +65,7 @@
       </address>
     </author>
 
-    <date day="13" month="June" year="2023" />
+    <date day="17" month="July" year="2023" />
 
     <workgroup>OpenID Connect Working Group</workgroup>
 
@@ -146,6 +146,14 @@
 	as described in
 	<xref target="OpenID.Registration">OpenID Connect Dynamic Client Registration 1.0</xref>,
 	or may be obtained via other mechanisms.
+      </t>
+
+      <t>
+	The previous versions of this specification are:
+	<list style="symbols">
+	  <t><xref target="OpenID.Core.Errata1">OpenID Connect Core 1.0 incorporating errata set 1</xref></t>
+	  <t><xref target="OpenID.Core.Final">OpenID Connect Core 1.0 (final)</xref></t>
+	</list>
       </t>
 
       <section anchor="rnc" title="Requirements Notation and Conventions">
@@ -8655,6 +8663,62 @@
     </references>
     <references title="Informative References">
 
+      <reference anchor="OpenID.Core.Errata1" target="http://openid.net/specs/openid-connect-core-1_0-errata1.html">
+        <front>
+          <title>OpenID Connect Core 1.0 incorporating errata set 1</title>
+
+          <author fullname="Nat Sakimura" initials="N." surname="Sakimura">
+            <organization abbrev="NRI">Nomura Research Institute, Ltd.</organization>
+          </author>
+
+          <author fullname="John Bradley" initials="J." surname="Bradley">
+            <organization abbrev="Ping Identity">Ping Identity</organization>
+          </author>
+
+          <author fullname="Michael B. Jones" initials="M.B." surname="Jones">
+            <organization abbrev="Microsoft">Microsoft</organization>
+          </author>
+
+          <author fullname="Breno de Medeiros" initials="B." surname="de Medeiros">
+            <organization abbrev="Google">Google</organization>
+          </author>
+
+	  <author fullname="Chuck Mortimore" initials="C." surname="Mortimore">
+	    <organization abbrev="Salesforce">Salesforce</organization>
+	  </author>
+
+          <date day="8" month="November" year="2014"/>
+        </front>
+      </reference>
+
+      <reference anchor="OpenID.Core.Final" target="http://openid.net/specs/openid-connect-core-1_0-final.html">
+        <front>
+          <title>OpenID Connect Core 1.0 (final)</title>
+
+          <author fullname="Nat Sakimura" initials="N." surname="Sakimura">
+            <organization abbrev="NRI">Nomura Research Institute, Ltd.</organization>
+          </author>
+
+          <author fullname="John Bradley" initials="J." surname="Bradley">
+            <organization abbrev="Ping Identity">Ping Identity</organization>
+          </author>
+
+          <author fullname="Michael B. Jones" initials="M.B." surname="Jones">
+            <organization abbrev="Microsoft">Microsoft</organization>
+          </author>
+
+          <author fullname="Breno de Medeiros" initials="B." surname="de Medeiros">
+            <organization abbrev="Google">Google</organization>
+          </author>
+
+	  <author fullname="Chuck Mortimore" initials="C." surname="Mortimore">
+	    <organization abbrev="Salesforce">Salesforce</organization>
+	  </author>
+
+          <date day="25" month="February" year="2014"/>
+        </front>
+      </reference>
+
       <!-- Reference from https://bib.ietf.org/public/rfc/bibxml/reference.RFC.4949.xml -->
 
 <reference anchor="RFC4949" target="https://www.rfc-editor.org/info/rfc4949">
@@ -9412,6 +9476,9 @@
 	  </t>
 	  <t>
 	    Fixed #977: Return HTTP 400 (Bad Request) when the Response Mode is not supported.
+	  </t>
+	  <t>
+	    Fixed #978: Referenced previous versions.
 	  </t>
 	  <t>
 	    Updated contributor affiliations.
