@@ -1,5 +1,5 @@
 %%%
-title = "OpenID for Verifiable Presentations - draft 19"
+title = "OpenID for Verifiable Presentations - draft 20"
 abbrev = "openid-4-vp"
 ipr = "none"
 workgroup = "connect"
@@ -7,7 +7,7 @@ keyword = ["security", "openid", "ssi"]
 
 [seriesInfo]
 name = "Internet-Draft"
-value = "openid-4-verifiable-presentations-1_0-19"
+value = "openid-4-verifiable-presentations-1_0-20"
 status = "standard"
 
 [[author]]
@@ -448,12 +448,13 @@ Body
 
 <{{examples/request/request_object_client_id_did.json}}
 
-* `x509_san_dns`: When the Client Identifier Scheme is `x509_san_dns`, the Client Identifier MUST be a DNS name and match a `dNSName` Subject Alternative Name (SAN) [@!RFC5280] entry in the leaf certificate passed with the request. The request MUST be signed with the private key corresponding to the public key in the leaf X.509 certificate of the certificate chain added to the request in the `x5c` JOSE header [@!RFC7515] of the signed request object. The Wallet MUST validate the signature and the trust chain of the X.509 certificate. All Verifier metadata other than the public key MUST be obtained from the `client_metadata` parameter. If the Wallet can establish trust in the Client Identifier authenticated through the certificate, e.g. because the Client Identifier is contained in a list of trusted Client Identifiers, it may allow the client to freely choose the `redirect_uri` value. If not, the FQDN of the `redirect_uri` value MUST match the Client Identifier.
+* `verifier_attestation`: This Client Identifier Scheme allows the Verifier to authenticate using a JWT that is bound to a certain public key as defined in (#verifier_attestation_jwt). When the Client Identifier Scheme is `verifier_attestation`, the Client Identifier MUST equal the `sub` claim value in the Verifier attestation JWT. The request MUST be signed with the private key corresponding to the public key in the `cnf` claim in the Verifier attestation JWT. This serves as proof of possesion of this key. The Verifier attestation JWT MUST be added to the `jwt` JOSE Header of the request object (see (#verifier_attestation_jwt)). The Wallet MUST validate the signature on the Verifier attestation JWT. The `iss` claim value of the Verifier Attestation JWT MUST identify a party the Wallet trusts for issuing Verifier Attestation JWTs. If the Wallet cannot establish trust, it MUST refuse the request. If the issuer of the Verifier Attestation JWT adds a `redirect_uris` claim to the attestation, the Wallet MUST ensure the `redirect_uri` request parameter value exactly matches one of the `redirect_uris` claim entries. All Verifier metadata other than the public key MUST be obtained from the `client_metadata` or or the `client_metadata_uri` parameter.
 
+* `x509_san_dns`: When the Client Identifier Scheme is `x509_san_dns`, the Client Identifier MUST be a DNS name and match a `dNSName` Subject Alternative Name (SAN) [@!RFC5280] entry in the leaf certificate passed with the request. The request MUST be signed with the private key corresponding to the public key in the leaf X.509 certificate of the certificate chain added to the request in the `x5c` JOSE header [@!RFC7515] of the signed request object. The Wallet MUST validate the signature and the trust chain of the X.509 certificate. All Verifier metadata other than the public key MUST be obtained from the `client_metadata` parameter. If the Wallet can establish trust in the Client Identifier authenticated through the certificate, e.g. because the Client Identifier is contained in a list of trusted Client Identifiers, it may allow the client to freely choose the `redirect_uri` value. If not, the FQDN of the `redirect_uri` value MUST match the Client Identifier.
 
 * `x509_san_uri`: When the Client Identifier Scheme is `x509_san_uri`, the Client Identifier MUST be a URI and match a `uniformResourceIdentifier` Subject Alternative Name (SAN) [@!RFC5280] entry in the leaf certificate passed with the request. The request MUST be signed with the private key corresponding to the public key in the leaf X.509 certificate of the certificate chain added to the request in the `x5c` JOSE header [@!RFC7515] of the signed request object. The Wallet MUST validate the signature and the trust chain of the X.509 certificate. All Verifier metadata other than the public key MUST be obtained from the `client_metadata` parameter. If the Wallet can establish trust in the Client Identifier authenticated through the certificate, e.g. because the Client Identifier is contained in a list of trusted Client Identifiers, it may allow the client to freely choose the `redirect_uri` value. If not, the `redirect_uri` value MUST match the Client Identifier.
 
-To use `client_id_scheme` values `entity_id`, `did`, `x509_san_dns`, and `x509_san_uri`, Verifiers MUST be confidential clients. This might require changes to the technical design of native apps as such apps are typically public clients.
+To use `client_id_scheme` values `entity_id`, `did`, `verifier_attestation`, `x509_san_dns`, and `x509_san_uri`, Verifiers MUST be confidential clients. This might require changes to the technical design of native apps as such apps are typically public clients.
 
 Other specifications can define further values for the `client_id_scheme` parameter. It is RECOMMENDED to use collision-resistant names for such values.
 
@@ -761,6 +762,33 @@ Deployments can extend the formats supported, provided Issuers, Holders and Veri
 
 `client_id_scheme`:
 : OPTIONAL. JSON String identifying the Client Identifier scheme. The value range defined by this specification is `pre-registered`, `redirect_uri`, `entity_id`, `did`. If omitted, the default value is `pre-registered`. 
+
+# Verifier Attestation JWT {#verifier_attestation_jwt}
+
+The Verifier Attestation JWT is a JWT especially designed to allow a Wallet to authenticate a Verifier in a secure and flexible manner. A Verifier Attestation JWT is issued to the Verifier by a party that wallets trust for the purpose of authentication and authorization of Verifiers. The way this trust established is out of scope of this specification. Every Verifier is bound to a public key, the Verifier MUST always present a Verifier Attestation JWT along with the proof of possession for this key. In the case of the `client_id_scheme` `verifier_attestation`, the authorization request is signed with this key, which serves as proof of possession.
+
+A Verifier Attestation JWT MUST contain the following claims:
+
+* `iss`: REQUIRED. This claim identifies the issuer of the Verifier Attestation JWT. The `iss` value MAY be used to retrieve the issuer's public key. How the trust is established between Wallet and Issuer and how the public key is obtained for validating the attestation's signature is out of scope of this specification. 
+* `sub`: REQUIRED. The value of this claim MUST be the `client_id` of the client making the credential request.
+* `iat`: OPTIONAL. (number). The value of this claim MUST be the time at which the Verifier Attestation JWT was issued using the syntax defined in [RFC7519].
+* `exp`: REQUIRED. (number). The value of this claim MUST be the time at which the Verifier Attestation JWT expires using the syntax defined in [RFC7519]. The Wallet MUST reject any Verifier Attestation JWT with an expiration time that has passed, subject to allowable clock skew between systems.
+* `nbf`: OPTIONAL. The Verifier Attestation JWT MAY contain an "nbf" (not before) claim that identifies the time before which the token MUST NOT be accepted for processing.
+* `cnf`: REQUIRED. This claim contains the confirmation method as defined in [@!RFC7800]. It MUST contain a JWK as defined in Section 3.2 of [RFC7800]. This claim determines the public key for which's corresponding private key the Verifier MUST proof possession of when presenting the Verifier Attestation JWT. This additional security measure allows the Verifier to obtain a Verifier Attestion JWT from a trusted issuer and use it for a long time independent of that issuer without the risk of an advisary impersonating the Verifier by replaying a captured attestation. 
+
+The Verifier Attestation JWT MAY use any claim registered in the "JSON Web Token Claims" registry as defined in [@!RFC7519].
+
+Verifier Attestation JWTs compliant with this specification MUST use the media type `application/verifier-attestation+jwt` as defined in (#va_media_type).
+
+A Verifier Attestation JWT MUST set the `typ` JOSE header to `verifier-attestation+jwt`.
+
+The Verifier Attestation JWT MAY be conveyed in the header of a JWS signed object (JOSE header). 
+
+This specification introduces a JOSE header, which can be used to add a JWT to such a header as follows: 
+
+* `jwt`: This JOSE header MUST contain a JWT. 
+
+In the context of this specification, such a JWT MUST set the `typ` JOSE header to `verifier-attestation+jwt`.
 
 # Implementation Considerations
 
@@ -1561,6 +1589,8 @@ Note: The `nonce` and `aud` are set to the `nonce` of the request and the Client
 
 # IANA Considerations
 
+## Response Types
+
 * Response Type Name: `vp_token`
 * Change Controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net
 * Specification Document(s): https://openid.net/specs/openid-4-verifiable-presentations-1_0.html
@@ -1570,6 +1600,49 @@ Note: The `nonce` and `aud` are set to the `nonce` of the request and the Client
 * Specification Document(s): https://openid.net/specs/openid-4-verifiable-presentations-1_0.html
 
 Note: Plan to register the following Response Types in the [OAuth Authorization Endpoint Response Types IANA Registry](https://www.iana.org/assignments/oauth-parameters/oauth-parameters.xhtml#endpoint).
+
+## Media Types
+### application/verifier-attestation+jwt {#va_media_type}
+
+The Internet media type for a Verifier Attestation JWT is `application/verifier-attestation+jwt`.
+
+Type name: : `application`
+
+Subtype name: : `verifier-attestation+jwt`
+
+Required parameters: : n/a
+
+Optional parameters: : n/a
+
+Encoding considerations: : Compact Serialization as defined in [@!RFC7519].
+
+Security considerations: : See Security Considerations in in [@!RFC7519].
+
+Interoperability considerations: : n/a
+
+- Published specification: : TODO
+- Applications that use this media type: : Applications that issue, present,
+  verify verifier attestation VCs.
+- Additional information:
+  - Magic number(s): n/a
+  - File extension(s): n/a
+  - Macintosh file type code(s): n/a
+  - Person & email address to contact for further information: TBD
+  - Intended usage: COMMON
+  - Restrictions on usage: none
+  - Author: tbd <TODO@email.com>
+  - Change controller: OpenID Foundation
+
+
+## JWS Headers
+### JWT {#jose_header}
+This specification registers the following JWS header name in the IANA "JSON Web Signature and Encryption Header Parameters" registry established by [@!RFC7515].
+
+* Header Parameter Name: `jwt`
+* Header Parameter Description: This header contains a JWT. Processing rules MAY depend on the `typ` header value of the respective JWT. 
+* Header Parameter Usage Location: JWS
+* Change Controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net
+* Specification Document(s): (#verifier_attestation_jwt)
 
 # Acknowledgements {#Acknowledgements}
 
@@ -1587,6 +1660,10 @@ The technology described in this specification was made available from contribut
 
    [[ To be removed from the final specification ]]
 
+   -20
+
+   * added "verifier_attestation" client id scheme value
+ 
    -19
 
    * added "x509_san_uri" and "x509_san_dns" client id scheme value
