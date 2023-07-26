@@ -3477,7 +3477,7 @@
 	  <t>
 	    For privacy reasons, OpenID Providers MAY elect to not return
 	    values for some requested Claims.
-	    It is not an error condition to not return a requested claim.
+	    It is not an error condition to not return a requested Claim.
 	  </t>
 	  <t>
 	    If a Claim is not returned, that Claim Name SHOULD be
