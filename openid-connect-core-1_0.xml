@@ -148,6 +148,14 @@
 	or may be obtained via other mechanisms.
       </t>
 
+      <t>
+	The previous versions of this specification are:
+	<list style="symbols">
+	  <t><xref target="OpenID.Core.Errata1">OpenID Connect Core 1.0 incorporating errata set 1</xref></t>
+	  <t><xref target="OpenID.Core.Final">OpenID Connect Core 1.0 (final)</xref></t>
+	</list>
+      </t>
+
       <section anchor="rnc" title="Requirements Notation and Conventions">
 	<t>The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
 	"SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and "OPTIONAL" in this
@@ -3483,6 +3491,7 @@
 	  <t>
 	    For privacy reasons, OpenID Providers MAY elect to not return
 	    values for some requested Claims.
+	    It is not an error condition to not return a requested Claim.
 	  </t>
 	  <t>
 	    If a Claim is not returned, that Claim Name SHOULD be
@@ -3837,10 +3846,9 @@
 	  <xref target="StandardClaims"/>, the (example)
 	  <spanx style="verb">http://example.info/claims/groups</spanx> Claim,
 	  is being requested.
-	  Using the <spanx style="verb">claims</spanx> parameter is the only
-	  way to request Claims outside the standard set.
-	  It is also the only way to request specific combinations of the
-	  standard Claims that cannot be specified using scope values.
+	  Using the <spanx style="verb">claims</spanx> parameter
+	  is the only way to request specific combinations of
+	  Claims that cannot be specified using scope values.
 	</t>
 
 	<section anchor="IndividualClaimsRequests" title="Individual Claims Requests">
@@ -4359,6 +4367,10 @@
 ]]></artwork>
 	      </figure>
 	    </t>
+	    <t>
+	      Note that not returning <spanx style="verb">phone_number</spanx>, which is held by Claims Provider B,
+	      demonstrates that not all Claims held by a utilized Claims Provider need be included.
+	    </t>
 	  </section>
 
 	</section>
@@ -4799,7 +4811,7 @@
 	</t>
 
 	<section anchor="CreateRequestUri"
-		 title="URL Referencing the Request Object">
+		 title="URI Referencing the Request Object">
 	  <t>
 	    The Client stores the Request Object resource either
 	    locally or remotely at a URL the Server can access.
@@ -5136,6 +5148,9 @@
       </section>
 
       <section anchor="SelfIssuedRequest" title="Self-Issued OpenID Provider Request">
+	<t>
+	  The self-issued OP's Authorization Endpoint is the URI <spanx style="verb">openid:</spanx>.
+	</t>
 	<t>The Client sends the Authentication Request to the Authorization Endpoint
 	with the following parameters:</t>
 	<t>
@@ -5166,13 +5181,7 @@
 	      OPTIONAL.
 	      <spanx style="verb">id_token_hint</spanx> parameter value,
 	      as specified in <xref target="AuthorizationEndpoint"/>.
-	      If the ID Token is encrypted to the Self-Issued OP,
-	      the <spanx style="verb">sub</spanx> (subject)
-	      of the signed ID Token MUST be sent as the
-	      <spanx style="verb">kid</spanx> (key ID) of the JWE.
-	      Encrypting content to Self-Issued OPs is currently only supported when
-	      the OP's JWK key type is <spanx style="verb">RSA</spanx> and the encryption
-	      algorithm used is <spanx style="verb">RSA1_5</spanx>.
+	      Encrypting content to Self-Issued OPs is not supported.
 	    </t>
 	    <t hangText="claims">
 	      <vspace/>
@@ -5192,13 +5201,7 @@
 	      <vspace/>
 	      OPTIONAL.
 	      Request Object value, as specified in <xref target="RequestObject"/>.
-	      The Request Object MAY be encrypted to the Self-Issued OP by the Client.
-	      In this case, the <spanx style="verb">sub</spanx> (subject) of
-	      a previously issued ID Token for this Client
-	      MUST be sent as the <spanx style="verb">kid</spanx> (key ID) of the JWE.
-	      Encrypting content to Self-Issued OPs is currently only supported when
-	      the OP's JWK key type is <spanx style="verb">RSA</spanx> and the encryption
-	      algorithm used is <spanx style="verb">RSA1_5</spanx>.
+	      Encrypting content to Self-Issued OPs is not supported.
 	    </t>
 	  </list>
 	</t>
@@ -7944,6 +7947,38 @@
 	<?rfc subcompact="no"?>
 
       </section>
+
+      <section anchor="URISchemeRegistry" title="URI Scheme Registration">
+
+	<t>
+	  This specification registers the following URI scheme
+	  in the IANA
+	  "Uniform Resource Identifier (URI) Schemes" registry <xref target="IANA.URISchemes"/>
+	  established by <xref target="RFC7595">RFC 7595</xref>.
+	</t>
+
+	<section anchor='URISchemeContents' title='Registry Contents'>
+	  <t>
+	    <?rfc subcompact="yes"?>
+	    <list style="symbols">
+	      <t>Scheme name: <spanx style="verb">openid</spanx></t>
+
+	      <t>Status: Permanent</t>
+
+	      <t>Applications/protocols that use this scheme name: OpenID Connect</t>
+
+	      <t>Contact: Michael B. Jones - michael_b_jones@hotmail.com</t>
+
+	      <t>Change controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net</t>
+
+	      <t>References: <xref target="SelfIssuedRequest"/> of this document</t>
+
+	    </list>
+	  </t>
+	</section>
+	<?rfc subcompact="no"?>
+
+      </section>
     </section>
 
   </middle>
@@ -8629,6 +8664,16 @@
         </front>
       </reference>
 
+      <reference anchor="IANA.URISchemes" target="https://www.iana.org/assignments/uri-schemes">
+        <front>
+          <title>Uniform Resource Identifier (URI) Schemes</title>
+          <author>
+            <organization>IANA</organization>
+          </author>
+	  <date/>
+        </front>
+      </reference>
+
       <reference anchor="RFC20" target="https://www.rfc-editor.org/info/rfc20">
 	<front>
 	  <title>ASCII format for Network Interchange</title>
@@ -8661,6 +8706,62 @@
     </references>
     <references title="Informative References">
 
+      <reference anchor="OpenID.Core.Errata1" target="http://openid.net/specs/openid-connect-core-1_0-errata1.html">
+        <front>
+          <title>OpenID Connect Core 1.0 incorporating errata set 1</title>
+
+          <author fullname="Nat Sakimura" initials="N." surname="Sakimura">
+            <organization abbrev="NRI">Nomura Research Institute, Ltd.</organization>
+          </author>
+
+          <author fullname="John Bradley" initials="J." surname="Bradley">
+            <organization abbrev="Ping Identity">Ping Identity</organization>
+          </author>
+
+          <author fullname="Michael B. Jones" initials="M.B." surname="Jones">
+            <organization abbrev="Microsoft">Microsoft</organization>
+          </author>
+
+          <author fullname="Breno de Medeiros" initials="B." surname="de Medeiros">
+            <organization abbrev="Google">Google</organization>
+          </author>
+
+	  <author fullname="Chuck Mortimore" initials="C." surname="Mortimore">
+	    <organization abbrev="Salesforce">Salesforce</organization>
+	  </author>
+
+          <date day="8" month="November" year="2014"/>
+        </front>
+      </reference>
+
+      <reference anchor="OpenID.Core.Final" target="http://openid.net/specs/openid-connect-core-1_0-final.html">
+        <front>
+          <title>OpenID Connect Core 1.0 (final)</title>
+
+          <author fullname="Nat Sakimura" initials="N." surname="Sakimura">
+            <organization abbrev="NRI">Nomura Research Institute, Ltd.</organization>
+          </author>
+
+          <author fullname="John Bradley" initials="J." surname="Bradley">
+            <organization abbrev="Ping Identity">Ping Identity</organization>
+          </author>
+
+          <author fullname="Michael B. Jones" initials="M.B." surname="Jones">
+            <organization abbrev="Microsoft">Microsoft</organization>
+          </author>
+
+          <author fullname="Breno de Medeiros" initials="B." surname="de Medeiros">
+            <organization abbrev="Google">Google</organization>
+          </author>
+
+	  <author fullname="Chuck Mortimore" initials="C." surname="Mortimore">
+	    <organization abbrev="Salesforce">Salesforce</organization>
+	  </author>
+
+          <date day="25" month="February" year="2014"/>
+        </front>
+      </reference>
+
       <!-- Reference from https://bib.ietf.org/public/rfc/bibxml/reference.RFC.4949.xml -->
 
 <reference anchor="RFC4949" target="https://www.rfc-editor.org/info/rfc4949">
@@ -8675,6 +8776,24 @@
   <seriesInfo name="FYI" value="36"/>
   <seriesInfo name="RFC" value="4949"/>
   <seriesInfo name="DOI" value="10.17487/RFC4949"/>
+</reference>
+
+      <!-- Reference from https://bib.ietf.org/public/rfc/bibxml/reference.RFC.7595.xml -->
+
+<reference anchor="RFC7595" target="https://www.rfc-editor.org/info/rfc7595">
+  <front>
+    <title>Guidelines and Registration Procedures for URI Schemes</title>
+    <author fullname="D. Thaler" initials="D." role="editor" surname="Thaler"/>
+    <author fullname="T. Hansen" initials="T." surname="Hansen"/>
+    <author fullname="T. Hardie" initials="T." surname="Hardie"/>
+    <date month="June" year="2015"/>
+    <abstract>
+      <t>This document updates the guidelines and recommendations, as well as the IANA registration processes, for the definition of Uniform Resource Identifier (URI) schemes. It obsoletes RFC 4395.</t>
+    </abstract>
+  </front>
+  <seriesInfo name="BCP" value="35"/>
+  <seriesInfo name="RFC" value="7595"/>
+  <seriesInfo name="DOI" value="10.17487/RFC7595"/>
 </reference>
 
       <reference anchor="OpenID.Basic" target="https://openid.net/specs/openid-connect-basic-1_0.html">
@@ -9418,6 +9537,27 @@
 	  </t>
 	  <t>
 	    Fixed #977: Return HTTP 400 (Bad Request) when the Response Mode is not supported.
+	  </t>
+	  <t>
+	    Fixed #1051: Deleted erroneous sentence about the <spanx style="verb">claims</spanx> parameter and non-standard Claims.
+	  </t>
+	  <t>
+	    Fixed #1115: Said that it is not an error condition to not return a requested Claim.
+	  </t>
+	  <t>
+	    Fixed #1169: Changed URL to URI in a section title.
+	  </t>
+	  <t>
+	    Fixed #1065: Clarified that not all Claims from utilized Claims Providers need be returned.
+	  </t>
+	  <t>
+	    Fixed #1112: Requested registration of the "openid:" URI scheme.
+	  </t>
+	  <t>
+	    Fixed #974: Removed use of <spanx style="verb">RSA1_5</spanx>.
+	  </t>
+	  <t>
+	    Fixed #978: Referenced previous versions.
 	  </t>
 	  <t>
 	    Fixed #1046: Augmented <spanx style="verb">login_hint</spanx> description.
