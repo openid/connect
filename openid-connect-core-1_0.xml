@@ -4353,6 +4353,10 @@
 ]]></artwork>
 	      </figure>
 	    </t>
+	    <t>
+	      Note that not returning <spanx style="verb">phone_number</spanx>, which is held by Claims Provider B,
+	      demonstrates that not all Claims held by a utilized Claims Provider need be included.
+	    </t>
 	  </section>
 
 	</section>
@@ -9421,6 +9425,9 @@
 	  </t>
 	  <t>
 	    Fixed #1169: Changed URL to URI in a section title.
+	  </t>
+	  <t>
+	    Fixed #1065: Clarified that not all Claims from utilized Claims Providers need be returned.
 	  </t>
 	  <t>
 	    Updated contributor affiliations.
