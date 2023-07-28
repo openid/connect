@@ -3477,6 +3477,7 @@
 	  <t>
 	    For privacy reasons, OpenID Providers MAY elect to not return
 	    values for some requested Claims.
+	    It is not an error condition to not return a requested Claim.
 	  </t>
 	  <t>
 	    If a Claim is not returned, that Claim Name SHOULD be
@@ -3831,10 +3832,9 @@
 	  <xref target="StandardClaims"/>, the (example)
 	  <spanx style="verb">http://example.info/claims/groups</spanx> Claim,
 	  is being requested.
-	  Using the <spanx style="verb">claims</spanx> parameter is the only
-	  way to request Claims outside the standard set.
-	  It is also the only way to request specific combinations of the
-	  standard Claims that cannot be specified using scope values.
+	  Using the <spanx style="verb">claims</spanx> parameter
+	  is the only way to request specific combinations of
+	  Claims that cannot be specified using scope values.
 	</t>
 
 	<section anchor="IndividualClaimsRequests" title="Individual Claims Requests">
@@ -9412,6 +9412,12 @@
 	  </t>
 	  <t>
 	    Fixed #977: Return HTTP 400 (Bad Request) when the Response Mode is not supported.
+	  </t>
+	  <t>
+	    Fixed #1051: Deleted erroneous sentence about the <spanx style="verb">claims</spanx> parameter and non-standard Claims.
+	  </t>
+	  <t>
+	    Fixed #1115: Said that it is not an error condition to not return a requested Claim.
 	  </t>
 	  <t>
 	    Fixed #1169: Changed URL to URI in a section title.
