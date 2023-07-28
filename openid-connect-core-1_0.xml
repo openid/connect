@@ -2993,11 +2993,17 @@
           <t hangText="login_hint">
 	    <vspace/>
 	    OPTIONAL.
-	    Hint to the Authorization Server
-            about the login identifier the End-User might use to log in.
-	    If the client receives a value for this string-valued parameter,
-	    it MUST include it in the Authentication Request
-	    as the <spanx style="verb">login_hint</spanx> parameter value.
+	    Hint to the Authorization Server about the End-User to be authenticated.
+	    The meaning of this string-valued parameter is left to the OP's discretion.
+	    In common use cases, the value will contain an e-mail address, phone number, or username
+	    collected by the RP before requesting authentication at the OP.
+	    For example, this hint can be used by an RP after it asks the End-User
+	    for their e-mail address (or other identifier),
+	    passing that identifier as a hint to the OpenID Provider.
+	    It is RECOMMENDED that the hint value match the value provided for discovery.
+	    Other uses MAY include
+	    using the <spanx style="verb">sub</spanx> claim from the ID Token as the hint value
+	    or potentially other kinds of information about the requested authentication.
           </t>
           <t hangText="target_link_uri">
 	    <vspace/>
@@ -9552,6 +9558,9 @@
 	  </t>
 	  <t>
 	    Fixed #978: Referenced previous versions.
+	  </t>
+	  <t>
+	    Fixed #1046: Augmented <spanx style="verb">login_hint</spanx> description.
 	  </t>
 	  <t>
 	    Updated contributor affiliations.
