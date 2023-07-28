@@ -65,7 +65,7 @@
       </address>
     </author>
 
-    <date day="13" month="June" year="2023" />
+    <date day="17" month="July" year="2023" />
 
     <workgroup>OpenID Connect Working Group</workgroup>
 
@@ -3831,10 +3831,9 @@
 	  <xref target="StandardClaims"/>, the (example)
 	  <spanx style="verb">http://example.info/claims/groups</spanx> Claim,
 	  is being requested.
-	  Using the <spanx style="verb">claims</spanx> parameter is the only
-	  way to request Claims outside the standard set.
-	  It is also the only way to request specific combinations of the
-	  standard Claims that cannot be specified using scope values.
+	  Using the <spanx style="verb">claims</spanx> parameter
+	  is the only way to request specific combinations of
+	  Claims that cannot be specified using scope values.
 	</t>
 
 	<section anchor="IndividualClaimsRequests" title="Individual Claims Requests">
@@ -9412,6 +9411,9 @@
 	  </t>
 	  <t>
 	    Fixed #977: Return HTTP 400 (Bad Request) when the Response Mode is not supported.
+	  </t>
+	  <t>
+	    Fixed #1051: Deleted erroneous sentence about the <spanx style="verb">claims</spanx> parameter and non-standard Claims.
 	  </t>
 	  <t>
 	    Updated contributor affiliations.
