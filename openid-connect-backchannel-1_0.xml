@@ -41,7 +41,7 @@
       </address>
     </author>
 
-    <date day="13" month="June" year="2023" />
+    <date day="28" month="July" year="2023" />
 
     <workgroup>OpenID Connect Working Group</workgroup>
 
@@ -117,6 +117,13 @@
 	OpenID Connect RP-Initiated Logout 1.0,
 	OpenID Connect Session Management 1.0, and/or
 	OpenID Connect Front-Channel Logout 1.0.
+      </t>
+
+      <t>
+	The previous version of this specification is:
+	<list style="symbols">
+	  <t><xref target="OpenID.BackChannel.Final">OpenID Connect Back-Channel Logout 1.0 (final)</xref></t>
+	</list>
       </t>
 
       <section anchor="rnc" title="Requirements Notation and Conventions">
@@ -1135,6 +1142,23 @@
     </references>
 
     <references title="Informative References">
+
+      <reference anchor="OpenID.BackChannel.Final" target="https://openid.net/specs/openid-connect-backchannel-1_0-final.html">
+	<front>
+	  <title>OpenID Connect Back-Channel Logout 1.0 (final)</title>
+
+	  <author fullname="Michael B. Jones" initials="M.B." surname="Jones">
+	    <organization abbrev="Microsoft">Microsoft</organization>
+	  </author>
+
+          <author fullname="John Bradley" initials="J." surname="Bradley">
+            <organization abbrev="Yubico">Yubico</organization>
+          </author>
+
+	  <date day="12" month="September" year="2022" />
+	</front>
+      </reference>
+
       <!-- Reference from https://bib.ietf.org/public/rfc/bibxml/reference.RFC.2046.xml -->
 
 <reference anchor="RFC2046" target="https://www.rfc-editor.org/info/rfc2046">
@@ -1298,7 +1322,7 @@
 	  <t>Vladimir Dzhuvinov (vladimir@connect2id.com), Connect2id</t>
 	  <t>Pedro Felix (pmhsfelix@gmail.com), individual</t>
 	  <t>Joseph Heenan (joseph@authlete.com), Authlete</t>
-	  <t>Phil Hunt (phil.hunt@independentid.com), independent</t>
+	  <t>Phil Hunt (phil.hunt@independentid.com), Independent Identity, Inc.</t>
           <t>Michael B. Jones (michael_b_jones@hotmail.com), independent (was at Microsoft)</t>
 	  <t>Todd Lainhart (lainhart@us.ibm.com), IBM</t>
 	  <t>Torsten Lodderstedt (torsten@lodderstedt.net), yes.com</t>
@@ -1354,6 +1378,9 @@
         <list style="symbols">
 	  <t>
 	    Fixed #1664: Added <spanx style="verb">exp</spanx> claim to Logout Token.
+	  </t>
+	  <t>
+	    Fixed #978: Referenced previous version.
 	  </t>
 	  <t>
 	    Updated contributor affiliations.

@@ -50,7 +50,7 @@
       </address>
     </author>
 
-    <date day="30" month="May" year="2023" />
+    <date day="28" month="July" year="2023" />
 
     <workgroup>OpenID Connect Working Group</workgroup>
 
@@ -91,6 +91,14 @@
 	This document describes how an RP
 	can register with an OP, and how registration information
 	for the RP can be retrieved.
+      </t>
+
+      <t>
+	The previous versions of this specification are:
+	<list style="symbols">
+	  <t><xref target="OpenID.Registration.Errata1">OpenID Connect Registration 1.0 incorporating errata set 1</xref></t>
+	  <t><xref target="OpenID.Registration.Final">OpenID Connect Registration 1.0 (final)</xref></t>
+	</list>
       </t>
 
       <section anchor="rnc" title="Requirements Notation and Conventions">
@@ -802,7 +810,7 @@
      "https://other.example.net/file_of_redirect_uris.json",
    "token_endpoint_auth_method": "client_secret_basic",
    "jwks_uri": "https://client.example.org/my_public_keys.jwks",
-   "userinfo_encrypted_response_alg": "RSA1_5",
+   "userinfo_encrypted_response_alg": "RSA-OAEP-256",
    "userinfo_encrypted_response_enc": "A128CBC-HS256",
    "contacts": ["ve7jtb@example.org", "mary@example.org"],
    "request_uris":
@@ -938,7 +946,7 @@
    "sector_identifier_uri":
      "https://other.example.net/file_of_redirect_uris.json",
    "jwks_uri": "https://client.example.org/my_public_keys.jwks",
-   "userinfo_encrypted_response_alg": "RSA1_5",
+   "userinfo_encrypted_response_alg": "RSA-OAEP-256",
    "userinfo_encrypted_response_enc": "A128CBC-HS256",
    "contacts": ["ve7jtb@example.org", "mary@example.org"],
    "request_uris":
@@ -1158,7 +1166,7 @@
    "sector_identifier_uri":
      "https://other.example.net/file_of_redirect_uris.json",
    "jwks_uri": "https://client.example.org/my_public_keys.jwks",
-   "userinfo_encrypted_response_alg": "RSA1_5",
+   "userinfo_encrypted_response_alg": "RSA-OAEP-256",
    "userinfo_encrypted_response_enc": "A128CBC-HS256",
    "contacts": ["ve7jtb@example.org", "mary@example.org"],
    "request_uris":
@@ -2213,6 +2221,47 @@
     </references>
 
     <references title="Informative References">
+
+      <reference anchor="OpenID.Registration.Errata1" target="http://openid.net/specs/openid-connect-registration-1_0-errata1.html">
+	<front>
+	  <title>OpenID Connect Dynamic Client Registration 1.0 incorporating errata set 1</title>
+
+	  <author fullname="Nat Sakimura" initials="N." surname="Sakimura">
+	    <organization abbrev="NRI">Nomura Research Institute, Ltd.</organization>
+	  </author>
+
+	  <author fullname="John Bradley" initials="J." surname="Bradley">
+	    <organization abbrev="Ping Identity">Ping Identity</organization>
+	  </author>
+
+	  <author fullname="Michael B. Jones" initials="M.B." surname="Jones">
+	    <organization abbrev="Microsoft">Microsoft</organization>
+	  </author>
+
+	  <date day="8" month="November" year="2014"/>
+	</front>
+      </reference>
+
+      <reference anchor="OpenID.Registration.Final" target="http://openid.net/specs/openid-connect-registration-1_0-final.html">
+	<front>
+	  <title>OpenID Connect Dynamic Client Registration 1.0 (final)</title>
+
+	  <author fullname="Nat Sakimura" initials="N." surname="Sakimura">
+	    <organization abbrev="NRI">Nomura Research Institute, Ltd.</organization>
+	  </author>
+
+	  <author fullname="John Bradley" initials="J." surname="Bradley">
+	    <organization abbrev="Ping Identity">Ping Identity</organization>
+	  </author>
+
+	  <author fullname="Michael B. Jones" initials="M.B." surname="Jones">
+	    <organization abbrev="Microsoft">Microsoft</organization>
+	  </author>
+
+	  <date day="25" month="February" year="2014"/>
+	</front>
+      </reference>
+
       <!-- Reference from https://bib.ietf.org/public/rfc/bibxml/reference.RFC.7591.xml -->
 
 <reference anchor="RFC7591" target="https://www.rfc-editor.org/info/rfc7591">
@@ -2352,6 +2401,12 @@
       <t>
 	-36
         <list style="symbols">
+	  <t>
+	    Fixed #974: Replaced uses of <spanx style="verb">RSA1_5</spanx> with <spanx style="verb">RSA-OAEP-256</spanx>.
+	  </t>
+	  <t>
+	    Fixed #978: Referenced previous versions.
+	  </t>
 	  <t>
 	    Updated contributor affiliations.
 	  </t>
