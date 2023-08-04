@@ -24,7 +24,7 @@
 
   <front>
     <title abbrev="OpenID Connect Registration 1.0">OpenID Connect
-    Dynamic Client Registration 1.0 - draft 36 incorporating errata set 2</title>
+    Dynamic Client Registration 1.0 - draft 37 incorporating errata set 2</title>
 
     <author fullname="Nat Sakimura" initials="N." surname="Sakimura">
       <organization abbrev="NAT.Consulting (was at NRI)">NAT.Consulting</organization>
@@ -50,7 +50,7 @@
       </address>
     </author>
 
-    <date day="28" month="July" year="2023" />
+    <date day="4" month="August" year="2023" />
 
     <workgroup>OpenID Connect Working Group</workgroup>
 
@@ -2397,6 +2397,15 @@
 
     <section anchor="History" title="Document History">
       <t>[[ To be removed from the approved errata ]]</t>
+
+      <t>
+	-37
+        <list style="symbols">
+	  <t>
+	    TBD
+	  </t>
+	</list>
+      </t>
 
       <t>
 	-36
