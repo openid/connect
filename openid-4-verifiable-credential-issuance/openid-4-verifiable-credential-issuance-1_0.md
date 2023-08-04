@@ -871,17 +871,19 @@ Cache-Control: no-store
 
 When the Credential Request is invalid or unauthorized, the Credential Issuer constructs the error response as defined in this section.
 
-The following additional clarifications are provided for the following parameters already defined in section 3.1 of [@!RFC6750]:
+The HTTP response body uses the application/json media type with an HTTP 400 (Bad Request) status code (unless specified otherwise) and includes the following parameters with the response:
+
+`error`:
+
+* REQUIRED. A single ASCII [USASCII] error code from the following:
 
 `invalid_request`:
 
-- Credential Request was malformed. One or more of the parameters (i.e. `format`, `proof`) are missing or malformed.
+* Credential Request was malformed. One or more of the parameters (i.e. `format`, `proof`) are missing or malformed.
 
 `invalid_token`:
 
 * Credential Request contains the wrong Access Token or the Access Token is missing.
-
-The following additional error codes are specified:
 
 * `unsupported_credential_type`: requested credential type is not supported
 * `unsupported_credential_format`:  requested credential format is not supported
@@ -1076,9 +1078,9 @@ Deferred Credential Response MUST be sent using `application/json` media type.
 
 ## Deferred Credential Error Response {#deferred-credential_error_response}
 
-When the Deferred Credential Request is invalid or unauthorized, or the credential is not available yet, the Credential Issuer constructs the error response as defined in this section.
+When the Deferred Credential Request is invalid or unauthorized, or the credential is not available yet, the Credential Issuer constructs the error response as defined in (#credential-error-response).
 
-The following additional clarifications are provided for the following parameters already defined in section 3.1 of [@!RFC6750]:
+The following additional clarifications are provided for the following parameters already defined in (#credential-error-response):
 
 `invalid_request`:
 
@@ -1350,19 +1352,6 @@ TBD
       <organization>University of Kent</organization>
     </author>
    <date day="19" month="Nov" year="2019"/>
-  </front>
-</reference>
-
-<reference anchor="RFC6750" target="https://www.rfc-editor.org/rfc/rfc6750">
-  <front>
-    <title>The OAuth 2.0 Authorization Framework: Bearer Token Usage</title>
-    <author fullname="Dick Hardt">
-      <organization>Independent</organization>
-    </author>
-    <author fullname="Michael B. Jones">
-      <organization>Microsoft</organization>
-    </author>
-   <date month="October" year="2012"/>
   </front>
 </reference>
 
