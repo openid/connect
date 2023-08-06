@@ -7138,8 +7138,8 @@
 
       <section anchor="ClaimsRegistry" title="JSON Web Token Claims Registration">
 	<t>
-	  This specification registers the Claims defined in
-	  <xref target="StandardClaims"/> and <xref target="IDToken"/> in the IANA
+	  This specification registers the following Claims
+	  in the IANA
 	  "JSON Web Token Claims" registry <xref target="IANA.JWT.Claims"/>
 	  established by <xref target="JWT"/>.
 	</t>
