@@ -194,8 +194,8 @@
 	and proceed to <xref target="ProviderConfig"></xref>.
       </t>
       <t>
-	Issuer discovery requires the following information to make a
-	discovery request:
+	The following information is needed to perform issuer discovery
+	using <xref target="RFC7033">WebFinger</xref>:
       </t>
 
       <t><list style="hanging">
@@ -238,9 +238,14 @@
       normalization rules to the Identifier to determine the Resource and Host.
       Then it makes an HTTP <spanx style="verb">GET</spanx> request to the Host's
       <xref target="RFC7033">WebFinger</xref>
-      endpoint with the <spanx style="verb">resource</spanx> and <spanx
-      style="verb">rel</spanx> parameters to obtain the location of the
+      endpoint with the <spanx style="verb">resource</spanx>
+      parameter to obtain the location of the
       requested service.
+      Use of the <spanx style="verb">rel</spanx> parameter in the request with a value of
+      <spanx style="verb">http://openid.net/specs/connect/1.0/issuer</spanx>
+      is also RECOMMENDED to narrow the response to the specific link relation type needed.
+      </t>
+      <t>
       All WebFinger communication MUST utilize TLS
       in the manner described in <xref target="TLSRequirements"/>.
       The WebFinger endpoint SHOULD support the use of
@@ -2418,7 +2423,7 @@
 	-35
         <list style="symbols">
 	  <t>
-	    TBD
+	    Fixed #1091: Clarified use of WebFinger.
 	  </t>
 	</list>
       </t>
