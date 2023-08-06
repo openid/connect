@@ -4240,6 +4240,12 @@
 	    </list>
 	  </t>
 	  <t>
+	    An <spanx style="verb">iss</spanx> (issuer) Claim SHOULD be included
+	    in any JWT issued by a Claims Provider so that the Claims Provider's
+	    keys can be retrieved for signature validation of the JWT.
+	    The value of the Claim is the Claims Provider's Issuer Identifier URL.
+	  </t>
+	  <t>
 	    In general, it is up to the OP when it is appropriate to use
 	    Aggregated Claims and Distributed Claims.
 	    In some cases, information about when to use what Claim Types
@@ -4257,10 +4263,12 @@
 	      <figure>
 		<preamble>
 		  In this example, these Claims about Jane Doe have been issued by
-		  Claims Provider A:
+		  Claims Provider A.
+		  (The example also includes the Claims Provider's Issuer Identifier URL.)
 		</preamble>
 		<artwork><![CDATA[
   {
+   "iss": "https://a.example.com",
    "address": {
      "street_address": "1234 Hollywood Blvd.",
      "locality": "Los Angeles",
@@ -4320,10 +4328,12 @@
 	      <figure>
 		<preamble>
 		  In this example, these Claims about Jane Doe are held by
-		  Claims Provider B (Jane Doe's bank):
+		  Claims Provider B (Jane Doe's bank).
+		  (The example also includes the Claims Provider's Issuer Identifier URL.)
 		</preamble>
 		<artwork><![CDATA[
   {
+   "iss": "https://bank.example.com",
    "shipping_address": {
      "street_address": "1234 Hollywood Blvd.",
      "locality": "Los Angeles",
@@ -4341,10 +4351,12 @@
 	      <figure>
 		<preamble>
 		  Also in this example, this Claim about Jane Doe is held by
-		  Claims Provider C (a credit agency):
+		  Claims Provider C (a credit agency).
+		  (The example also includes the Claims Provider's Issuer Identifier URL.)
 		</preamble>
 		<artwork><![CDATA[
   {
+   "iss": "https://creditagency.example.com",
    "credit_score": 650
   }
 ]]></artwork>
@@ -9550,7 +9562,7 @@
 	-32
         <list style="symbols">
 	  <t>
-	    TBD
+	    Fixed #1066: JWTs for Aggregated and Distributed Claims SHOULD contain an <spanx style="verb">iss</spanx> (issuer) Claim.
 	  </t>
 	</list>
       </t>
