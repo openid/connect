@@ -34,7 +34,7 @@ organization="yes.com"
 This specification describes the trust architecture in OpenID for
 Verifiable Credentials (VCs), outlines security considerations and
 requirements for the components in an ecosystem, and provides an
-informal security analysis of the OpenID 4 VC protocols.
+informal security analysis of the OpenID for VC protocols.
 
 {mainmatter}
 
@@ -108,9 +108,9 @@ Wallet, respectively). The Wallet/End-User can then present the
 Verifiable Credential to a Verifier (the entity that needs to know the
 claim).
 
-A Credential can be presented various times during its lifecycle and
-multiple Credentials (or subsets of the claims in those Credentials) can
-be presented to a Verifier in a single transaction. 
+A Credential can be presented multiple times during its lifecycle and
+multiple Credentials can
+be presented to a Verifier in a single transaction. Subsets of the claims in one or more credentials can be presented. 
 
 The End-User then decides what Credential to use with which Verifier.
 The Verifier decides what Credential to accept from the End-User.
@@ -121,8 +121,8 @@ to securely implement the Credential exchange. The details of how this
 is achieved are defined in the Trust Framework.
 
 All parties communicate with each other using a set of protocols, or
-just "protocol" in the following. In the case of OpenID 4 VP, the
-protocols are OpenID 4 Verifiable Credential Issuance and OpenID 4
+just "protocol" in the following. In the case of OpenID4VP, the
+protocols are OpenID for Verifiable Credential Issuance and OpenID for
 Verifiable Presentations, with an optional use of SIOP v2.
 
 ## Trust in the Issuer-Holder-Verifier Model
@@ -169,7 +169,7 @@ different parties.
 
 Depending on the use case, the Verifier needs to trust the End-User
 to be the legitimate holder of a certain Credential. Accepting a
-Credential from every bearer is a security risk:
+Credential from any bearer is a security risk:
 
  - A malicious party that has gained access to a Credential (e.g., data
    leaked from a connection or from a Verifier) can present it to a
@@ -730,7 +730,7 @@ met.
 **Note:** The involved parties need to access data about identifiers,
 keys, and Credentials as well as data about the acting parties
 themselves in order to securely implement the Credential exchange. The
-way this works is out of scope for OpenID 4 Verifiable Credential
+way this works is out of scope for OpenID for Verifiable Credential
 Issuance.
 
 
@@ -785,9 +785,9 @@ Issuance.
 
 
 
-# Protocol Analysis OpenID 4 VC
+# Protocol Analysis OpenID for VC
 
-OpenID 4 VC consists of three protocols:
+OpenID for VC consists of three protocols:
 
  * OpenID for Verifiable Credential Issuance – Defines an API and
    corresponding OAuth-based authorization mechanisms for issuance of
@@ -798,7 +798,7 @@ OpenID 4 VC consists of three protocols:
  * Self-Issued OpenID Provider v2 – Enables End-Users to use OpenID
    Providers (OPs) that they control
 
-The following analysis aims to show that OpenID 4 VC meets the security
+The following analysis aims to show that OpenID for VC meets the security
 and privacy requirements defined in the previous section. This is an
 informal analysis that may be incomplete or contain mistakes. A formal
 analysis to confirm the results is yet to be done.
