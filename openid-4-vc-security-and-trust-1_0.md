@@ -32,7 +32,7 @@ organization="yes.com"
 .# Abstract
 
 This specification describes the trust architecture in OpenID for
-Verifiable Credentials (VCs), outlines security considerations and
+Verifiable Credentials ([@OpenID.VCI], [@OpenID.VP], [@OpenID.SIOPv2]), outlines security considerations and
 requirements for the components in an ecosystem, and provides an
 informal security analysis of the OpenID for VC protocols.
 
@@ -48,7 +48,7 @@ formal methods.
 # Terminology
 
 
-**TODO: Check if all of the following terms are actually used.**
+**TODO: Check if all of the following terms are actually used and aligned with latest drafts.**
 
 
 This specification uses the terms "Access Token", "Authorization
@@ -62,7 +62,7 @@ Web Token (JWT)" defined by JSON Web Token (JWT) [@!RFC7519], the term
 Signature (JWS) [@!RFC7515], and the term "Response Mode" defined by
 OAuth 2.0 Multiple Response Type Encoding Practices [@!OAuth.Responses].
 
-This specification also uses the following terms defined in [todo]. 
+This specification also uses the following terms defined in [@!OpenID.VP] and [@!OpenID.VCI]. 
 
 Credential:
 :  A set of one or more claims about a subject made by a Credential Issuer. Note that this definition of a term "Credential" in this specification is different from that in [@!OpenID.Core].
@@ -122,8 +122,8 @@ is achieved are defined in the Trust Framework.
 
 All parties communicate with each other using a set of protocols, or
 just "protocol" in the following. In the case of OpenID4VP, the
-protocols are OpenID for Verifiable Credential Issuance and OpenID for
-Verifiable Presentations, with an optional use of SIOP v2.
+protocols are OpenID for Verifiable Credential Issuance [@!OpenID.VCI] and OpenID for
+Verifiable Presentations [@!OpenID.VP], with an optional use of SIOP v2 [@!OpenID.SIOPv2].
 
 ## Trust in the Issuer-Holder-Verifier Model
 
@@ -1227,7 +1227,7 @@ example, by caching the data for a random period of time.
   </front>
 </reference>
 
-<reference anchor="SIOPv2" target="https://openid.bitbucket.io/connect/openid-connect-self-issued-v2-1_0.html">
+<reference anchor="OpenID.SIOPv2" target="https://openid.bitbucket.io/connect/openid-connect-self-issued-v2-1_0.html">
   <front>
     <title>Self-Issued OpenID Provider V2</title>
     <author fullname="Kristina Yasuda">
@@ -1419,6 +1419,25 @@ issuers in Self-Sovereign Identity ecosystems using TRAIN</title>
             <organization>Mattr</organization>
           </author>
           <date day="20" month="June" year="2022"/>
+        </front>
+</reference>
+
+<reference anchor="OpenID.VP" target="https://openid.net/specs/openid-4-verifiable-presentations-1_0.html">
+        <front>
+          <title>OpenID for Verifiable Presentations</title>
+          <author initials="O." surname="Terbu" fullname="Oliver Terbu">
+            <organization>Spruce Systems, Inc.</organization>
+          </author>
+          <author initials="T." surname="Lodderstedt" fullname="Torsten Lodderstedt">
+            <organization>yes.com</organization>
+          </author>
+          <author initials="K." surname="Yasuda" fullname="Kristina Yasuda">
+            <organization>Microsoft</organization>
+          </author>
+          <author initials="T." surname="Looker" fullname="Tobias Looker">
+            <organization>Mattr</organization>
+          </author>
+          <date day="21" month="April" year="2023"/>
         </front>
 </reference>
 
