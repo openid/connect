@@ -3538,11 +3538,11 @@
 	  </t>
 	  <t>
 	    If signed, the UserInfo Response
-	    SHOULD contain the Claims
+	    MUST contain the Claims
 	    <spanx style="verb">iss</spanx> (issuer)
 	    and <spanx style="verb">aud</spanx> (audience) as members.
-	    The <spanx style="verb">iss</spanx> value SHOULD be the OP's Issuer Identifier URL.
-	    The <spanx style="verb">aud</spanx> value SHOULD be or include the RP's Client ID value.
+	    The <spanx style="verb">iss</spanx> value MUST be the OP's Issuer Identifier URL.
+	    The <spanx style="verb">aud</spanx> value MUST be or include the RP's Client ID value.
 	  </t>
 
 	  <figure>
