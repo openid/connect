@@ -871,11 +871,11 @@ Cache-Control: no-store
 
 When the Credential Request is invalid or unauthorized, the Credential Issuer constructs the error response as defined in this section.
 
-The HTTP response body uses the application/json media type with an HTTP 400 (Bad Request) status code (unless specified otherwise) and includes the following parameters with the response:
+#### Authorization Errors
 
-`error`:
+If the Credential Request does not include authentication credentials or does not contain an Access Token that enables issuance of a requested credential, the Credential Endpoint MUST return an error as defined in section 3 of [@!RFC6750].
 
-* REQUIRED. A single ASCII [USASCII] error code from the following:
+The following additional clarifications are provided for the following parameters already defined in section 3.1 of [@!RFC6750]:
 
 `invalid_request`:
 
@@ -885,9 +885,20 @@ The HTTP response body uses the application/json media type with an HTTP 400 (Ba
 
 * Credential Request contains the wrong Access Token or the Access Token is missing.
 
-* `unsupported_credential_type`: requested credential type is not supported
-* `unsupported_credential_format`:  requested credential format is not supported
-* `invalid_proof`: The `proof` in the Credential Request was invalid, for example:
+#### Credential Request Errors
+
+If the Credential Request is requesting for the issuance of a credential not supported by the Credential Endpoint, the HTTP response body uses the `application/json`` media type with an HTTP 400 (Bad Request) status code (unless specified otherwise) and includes one of the following parameters with the response:
+
+`unsupported_credential_type`:
+* Requested credential type is not supported.
+
+`unsupported_credential_format`:
+
+* Requested credential format is not supported.
+
+`invalid_proof`: 
+
+* The `proof` in the Credential Request was invalid, for example:
   * No key proof was provided (the `proof` field was not present)
   * The provided key proof was not bound to a nonce provided by the Credential Issuer
 
