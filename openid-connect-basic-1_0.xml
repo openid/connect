@@ -24,7 +24,7 @@
 
   <front>
     <title abbrev="OpenID Connect Basic Client Guide 1.0">OpenID Connect
-    Basic Client Implementer's Guide 1.0 - draft 43</title>
+    Basic Client Implementer's Guide 1.0 - draft 44</title>
 
     <author fullname="Nat Sakimura" initials="N." surname="Sakimura">
       <organization abbrev="NAT.Consulting">NAT.Consulting</organization>
@@ -66,7 +66,7 @@
       </address>
     </author>
 
-    <date day="30" month="May" year="2023" />
+    <date day="5" month="August" year="2023" />
 
     <workgroup>OpenID Connect Working Group</workgroup>
 
@@ -2846,6 +2846,15 @@
 
     <section anchor="History" title="Document History">
       <t>[[ To be removed from the final document ]]</t>
+
+      <t>
+	-44
+        <list style="symbols">
+	  <t>
+	    TBD
+	  </t>
+	</list>
+      </t>
 
       <t>
 	-43

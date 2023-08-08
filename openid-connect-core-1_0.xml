@@ -23,7 +23,7 @@
   <?rfc private="Draft" ?>
 
   <front>
-    <title abbrev="OpenID Connect Core 1.0">OpenID Connect Core 1.0 - draft 31 incorporating errata set 2</title>
+    <title abbrev="OpenID Connect Core 1.0">OpenID Connect Core 1.0 - draft 32 incorporating errata set 2</title>
 
     <author fullname="Nat Sakimura" initials="N." surname="Sakimura">
       <organization abbrev="NAT.Consulting (was at NRI)">NAT.Consulting</organization>
@@ -65,7 +65,7 @@
       </address>
     </author>
 
-    <date day="28" month="July" year="2023" />
+    <date day="4" month="August" year="2023" />
 
     <workgroup>OpenID Connect Working Group</workgroup>
 
@@ -7138,8 +7138,8 @@
 
       <section anchor="ClaimsRegistry" title="JSON Web Token Claims Registration">
 	<t>
-	  This specification registers the Claims defined in
-	  <xref target="StandardClaims"/> and <xref target="IDToken"/> in the IANA
+	  This specification registers the following Claims
+	  in the IANA
 	  "JSON Web Token Claims" registry <xref target="IANA.JWT.Claims"/>
 	  established by <xref target="JWT"/>.
 	</t>
@@ -9545,6 +9545,15 @@
 
     <section anchor="History" title="Document History">
       <t>[[ To be removed from the approved errata ]]</t>
+
+      <t>
+	-32
+        <list style="symbols">
+	  <t>
+	    TBD
+	  </t>
+	</list>
+      </t>
 
       <t>
 	-31
