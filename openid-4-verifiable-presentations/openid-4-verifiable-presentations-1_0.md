@@ -1083,6 +1083,27 @@ Implementers MUST make sure that JSONPath used as part of `presentation_definiti
 
 Implementers should be careful with what is used as a filter property in [@!DIF.PresentationExchange]. For example, when using regular expressions or JSON Schemas as filters, implementers should ensure that computations and resource access are bounded with the security in mind to prevent attacks such as denial of service or unauthorized access.
 
+# Privacy Considerations
+
+## Personally Identifiable Information
+
+Presented credentials typically contain Personally Identifiable Information (PII). As such, End-User consent for the release of the information for the specified purpose should be obtained at or prior to the authorization time in accordance with relevant regulations.
+
+## Selective Disclosure
+
+A Holder can trust that no party learns any claims except Verifiers to whom the Holder has explicitly released the claims.
+
+The Credential Format must ensure that there is a robust mechanism to ensure that data that is not to be released to a Verifier cannot be extracted by the Verifier.
+
+
+## 
+
+From the Verifier’s standpoint it is now sufficient to ensure it accepts Credentials from this Issuer since, by conclusion, if it gets presented a valid Credential issued by this Issuer it must have come from a trustworthy wallet. This change significantly simplifies the protocol and fosters privacy since the presentation process does not need to authenticate the wallet towards the Verifier.
+
+## Correlation
+
+When using a Credential at multiple Verifiers, the End-User might not want that the Verifiers learn that the same End-User is using their services (correlation). The exception to this is when the End-Users shares data with the Verifiers that allow for a unique identification, e.g., a name and birth date, or a unique identifier, e.g., a social security number.
+
 {backmatter}
 
 <reference anchor="VC_DATA" target="https://www.w3.org/TR/2022/REC-vc-data-model-20220303/">
