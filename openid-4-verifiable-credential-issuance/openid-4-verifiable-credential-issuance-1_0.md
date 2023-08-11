@@ -388,7 +388,7 @@ Below is a non-normative example of a Credential Offer Object for a Pre-Authoriz
 
 <{{examples/credential_offer_by_reference.json}}
 
-When retrieving Credential Offer from the Credential Offer URL, `application/json` media type MUST be used. Credential Offer cannot be signed so there is no need to use `application/jwt` media type and ensure that the URL-safe claims representation and processing can be the same in both the signed and unsigned cases as described in [@RFC8725].
+When retrieving Credential Offer from the Credential Offer URL, `application/json` media type MUST be used. The Credential Offer cannot be signed and it is a deliberate design decision to not use `application/jwt` with `"alg": "none"`.
 
 ## Credential Offer Response
 
