@@ -4022,7 +4022,7 @@
 	    <t>
 	      If the <spanx style="verb">acr</spanx> Claim is requested
 	      as an Essential Claim for the ID Token
-	      with a <spanx style="verb">values</spanx> parameter requesting
+	      with a <spanx style="verb">value</spanx> or <spanx style="verb">values</spanx> parameter requesting
 	      specific Authentication Context Class Reference values and
 	      the implementation supports the <spanx style="verb">claims</spanx> parameter,
 	      the Authorization Server MUST return an <spanx style="verb">acr</spanx>
@@ -9550,7 +9550,8 @@
 	-32
         <list style="symbols">
 	  <t>
-	    TBD
+	    Fixed #1143: Changed <spanx style="verb">values</spanx> to
+	    <spanx style="verb">value</spanx> or <spanx style="verb">values</spanx>.
 	  </t>
 	</list>
       </t>
