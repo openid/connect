@@ -3190,8 +3190,8 @@
 
 	  <c>zoneinfo</c>
 	  <c>string</c>
-	  <c>String from zoneinfo <xref target="zoneinfo"/> time zone
-	  database representing the End-User's time zone.
+	  <c>String from IANA Time Zone Database <xref target="IANA.time-zones"/>
+	  representing the End-User's time zone.
 	  For example, <spanx style="verb">Europe/Paris</spanx> or
 	  <spanx style="verb">America/Los_Angeles</spanx>.</c>
 
@@ -4022,7 +4022,7 @@
 	    <t>
 	      If the <spanx style="verb">acr</spanx> Claim is requested
 	      as an Essential Claim for the ID Token
-	      with a <spanx style="verb">values</spanx> parameter requesting
+	      with a <spanx style="verb">value</spanx> or <spanx style="verb">values</spanx> parameter requesting
 	      specific Authentication Context Class Reference values and
 	      the implementation supports the <spanx style="verb">claims</spanx> parameter,
 	      the Authorization Server MUST return an <spanx style="verb">acr</spanx>
@@ -7134,8 +7134,8 @@
 
       <section anchor="ClaimsRegistry" title="JSON Web Token Claims Registration">
 	<t>
-	  This specification registers the Claims defined in
-	  <xref target="StandardClaims"/> and <xref target="IDToken"/> in the IANA
+	  This specification registers the following Claims
+	  in the IANA
 	  "JSON Web Token Claims" registry <xref target="IANA.JWT.Claims"/>
 	  established by <xref target="JWT"/>.
 	</t>
@@ -8619,16 +8619,14 @@
 	</front>
       </reference>
 
-      <reference anchor="zoneinfo" target="http://www.twinsun.com/tz/tz-link.htm">
-	<front>
-	  <title>The tz database</title>
-
-	  <author fullname="Public Domain">
-	    <organization abbrev="Public">Public Domain</organization>
-	  </author>
-
-	  <date month="June" year="2011" />
-	</front>
+      <reference anchor="IANA.time-zones" target="https://www.iana.org/time-zones">
+        <front>
+          <title>Time Zone Database</title>
+          <author>
+            <organization>IANA</organization>
+          </author>
+	  <date/>
+        </front>
       </reference>
 
       <reference anchor="OAuth.Responses" target="https://openid.net/specs/oauth-v2-multiple-response-types-1_0.html">
@@ -9563,6 +9561,13 @@
       <t>
 	-32
         <list style="symbols">
+	  <t>
+	    Fixed #1143: Changed <spanx style="verb">values</spanx> to
+	    <spanx style="verb">value</spanx> or <spanx style="verb">values</spanx>.
+	  </t>
+	  <t>
+	    Use IANA Time Zone Database for <spanx style="verb">zoneinfo</spanx> Claim values.
+	  </t>
 	  <t>
 	    Fixed #1159: Use TLS guidance from BCP 195.
 	  </t>
