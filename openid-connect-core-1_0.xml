@@ -1081,6 +1081,14 @@
 		  The Authorization Server MAY also attempt to detect the capabilities
 		  of the User Agent and present an appropriate display.
 		</t>
+		<t>
+		  If an OP receives a <spanx style="verb">display</spanx> value
+		  outside the set defined above that it does not understand,
+		  it MAY return an error or it MAY ignore it;
+		  in practice, not returning errors for not-understood values
+		  will help facilitate phasing in extensions using new
+		  <spanx style="verb">display</spanx> values.
+		</t>
 
 		<t hangText="prompt">
 		  <vspace/>
@@ -1145,6 +1153,14 @@
 		  request. If this parameter contains <spanx style="verb">none</spanx>
 		  with any other value, an
 		  error is returned.
+		</t>
+		<t>
+		  If an OP receives a <spanx style="verb">prompt</spanx> value
+		  outside the set defined above that it does not understand,
+		  it MAY return an error or it MAY ignore it;
+		  in practice, not returning errors for not-understood values
+		  will help facilitate phasing in extensions using new
+		  <spanx style="verb">prompt</spanx> values.
 		</t>
 
 		<t hangText="max_age">
@@ -3190,8 +3206,8 @@
 
 	  <c>zoneinfo</c>
 	  <c>string</c>
-	  <c>String from zoneinfo <xref target="zoneinfo"/> time zone
-	  database representing the End-User's time zone.
+	  <c>String from IANA Time Zone Database <xref target="IANA.time-zones"/>
+	  representing the End-User's time zone.
 	  For example, <spanx style="verb">Europe/Paris</spanx> or
 	  <spanx style="verb">America/Los_Angeles</spanx>.</c>
 
@@ -4022,7 +4038,7 @@
 	    <t>
 	      If the <spanx style="verb">acr</spanx> Claim is requested
 	      as an Essential Claim for the ID Token
-	      with a <spanx style="verb">values</spanx> parameter requesting
+	      with a <spanx style="verb">value</spanx> or <spanx style="verb">values</spanx> parameter requesting
 	      specific Authentication Context Class Reference values and
 	      the implementation supports the <spanx style="verb">claims</spanx> parameter,
 	      the Authorization Server MUST return an <spanx style="verb">acr</spanx>
@@ -4156,6 +4172,8 @@
 		Claims. The member values are references to the member names
 		in the <spanx style="verb">_claim_sources</spanx> member from which
 		the actual Claim Values can be retrieved.
+		The OP MAY omit some Claims available from referenced Claims Providers
+		from the set of Claim Names.
 	      </t>
 
 	      <t hangText="_claim_sources">
@@ -4228,6 +4246,12 @@
 		    </list>
 		  </t>
 		  <t>
+		    Since it is not an error condition to not return a requested Claim,
+		    RPs MUST be prepared to handle the condition that some Claims listed in
+		    <spanx style="verb">_claim_sources</spanx> are not returned from the Claims Provider.
+		    They SHOULD treat this the same as when any other requested Claim is not returned.
+		  </t>
+		  <t>
 		    A <spanx style="verb">sub</spanx> (subject) Claim SHOULD NOT
 		    be returned from the Claims Provider
 		    unless its value is an identifier for the End-User at
@@ -4238,6 +4262,12 @@
 		</list>
 	      </t>
 	    </list>
+	  </t>
+	  <t>
+	    An <spanx style="verb">iss</spanx> (issuer) Claim SHOULD be included
+	    in any JWT issued by a Claims Provider so that the Claims Provider's
+	    keys can be retrieved for signature validation of the JWT.
+	    The value of the Claim is the Claims Provider's Issuer Identifier URL.
 	  </t>
 	  <t>
 	    In general, it is up to the OP when it is appropriate to use
@@ -4257,10 +4287,12 @@
 	      <figure>
 		<preamble>
 		  In this example, these Claims about Jane Doe have been issued by
-		  Claims Provider A:
+		  Claims Provider A.
+		  (The example also includes the Claims Provider's Issuer Identifier URL.)
 		</preamble>
 		<artwork><![CDATA[
   {
+   "iss": "https://a.example.com",
    "address": {
      "street_address": "1234 Hollywood Blvd.",
      "locality": "Los Angeles",
@@ -4320,10 +4352,12 @@
 	      <figure>
 		<preamble>
 		  In this example, these Claims about Jane Doe are held by
-		  Claims Provider B (Jane Doe's bank):
+		  Claims Provider B (Jane Doe's bank).
+		  (The example also includes the Claims Provider's Issuer Identifier URL.)
 		</preamble>
 		<artwork><![CDATA[
   {
+   "iss": "https://bank.example.com",
    "shipping_address": {
      "street_address": "1234 Hollywood Blvd.",
      "locality": "Los Angeles",
@@ -4341,10 +4375,12 @@
 	      <figure>
 		<preamble>
 		  Also in this example, this Claim about Jane Doe is held by
-		  Claims Provider C (a credit agency):
+		  Claims Provider C (a credit agency).
+		  (The example also includes the Claims Provider's Issuer Identifier URL.)
 		</preamble>
 		<artwork><![CDATA[
   {
+   "iss": "https://creditagency.example.com",
    "credit_score": 650
   }
 ]]></artwork>
@@ -6960,14 +6996,10 @@
 	  Which version(s) ought to be implemented will vary over
 	  time, and depend on the widespread deployment and known
 	  security vulnerabilities at the time of implementation.
-	  At the time of this writing,
-	  TLS version 1.2 <xref target='RFC5246' />
-	  is the most recent version, but has very limited actual
-	  deployment, and might not be readily available in
-	  implementation toolkits.
-	  TLS version 1.0 <xref target='RFC2246' />
-	  is the most widely deployed version, and will give the
-	  broadest interoperability.
+	  Implementations SHOULD follow the guidance in
+	  BCP 195 <xref target="RFC8996"/> <xref target="RFC9325"/>,
+	  which provides recommendations and requirements
+	  for improving the security of deployed services that use TLS.
 	</t>
 	<t>
 	  To protect against information disclosure and tampering,
@@ -8028,22 +8060,6 @@
   <seriesInfo name="DOI" value="10.17487/RFC2119"/>
 </reference>
 
-      <!-- Reference from https://bib.ietf.org/public/rfc/bibxml/reference.RFC.2246.xml -->
-
-<reference anchor="RFC2246" target="https://www.rfc-editor.org/info/rfc2246">
-  <front>
-    <title>The TLS Protocol Version 1.0</title>
-    <author fullname="T. Dierks" initials="T" surname="Dierks"/>
-    <author fullname="C. Allen" initials="C" surname="Allen"/>
-    <date month="January" year="1999"/>
-    <abstract>
-      <t>This document specifies Version 1.0 of the Transport Layer Security (TLS) protocol.  The TLS protocol provides communications privacy over the Internet.  The protocol allows client/server applications to communicate in a way that is designed to prevent eavesdropping, tampering, or message forgery.</t>
-    </abstract>
-  </front>
-  <seriesInfo name="RFC" value="2246"/>
-  <seriesInfo name="DOI" value="10.17487/RFC2246"/>
-</reference>
-
       <!-- Reference from https://bib.ietf.org/public/rfc/bibxml/reference.RFC.4627.xml -->
 
 <reference anchor="RFC4627" target="https://www.rfc-editor.org/info/rfc4627">
@@ -8122,22 +8138,6 @@
   <seriesInfo name="STD" value="66"/>
   <seriesInfo name="RFC" value="3986"/>
   <seriesInfo name="DOI" value="10.17487/RFC3986"/>
-</reference>
-
-      <!-- Reference from https://bib.ietf.org/public/rfc/bibxml/reference.RFC.5246.xml -->
-
-<reference anchor="RFC5246" target="https://www.rfc-editor.org/info/rfc5246">
-  <front>
-    <title>The Transport Layer Security (TLS) Protocol Version 1.2</title>
-    <author fullname="T. Dierks" initials="T" surname="Dierks"/>
-    <author fullname="E. Rescorla" initials="E" surname="Rescorla"/>
-    <date month="August" year="2008"/>
-    <abstract>
-      <t>This document specifies Version 1.2 of the Transport Layer Security (TLS) protocol.  The TLS protocol provides communications security over the Internet.  The protocol allows client/server applications to communicate in a way that is designed to prevent eavesdropping, tampering, or message forgery. [STANDARDS-TRACK]</t>
-    </abstract>
-  </front>
-  <seriesInfo name="RFC" value="5246"/>
-  <seriesInfo name="DOI" value="10.17487/RFC5246"/>
 </reference>
 
       <!-- Reference from https://bib.ietf.org/public/rfc/bibxml/reference.RFC.5322.xml -->
@@ -8314,6 +8314,56 @@
   </front>
   <seriesInfo name="RFC" value="7234"/>
   <seriesInfo name="DOI" value="10.17487/RFC7234"/>
+</reference>
+
+      <!-- Reference from https://bib.ietf.org/public/rfc/bibxml/reference.RFC.8996.xml -->
+
+<reference anchor="RFC8996" target="https://www.rfc-editor.org/info/rfc8996">
+  <front>
+    <title>Deprecating TLS 1.0 and TLS 1.1</title>
+    <author fullname="K. Moriarty" initials="K." surname="Moriarty"/>
+    <author fullname="S. Farrell" initials="S." surname="Farrell"/>
+    <date month="March" year="2021"/>
+    <abstract>
+      <t>
+	This document formally deprecates Transport Layer Security (TLS) versions 1.0 (RFC 2246) and 1.1 (RFC 4346). Accordingly, those documents have been moved to Historic status. These versions lack support for current and recommended cryptographic algorithms and mechanisms, and various government and industry profiles of applications using TLS now mandate avoiding these old TLS versions. TLS version 1.2 became the recommended version for IETF protocols in 2008 (subsequently being obsoleted by TLS version 1.3 in 2018), providing sufficient time to transition away from older versions. Removing support for older versions from implementations reduces the attack surface, reduces opportunity for misconfiguration, and streamlines library and product maintenance.
+      </t>
+      <t>
+	This document also deprecates Datagram TLS (DTLS) version 1.0 (RFC 4347) but not DTLS version 1.2, and there is no DTLS version 1.1.
+      </t>
+      <t>
+	This document updates many RFCs that normatively refer to TLS version 1.0 or TLS version 1.1, as described herein. This document also updates the best practices for TLS usage in RFC 7525; hence, it is part of BCP 195.
+      </t>
+    </abstract>
+  </front>
+  <seriesInfo name="BCP" value="195"/>
+  <seriesInfo name="RFC" value="8996"/>
+  <seriesInfo name="DOI" value="10.17487/RFC8996"/>
+</reference>
+
+      <!-- Reference from https://bib.ietf.org/public/rfc/bibxml/reference.RFC.9325.xml -->
+
+<reference anchor="RFC9325" target="https://www.rfc-editor.org/info/rfc9325">
+  <front>
+    <title>
+      Recommendations for Secure Use of Transport Layer Security (TLS) and Datagram Transport Layer Security (DTLS)
+    </title>
+    <author fullname="Y. Sheffer" initials="Y." surname="Sheffer"/>
+    <author fullname="P. Saint-Andre" initials="P." surname="Saint-Andre"/>
+    <author fullname="T. Fossati" initials="T." surname="Fossati"/>
+    <date month="November" year="2022"/>
+    <abstract>
+      <t>
+	Transport Layer Security (TLS) and Datagram Transport Layer Security (DTLS) are used to protect data exchanged over a wide range of application protocols and can also form the basis for secure transport protocols. Over the years, the industry has witnessed several serious attacks on TLS and DTLS, including attacks on the most commonly used cipher suites and their modes of operation. This document provides the latest recommendations for ensuring the security of deployed services that use TLS and DTLS. These recommendations are applicable to the majority of use cases.
+      </t>
+      <t>
+	RFC 7525, an earlier version of the TLS recommendations, was published when the industry was transitioning to TLS 1.2. Years later, this transition is largely complete, and TLS 1.3 is widely available. This document updates the guidance given the new environment and obsoletes RFC 7525. In addition, this document updates RFCs 5288 and 6066 in view of recent attacks.
+      </t>
+    </abstract>
+  </front>
+  <seriesInfo name="BCP" value="195"/>
+  <seriesInfo name="RFC" value="9325"/>
+  <seriesInfo name="DOI" value="10.17487/RFC9325"/>
 </reference>
 
       <!-- Reference from https://bib.ietf.org/public/rfc/bibxml4/reference.W3C.REC-html401-19991224.xml" modified to anchor="W3C.REC-html401-19991224" -->
@@ -8615,16 +8665,14 @@
 	</front>
       </reference>
 
-      <reference anchor="zoneinfo" target="http://www.twinsun.com/tz/tz-link.htm">
-	<front>
-	  <title>The tz database</title>
-
-	  <author fullname="Public Domain">
-	    <organization abbrev="Public">Public Domain</organization>
-	  </author>
-
-	  <date month="June" year="2011" />
-	</front>
+      <reference anchor="IANA.time-zones" target="https://www.iana.org/time-zones">
+        <front>
+          <title>Time Zone Database</title>
+          <author>
+            <organization>IANA</organization>
+          </author>
+	  <date/>
+        </front>
       </reference>
 
       <reference anchor="OAuth.Responses" target="https://openid.net/specs/oauth-v2-multiple-response-types-1_0.html">
@@ -9559,6 +9607,29 @@
       <t>
 	-32
         <list style="symbols">
+	  <t>
+	    Fixed #1143: Changed <spanx style="verb">values</spanx> to
+	    <spanx style="verb">value</spanx> or <spanx style="verb">values</spanx>.
+	  </t>
+	  <t>
+	    Use IANA Time Zone Database for <spanx style="verb">zoneinfo</spanx> Claim values.
+	  </t>
+	  <t>
+	    Fixed #1159: Use TLS guidance from BCP 195.
+	  </t>
+	  <t>
+	    Fixed #1101: Discuss OP behaviors when unknown <spanx style="verb">display</spanx>
+	    or <spanx style="verb">prompt</spanx> values are received.
+	  </t>
+	  <t>
+	    Fixed #1050: The OP MAY omit Claims available from Claims Providers from <spanx style="verb">_claim_names</spanx>.
+	  </t>
+	  <t>
+	    Fixed #1117: It is not an error condition for a Claims Provider to not return a requested Claim.
+	  </t>
+	  <t>
+	    Fixed #1066: JWTs for Aggregated and Distributed Claims SHOULD contain an <spanx style="verb">iss</spanx> (issuer) Claim.
+	  </t>
 	  <t>
 	    Fixed #1026: Added Security Considerations about custom URI schemes on iOS.
 	  </t>
