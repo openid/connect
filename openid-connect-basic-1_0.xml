@@ -66,7 +66,7 @@
       </address>
     </author>
 
-    <date day="5" month="August" year="2023" />
+    <date day="13" month="August" year="2023" />
 
     <workgroup>OpenID Connect Working Group</workgroup>
 
@@ -1678,8 +1678,8 @@
 
 	  <c>zoneinfo</c>
 	  <c>string</c>
-	  <c>String from zoneinfo <xref target="zoneinfo"/> time zone
-	  database representing the End-User's time zone.
+	  <c>String from IANA Time Zone Database <xref target="IANA.time-zones"/>
+	  representing the End-User's time zone.
 	  For example, <spanx style="verb">Europe/Paris</spanx> or
 	  <spanx style="verb">America/Los_Angeles</spanx>.</c>
 
@@ -2581,15 +2581,13 @@
         </front>
       </reference>
 
-      <reference anchor="zoneinfo" target="http://www.twinsun.com/tz/tz-link.htm">
+      <reference anchor="IANA.time-zones" target="https://www.iana.org/time-zones">
         <front>
-          <title>The tz database</title>
-
-          <author fullname="Public Domain">
-            <organization abbrev="Public">Public Domain</organization>
+          <title>Time Zone Database</title>
+          <author>
+            <organization>IANA</organization>
           </author>
-
-          <date month="June" year="2011"/>
+	  <date/>
         </front>
       </reference>
 
@@ -2774,10 +2772,10 @@
           </author>
 
           <author fullname="Chuck Mortimore" initials="C." surname="Mortimore">
-            <organization abbrev="Disney (was at Salesforce)">Disney</organization>
+            <organization abbrev="Disney">Disney</organization>
           </author>
 
-	  <date day="14" month="September" year="2022" />
+	  <date day="13" month="August" year="2022" />
         </front>
       </reference>
 
@@ -2866,6 +2864,9 @@
       <t>
 	-44
         <list style="symbols">
+	  <t>
+	    Use IANA Time Zone Database for <spanx style="verb">zoneinfo</spanx> Claim values.
+	  </t>
 	  <t>
 	    Fixed #1101: Discuss OP behaviors when unknown <spanx style="verb">display</spanx>
 	    or <spanx style="verb">prompt</spanx> values are received.
