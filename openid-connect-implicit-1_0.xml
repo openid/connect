@@ -613,6 +613,14 @@
 		  The Authorization Server MAY also attempt to detect the capabilities
 		  of the User Agent and present an appropriate display.
 		</t>
+		<t>
+		  If an OP receives a <spanx style="verb">display</spanx> value
+		  outside the set defined above that it does not understand,
+		  it MAY return an error or it MAY ignore it;
+		  in practice, not returning errors for not-understood values
+		  will help facilitate phasing in extensions using new
+		  <spanx style="verb">display</spanx> values.
+		</t>
 
 		<t hangText="prompt">
 		  <vspace/>
@@ -675,6 +683,14 @@
 		  request. If this parameter contains <spanx style="verb">none</spanx>
 		  with any other value, an
 		  error is returned.
+		</t>
+		<t>
+		  If an OP receives a <spanx style="verb">prompt</spanx> value
+		  outside the set defined above that it does not understand,
+		  it MAY return an error or it MAY ignore it;
+		  in practice, not returning errors for not-understood values
+		  will help facilitate phasing in extensions using new
+		  <spanx style="verb">prompt</spanx> values.
 		</t>
 
 		<t hangText="max_age">
@@ -3280,7 +3296,8 @@
 	-27
         <list style="symbols">
 	  <t>
-	    TBD
+	    Fixed #1101: Discuss OP behaviors when unknown <spanx style="verb">display</spanx>
+	    or <spanx style="verb">prompt</spanx> values are received.
 	  </t>
 	</list>
       </t>
