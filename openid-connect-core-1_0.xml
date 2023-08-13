@@ -1202,7 +1202,9 @@
 		  ID Token previously issued by the Authorization Server
 		  being passed as a hint about the End-User's current or past
 		  authenticated session with the Client.
-		  If the End-User identified by the ID Token is logged in or is logged in by the request,
+		  If the End-User identified by the ID Token is already logged in
+		  or is logged in as a result of the request
+		  (with the OP possibly evaluating other information beyond the ID Token in this decision),
 		  then the Authorization Server returns a positive response;
 		  otherwise, it MUST return
 		  an error, such as <spanx style="verb">login_required</spanx>.
@@ -9637,6 +9639,9 @@
 	  </t>
 	  <t>
 	    Fixed #989: Only <spanx style="verb">iss</spanx> and <spanx style="verb">sub</spanx> from the ID Token provide a stable identifier for the End-User.
+	  </t>
+	  <t>
+	    Fixed #1395: Stated that login decision with <spanx style="verb">id_token_hint</spanx> may involve other information.
 	  </t>
 	</list>
       </t>
