@@ -7083,7 +7083,17 @@
 	</t>
       </section>
 
+      <section anchor="iOSCustomSchemes" title="Custom URI Schemes on iOS">
+	<t>
+	  Note that on iOS, multiple applications can register as handlers for a custom URI scheme,
+	  therefore it is not deterministic that the calling application will receive the Authentication Reply
+	  from the Self-Issued OpenID Provider.
+	  Use of a claimed URI is an alternative to using the <spanx style="verb">openid:</spanx> custom URI scheme.
+	</t>
+      </section>
+
     </section>
+
     <section anchor="Privacy" title="Privacy Considerations">
 
       <section anchor="PII" title="Personally Identifiable Information">
@@ -9619,6 +9629,9 @@
 	  </t>
 	  <t>
 	    Fixed #1066: JWTs for Aggregated and Distributed Claims SHOULD contain an <spanx style="verb">iss</spanx> (issuer) Claim.
+	  </t>
+	  <t>
+	    Fixed #1026: Added Security Considerations about custom URI schemes on iOS.
 	  </t>
 	</list>
       </t>
