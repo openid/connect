@@ -1128,18 +1128,37 @@ Communication with the Callback Endpoint MUST utilize TLS.
 
 ## Callback from the Wallet
 
-When the Credential has been successfully stored in the Wallet, the Wallet constructs the HTTP response with a 200 (OK) status code using the `text/plain` media type:
+the Wallet sends a callback to the Callback Endpoint by sending the following parameters in the entity-body of an HTTP POST request using the `application/json` media type.
 
-```
-HTTP/1.1 200 OK
-Content-Type: text/plain; charset=utf-8
-
-OK
-```
-
-When the Credential has not been successfully stored in the Wallet, the Wallet responds with an HTTP 400 (Bad Request) status code (unless specified otherwise) and includes the following parameter with the response:
-
+* `status`: REQUIRED. Status whether the credential issuance was successful or not. The value MUST be either `success` or `fail`.
 * `error_description`: OPTIONAL. Human-readable ASCII [USASCII] text providing additional information, used to assist the Credential Issuer developer in understanding the error that occurred. Values for the "error_description" parameter MUST NOT include characters outside the set %x20-21 / %x23-5B / %x5D-7E.
+
+Below is a non-normative example of a callback when credential issuance was successful:
+
+```
+POST /callback HTTP/1.1
+Host: server.example.com
+Content-Type: application/json
+
+{
+  "status": "Success"
+}
+
+```
+
+Below is a non-normative example of a callback when credential issuance was unsuccessful:
+
+```
+POST /callback HTTP/1.1
+Host: server.example.com
+Content-Type: application/json
+
+{
+  "status": "Fail"
+  "error_description": "..."
+}
+
+```
 
 # Metadata
 
