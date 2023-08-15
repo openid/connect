@@ -887,9 +887,10 @@ The following additional clarifications are provided for the following parameter
 
 #### Credential Request Errors
 
-If the Credential Request is requesting for the issuance of a credential not supported by the Credential Endpoint, the HTTP response body uses the `application/json`` media type with an HTTP 400 (Bad Request) status code (unless specified otherwise) and includes one of the following parameters with the response:
+If the Credential Request is requesting for the issuance of a credential not supported by the Credential Endpoint, the HTTP response body uses the `application/json` media type with an HTTP 400 (Bad Request) status code (unless specified otherwise) and includes one of the following parameters with the response:
 
 `unsupported_credential_type`:
+
 * Requested credential type is not supported.
 
 `unsupported_credential_format`:
