@@ -1122,7 +1122,7 @@ Cache-Control: no-store
 
 This endpoint is used to receive notification from the Wallet whether credential has been successfully stored in the Wallet or not. Support for this endpoint is OPTIONAL.
 
-This endpoint can be used after the Credential Issuer has sent Credential Response or Batch Credential Response. It enables the Credential Issuer to take action when the issued credential has not been successfully stored by the Wallet due to the errors or other unforeseen circumstances.
+This endpoint can be used after the Credential Issuer has sent Credential Response or Batch Credential Response. It enables the Credential Issuer to take subsequent actions after issuance, depending on whether the credential has been accepted and successully stored by the Wallet, rejected by the Wallet, or errors and other unforeseen circumstances have occurred during the Wallet's processing.
 
 Communication with the Callback Endpoint MUST utilize TLS.
 
@@ -1131,7 +1131,7 @@ Communication with the Callback Endpoint MUST utilize TLS.
 the Wallet sends a callback to the Callback Endpoint by sending the following parameters in the entity-body of an HTTP POST request using the `application/json` media type.
 
 * `status`: REQUIRED. Status whether the credential issuance was successful or not. The value MUST be either `success` or `error`.
-* `error_description`: OPTIONAL. Human-readable ASCII [USASCII] text providing additional information, used to assist the Credential Issuer developer in understanding the error that occurred. Values for the "error_description" parameter MUST NOT include characters outside the set %x20-21 / %x23-5B / %x5D-7E.
+* `error_description`: OPTIONAL. Human-readable ASCII [@!USASCII] text providing additional information, used to assist the Credential Issuer developer in understanding the error that occurred. Values for the `error_description`` parameter MUST NOT include characters outside the set %x20-21 / %x23-5B / %x5D-7E.
 
 Below is a non-normative example of a callback when credential issuance was successful:
 
