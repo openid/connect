@@ -2,6 +2,7 @@
    {
       "type": "openid_credential",
       "format": "jwt_vc_json",
+      "identifiers": [ "CivilEngineeringDegree-2023" ],
       "credential_definition": {
          "type": [
             "VerifiableCredential",
