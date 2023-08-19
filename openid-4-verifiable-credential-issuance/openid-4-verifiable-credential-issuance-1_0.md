@@ -314,10 +314,10 @@ For security considerations, see (#credential-offer-security).
 Credential Offer object MAY contain the following parameters:
 
 * `credential_issuer`: REQUIRED. The URL of the Credential Issuer, as defined in (#credential-issuer-identifier), from which the Wallet is requested to obtain one or more Credentials. The Wallet uses it to obtain the Credential Issuer's Metadata following the steps defined in (#credential-issuer-wellknown).
-* `credentials`: REQUIRED. A JSON array, where every entry is a JSON string or a JSON object describing a credential the Wallet MAY request. If the entry is a string, the string value MUST be one of the `identifier` values included in a `display` property of a `credentials_supported` Credential Issuer metadata parameter as defined in (#credential-metadata-object). When processing, the Wallet MUST resolve this string value to the respective object. If the entry is an object, the object contains the data related to a certain credential type. Each object MUST contain the following parameters: 
-  * `format`: JSON string determining the format of the credential.
-  * Parameters characterizing the type of the credential to be requested: These parameters are specific to the credential format profile, some of which are defined in (#format_profiles).
-  * `identifiers`: JSON array of JSON strings that each identify a credential. Multiple values are used when the Credential Issuer is offering to issue multiple credentials that have the same format and type values but different content.
+* `credentials`: REQUIRED. A JSON array, where every entry is a JSON string or a JSON object describing a credential the Wallet MAY request. If the entry is a string, the string value MUST be one of the `identifier` values included in a `display` property of a `credentials_supported` Credential Issuer metadata parameter as defined in (#credential-metadata-object). When processing, the Wallet MUST resolve this string value to the respective object. If the entry is an object, the object contains the data related to a certain credential type. Each object contains the following parameters: 
+  * `format`: REQUIRED. JSON string determining the format of the credential.
+  * Parameters characterizing the type of the credential to be requested: REQUIRED. These parameters are specific to the credential format profile, some of which are defined in (#format_profiles).
+  * `identifiers`: OPTIONAL. JSON array of JSON strings that each identify a credential. Multiple values are used when the Credential Issuer is offering to issue multiple credentials that have the same format and type values but different content.
 * `grants`: OPTIONAL. A JSON object indicating to the Wallet the Grant Types the Credential Issuer's AS is prepared to process for this Credential Offer. Every grant is represented by a name/value pair. The name is the Grant Type identifier; the value is a JSON object that contains parameters either determining the way the Wallet MUST use the particular grant and/or parameters the Wallet MUST send with the respective request(s). If `grants` is not present or empty, the Wallet MUST determine the Grant Types the Credential Issuer's AS supports using the respective metadata. When multiple grants are present, it is at the Wallet's discretion which one to use.
 
 The following values are defined by this specification: 
@@ -329,7 +329,7 @@ The following values are defined by this specification:
   * `user_pin_required`: OPTIONAL. Boolean value specifying whether the AS expects presentation of a user PIN along with the Token Request in a Pre-Authorized Code Flow. Default is `false`. This PIN is intended to bind the Pre-Authorized Code to a certain transaction to prevent replay of this code by an attacker that, for example, scanned the QR code while standing behind the legitimate user. It is RECOMMENDED to send a PIN via a separate channel. If the Wallet decides to use the Pre-Authorized Code Flow, a PIN value MUST be sent in the `user_pin` parameter with the respective Token Request.
   * `interval`: OPTIONAL. The minimum amount of time in seconds that the Wallet SHOULD wait between polling requests to the token endpoint (in case the Authorization Server responds with error code `authorization_pending` - see (#token_error_response)). If no value is provided, Wallets MUST use 5 as the default.
 
-The following non-normative example shows a Credential Offer object where the Credential Issuer can offer the issuance of two Credentials of different formats, one as JSON string ("UniversityDegree_JWT") and the other one as JSON object:
+The following non-normative example shows a Credential Offer object where the Credential Issuer can offer the issuance of two Credentials of different formats, one as JSON string ("CivilEngineeringDegree-2023") and the other one as JSON object:
 
 <{{examples/credential_offer_multiple_credentials.json}}
 
@@ -383,11 +383,11 @@ openid-credential-offer://?
   credential_offer_uri=https%3A%2F%2Fserver%2Eexample%2Ecom%2Fcredential-offer.json
 ```
 
-Below is a non-normative example of a response from the Credential Issuer that contains a Credential Offer Object used to encourage the Wallet to start an Authorization Code Flow:
+Below is a non-normative example of a response from the Credential Issuer that contains a Credential Offer Object used to encourage the Wallet to start an Authorization Code Flow to issue two credential of a same format and type but different content, identified using strings "CivilEngineeringDegree-2023" and "ElectricalEngineeringDegree-2023":
 
 <{{examples/credential_offer_authz_code.txt}}
 
-Below is a non-normative example of a Credential Offer Object for a Pre-Authorized Code Flow (with a credential type reference):
+Below is a non-normative example of a Credential Offer Object for a Pre-Authorized Code Flow when credential type is identified using a string "UniversityDegree_LDP":
 
 <{{examples/credential_offer_by_reference.json}}
 
@@ -416,7 +416,7 @@ The request parameter `authorization_details` defined in Section 2 of [@!RFC9396
   * When the Wallet is requesting issuance of credential(s) whose description included `identifiers` parameter in the Credential Offer.
   * When the Wallet is requesting issuance of specific credential(s) using identifier(s) it discovered from a `display` property as defined in (#credential-metadata-object).
 
-A non-normative example of an `authorization_details` object. 
+The following is a non-normative example of an `authorization_details` object:
 
 <{{examples/authorization_details.json}}
 
@@ -441,7 +441,7 @@ GET /authorize?
 Host: https://server.example.com
 ```
 
-This non-normative example requests authorization to issue two different Credentials:
+This non-normative example requests authorization to issue two different Credentials - one of format `jwt_vc_json`, type "UniversityDegreeCredential" and identifier "CivilEngineeringDegree-2023"; and the other of format `mso_mdoc` and doctype "org.iso.18013.5.1.mDL":
 
 <{{examples/authorization_details_multiple_credentials.json}}
 
@@ -1202,7 +1202,7 @@ It is dependent on the Credential format where the available claims will appear 
 
 The AS MUST be able to determine from the Issuer metadata what claims are disclosed with the requested credentials to be able to render a meaningful user consent.
 
-The following example shows a non-normative example of an object comprising `credentials_supported` parameter for a credential in JWT VC format (JSON encoding).
+The following is a non-normative example of an object comprising `credentials_supported` parameter for a credential in JWT VC format (JSON encoding).
 
 <{{examples/credential_metadata_jwt_vc_json.json}}
 
