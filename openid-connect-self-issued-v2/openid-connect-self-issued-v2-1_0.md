@@ -636,8 +636,8 @@ The following is a non-normative example of a base64url decoded Self-Issued ID T
 
 ```json
 {
-  "iss": "NzbLsXh8uDCcd-6MNwXF4W_7noWXFZAfHkxZsRGC9Xs",
-  "sub": "NzbLsXh8uDCcd-6MNwXF4W_7noWXFZAfHkxZsRGC9Xs",
+  "iss": "urn:ietf:params:oauth:jwk-thumbprint:sha-256:NzbLsXh8uDCcd-6MNwXF4W_7noWXFZAfHkxZsRGC9Xs",
+  "sub": "urn:ietf:params:oauth:jwk-thumbprint:sha-256:NzbLsXh8uDCcd-6MNwXF4W_7noWXFZAfHkxZsRGC9Xs",
   "aud": "https://client.example.org/cb",
   "nonce": "n-0S6_WzA2Mj",
   "exp": 1311281970,
@@ -747,6 +747,12 @@ The Authorization Response MUST NOT leak to a party outside of the Self-Issued O
 Implementers of Self-Issed OPs are encouraged to take operating system dependent measures to ensure that the Authorization Response is only passed to a legitimate system browser in the same-device protocol flow. If implementers wish to support native applications acting as an RP, they MAY alternatively invoke the RP application if the Self-Issed OP can verify the RP application to be legitimate.
 
 Further details of application to application and application to web communication are discussed in [@app-2-app-sec].
+
+##  TLS Requirements
+
+Implementations MUST follow [@!BCP195].
+
+Whenever TLS is used, a TLS server certificate check MUST be performed, per [@!RFC6125].
 
 # Privacy Considerations
 
@@ -874,6 +880,16 @@ The scope of this specification was an extension to Chapter 7 Self-Issued OpenID
             <organization>Evernym</organization>
         </author>
         <date day="19" month="Nov" year="2019"/>
+        </front>
+</reference>
+
+<reference anchor="BCP195" target="https://www.rfc-editor.org/info/bcp195">
+        <front>
+          <title>BCP195</title>
+          <author>
+            <organization>IETF</organization>
+          </author>
+          <date year="2022"/>
         </front>
 </reference>
 
