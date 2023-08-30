@@ -886,11 +886,7 @@ When the Credential Request is invalid or unauthorized, the Credential Issuer co
 
 If the Credential Request does not contain an Access Token that enables issuance of a requested credential, or client authentication credentials when required, the Credential Endpoint MUST return an error response as defined in section 3 of [@!RFC6750].
 
-The following additional clarifications are provided for the following parameters already defined in section 3.1 of [@!RFC6750]:
-
-`invalid_request`:
-
-* Credential Request was malformed. One or more of the parameters are missing or malformed. When the error is caused by `type`, `format`, `proof` or encryption parameters in the request, error codes parameters defined in (#credential-request-errors) SHOULD be used instead of this generic one.
+When the error is caused by `type`, `format`, `proof` or encryption parameters in the request, error codes parameters defined in (#credential-request-errors) SHOULD be used instead of a generic `invalid_request` parameter defined in section 3.1 of [@!RFC6750].
 
 #### Credential Request Errors {#credential-request-errors}
 
