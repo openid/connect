@@ -898,17 +898,18 @@ If the Credential Request is requesting for the issuance of a credential not sup
   * `invalid_proof`: The `proof` in the Credential Request was invalid. For example, No key proof was provided (the `proof` field was not present); the provided key proof was not bound to a nonce provided by the Credential Issuer, etc.
   * `invalid_encryption_parameters`: This error occurs when the encryption parameters in the Credential Request are either invalid or missing. In the latter case, it indicates that the Credential Issuer requires the Credential Response to be sent encrypted, but the Credential Request does not contain the necessary encryption parameters.
 
-The usage of these parameters take precedence over `invalid_request` parameter defined in (#authorization-errors), since they provide more details about the errors.
+The usage of these parameters takes precedence over the `invalid_request` parameter defined in (#authorization-errors), since they provide more details about the errors.
 
-This is a non-normative example of a Credential Error Response:
+The following is a non-normative example of a Credential Error Response when invalid Access Token was used to request an unsupported credential format:
 
 ```
-HTTP/1.1 400 Bad Request
+HTTP/1.1 401 Unauthorized
+WWW-Authenticate: Bearer realm="example", error="invalid_token"
 Content-Type: application/json
 Cache-Control: no-store
 
 {
-   "error": "invalid_request"
+   "error": "unsupported_credential_format"
 }
 ```
 
