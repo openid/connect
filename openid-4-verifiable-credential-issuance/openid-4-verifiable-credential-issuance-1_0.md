@@ -884,7 +884,7 @@ When the Credential Request is invalid or unauthorized, the Credential Issuer co
 
 #### Authorization Errors {#authorization-errors}
 
-If the Credential Request does not contain an Access Token that enables issuance of a requested credential, or client authentication credentials when required, the Credential Endpoint MUST return an error response as defined in section 3 of [@!RFC6750].
+If the Credential Request does not contain an Access Token that enables issuance of a requested credential, the Credential Endpoint MUST return an error response as defined in section 3 of [@!RFC6750].
 
 The following additional parameter are defined in addition to those already defined in section 3.1 of [@!RFC6750]:
 
