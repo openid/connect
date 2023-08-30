@@ -1092,22 +1092,12 @@ Deferred Credential Response MUST be sent using the `application/json` media typ
 
 When the Deferred Credential Request is invalid or unauthorized, or the credential is not available yet, the Credential Issuer constructs the error response as defined in (#credential-error-response).
 
-The following additional clarifications are provided on top of (#authorization-errors) for the following parameters already defined in section 3.1 of [@!RFC6749]:
-
-`invalid_request`:
-
-- Credential Request was malformed, e.g., the parameter `transaction_id` is missing or malformed.
-
-`invalid_token`:
-
-- Credential Request contains the wrong Access Token or the Access Token is missing.
-
 The following additional error codes are specified in addition to those already defined in (#credential-request-errors):
 
 * `issuance_pending` - The credential issuance is still pending. The error response will also contain another claim `interval` determining the minimum amount of time in seconds that the Wallet SHOULD wait between requests to the Deferred Credential Endpoint.  If no value is provided, clients MUST use 5 as the default.
 * `invalid_transaction_id` - Deferred Credential Request contained an invalid `transaction_id`, i.e., it was not issued by the respective Credential Issuer or was already used to obtain the Credential.
 
-This is a non-normative example of a Credential Error Response:
+This is a non-normative example of a Deferred Credential Error Response:
 
 ```
 HTTP/1.1 400 Bad Request
@@ -1115,7 +1105,7 @@ Content-Type: application/json
 Cache-Control: no-store
 
 {
-   "error": "invalid_request"
+   "error": "invalid_transaction_id"
 }
 ```
 
