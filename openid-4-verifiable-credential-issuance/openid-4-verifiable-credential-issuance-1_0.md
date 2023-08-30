@@ -886,7 +886,11 @@ When the Credential Request is invalid or unauthorized, the Credential Issuer co
 
 If the Credential Request does not contain an Access Token that enables issuance of a requested credential, or client authentication credentials when required, the Credential Endpoint MUST return an error response as defined in section 3 of [@!RFC6750].
 
-When the error is caused by `type`, `format`, `proof` or encryption parameters in the request, error codes parameters defined in (#credential-request-errors) SHOULD be used instead of a generic `invalid_request` parameter defined in section 3.1 of [@!RFC6750].
+The following additional parameter are defined in addition to those already defined in section 3.1 of [@!RFC6750]:
+
+* `invalid_credential_request`: The Credential Request is missing a required parameter, includes an unsupported parameter or parameter value, repeats the same parameter, uses more than one method for including an Access Token, or is otherwise malformed. The Credential Endpoint SHOULD respond with the HTTP 400 (Bad Request) status code. This parameter SHOULD be used instead of an `invalid_request` parameter defined in section 3.1 of [@!RFC6750].
+
+When the error is caused by `type`, `format`, `proof` or encryption parameters in the request, error codes parameters defined in (#credential-request-errors) SHOULD be used instead of generic `invalid_request` or `invalid_credential_request` parameters.
 
 #### Credential Request Errors {#credential-request-errors}
 
