@@ -886,11 +886,7 @@ When the Credential Request is invalid or unauthorized, the Credential Issuer co
 
 If the Credential Request does not contain an Access Token that enables issuance of a requested credential, the Credential Endpoint MUST return an error response as defined in section 3 of [@!RFC6750].
 
-The following additional parameter are defined in addition to those already defined in section 3.1 of [@!RFC6750]:
-
-* `invalid_credential_request`: The Credential Request is missing a required parameter, includes an unsupported parameter or parameter value, repeats the same parameter, uses more than one method for including an Access Token, or is otherwise malformed. The Credential Endpoint SHOULD respond with the HTTP 400 (Bad Request) status code. This parameter SHOULD be used instead of an `invalid_request` parameter defined in section 3.1 of [@!RFC6750].
-
-When the error is caused by `type`, `format`, `proof` or encryption parameters in the request, error codes parameters defined in (#credential-request-errors) SHOULD be used instead of generic `invalid_request` or `invalid_credential_request` parameters.
+For the errors specific to the Credential Request such as those caused by `type`, `format`, `proof` or encryption parameters in the request, error codes parameters defined in (#credential-request-errors) SHOULD be used instead of a generic `invalid_request` parameter defined in section 3.1 of [@!RFC6750].
 
 #### Credential Request Errors {#credential-request-errors}
 
@@ -899,6 +895,7 @@ If the Credential Request is requesting for the issuance of a credential not sup
 A JSON object containing a list of name/value pairs, where each name identifies a claim offered in the Credential
 
 * `error`: REQUIRED. A key at the top level of a JSON object, the value of which SHOULD be a single ASCII [@!USASCII] error code from the following:
+  * `invalid_credential_request`: The Credential Request is missing a required parameter, includes an unsupported parameter or parameter value, repeats the same parameter, or is otherwise malformed.
   * `unsupported_credential_type`: Requested credential type is not supported.
   * `unsupported_credential_format`: Requested credential format is not supported.
   * `invalid_proof`: The `proof` in the Credential Request was invalid. For example, No key proof was provided (the `proof` field was not present); the provided key proof was not bound to a nonce provided by the Credential Issuer, etc.
