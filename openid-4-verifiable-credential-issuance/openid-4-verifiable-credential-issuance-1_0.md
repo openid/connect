@@ -892,8 +892,6 @@ For the errors specific to the Credential Request such as those caused by `type`
 
 If the Credential Request is requesting for the issuance of a credential not supported by the Credential Endpoint, the HTTP response body uses the `application/json` media type with an HTTP 400 (Bad Request) status code (unless specified otherwise) and includes one of the following parameters with the response:
 
-A JSON object containing a list of name/value pairs, where each name identifies a claim offered in the Credential
-
 * `error`: REQUIRED. A key at the top level of a JSON object, the value of which SHOULD be a single ASCII [@!USASCII] error code from the following:
   * `invalid_credential_request`: The Credential Request is missing a required parameter, includes an unsupported parameter or parameter value, repeats the same parameter, or is otherwise malformed.
   * `unsupported_credential_type`: Requested credential type is not supported.
