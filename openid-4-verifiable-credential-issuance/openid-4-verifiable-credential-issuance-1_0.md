@@ -884,17 +884,13 @@ When the Credential Request is invalid or unauthorized, the Credential Issuer co
 
 #### Authorization Errors {#authorization-errors}
 
-If the Credential Request does not include authentication credentials or does not contain an Access Token that enables issuance of a requested credential, the Credential Endpoint MUST return an error response as defined in section 3 of [@!RFC6750].
+If the Credential Request does not contain an Access Token that enables issuance of a requested credential, or client authentication credentials when required, the Credential Endpoint MUST return an error response as defined in section 3 of [@!RFC6750].
 
 The following additional clarifications are provided for the following parameters already defined in section 3.1 of [@!RFC6750]:
 
 `invalid_request`:
 
-* Credential Request was malformed. One or more of the parameters are missing or malformed. MUST not be used when the parameters defined in (#credential-request-errors) are present.
-
-`invalid_token`:
-
-* Credential Request contains the wrong Access Token or the Access Token is missing.
+* Credential Request was malformed. One or more of the parameters are missing or malformed. When the error is caused by `type`, `format`, `proof` or encryption parameters in the request, error codes parameters defined in (#credential-request-errors) SHOULD be used instead of this generic one.
 
 #### Credential Request Errors {#credential-request-errors}
 
@@ -904,7 +900,7 @@ If the Credential Request is requesting for the issuance of a credential not sup
   * `unsupported_credential_type`: Requested credential type is not supported.
   * `unsupported_credential_format`: Requested credential format is not supported.
   * `invalid_proof`: The `proof` in the Credential Request was invalid. For example, No key proof was provided (the `proof` field was not present); the provided key proof was not bound to a nonce provided by the Credential Issuer, etc.
-* `invalid_encryption_parameters`: This error occurs when the encryption parameters in the Credential Request are either invalid or missing. In the latter case, it indicates that the Credential Issuer requires the Credential Response to be sent encrypted, but the Credential Request does not contain the necessary encryption parameters.
+  * `invalid_encryption_parameters`: This error occurs when the encryption parameters in the Credential Request are either invalid or missing. In the latter case, it indicates that the Credential Issuer requires the Credential Response to be sent encrypted, but the Credential Request does not contain the necessary encryption parameters.
 
 The usage of these parameters take precedence over `invalid_request` parameter defined in (#authorization-errors), since they provide more details about the errors.
 
