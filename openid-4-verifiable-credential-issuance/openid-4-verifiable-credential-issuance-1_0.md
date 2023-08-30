@@ -896,11 +896,14 @@ When the error is caused by `type`, `format`, `proof` or encryption parameters i
 
 If the Credential Request is requesting for the issuance of a credential not supported by the Credential Endpoint, the HTTP response body uses the `application/json` media type with an HTTP 400 (Bad Request) status code (unless specified otherwise) and includes one of the following parameters with the response:
 
-* `error`: REQUIRED.  A single ASCII [@!USASCII] error code from the following:
+A JSON object containing a list of name/value pairs, where each name identifies a claim offered in the Credential
+
+* `error`: REQUIRED. A key at the top level of a JSON object, the value of which SHOULD be a single ASCII [@!USASCII] error code from the following:
   * `unsupported_credential_type`: Requested credential type is not supported.
   * `unsupported_credential_format`: Requested credential format is not supported.
   * `invalid_proof`: The `proof` in the Credential Request was invalid. For example, No key proof was provided (the `proof` field was not present); the provided key proof was not bound to a nonce provided by the Credential Issuer, etc.
   * `invalid_encryption_parameters`: This error occurs when the encryption parameters in the Credential Request are either invalid or missing. In the latter case, it indicates that the Credential Issuer requires the Credential Response to be sent encrypted, but the Credential Request does not contain the necessary encryption parameters.
+* `error_description`: OPTIONAL. A key at the top level of a JSON object, the value of which MUST be a human-readable ASCII [@!USASCII] text providing additional information, used to assist the client developer in understanding the error that occurred. Values for the `error_description` parameter MUST NOT include characters outside the set %x20-21 / %x23-5B / %x5D-7E.
 
 The usage of these parameters takes precedence over the `invalid_request` parameter defined in (#authorization-errors), since they provide more details about the errors.
 
