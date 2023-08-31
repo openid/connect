@@ -890,7 +890,7 @@ For the errors specific to the Credential Request such as those caused by `type`
 
 #### Credential Request Errors {#credential-request-errors}
 
-If the Credential Request is requesting for the issuance of a credential not supported by the Credential Endpoint, the HTTP response body uses the `application/json` media type with an HTTP 400 (Bad Request) status code (unless specified otherwise) and includes one of the following parameters with the response:
+If the Credential Request is requesting for the issuance of a credential not supported by the Credential Endpoint, the HTTP response body uses the `application/json` media type with an HTTP 400 (Bad Request) status code (unless specified otherwise) and includes the following parameters with the response:
 
 * `error`: REQUIRED. A key at the top level of a JSON object, the value of which SHOULD be a single ASCII [@!USASCII] error code from the following:
   * `invalid_credential_request`: The Credential Request is missing a required parameter, includes an unsupported parameter or parameter value, repeats the same parameter, or is otherwise malformed.
@@ -905,8 +905,7 @@ The usage of these parameters takes precedence over the `invalid_request` parame
 The following is a non-normative example of a Credential Error Response when invalid Access Token was used to request an unsupported credential format:
 
 ```
-HTTP/1.1 401 Unauthorized
-WWW-Authenticate: Bearer realm="example", error="invalid_token"
+HTTP/1.1 400 Bad Request
 Content-Type: application/json
 Cache-Control: no-store
 
