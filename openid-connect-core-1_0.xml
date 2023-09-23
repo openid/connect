@@ -4503,6 +4503,10 @@
 	If one of these parameters is used,
 	the other MUST NOT be used in the same request.
       </t>
+      <t>
+	Note that the Request Objects defined here are compatible with those specified by
+	<xref target="RFC9101">The OAuth 2.0 Authorization Framework: JWT-Secured Authorization Request (JAR)</xref>.
+      </t>
 
       <section title="Passing a Request Object by Value" anchor="RequestObject">
 
@@ -8875,6 +8879,24 @@
   <seriesInfo name="DOI" value="10.17487/RFC7595"/>
 </reference>
 
+      <!-- Reference from https://bib.ietf.org/public/rfc/bibxml/reference.RFC.9101.xml -->
+
+<reference anchor="RFC9101" target="https://www.rfc-editor.org/info/rfc9101">
+  <front>
+    <title>The OAuth 2.0 Authorization Framework: JWT-Secured Authorization Request (JAR)</title>
+    <author fullname="N. Sakimura" initials="N." surname="Sakimura"/>
+    <author fullname="J. Bradley" initials="J." surname="Bradley"/>
+    <author fullname="M. Jones" initials="M." surname="Jones"/>
+    <date month="August" year="2021"/>
+    <abstract>
+      <t>The authorization request in OAuth 2.0 described in RFC 6749 utilizes query parameter serialization, which means that authorization request parameters are encoded in the URI of the request and sent through user agents such as web browsers. While it is easy to implement, it means that a) the communication through the user agents is not integrity protected and thus, the parameters can be tainted, b) the source of the communication is not authenticated, and c) the communication through the user agents can be monitored. Because of these weaknesses, several attacks to the protocol have now been put forward.</t>
+      <t>This document introduces the ability to send request parameters in a JSON Web Token (JWT) instead, which allows the request to be signed with JSON Web Signature (JWS) and encrypted with JSON Web Encryption (JWE) so that the integrity, source authentication, and confidentiality properties of the authorization request are attained. The request can be sent by value or by reference.</t>
+    </abstract>
+  </front>
+  <seriesInfo name="RFC" value="9101"/>
+  <seriesInfo name="DOI" value="10.17487/RFC9101"/>
+</reference>
+
       <reference anchor="OpenID.Basic" target="https://openid.net/specs/openid-connect-basic-1_0.html">
 	<front>
 	  <title>OpenID Connect Basic Client Implementer's Guide 1.0</title>
@@ -9612,7 +9634,7 @@
 	-33
         <list style="symbols">
 	  <t>
-	    TBD
+	    Fixed #2029: Referenced RFC 9101 where we define Request Objects.
 	  </t>
 	</list>
       </t>
