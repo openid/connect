@@ -43,5 +43,5 @@ pipelines:
             - cp *.html openid.bitbucket.io/connect/editors-draft
             - cd openid.bitbucket.io/connect
             - git add *
-            - git commit -m "Update OID4VC drafts"
+            - git commit -m "Update OID4VC drafts" --allow-empty
             - git push origin master
