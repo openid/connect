@@ -1767,15 +1767,18 @@
 	    more fine-grained address information.
 	  </t>
 	  <t>
-	    Implementations MAY return just the full address 
-	    as a single string in the formatted sub-field, 
-	    or they MAY return just the individual component 
-	    fields using the other sub-fields, 
-	    or they MAY return both. 
-	    If both variants are returned, 
-	    they SHOULD be describing the same address, 
-	    with the formatted address indicating how the 
+	    Implementations MAY return just the full address
+	    as a single string in the formatted sub-field,
+	    or they MAY return just the individual component
+	    fields using the other sub-fields,
+	    or they MAY return both.
+	    If both variants are returned,
+	    they SHOULD represent the same address,
+	    with the formatted address indicating how the
 	    component fields are combined.
+	  </t>
+	  <t>
+	    All the address values defined below are represented as JSON strings.
 	  </t>
 	  <t>
 	    <list style="hanging">
@@ -2845,7 +2848,7 @@
 	    extensions are used that are beyond the scope of this specification.
 	  </t>
 	  <t>
-	    TBD
+	    Fixed #2047: Clarified that address field values are JSON strings.
 	  </t>
 	</list>
       </t>
