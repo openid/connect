@@ -1205,21 +1205,6 @@
 	      case-sensitive strings.
 	    </t>
 
-	    <t hangText="azp">
-	      <vspace/>
-	      OPTIONAL.
-	      Authorized party - the party to which the ID Token was issued.
-	      If present, it MUST contain the OAuth 2.0
-	      Client ID of this party.
-	      This Claim is only needed when
-	      the ID Token has a single audience value
-	      and that audience is different than the authorized party.
-	      It MAY be included even when the authorized party is the same
-	      as the sole audience.
-	      The <spanx style="verb">azp</spanx> value is a case-sensitive string
-	      containing a StringOrURI value.
-	    </t>
-
 	    <t hangText="sub_jwk">
 	      <vspace/>
 	      Public key used to check the signature of an ID Token
@@ -1305,15 +1290,6 @@
 		as an audience.
 		The ID Token MUST be rejected if the ID Token does not list
 		the Client as a valid audience, or if it contains additional audiences not trusted by the Client.
-	      </t>
-	      <t>
-		If the ID Token contains multiple audiences, the Client SHOULD verify
-		that an <spanx style="verb">azp</spanx> Claim is present.
-	      </t>
-	      <t>
-		If an <spanx style="verb">azp</spanx> (authorized party) Claim is present,
-		the Client SHOULD verify that its <spanx style="verb">client_id</spanx>
-		is the Claim Value.
 	      </t>
 
 	      <t>
@@ -3293,6 +3269,10 @@
       <t>
 	-28
         <list style="symbols">
+	  <t>
+	    Fixed #973 and #1009 - The "azp" Claim only occurs when
+	    extensions are used that are beyond the scope of this specification.
+	  </t>
 	  <t>
 	    TBD
 	  </t>
