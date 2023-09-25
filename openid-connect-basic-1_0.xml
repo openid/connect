@@ -43,7 +43,7 @@
     </author>
 
     <author fullname="Michael B. Jones" initials="M.B." surname="Jones">
-      <organization abbrev="independent (was at Microsoft)">independent</organization>
+      <organization abbrev="Self-Issued Consulting (was at Microsoft)">Self-Issued Consulting</organization>
       <address>
         <email>michael_b_jones@hotmail.com</email>
 	<uri>https://self-issued.info/</uri>
@@ -1214,21 +1214,6 @@
 	      case-sensitive strings.
 	    </t>
 
-	    <t hangText="azp">
-	      <vspace/>
-	      OPTIONAL.
-	      Authorized party - the party to which the ID Token was issued.
-	      If present, it MUST contain the OAuth 2.0
-	      Client ID of this party.
-	      This Claim is only needed when
-	      the ID Token has a single audience value
-	      and that audience is different than the authorized party.
-	      It MAY be included even when the authorized party is the same
-	      as the sole audience.
-	      The <spanx style="verb">azp</spanx> value is a case-sensitive string
-	      containing a StringOrURI value.
-	    </t>
-
 	  </list>
 	</t>
 
@@ -1296,15 +1281,6 @@
 		as an audience.
 		The ID Token MUST be rejected if the ID Token does not list
 		the Client as a valid audience, or if it contains additional audiences not trusted by the Client.
-	      </t>
-	      <t>
-		If the ID Token contains multiple audiences, the Client SHOULD verify
-		that an <spanx style="verb">azp</spanx> Claim is present.
-	      </t>
-	      <t>
-		If an <spanx style="verb">azp</spanx> (authorized party) Claim is present,
-		the Client SHOULD verify that its <spanx style="verb">client_id</spanx>
-		is the Claim Value.
 	      </t>
 
 	      <t>
@@ -2604,7 +2580,7 @@
           </author>
 
           <author fullname="Michael B. Jones" initials="M.B." surname="Jones">
-            <organization abbrev="independent (was at Microsoft)">independent</organization>
+            <organization abbrev="Self-Issued Consulting (was at Microsoft)">Self-Issued Consulting</organization>
           </author>
 
           <author fullname="Breno de Medeiros" initials="B." surname="de Medeiros">
@@ -2632,7 +2608,7 @@
           </author>
 
           <author fullname="Michael B. Jones" initials="M.B." surname="Jones">
-            <organization abbrev="independent (was at Microsoft)">independent</organization>
+            <organization abbrev="Self-Issued Consulting (was at Microsoft)">Self-Issued Consulting</organization>
           </author>
 
           <author fullname="Edmund Jay" initials="E." surname="Jay">
@@ -2656,7 +2632,7 @@
           </author>
 
           <author fullname="Michael B. Jones" initials="M.B." surname="Jones">
-            <organization abbrev="independent (was at Microsoft)">independent</organization>
+            <organization abbrev="Self-Issued Consulting (was at Microsoft)">Self-Issued Consulting</organization>
           </author>
 
           <date day="8" month="November" year="2014"/>
@@ -2764,7 +2740,7 @@
           </author>
 
           <author fullname="Michael B. Jones" initials="M.B." surname="Jones">
-            <organization abbrev="independent">independent</organization>
+            <organization abbrev="Self-Issued Consulting">Self-Issued Consulting</organization>
           </author>
 
           <author fullname="Breno de Medeiros" initials="B." surname="de Medeiros">
@@ -2799,8 +2775,8 @@
 	  <t>Roland Hedberg (roland@catalogix.se), independent</t>
           <t>Ryo Ito (ryo.ito@mixi.co.jp), mixi, Inc.</t>
           <t>Edmund Jay (ejay@mgi1.com), Illumila</t>
-          <t>Michael B. Jones (michael_b_jones@hotmail.com), independent</t>
-	  <t>Torsten Lodderstedt (torsten@lodderstedt.net), yes.com</t>
+          <t>Michael B. Jones (michael_b_jones@hotmail.com), Self-Issued Consulting</t>
+	  <t>Torsten Lodderstedt (torsten@lodderstedt.net), independent</t>
           <t>Nov Matake (nov@matake.jp), independent</t>
           <t>Chuck Mortimore (charliemortimore@gmail.com), Disney</t>
           <t>Anthony Nadalin (nadalin@prodigy.net), independent</t>
@@ -2810,7 +2786,7 @@
 	  <t>Justin Richer (justin@bspk.io), Bespoke Engineering</t>
           <t>Nat Sakimura (nat@nat.consulting), NAT.Consulting</t>
 	  <t>Luke Shepard (luke@lukeshepard.com), Facebook</t>
-	  <t>Andreas &Aring;kre Solberg (andreas.solberg@uninett.no), UNINET</t>
+	  <t>Andreas &Aring;kre Solberg (Andreas.Solberg@sikt.no), Sikt</t>
 	  <t>Paul Tarjan (paul@paultarjan.com), Facebook</t>
         </list>
       </t>
@@ -2864,6 +2840,10 @@
       <t>
 	-45
         <list style="symbols">
+	  <t>
+	    Fixed #973 and #1009 - The "azp" Claim only occurs when
+	    extensions are used that are beyond the scope of this specification.
+	  </t>
 	  <t>
 	    TBD
 	  </t>

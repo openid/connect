@@ -23,10 +23,10 @@
 
   <front>
     <title abbrev="OpenID Connect Back-Channel Logout 1.0">OpenID Connect
-    Back-Channel Logout 1.0 - draft 11 incorporating errata set 1</title>
+    Back-Channel Logout 1.0 - draft 12 incorporating errata set 1</title>
 
     <author fullname="Michael B. Jones" initials="M.B." surname="Jones">
-      <organization abbrev="independent (was at Microsoft)">independent</organization>
+      <organization abbrev="Self-Issued Consulting (was at Microsoft)">Self-Issued Consulting</organization>
       <address>
         <email>michael_b_jones@hotmail.com</email>
 	<uri>https://self-issued.info/</uri>
@@ -41,7 +41,7 @@
       </address>
     </author>
 
-    <date day="28" month="July" year="2023" />
+    <date day="22" month="September" year="2023" />
 
     <workgroup>OpenID Connect Working Group</workgroup>
 
@@ -958,7 +958,7 @@
           </author>
 
           <author fullname="Michael B. Jones" initials="M.B." surname="Jones">
-            <organization abbrev="independent (was at Microsoft)">independent</organization>
+            <organization abbrev="Self-Issued Consulting (was at Microsoft)">Self-Issued Consulting</organization>
           </author>
 
           <author fullname="Breno de Medeiros" initials="B." surname="de Medeiros">
@@ -986,7 +986,7 @@
 	  </author>
 
 	  <author fullname="Michael B. Jones" initials="M.B." surname="Jones">
-	    <organization abbrev="independent (was at Microsoft)">independent</organization>
+	    <organization abbrev="Self-Issued Consulting (was at Microsoft)">Self-Issued Consulting</organization>
 	  </author>
 
 	  <author fullname="Edmund Jay" initials="E." surname="Jay">
@@ -1010,7 +1010,7 @@
 	  </author>
 
 	  <author fullname="Michael B. Jones" initials="M.B." surname="Jones">
-	    <organization abbrev="independent (was at Microsoft)">independent</organization>
+	    <organization abbrev="Self-Issued Consulting (was at Microsoft)">Self-Issued Consulting</organization>
 	  </author>
 
           <date day="8" month="November" year="2014"/>
@@ -1323,9 +1323,9 @@
 	  <t>Pedro Felix (pmhsfelix@gmail.com), individual</t>
 	  <t>Joseph Heenan (joseph@authlete.com), Authlete</t>
 	  <t>Phil Hunt (phil.hunt@independentid.com), Independent Identity, Inc.</t>
-          <t>Michael B. Jones (michael_b_jones@hotmail.com), independent (was at Microsoft)</t>
+          <t>Michael B. Jones (michael_b_jones@hotmail.com), Self-Issued Consulting (was at Microsoft)</t>
 	  <t>Todd Lainhart (lainhart@us.ibm.com), IBM</t>
-	  <t>Torsten Lodderstedt (torsten@lodderstedt.net), yes.com</t>
+	  <t>Torsten Lodderstedt (torsten@lodderstedt.net), independent (was at yes.com)</t>
 	  <t>Nat Sakimura (nat@nat.consulting), NAT.Consulting</t>
 	  <t>Filip Skokan (panva.ip@gmail.com), Auth0</t>
 	  <t>Hans Zandbelt (hans.zandbelt@zmartzone.eu), ZmartZone</t>
@@ -1372,6 +1372,15 @@
 
     <section anchor="History" title="Document History">
       <t>[[ To be removed from the approved errata ]]</t>
+
+      <t>
+	-12
+        <list style="symbols">
+	  <t>
+	    Updated contributor affiliations.
+	  </t>
+	</list>
+      </t>
 
       <t>
 	-11

@@ -42,7 +42,7 @@
     </author>
 
     <author fullname="Michael B. Jones" initials="M.B." surname="Jones">
-      <organization abbrev="independent (was at Microsoft)">independent</organization>
+      <organization abbrev="Self-Issued Consulting (was at Microsoft)">Self-Issued Consulting</organization>
       <address>
         <email>michael_b_jones@hotmail.com</email>
 	<uri>https://self-issued.info/</uri>
@@ -2021,7 +2021,7 @@
           </author>
 
           <author fullname="Michael B. Jones" initials="M.B." surname="Jones">
-            <organization abbrev="independent (was at Microsoft)">independent</organization>
+            <organization abbrev="Self-Issued Consulting (was at Microsoft)">Self-Issued Consulting</organization>
           </author>
 
           <author fullname="Breno de Medeiros" initials="B." surname="de Medeiros">
@@ -2148,7 +2148,7 @@
           </author>
 
           <author fullname="Michael B. Jones" initials="M.B." surname="Jones">
-            <organization abbrev="independent (was at Microsoft)">independent</organization>
+            <organization abbrev="Self-Issued Consulting (was at Microsoft)">Self-Issued Consulting</organization>
           </author>
 
           <date day="8" month="November" year="2014"/>
@@ -2372,8 +2372,8 @@
 	  <t>Dick Hardt (dick.hardt@gmail.com), independent</t>
 	  <t>Roland Hedberg (roland@catalogix.se), independent (was at University of Ume&aring;)</t>
 	  <t>Edmund Jay (ejay@mgi1.com), Illumila</t>
-	  <t>Michael B. Jones (michael_b_jones@hotmail.com), independent (was at Microsoft)</t>
-	  <t>Torsten Lodderstedt (torsten@lodderstedt.net), yes.com (was at Deutsche Telekom)</t>
+	  <t>Michael B. Jones (michael_b_jones@hotmail.com), Self-Issued Consulting (was at Microsoft)</t>
+	  <t>Torsten Lodderstedt (torsten@lodderstedt.net), independent (was at Deutsche Telekom)</t>
 	  <t>Nov Matake (nov@matake.jp), independent</t>
 	  <t>Chuck Mortimore (charliemortimore@gmail.com), Disney (was at Salesforce)</t>
 	  <t>Anthony Nadalin (nadalin@prodigy.net), independent (was at Microsoft)</t>
@@ -2382,7 +2382,7 @@
 	  <t>Justin Richer (justin@bspk.io), Bespoke Engineering (was at MITRE)</t>
 	  <t>Nat Sakimura (nat@nat.consulting), NAT.Consulting (was at NRI)</t>
 	  <t>Owen Shepherd (owen.shepherd@e43.eu), independent</t>
-	  <t>Andreas &Aring;kre Solberg (andreas.solberg@uninett.no), UNINET</t>
+	  <t>Andreas &Aring;kre Solberg (Andreas.Solberg@sikt.no), Sikt (was at UNINET)</t>
 	  <t>Kick Willemse (k.willemse@evidos.nl), Evidos B.V.</t>
 	</list>
       </t>
