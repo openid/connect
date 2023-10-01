@@ -644,20 +644,15 @@
 	  <t>
 	    NOTE:  It is common for sites to use e-mail addresses as local identifiers
 	    for accounts at those sites, even though the domain in the e-mail address
-	    one controlled by the site.
+	    is not one controlled by the site.
 	    For instance, the site <spanx style="verb">example.org</spanx>
 	    might have a local account named <spanx style="verb">joe@example.com</spanx>.
-	    As of the time of this writing, a discussion is ongoing among WebFinger
-	    contributors about the syntax that should be used when discovering
-	    information about such accounts with WebFinger.
-	    The current thinking seems to be that such accounts would be represented
-	    by quoting the '@' character in the userinfo component of the account
-	    identifier when constructing the <spanx style="verb">acct:</spanx> URI
-	    representing the account.
+	    This specification uses <spanx style="verb">acct:</spanx> URIs
+	    as defined by <xref target="RFC7565"/> to represent such accounts
+	    during WebFinger discovery.
 	    Such an example is
 	    <spanx style="verb">acct:joe%40example.com@example.org</spanx>.
-	    In a future version of this specification, it is possible that
-	    normalization rules will be defined allowing End-Users to input
+	    End-Users MAY input
 	    values like <spanx style="verb">joe@example.com@example.org</spanx>
 	    to initiate discovery on such accounts.
 	  </t>
@@ -2437,7 +2432,7 @@
 	-36
         <list style="symbols">
 	  <t>
-	    TBD
+	    Fixed #2027: Updated speculative language that anticipated standardization of The 'acct' URI Scheme [RFC 7565].
 	  </t>
 	</list>
       </t>
