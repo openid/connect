@@ -1809,11 +1809,8 @@
 
 	      <c>Cache-Control</c>
 
-	      <c>no-cache, no-store</c>
+	      <c>no-store</c>
 
-	      <c>Pragma</c>
-
-	      <c>no-cache</c>
 	    </texttable>
 
 	    <figure>
@@ -1826,8 +1823,7 @@
 	      <artwork><![CDATA[
   HTTP/1.1 200 OK
   Content-Type: application/json
-  Cache-Control: no-cache, no-store
-  Pragma: no-cache
+  Cache-Control: no-store
 
   {
    "access_token": "SlAV32hkKG",
@@ -1869,8 +1865,7 @@
 	      <artwork><![CDATA[
   HTTP/1.1 400 Bad Request
   Content-Type: application/json
-  Cache-Control: no-cache, no-store
-  Pragma: no-cache
+  Cache-Control: no-store
 
   {
    "error": "invalid_request"
@@ -6179,8 +6174,7 @@
 	  <artwork><![CDATA[
   HTTP/1.1 200 OK
   Content-Type: application/json
-  Cache-Control: no-cache, no-store
-  Pragma: no-cache
+  Cache-Control: no-store
 
   {
    "access_token": "TlBN45jURg",
@@ -9612,7 +9606,7 @@
 	-33
         <list style="symbols">
 	  <t>
-	    TBD
+	    Fixed #2025 - Removed "Pragma: no-cache" and changed "Cache-Control: no-cache, no-store" to "Cache-Control: no-store".
 	  </t>
 	</list>
       </t>
