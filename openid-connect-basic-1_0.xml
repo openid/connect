@@ -2501,7 +2501,7 @@
             <organization abbrev="ISO">International Organization for Standardization</organization>
           </author>
 
-          <date month="March" year="2013" />
+          <date month="April" year="2013" />
         </front>
 
 	<seriesInfo name="ISO/IEC" value="29115" />
@@ -2863,6 +2863,9 @@
 	  </t>
 	  <t>
 	    Fixed #2028: Referenced IANA Authentication Method Reference Values registry and RFC 8176 for <spanx style="verb">amr</spanx> values.
+	  </t>
+	  <t>
+	    Fixed #2030: Corrected ISO/IEC 29115 date to April 2013.
 	  </t>
 	</list>
       </t>

@@ -8612,7 +8612,7 @@
 	    <organization abbrev="ISO">International Organization for Standardization</organization>
 	  </author>
 
-	  <date month="March" year="2013" />
+	  <date month="April" year="2013" />
 	</front>
 
 	<seriesInfo name="ISO/IEC" value="29115" />
@@ -9653,6 +9653,9 @@
 	  </t>
 	  <t>
 	    Fixed #2032: Use phrase JavaScript Clients and other Browser-Based Clients.
+	  </t>
+	  <t>
+	    Fixed #2030: Corrected ISO/IEC 29115 date to April 2013.
 	  </t>
 	</list>
       </t>
