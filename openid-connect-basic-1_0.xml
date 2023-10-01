@@ -1034,8 +1034,7 @@
               <artwork><![CDATA[
   HTTP/1.1 200 OK
   Content-Type: application/json
-  Cache-Control: no-cache, no-store
-  Pragma: no-cache
+  Cache-Control: no-store
 
   {
    "access_token":"SlAV32hkKG",
@@ -1111,7 +1110,7 @@
 	      expiration date/time listed in the value. Implementers MAY
 	      provide for some small leeway, usually no more than a few
 	      minutes, to account for clock skew.
-	      Its value is a JSON <xref target="RFC7159"/> number representing the number of seconds from
+	      Its value is a JSON <xref target="RFC8259"/> number representing the number of seconds from
 	      1970-01-01T00:00:00Z as measured in UTC until the date/time.
 	      See <xref target="RFC3339">RFC 3339</xref>
 	      for details regarding date/times in general and UTC in
@@ -1205,13 +1204,15 @@
 	      used in the authentication.
 	      For instance, values might indicate that both password and OTP
 	      authentication methods were used.
-	      The definition of particular values to be used in the
-	      <spanx style="verb">amr</spanx> Claim
-	      is beyond the scope of this document.
-	      Parties using this claim will need to agree upon the meanings of
-	      the values used, which may be context specific.
 	      The <spanx style="verb">amr</spanx> value is an array of
 	      case-sensitive strings.
+	      Values used in the
+	      <spanx style="verb">amr</spanx> Claim
+	      SHOULD be from those registered in the
+	      IANA Authentication Method Reference Values registry <xref target="IANA.AMR"/>
+	      established by <xref target="RFC8176"/>;
+	      parties using this claim will need to agree upon the meanings of
+	      any unregistered values used, which may be context specific.
 	    </t>
 
 	  </list>
@@ -1707,7 +1708,7 @@
 	  <c>
 	    End-User's preferred postal address.
 	    The value of the <spanx style="verb">address</spanx> member is
-	    a JSON <xref target="RFC4627"/> structure containing some or all of
+	    a JSON <xref target="RFC8259"/> structure containing some or all of
 	    the members defined in <xref target="AddressClaim"/>.
 	  </c>
 
@@ -1767,15 +1768,18 @@
 	    more fine-grained address information.
 	  </t>
 	  <t>
-	    Implementations MAY return just the full address 
-	    as a single string in the formatted sub-field, 
-	    or they MAY return just the individual component 
-	    fields using the other sub-fields, 
-	    or they MAY return both. 
-	    If both variants are returned, 
-	    they SHOULD be describing the same address, 
-	    with the formatted address indicating how the 
+	    Implementations MAY return just the full address
+	    as a single string in the formatted sub-field,
+	    or they MAY return just the individual component
+	    fields using the other sub-fields,
+	    or they MAY return both.
+	    If both variants are returned,
+	    they SHOULD represent the same address,
+	    with the formatted address indicating how the
 	    component fields are combined.
+	  </t>
+	  <t>
+	    All the address values defined below are represented as JSON strings.
 	  </t>
 	  <t>
 	    <list style="hanging">
@@ -2278,21 +2282,6 @@
   <seriesInfo name="DOI" value="10.17487/RFC3986"/>
 </reference>
 
-      <!-- Reference from https://bib.ietf.org/public/rfc/bibxml/reference.RFC.4627.xml -->
-
-<reference anchor="RFC4627" target="https://www.rfc-editor.org/info/rfc4627">
-  <front>
-    <title>The application/json Media Type for JavaScript Object Notation (JSON)</title>
-    <author fullname="D. Crockford" initials="D" surname="Crockford"/>
-    <date month="July" year="2006"/>
-    <abstract>
-      <t>JavaScript Object Notation (JSON) is a lightweight, text-based, language-independent data interchange format.  It was derived from the ECMAScript Programming Language Standard.  JSON defines a small set of formatting rules for the portable representation of structured data.  This memo provides information for the Internet community.</t>
-    </abstract>
-  </front>
-  <seriesInfo name="RFC" value="4627"/>
-  <seriesInfo name="DOI" value="10.17487/RFC4627"/>
-</reference>
-
       <!-- Reference from https://bib.ietf.org/public/rfc/bibxml/reference.RFC.5646.xml -->
 
 <reference anchor="RFC5646" target="https://www.rfc-editor.org/info/rfc5646">
@@ -2403,20 +2392,21 @@
   <seriesInfo name="DOI" value="10.17487/RFC6750"/>
 </reference>
 
-      <!-- Reference from https://bib.ietf.org/public/rfc/bibxml/reference.RFC.7159.xml -->
+      <!-- Reference from https://bib.ietf.org/public/rfc/bibxml/reference.RFC.8259.xml -->
 
-<reference anchor="RFC7159" target="https://www.rfc-editor.org/info/rfc7159">
+<reference anchor="RFC8259" target="https://www.rfc-editor.org/info/rfc8259">
   <front>
     <title>The JavaScript Object Notation (JSON) Data Interchange Format</title>
-    <author fullname="T. Bray" initials="T" role="editor" surname="Bray"/>
-    <date month="March" year="2014"/>
+    <author fullname="T. Bray" initials="T." role="editor" surname="Bray"/>
+    <date month="December" year="2017"/>
     <abstract>
       <t>JavaScript Object Notation (JSON) is a lightweight, text-based, language-independent data interchange format. It was derived from the ECMAScript Programming Language Standard. JSON defines a small set of formatting rules for the portable representation of structured data.</t>
       <t>This document removes inconsistencies with other specifications of JSON, repairs specification errors, and offers experience-based interoperability guidance.</t>
     </abstract>
   </front>
-  <seriesInfo name="RFC" value="7159"/>
-  <seriesInfo name="DOI" value="10.17487/RFC7159"/>
+  <seriesInfo name="STD" value="90"/>
+  <seriesInfo name="RFC" value="8259"/>
+  <seriesInfo name="DOI" value="10.17487/RFC8259"/>
 </reference>
 
       <!-- Reference from https://bib.ietf.org/public/rfc/bibxml/reference.RFC.7230.xml -->
@@ -2449,6 +2439,23 @@
   </front>
   <seriesInfo name="RFC" value="7231"/>
   <seriesInfo name="DOI" value="10.17487/RFC7231"/>
+</reference>
+
+      <!-- Reference from https://bib.ietf.org/public/rfc/bibxml/reference.RFC.8176.xml -->
+
+<reference anchor="RFC8176" target="https://www.rfc-editor.org/info/rfc8176">
+  <front>
+    <title>Authentication Method Reference Values</title>
+    <author fullname="M. Jones" initials="M." surname="Jones"/>
+    <author fullname="P. Hunt" initials="P." surname="Hunt"/>
+    <author fullname="A. Nadalin" initials="A." surname="Nadalin"/>
+    <date month="June" year="2017"/>
+    <abstract>
+      <t>The "amr" (Authentication Methods References) claim is defined and registered in the IANA "JSON Web Token Claims" registry, but no standard Authentication Method Reference values are currently defined. This specification establishes a registry for Authentication Method Reference values and defines an initial set of Authentication Method Reference values.</t>
+    </abstract>
+  </front>
+  <seriesInfo name="RFC" value="8176"/>
+  <seriesInfo name="DOI" value="10.17487/RFC8176"/>
 </reference>
 
       <!-- Reference from https://bib.ietf.org/public/rfc/bibxml4/reference.W3C.REC-html401-19991224.xml" modified to anchor="W3C.REC-html401-19991224" -->
@@ -2497,7 +2504,7 @@
             <organization abbrev="ISO">International Organization for Standardization</organization>
           </author>
 
-          <date month="March" year="2013" />
+          <date month="April" year="2013" />
         </front>
 
 	<seriesInfo name="ISO/IEC" value="29115" />
@@ -2695,6 +2702,16 @@
         </front>
       </reference>
 
+      <reference anchor="IANA.AMR" target="https://www.iana.org/assignments/authentication-method-reference-values">
+        <front>
+          <title>Authentication Method Reference Values</title>
+          <author>
+            <organization>IANA</organization>
+          </author>
+	  <date/>
+        </front>
+      </reference>
+
       <reference anchor="RFC20" target="https://www.rfc-editor.org/info/rfc20">
 	<front>
 	  <title>ASCII format for Network Interchange</title>
@@ -2845,7 +2862,16 @@
 	    extensions are used that are beyond the scope of this specification.
 	  </t>
 	  <t>
-	    TBD
+	    Fixed #2025 - Removed "Pragma: no-cache" and changed "Cache-Control: no-cache, no-store" to "Cache-Control: no-store".
+	  </t>
+	  <t>
+	    Fixed #2028: Referenced IANA Authentication Method Reference Values registry and RFC 8176 for <spanx style="verb">amr</spanx> values.
+	  </t>
+	  <t>
+	    Fixed #2030: Corrected ISO/IEC 29115 date to April 2013.
+	  </t>
+	  <t>
+	    Fixed #2047: Clarified that address field values are JSON strings.
 	  </t>
 	</list>
       </t>
