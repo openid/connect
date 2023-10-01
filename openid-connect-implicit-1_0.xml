@@ -527,8 +527,10 @@
 		  The Redirection URI
 		  MUST NOT use the <spanx style="verb">http</spanx> scheme
 		  unless the Client is a native application, in which case it MAY
-		  use the <spanx style="verb">http:</spanx> scheme with
-		  <spanx style="verb">localhost</spanx> as the hostname.
+		  use the <spanx style="verb">http</spanx> scheme with
+		  <spanx style="verb">localhost</spanx> or the IP loopback literals
+		  <spanx style="verb">127.0.0.1</spanx> or <spanx style="verb">[::1]</spanx>
+		  as the hostname.
                 </t>
 
 		<t hangText="state">
@@ -3299,6 +3301,9 @@
 	  </t>
 	  <t>
 	    Fixed #2047: Clarified that address field values are JSON strings.
+	  </t>
+	  <t>
+	    Fixed #2026: Clarified description of loopback hostnames for native applications.
 	  </t>
 	</list>
       </t>

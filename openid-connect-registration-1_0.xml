@@ -308,13 +308,15 @@
 	    MUST only register URLs using the <spanx style="verb">https</spanx> scheme as
 	    <spanx style="verb">redirect_uris</spanx>;
 	    they MUST NOT use <spanx style="verb">localhost</spanx> as the hostname.
-	    Native Clients MUST only register <spanx style="verb">redirect_uris</spanx> using custom 
-	    URI schemes or URLs using the <spanx style="verb">http:</spanx> scheme with
-	    <spanx style="verb">localhost</spanx> as the hostname.
+	    Native Clients MUST only register <spanx style="verb">redirect_uris</spanx> using custom
+	    URI schemes or loopback URLs using the <spanx style="verb">http</spanx> scheme;
+	    loopback URLs use <spanx style="verb">localhost</spanx> or the IP loopback literals
+	    <spanx style="verb">127.0.0.1</spanx> or <spanx style="verb">[::1]</spanx>
+	    as the hostname.
 	    Authorization Servers MAY place additional constraints on Native Clients.
 	    Authorization Servers MAY reject Redirection URI values
 	    using the <spanx style="verb">http</spanx> scheme, other than the
-	    <spanx style="verb">localhost</spanx> case for Native Clients.
+	    loopback case for Native Clients.
 	    The Authorization Server MUST verify that all the registered 
 	    <spanx style="verb">redirect_uris</spanx> conform to these constraints.  
 	    This prevents sharing a Client ID across different types of Clients.
@@ -2401,6 +2403,9 @@
 	  </t>
 	  <t>
 	    Fixed #2032: Use phrase JavaScript Clients and other Browser-Based Clients.
+	  </t>
+	  <t>
+	    Fixed #2026: Clarified description of loopback hostnames for native applications.
 	  </t>
 	</list>
       </t>
