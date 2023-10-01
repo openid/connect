@@ -1110,7 +1110,7 @@
 	      expiration date/time listed in the value. Implementers MAY
 	      provide for some small leeway, usually no more than a few
 	      minutes, to account for clock skew.
-	      Its value is a JSON <xref target="RFC7159"/> number representing the number of seconds from
+	      Its value is a JSON <xref target="RFC8259"/> number representing the number of seconds from
 	      1970-01-01T00:00:00Z as measured in UTC until the date/time.
 	      See <xref target="RFC3339">RFC 3339</xref>
 	      for details regarding date/times in general and UTC in
@@ -1708,7 +1708,7 @@
 	  <c>
 	    End-User's preferred postal address.
 	    The value of the <spanx style="verb">address</spanx> member is
-	    a JSON <xref target="RFC4627"/> structure containing some or all of
+	    a JSON <xref target="RFC8259"/> structure containing some or all of
 	    the members defined in <xref target="AddressClaim"/>.
 	  </c>
 
@@ -2279,21 +2279,6 @@
   <seriesInfo name="DOI" value="10.17487/RFC3986"/>
 </reference>
 
-      <!-- Reference from https://bib.ietf.org/public/rfc/bibxml/reference.RFC.4627.xml -->
-
-<reference anchor="RFC4627" target="https://www.rfc-editor.org/info/rfc4627">
-  <front>
-    <title>The application/json Media Type for JavaScript Object Notation (JSON)</title>
-    <author fullname="D. Crockford" initials="D" surname="Crockford"/>
-    <date month="July" year="2006"/>
-    <abstract>
-      <t>JavaScript Object Notation (JSON) is a lightweight, text-based, language-independent data interchange format.  It was derived from the ECMAScript Programming Language Standard.  JSON defines a small set of formatting rules for the portable representation of structured data.  This memo provides information for the Internet community.</t>
-    </abstract>
-  </front>
-  <seriesInfo name="RFC" value="4627"/>
-  <seriesInfo name="DOI" value="10.17487/RFC4627"/>
-</reference>
-
       <!-- Reference from https://bib.ietf.org/public/rfc/bibxml/reference.RFC.5646.xml -->
 
 <reference anchor="RFC5646" target="https://www.rfc-editor.org/info/rfc5646">
@@ -2404,20 +2389,21 @@
   <seriesInfo name="DOI" value="10.17487/RFC6750"/>
 </reference>
 
-      <!-- Reference from https://bib.ietf.org/public/rfc/bibxml/reference.RFC.7159.xml -->
+      <!-- Reference from https://bib.ietf.org/public/rfc/bibxml/reference.RFC.8259.xml -->
 
-<reference anchor="RFC7159" target="https://www.rfc-editor.org/info/rfc7159">
+<reference anchor="RFC8259" target="https://www.rfc-editor.org/info/rfc8259">
   <front>
     <title>The JavaScript Object Notation (JSON) Data Interchange Format</title>
-    <author fullname="T. Bray" initials="T" role="editor" surname="Bray"/>
-    <date month="March" year="2014"/>
+    <author fullname="T. Bray" initials="T." role="editor" surname="Bray"/>
+    <date month="December" year="2017"/>
     <abstract>
       <t>JavaScript Object Notation (JSON) is a lightweight, text-based, language-independent data interchange format. It was derived from the ECMAScript Programming Language Standard. JSON defines a small set of formatting rules for the portable representation of structured data.</t>
       <t>This document removes inconsistencies with other specifications of JSON, repairs specification errors, and offers experience-based interoperability guidance.</t>
     </abstract>
   </front>
-  <seriesInfo name="RFC" value="7159"/>
-  <seriesInfo name="DOI" value="10.17487/RFC7159"/>
+  <seriesInfo name="STD" value="90"/>
+  <seriesInfo name="RFC" value="8259"/>
+  <seriesInfo name="DOI" value="10.17487/RFC8259"/>
 </reference>
 
       <!-- Reference from https://bib.ietf.org/public/rfc/bibxml/reference.RFC.7230.xml -->
