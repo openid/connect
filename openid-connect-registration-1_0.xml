@@ -920,8 +920,7 @@
 	  <artwork><![CDATA[
   HTTP/1.1 201 Created
   Content-Type: application/json
-  Cache-Control: no-cache, no-store
-  Pragma: no-cache
+  Cache-Control: no-store
 
   {
    "client_id": "s6BhdRkqt3",
@@ -1020,8 +1019,7 @@
 	    <artwork><![CDATA[
   HTTP/1.1 400 Bad Request
   Content-Type: application/json
-  Cache-Control: no-cache, no-store
-  Pragma: no-cache
+  Cache-Control: no-store
    
   {
    "error": "invalid_redirect_uri",
@@ -1142,8 +1140,7 @@
           <artwork><![CDATA[
   HTTP/1.1 200 OK
   Content-Type: application/json
-  Cache-Control: no-cache, no-store
-  Pragma: no-cache
+  Cache-Control: no-store
 
   {
    "client_id": "s6BhdRkqt3",
@@ -1206,8 +1203,7 @@
   HTTP/1.1 401 Unauthorized
   WWW-Authenticate: Bearer error="invalid_token",
     error_description="The access token expired"
-  Cache-Control: no-cache, no-store
-  Pragma: no-cache
+  Cache-Control: no-store
 ]]></artwork>
 	  </figure>
 	</t>
@@ -1248,8 +1244,7 @@
 
   HTTP/1.1 200 OK
   Content-Type: application/json
-  Cache-Control: no-cache, no-store
-  Pragma: no-cache
+  Cache-Control: no-store
 
   [ "https://client.example.org/callback",
     "https://client.example.org/callback2",
@@ -2416,7 +2411,7 @@
 	-38
         <list style="symbols">
 	  <t>
-	    TBD
+	    Fixed #2025 - Removed "Pragma: no-cache" and changed "Cache-Control: no-cache, no-store" to "Cache-Control: no-store".
 	  </t>
 	</list>
       </t>

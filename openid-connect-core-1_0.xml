@@ -641,13 +641,15 @@
 	    used in the authentication.
 	    For instance, values might indicate that both password and OTP
 	    authentication methods were used.
-	    The definition of particular values to be used in the
-	    <spanx style="verb">amr</spanx> Claim
-	    is beyond the scope of this specification.
-	    Parties using this claim will need to agree upon the meanings of
-	    the values used, which may be context specific.
 	    The <spanx style="verb">amr</spanx> value is an array of
 	    case-sensitive strings.
+	    Values used in the
+	    <spanx style="verb">amr</spanx> Claim
+	    SHOULD be from those registered in the
+	    IANA Authentication Method Reference Values registry <xref target="IANA.AMR"/>
+	    established by <xref target="RFC8176"/>;
+	    parties using this claim will need to agree upon the meanings of
+	    any unregistered values used, which may be context specific.
 	  </t>
 
 	  <t hangText="azp">
@@ -1809,11 +1811,8 @@
 
 	      <c>Cache-Control</c>
 
-	      <c>no-cache, no-store</c>
+	      <c>no-store</c>
 
-	      <c>Pragma</c>
-
-	      <c>no-cache</c>
 	    </texttable>
 
 	    <figure>
@@ -1826,8 +1825,7 @@
 	      <artwork><![CDATA[
   HTTP/1.1 200 OK
   Content-Type: application/json
-  Cache-Control: no-cache, no-store
-  Pragma: no-cache
+  Cache-Control: no-store
 
   {
    "access_token": "SlAV32hkKG",
@@ -1869,8 +1867,7 @@
 	      <artwork><![CDATA[
   HTTP/1.1 400 Bad Request
   Content-Type: application/json
-  Cache-Control: no-cache, no-store
-  Pragma: no-cache
+  Cache-Control: no-store
 
   {
    "error": "invalid_request"
@@ -6183,8 +6180,7 @@
 	  <artwork><![CDATA[
   HTTP/1.1 200 OK
   Content-Type: application/json
-  Cache-Control: no-cache, no-store
-  Pragma: no-cache
+  Cache-Control: no-store
 
   {
    "access_token": "TlBN45jURg",
@@ -8324,6 +8320,23 @@
   <seriesInfo name="DOI" value="10.17487/RFC7234"/>
 </reference>
 
+      <!-- Reference from https://bib.ietf.org/public/rfc/bibxml/reference.RFC.8176.xml -->
+
+<reference anchor="RFC8176" target="https://www.rfc-editor.org/info/rfc8176">
+  <front>
+    <title>Authentication Method Reference Values</title>
+    <author fullname="M. Jones" initials="M." surname="Jones"/>
+    <author fullname="P. Hunt" initials="P." surname="Hunt"/>
+    <author fullname="A. Nadalin" initials="A." surname="Nadalin"/>
+    <date month="June" year="2017"/>
+    <abstract>
+      <t>The "amr" (Authentication Methods References) claim is defined and registered in the IANA "JSON Web Token Claims" registry, but no standard Authentication Method Reference values are currently defined. This specification establishes a registry for Authentication Method Reference values and defines an initial set of Authentication Method Reference values.</t>
+    </abstract>
+  </front>
+  <seriesInfo name="RFC" value="8176"/>
+  <seriesInfo name="DOI" value="10.17487/RFC8176"/>
+</reference>
+
       <!-- Reference from https://bib.ietf.org/public/rfc/bibxml/reference.RFC.8996.xml -->
 
 <reference anchor="RFC8996" target="https://www.rfc-editor.org/info/rfc8996">
@@ -8750,6 +8763,16 @@
       <reference anchor="IANA.URISchemes" target="https://www.iana.org/assignments/uri-schemes">
         <front>
           <title>Uniform Resource Identifier (URI) Schemes</title>
+          <author>
+            <organization>IANA</organization>
+          </author>
+	  <date/>
+        </front>
+      </reference>
+
+      <reference anchor="IANA.AMR" target="https://www.iana.org/assignments/authentication-method-reference-values">
+        <front>
+          <title>Authentication Method Reference Values</title>
           <author>
             <organization>IANA</organization>
           </author>
@@ -9579,7 +9602,7 @@
 	  <t>Justin Richer (justin@bspk.io), Bespoke Engineering (was at MITRE)</t>
 	  <t>Nat Sakimura (nat@nat.consulting), NAT.Consulting (was at NRI)</t>
 	  <t>Luke Shepard (luke@lukeshepard.com), Facebook</t>
-	  <t>Andreas &Aring;kre Solberg (andreas.solberg@uninett.no), UNINET</t>
+	  <t>Andreas &Aring;kre Solberg (Andreas.Solberg@sikt.no), Sikt (was at UNINET)</t>
 	  <t>Paul Tarjan (paul@paultarjan.com), Facebook</t>
 	</list>
       </t>
@@ -9633,6 +9656,12 @@
       <t>
 	-33
         <list style="symbols">
+	  <t>
+	    Fixed #2025 - Removed "Pragma: no-cache" and changed "Cache-Control: no-cache, no-store" to "Cache-Control: no-store".
+	  </t>
+	  <t>
+	    Fixed #2028: Referenced IANA Authentication Method Reference Values registry and RFC 8176 for <spanx style="verb">amr</spanx> values.
+	  </t>
 	  <t>
 	    Fixed #2029: Referenced RFC 9101 where we define Request Objects.
 	  </t>
