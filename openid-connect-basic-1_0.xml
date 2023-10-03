@@ -66,7 +66,7 @@
       </address>
     </author>
 
-    <date day="18" month="September" year="2023" />
+    <date day="30" month="September" year="2023" />
 
     <workgroup>OpenID Connect Working Group</workgroup>
 
@@ -83,7 +83,7 @@
 	that is designed to be easy to read and implement for basic
 	Web-based Relying Parties using the
 	OAuth Authorization Code Flow.
-	This document intentionally duplicates content from the Core
+	This specification intentionally duplicates content from the Core
 	specification to provide a self-contained implementer's guide for basic
 	Web-based Relying Parties using the
 	OAuth Authorization Code Flow.
@@ -105,7 +105,7 @@
 	that is designed to be easy to read and implement for basic
 	Web-based Relying Parties using the
 	OAuth 2.0 <xref target="RFC6749"/> Authorization Code Flow.
-	This document intentionally duplicates content from the Core
+	This specification intentionally duplicates content from the Core
 	specification to provide a self-contained implementer's guide for basic
 	Web-based Relying Parties using the
 	OAuth Authorization Code Flow.
@@ -155,7 +155,7 @@
 	are also referred to as Relying Parties (RPs).
       </t>
       <t>
-	This document assumes that the Relying Party has already obtained
+	This specification assumes that the Relying Party has already obtained
 	configuration information about the OpenID Provider, including its
 	Authorization Endpoint and Token Endpoint locations.
 	This information is normally obtained via Discovery,
@@ -163,7 +163,7 @@
 	or may be obtained via other mechanisms.
       </t>
       <t>
-	Likewise, this document assumes that the Relying Party has already obtained
+	Likewise, this specification assumes that the Relying Party has already obtained
 	sufficient credentials and provided information needed to use the OpenID Provider.
 	This is normally done via Dynamic Registration,
 	as described in
@@ -178,30 +178,30 @@
 	target="RFC2119"/>.</t>
 
 	<t>
-	  In the .txt version of this document,
+	  In the .txt version of this specification,
 	  values are quoted to indicate that they are to be taken literally.
 	  When using these values in protocol messages,
 	  the quotes MUST NOT be used as part of the value.
-	  In the HTML version of this document,
+	  In the HTML version of this specification,
 	  values to be taken literally are indicated by
 	  the use of <spanx style="verb">this fixed-width font</spanx>.
 	</t>
 	<t>
 	  All uses of <xref target="JWS">JSON Web Signature (JWS)</xref>
-	  data structures in this document utilize
+	  data structures in this specification utilize
 	  the JWS Compact Serialization;
 	  the JWS JSON Serialization is not used.
 	</t>
 	<t>
 	  When the RFC 2119 language applies to the behavior of OpenID Providers,
-	  it is in this document for explanatory value to help Client
+	  it is in this specification for explanatory value to help Client
 	  implementers understand the expected behavior of OpenID Providers.
 	</t>
       </section>
 
       <section anchor="Terminology" title="Terminology">
         <t>
-	  This document uses the terms "Access Token", "Authorization Code",
+	  This specification uses the terms "Access Token", "Authorization Code",
 	  "Authorization Endpoint", "Authorization Grant", "Authorization Server",
 	  "Client", "Client Authentication", "Client Identifier", "Client Secret",
 	  "Grant Type", "Protected Resource", "Redirection URI", "Refresh Token",
@@ -215,7 +215,7 @@
 	  and the term "User Agent" defined by <xref target="RFC7230">RFC 7230</xref>.
 	</t>
 	<t>
-	  This document also defines the following terms:
+	  This specification also defines the following terms:
 	  <list style="hanging">
             <t hangText="Authentication">
 	      <vspace/>
@@ -325,9 +325,9 @@
 	</t>
 	<t>
 	  IMPORTANT NOTE TO READERS: The terminology definitions in
-	  this section are a normative portion of this document,
+	  this section are a normative portion of this specification,
 	  imposing requirements upon implementations.  All the
-	  capitalized words in the text of this document, such as
+	  capitalized words in the text of this specification, such as
 	  "Issuer Identifier", reference these defined terms.
 	  Whenever the reader encounters them, their definitions
 	  found in this section must be followed.
@@ -406,7 +406,7 @@
       </t>
 
       <t>
-	This document only provides information that is sufficient for
+	This specification only provides information that is sufficient for
 	basic Clients using the Code Flow.
       </t>
 
@@ -511,7 +511,7 @@
 		  <spanx style="verb">phone</spanx>,
 		  and <spanx style="verb">offline_access</spanx>
 		  are also defined.
-		  See <xref target="Scopes"/> for more about the scope values defined by this document.
+		  See <xref target="Scopes"/> for more about the scope values defined by this specification.
 		</t>
 
 		<t hangText="redirect_uri">
@@ -548,7 +548,7 @@
             </t>
 
             <t>
-	      This document also defines the following request parameters:
+	      This specification also defines the following request parameters:
 	    </t>
 
             <t>
@@ -844,7 +844,7 @@
 	    the End-User is logged in, depending upon the request parameter values used.
 	    If interaction with the End-User occurs over an HTTP channel,
 	    it MUST use TLS, as per <xref target="TLSRequirements"/>.
-	    The exact authentication methods used are out of scope for this document.
+	    The exact authentication methods used are out of scope for this specification.
 	  </t>
         </section>
 
@@ -1034,8 +1034,7 @@
               <artwork><![CDATA[
   HTTP/1.1 200 OK
   Content-Type: application/json
-  Cache-Control: no-cache, no-store
-  Pragma: no-cache
+  Cache-Control: no-store
 
   {
    "access_token":"SlAV32hkKG",
@@ -1111,7 +1110,7 @@
 	      expiration date/time listed in the value. Implementers MAY
 	      provide for some small leeway, usually no more than a few
 	      minutes, to account for clock skew.
-	      Its value is a JSON <xref target="RFC7159"/> number representing the number of seconds from
+	      Its value is a JSON <xref target="RFC8259"/> number representing the number of seconds from
 	      1970-01-01T00:00:00Z as measured in UTC until the date/time.
 	      See <xref target="RFC3339">RFC 3339</xref>
 	      for details regarding date/times in general and UTC in
@@ -1205,13 +1204,15 @@
 	      used in the authentication.
 	      For instance, values might indicate that both password and OTP
 	      authentication methods were used.
-	      The definition of particular values to be used in the
-	      <spanx style="verb">amr</spanx> Claim
-	      is beyond the scope of this document.
-	      Parties using this claim will need to agree upon the meanings of
-	      the values used, which may be context specific.
 	      The <spanx style="verb">amr</spanx> value is an array of
 	      case-sensitive strings.
+	      Values used in the
+	      <spanx style="verb">amr</spanx> Claim
+	      SHOULD be from those registered in the
+	      IANA Authentication Method Reference Values registry <xref target="IANA.AMR"/>
+	      established by <xref target="RFC8176"/>;
+	      parties using this claim will need to agree upon the meanings of
+	      any unregistered values used, which may be context specific.
 	    </t>
 
 	  </list>
@@ -1252,7 +1253,7 @@
 	<section anchor="IDTokenValidation" title="ID Token Validation">
 
 	  <t>
-	    If any of the validation procedures defined in this document fail, any operations requiring
+	    If any of the validation procedures defined in this specification fail, any operations requiring
 	    the information that failed to correctly validate MUST be aborted and
 	    the information that failed to validate MUST NOT be used.
 	  </t>
@@ -1297,7 +1298,7 @@
 	      <t>If the <spanx style="verb">acr</spanx> Claim was requested, the
 	      Client SHOULD check that the asserted Claim Value is appropriate.
 	      The meaning and processing of
-	      <spanx style="verb">acr</spanx> Claim Values is out of scope for this document.</t>
+	      <spanx style="verb">acr</spanx> Claim Values is out of scope for this specification.</t>
 
 	      <t>
 		When a <spanx style="verb">max_age</spanx> request is made,
@@ -1407,7 +1408,7 @@
         used to access OAuth 2.0 protected endpoints. For OpenID Connect, scopes
 	can be used to request that specific sets of information
 	be made available as Claim Values.
-        This document describes only the scope values used by OpenID Connect.</t>
+        This specification describes only the scope values used by OpenID Connect.</t>
 	<t>
 	  OpenID Connect allows additional scope values to be defined and used.
 	  Scope values used that are not understood by an implementation SHOULD be ignored.
@@ -1637,7 +1638,7 @@
 
 	  <c>gender</c>
 	  <c>string</c>
-	  <c>End-User's gender.  Values defined by this document
+	  <c>End-User's gender.  Values defined by this specification
 	  are <spanx style="verb">female</spanx> and
 	  <spanx style="verb">male</spanx>.  Other values MAY be used
 	  when neither of the defined values are applicable.</c>
@@ -1707,7 +1708,7 @@
 	  <c>
 	    End-User's preferred postal address.
 	    The value of the <spanx style="verb">address</spanx> member is
-	    a JSON <xref target="RFC4627"/> structure containing some or all of
+	    a JSON <xref target="RFC8259"/> structure containing some or all of
 	    the members defined in <xref target="AddressClaim"/>.
 	  </c>
 
@@ -1767,15 +1768,18 @@
 	    more fine-grained address information.
 	  </t>
 	  <t>
-	    Implementations MAY return just the full address 
-	    as a single string in the formatted sub-field, 
-	    or they MAY return just the individual component 
-	    fields using the other sub-fields, 
-	    or they MAY return both. 
-	    If both variants are returned, 
-	    they SHOULD be describing the same address, 
-	    with the formatted address indicating how the 
+	    Implementations MAY return just the full address
+	    as a single string in the formatted sub-field,
+	    or they MAY return just the individual component
+	    fields using the other sub-fields,
+	    or they MAY return both.
+	    If both variants are returned,
+	    they SHOULD represent the same address,
+	    with the formatted address indicating how the
 	    component fields are combined.
+	  </t>
+	  <t>
+	    All the address values defined below are represented as JSON strings.
 	  </t>
 	  <t>
 	    <list style="hanging">
@@ -2014,31 +2018,19 @@
 	</list>
       </t>
       <t>
-	In several places, this document uses space-delimited
+	In several places, this specification uses space-delimited
 	lists of strings.  In all such cases, the ASCII space
 	character (0x20) MUST be the only character used for this purpose.
       </t>
 
     </section>
 
-    <section anchor='TLS' title='TLS Version'>
-      <t>
-	Whenever Transport Layer Security (TLS) is used by this document,
-	the appropriate version (or versions) of
-	TLS will vary over time, based on the widespread deployment and known security
-	vulnerabilities. At the time of this writing, TLS version 1.2 <xref target='RFC5246' />
-	is the most recent version, but has a very limited deployment base and might not be
-	readily available for implementation. TLS version 1.0 <xref target='RFC2246' /> is the
-	most widely deployed version and will provide the broadest interoperability.
-      </t>
-    </section>
-
     <section anchor="ImplementationConsiderations" title="Implementation Considerations">
       <t>
-	This document defines features used by Relying Parties
+	This specification defines features used by Relying Parties
 	using the OAuth Authorization Code Flow.
 	These Relying Parties MUST implement the features that are listed
-	in this document as being "REQUIRED" or are described with a "MUST".
+	in this specification as being "REQUIRED" or are described with a "MUST".
       </t>
 
       <section anchor="DiscoReg" title="Discovery and Registration">
@@ -2071,14 +2063,10 @@
 	  Which version(s) ought to be implemented will vary over
 	  time, and depend on the widespread deployment and known
 	  security vulnerabilities at the time of implementation.
-	  At the time of this writing,
-	  TLS version 1.2 <xref target='RFC5246' />
-	  is the most recent version, but has very limited actual
-	  deployment, and might not be readily available in
-	  implementation toolkits.
-	  TLS version 1.0 <xref target='RFC2246' />
-	  is the most widely deployed version, and will give the
-	  broadest interoperability.
+	  Implementations SHOULD follow the guidance in
+	  BCP 195 <xref target="RFC8996"/> <xref target="RFC9325"/>,
+	  which provides recommendations and requirements
+	  for improving the security of deployed services that use TLS.
 	</t>
 	<t>
 	  To protect against information disclosure and tampering,
@@ -2129,7 +2117,7 @@
 	  posing greater privacy risk than the Claims transfer when the user is present.
 	  Therefore, it is prudent to obtain explicit consent for
 	  offline access to resources.
-	  This document mandates the use of the <spanx style="verb">prompt</spanx>
+	  This specification mandates the use of the <spanx style="verb">prompt</spanx>
 	  parameter to obtain consent unless it is already known that the
 	  request complies with the conditions for processing the request in each jurisdiction.
 	</t>
@@ -2140,7 +2128,7 @@
 	  If the Access Token does not enable offline access and the server
 	  can differentiate whether the Client request has been made
 	  offline or online, the risk will be substantially reduced.
-	  Therefore, this document mandates ignoring
+	  Therefore, this specification mandates ignoring
 	  the offline access request when the Access Token is
 	  transmitted in the front channel.
 	  Note that differentiating between online and offline access
@@ -2174,7 +2162,7 @@
     </section>
 
     <section anchor="IANA" title="IANA Considerations">
-      <t>This document makes no requests of IANA.</t>
+      <t>This specification makes no requests of IANA.</t>
     </section>
 
   </middle>
@@ -2195,22 +2183,6 @@
   <seriesInfo name="BCP" value="14"/>
   <seriesInfo name="RFC" value="2119"/>
   <seriesInfo name="DOI" value="10.17487/RFC2119"/>
-</reference>
-
-      <!-- Reference from https://bib.ietf.org/public/rfc/bibxml/reference.RFC.2246.xml -->
-
-<reference anchor="RFC2246" target="https://www.rfc-editor.org/info/rfc2246">
-  <front>
-    <title>The TLS Protocol Version 1.0</title>
-    <author fullname="T. Dierks" initials="T" surname="Dierks"/>
-    <author fullname="C. Allen" initials="C" surname="Allen"/>
-    <date month="January" year="1999"/>
-    <abstract>
-      <t>This document specifies Version 1.0 of the Transport Layer Security (TLS) protocol.  The TLS protocol provides communications privacy over the Internet.  The protocol allows client/server applications to communicate in a way that is designed to prevent eavesdropping, tampering, or message forgery.</t>
-    </abstract>
-  </front>
-  <seriesInfo name="RFC" value="2246"/>
-  <seriesInfo name="DOI" value="10.17487/RFC2246"/>
 </reference>
 
       <!-- Reference from https://bib.ietf.org/public/rfc/bibxml/reference.RFC.3339.xml -->
@@ -2278,21 +2250,6 @@
   <seriesInfo name="DOI" value="10.17487/RFC3986"/>
 </reference>
 
-      <!-- Reference from https://bib.ietf.org/public/rfc/bibxml/reference.RFC.4627.xml -->
-
-<reference anchor="RFC4627" target="https://www.rfc-editor.org/info/rfc4627">
-  <front>
-    <title>The application/json Media Type for JavaScript Object Notation (JSON)</title>
-    <author fullname="D. Crockford" initials="D" surname="Crockford"/>
-    <date month="July" year="2006"/>
-    <abstract>
-      <t>JavaScript Object Notation (JSON) is a lightweight, text-based, language-independent data interchange format.  It was derived from the ECMAScript Programming Language Standard.  JSON defines a small set of formatting rules for the portable representation of structured data.  This memo provides information for the Internet community.</t>
-    </abstract>
-  </front>
-  <seriesInfo name="RFC" value="4627"/>
-  <seriesInfo name="DOI" value="10.17487/RFC4627"/>
-</reference>
-
       <!-- Reference from https://bib.ietf.org/public/rfc/bibxml/reference.RFC.5646.xml -->
 
 <reference anchor="RFC5646" target="https://www.rfc-editor.org/info/rfc5646">
@@ -2308,22 +2265,6 @@
   <seriesInfo name="BCP" value="47"/>
   <seriesInfo name="RFC" value="5646"/>
   <seriesInfo name="DOI" value="10.17487/RFC5646"/>
-</reference>
-
-      <!-- Reference from https://bib.ietf.org/public/rfc/bibxml/reference.RFC.5246.xml -->
-
-<reference anchor="RFC5246" target="https://www.rfc-editor.org/info/rfc5246">
-  <front>
-    <title>The Transport Layer Security (TLS) Protocol Version 1.2</title>
-    <author fullname="T. Dierks" initials="T" surname="Dierks"/>
-    <author fullname="E. Rescorla" initials="E" surname="Rescorla"/>
-    <date month="August" year="2008"/>
-    <abstract>
-      <t>This document specifies Version 1.2 of the Transport Layer Security (TLS) protocol.  The TLS protocol provides communications security over the Internet.  The protocol allows client/server applications to communicate in a way that is designed to prevent eavesdropping, tampering, or message forgery. [STANDARDS-TRACK]</t>
-    </abstract>
-  </front>
-  <seriesInfo name="RFC" value="5246"/>
-  <seriesInfo name="DOI" value="10.17487/RFC5246"/>
 </reference>
 
       <!-- Reference from https://bib.ietf.org/public/rfc/bibxml/reference.RFC.5322.xml -->
@@ -2403,20 +2344,21 @@
   <seriesInfo name="DOI" value="10.17487/RFC6750"/>
 </reference>
 
-      <!-- Reference from https://bib.ietf.org/public/rfc/bibxml/reference.RFC.7159.xml -->
+      <!-- Reference from https://bib.ietf.org/public/rfc/bibxml/reference.RFC.8259.xml -->
 
-<reference anchor="RFC7159" target="https://www.rfc-editor.org/info/rfc7159">
+<reference anchor="RFC8259" target="https://www.rfc-editor.org/info/rfc8259">
   <front>
     <title>The JavaScript Object Notation (JSON) Data Interchange Format</title>
-    <author fullname="T. Bray" initials="T" role="editor" surname="Bray"/>
-    <date month="March" year="2014"/>
+    <author fullname="T. Bray" initials="T." role="editor" surname="Bray"/>
+    <date month="December" year="2017"/>
     <abstract>
       <t>JavaScript Object Notation (JSON) is a lightweight, text-based, language-independent data interchange format. It was derived from the ECMAScript Programming Language Standard. JSON defines a small set of formatting rules for the portable representation of structured data.</t>
       <t>This document removes inconsistencies with other specifications of JSON, repairs specification errors, and offers experience-based interoperability guidance.</t>
     </abstract>
   </front>
-  <seriesInfo name="RFC" value="7159"/>
-  <seriesInfo name="DOI" value="10.17487/RFC7159"/>
+  <seriesInfo name="STD" value="90"/>
+  <seriesInfo name="RFC" value="8259"/>
+  <seriesInfo name="DOI" value="10.17487/RFC8259"/>
 </reference>
 
       <!-- Reference from https://bib.ietf.org/public/rfc/bibxml/reference.RFC.7230.xml -->
@@ -2449,6 +2391,73 @@
   </front>
   <seriesInfo name="RFC" value="7231"/>
   <seriesInfo name="DOI" value="10.17487/RFC7231"/>
+</reference>
+
+      <!-- Reference from https://bib.ietf.org/public/rfc/bibxml/reference.RFC.8176.xml -->
+
+<reference anchor="RFC8176" target="https://www.rfc-editor.org/info/rfc8176">
+  <front>
+    <title>Authentication Method Reference Values</title>
+    <author fullname="M. Jones" initials="M." surname="Jones"/>
+    <author fullname="P. Hunt" initials="P." surname="Hunt"/>
+    <author fullname="A. Nadalin" initials="A." surname="Nadalin"/>
+    <date month="June" year="2017"/>
+    <abstract>
+      <t>The "amr" (Authentication Methods References) claim is defined and registered in the IANA "JSON Web Token Claims" registry, but no standard Authentication Method Reference values are currently defined. This specification establishes a registry for Authentication Method Reference values and defines an initial set of Authentication Method Reference values.</t>
+    </abstract>
+  </front>
+  <seriesInfo name="RFC" value="8176"/>
+  <seriesInfo name="DOI" value="10.17487/RFC8176"/>
+</reference>
+
+      <!-- Reference from https://bib.ietf.org/public/rfc/bibxml/reference.RFC.8996.xml -->
+
+<reference anchor="RFC8996" target="https://www.rfc-editor.org/info/rfc8996">
+  <front>
+    <title>Deprecating TLS 1.0 and TLS 1.1</title>
+    <author fullname="K. Moriarty" initials="K." surname="Moriarty"/>
+    <author fullname="S. Farrell" initials="S." surname="Farrell"/>
+    <date month="March" year="2021"/>
+    <abstract>
+      <t>
+	This document formally deprecates Transport Layer Security (TLS) versions 1.0 (RFC 2246) and 1.1 (RFC 4346). Accordingly, those documents have been moved to Historic status. These versions lack support for current and recommended cryptographic algorithms and mechanisms, and various government and industry profiles of applications using TLS now mandate avoiding these old TLS versions. TLS version 1.2 became the recommended version for IETF protocols in 2008 (subsequently being obsoleted by TLS version 1.3 in 2018), providing sufficient time to transition away from older versions. Removing support for older versions from implementations reduces the attack surface, reduces opportunity for misconfiguration, and streamlines library and product maintenance.
+      </t>
+      <t>
+	This document also deprecates Datagram TLS (DTLS) version 1.0 (RFC 4347) but not DTLS version 1.2, and there is no DTLS version 1.1.
+      </t>
+      <t>
+	This document updates many RFCs that normatively refer to TLS version 1.0 or TLS version 1.1, as described herein. This document also updates the best practices for TLS usage in RFC 7525; hence, it is part of BCP 195.
+      </t>
+    </abstract>
+  </front>
+  <seriesInfo name="BCP" value="195"/>
+  <seriesInfo name="RFC" value="8996"/>
+  <seriesInfo name="DOI" value="10.17487/RFC8996"/>
+</reference>
+
+      <!-- Reference from https://bib.ietf.org/public/rfc/bibxml/reference.RFC.9325.xml -->
+
+<reference anchor="RFC9325" target="https://www.rfc-editor.org/info/rfc9325">
+  <front>
+    <title>
+      Recommendations for Secure Use of Transport Layer Security (TLS) and Datagram Transport Layer Security (DTLS)
+    </title>
+    <author fullname="Y. Sheffer" initials="Y." surname="Sheffer"/>
+    <author fullname="P. Saint-Andre" initials="P." surname="Saint-Andre"/>
+    <author fullname="T. Fossati" initials="T." surname="Fossati"/>
+    <date month="November" year="2022"/>
+    <abstract>
+      <t>
+	Transport Layer Security (TLS) and Datagram Transport Layer Security (DTLS) are used to protect data exchanged over a wide range of application protocols and can also form the basis for secure transport protocols. Over the years, the industry has witnessed several serious attacks on TLS and DTLS, including attacks on the most commonly used cipher suites and their modes of operation. This document provides the latest recommendations for ensuring the security of deployed services that use TLS and DTLS. These recommendations are applicable to the majority of use cases.
+      </t>
+      <t>
+	RFC 7525, an earlier version of the TLS recommendations, was published when the industry was transitioning to TLS 1.2. Years later, this transition is largely complete, and TLS 1.3 is widely available. This document updates the guidance given the new environment and obsoletes RFC 7525. In addition, this document updates RFCs 5288 and 6066 in view of recent attacks.
+      </t>
+    </abstract>
+  </front>
+  <seriesInfo name="BCP" value="195"/>
+  <seriesInfo name="RFC" value="9325"/>
+  <seriesInfo name="DOI" value="10.17487/RFC9325"/>
 </reference>
 
       <!-- Reference from https://bib.ietf.org/public/rfc/bibxml4/reference.W3C.REC-html401-19991224.xml" modified to anchor="W3C.REC-html401-19991224" -->
@@ -2497,7 +2506,7 @@
             <organization abbrev="ISO">International Organization for Standardization</organization>
           </author>
 
-          <date month="March" year="2013" />
+          <date month="April" year="2013" />
         </front>
 
 	<seriesInfo name="ISO/IEC" value="29115" />
@@ -2695,6 +2704,16 @@
         </front>
       </reference>
 
+      <reference anchor="IANA.AMR" target="https://www.iana.org/assignments/authentication-method-reference-values">
+        <front>
+          <title>Authentication Method Reference Values</title>
+          <author>
+            <organization>IANA</organization>
+          </author>
+	  <date/>
+        </front>
+      </reference>
+
       <reference anchor="RFC20" target="https://www.rfc-editor.org/info/rfc20">
 	<front>
 	  <title>ASCII format for Network Interchange</title>
@@ -2751,7 +2770,7 @@
             <organization abbrev="Disney">Disney</organization>
           </author>
 
-	  <date day="13" month="August" year="2022" />
+	  <date day="30" month="September" year="2023" />
         </front>
       </reference>
 
@@ -2845,7 +2864,16 @@
 	    extensions are used that are beyond the scope of this specification.
 	  </t>
 	  <t>
-	    TBD
+	    Fixed #2025 - Removed "Pragma: no-cache" and changed "Cache-Control: no-cache, no-store" to "Cache-Control: no-store".
+	  </t>
+	  <t>
+	    Fixed #2028: Referenced IANA Authentication Method Reference Values registry and RFC 8176 for <spanx style="verb">amr</spanx> values.
+	  </t>
+	  <t>
+	    Fixed #2030: Corrected ISO/IEC 29115 date to April 2013.
+	  </t>
+	  <t>
+	    Fixed #2047: Clarified that address field values are JSON strings.
 	  </t>
 	</list>
       </t>

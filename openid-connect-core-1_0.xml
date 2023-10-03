@@ -65,7 +65,7 @@
       </address>
     </author>
 
-    <date day="18" month="September" year="2023" />
+    <date day="30" month="September" year="2023" />
 
     <workgroup>OpenID Connect Working Group</workgroup>
 
@@ -163,11 +163,11 @@
 	target="RFC2119">RFC 2119</xref>.</t>
 
 	<t>
-	  In the .txt version of this document,
+	  In the .txt version of this specification,
 	  values are quoted to indicate that they are to be taken literally.
 	  When using these values in protocol messages,
 	  the quotes MUST NOT be used as part of the value.
-	  In the HTML version of this document,
+	  In the HTML version of this specification,
 	  values to be taken literally are indicated by
 	  the use of <spanx style="verb">this fixed-width font</spanx>.
 	</t>
@@ -555,7 +555,7 @@
 	    expiration date/time listed in the value. Implementers MAY
 	    provide for some small leeway, usually no more than a few
 	    minutes, to account for clock skew.
-	    Its value is a JSON <xref target="RFC7159"/> number representing the number of seconds from
+	    Its value is a JSON <xref target="RFC8259"/> number representing the number of seconds from
 	    1970-01-01T00:00:00Z as measured in UTC until the date/time.
 	    See <xref target="RFC3339">RFC 3339</xref>
 	    for details regarding date/times in general and UTC in
@@ -641,13 +641,15 @@
 	    used in the authentication.
 	    For instance, values might indicate that both password and OTP
 	    authentication methods were used.
-	    The definition of particular values to be used in the
-	    <spanx style="verb">amr</spanx> Claim
-	    is beyond the scope of this specification.
-	    Parties using this claim will need to agree upon the meanings of
-	    the values used, which may be context specific.
 	    The <spanx style="verb">amr</spanx> value is an array of
 	    case-sensitive strings.
+	    Values used in the
+	    <spanx style="verb">amr</spanx> Claim
+	    SHOULD be from those registered in the
+	    IANA Authentication Method Reference Values registry <xref target="IANA.AMR"/>
+	    established by <xref target="RFC8176"/>;
+	    parties using this claim will need to agree upon the meanings of
+	    any unregistered values used, which may be context specific.
 	  </t>
 
 	  <t hangText="azp">
@@ -1809,11 +1811,8 @@
 
 	      <c>Cache-Control</c>
 
-	      <c>no-cache, no-store</c>
+	      <c>no-store</c>
 
-	      <c>Pragma</c>
-
-	      <c>no-cache</c>
 	    </texttable>
 
 	    <figure>
@@ -1826,8 +1825,7 @@
 	      <artwork><![CDATA[
   HTTP/1.1 200 OK
   Content-Type: application/json
-  Cache-Control: no-cache, no-store
-  Pragma: no-cache
+  Cache-Control: no-store
 
   {
    "access_token": "SlAV32hkKG",
@@ -1869,8 +1867,7 @@
 	      <artwork><![CDATA[
   HTTP/1.1 400 Bad Request
   Content-Type: application/json
-  Cache-Control: no-cache, no-store
-  Pragma: no-cache
+  Cache-Control: no-store
 
   {
    "error": "invalid_request"
@@ -2149,8 +2146,10 @@
 		  When using this flow, the Redirection URI
 		  MUST NOT use the <spanx style="verb">http</spanx> scheme
 		  unless the Client is a native application, in which case it MAY
-		  use the <spanx style="verb">http:</spanx> scheme with
-		  <spanx style="verb">localhost</spanx> as the hostname.
+		  use the <spanx style="verb">http</spanx> scheme with
+		  <spanx style="verb">localhost</spanx> or the IP loopback literals
+		  <spanx style="verb">127.0.0.1</spanx> or <spanx style="verb">[::1]</spanx>
+		  as the hostname.
 		</t>
 
 		<t hangText="nonce">
@@ -3261,7 +3260,7 @@
 	  <c>
 	    End-User's preferred postal address.
 	    The value of the <spanx style="verb">address</spanx> member is
-	    a JSON <xref target="RFC4627"/> structure containing some or all of
+	    a JSON <xref target="RFC8259"/> structure containing some or all of
 	    the members defined in <xref target="AddressClaim"/>.
 	  </c>
 
@@ -3286,15 +3285,18 @@
 	    more fine-grained address information.
 	  </t>
 	  <t>
-	    Implementations MAY return just the full address 
-	    as a single string in the formatted sub-field, 
-	    or they MAY return just the individual component 
-	    fields using the other sub-fields, 
-	    or they MAY return both. 
-	    If both variants are returned, 
-	    they SHOULD be describing the same address, 
-	    with the formatted address indicating how the 
+	    Implementations MAY return just the full address
+	    as a single string in the formatted sub-field,
+	    or they MAY return just the individual component
+	    fields using the other sub-fields,
+	    or they MAY return both.
+	    If both variants are returned,
+	    they SHOULD represent the same address,
+	    with the formatted address indicating how the
 	    component fields are combined.
+	  </t>
+	  <t>
+	    All the address values defined below are represented as JSON strings.
 	  </t>
 	  <t>
 	    <list style="hanging">
@@ -3468,7 +3470,7 @@
 	<t>The UserInfo Endpoint SHOULD support the use of
 	<xref target="CORS">Cross-Origin Resource Sharing (CORS)</xref>
 	and/or other methods as appropriate
-	to enable Java Script Clients to access it.</t>
+	to enable JavaScript Clients and other Browser-Based Clients to access it.</t>
 
 	<section anchor="UserInfoRequest" title="UserInfo Request">
 
@@ -4502,6 +4504,10 @@
 	The ability to pass requests by reference is particularly useful for large requests.
 	If one of these parameters is used,
 	the other MUST NOT be used in the same request.
+      </t>
+      <t>
+	Note that the Request Objects defined here are compatible with those specified by
+	<xref target="RFC9101">The OAuth 2.0 Authorization Framework: JWT-Secured Authorization Request (JAR)</xref>.
       </t>
 
       <section title="Passing a Request Object by Value" anchor="RequestObject">
@@ -6179,8 +6185,7 @@
 	  <artwork><![CDATA[
   HTTP/1.1 200 OK
   Content-Type: application/json
-  Cache-Control: no-cache, no-store
-  Pragma: no-cache
+  Cache-Control: no-store
 
   {
    "access_token": "TlBN45jURg",
@@ -6548,7 +6553,7 @@
 	    In that case, the <spanx style="verb">nonce</spanx> in the returned
 	    ID Token is compared to the hash of the session cookie
 	    to detect ID Token replay by third parties.
-	    A related method applicable to JavaScript Clients is to store the cryptographically random value
+	    A related method applicable to JavaScript Clients and other Browser-Based Clients is to store the cryptographically random value
 	    in HTML5 local storage and use a cryptographic hash of this value.
 	  </t>
 	</section>
@@ -7094,6 +7099,13 @@
 	  from the Self-Issued OpenID Provider.
 	  Use of a claimed URI is an alternative to using the <spanx style="verb">openid:</spanx> custom URI scheme.
 	</t>
+	<t>
+	  While it is possible to assign handlers to custom URI schemes
+	  and it is possible that the operating system could help the End-User select the correct handler,
+	  it is not possible to guarantee that the handler for a given custom URI scheme has not been replaced
+	  by a subsequently installed native application.
+	  At the time of this writing, there appears to be no fool-proof mitigation for this vulnerability.
+	</t>
       </section>
 
     </section>
@@ -7203,7 +7215,7 @@
 	      Change Controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net
 	    </t>
 	    <t>
-	      Specification Document(s): <xref target="StandardClaims"/> of this document
+	      Specification Document(s): <xref target="StandardClaims"/> of this specification
 	    </t>
 	  </list>
 	  </t>
@@ -7219,7 +7231,7 @@
 		Change Controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net
 	      </t>
 	      <t>
-		Specification Document(s): <xref target="StandardClaims"/> of this document
+		Specification Document(s): <xref target="StandardClaims"/> of this specification
 	      </t>
 	    </list>
 	  </t>
@@ -7235,7 +7247,7 @@
 		Change Controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net
 	      </t>
 	      <t>
-		Specification Document(s): <xref target="StandardClaims"/> of this document
+		Specification Document(s): <xref target="StandardClaims"/> of this specification
 	      </t>
 	    </list>
 	  </t>
@@ -7251,7 +7263,7 @@
 		Change Controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net
 	      </t>
 	      <t>
-		Specification Document(s): <xref target="StandardClaims"/> of this document
+		Specification Document(s): <xref target="StandardClaims"/> of this specification
 	      </t>
 	    </list>
 	  </t>
@@ -7267,7 +7279,7 @@
 		Change Controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net
 	      </t>
 	      <t>
-		Specification Document(s): <xref target="StandardClaims"/> of this document
+		Specification Document(s): <xref target="StandardClaims"/> of this specification
 	      </t>
 	    </list>
 	  </t>
@@ -7283,7 +7295,7 @@
 		Change Controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net
 	      </t>
 	      <t>
-		Specification Document(s): <xref target="StandardClaims"/> of this document
+		Specification Document(s): <xref target="StandardClaims"/> of this specification
 	      </t>
 	    </list>
 	  </t>
@@ -7299,7 +7311,7 @@
 		Change Controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net
 	      </t>
 	      <t>
-		Specification Document(s): <xref target="StandardClaims"/> of this document
+		Specification Document(s): <xref target="StandardClaims"/> of this specification
 	      </t>
 	    </list>
 	  </t>
@@ -7315,7 +7327,7 @@
 		Change Controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net
 	      </t>
 	      <t>
-		Specification Document(s): <xref target="StandardClaims"/> of this document
+		Specification Document(s): <xref target="StandardClaims"/> of this specification
 	      </t>
 	    </list>
 	  </t>
@@ -7331,7 +7343,7 @@
 		Change Controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net
 	      </t>
 	      <t>
-		Specification Document(s): <xref target="StandardClaims"/> of this document
+		Specification Document(s): <xref target="StandardClaims"/> of this specification
 	      </t>
 	    </list>
 	  </t>
@@ -7347,7 +7359,7 @@
 		Change Controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net
 	      </t>
 	      <t>
-		Specification Document(s): <xref target="StandardClaims"/> of this document
+		Specification Document(s): <xref target="StandardClaims"/> of this specification
 	      </t>
 	    </list>
 	  </t>
@@ -7363,7 +7375,7 @@
 		Change Controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net
 	      </t>
 	      <t>
-		Specification Document(s): <xref target="StandardClaims"/> of this document
+		Specification Document(s): <xref target="StandardClaims"/> of this specification
 	      </t>
 	    </list>
 	  </t>
@@ -7379,7 +7391,7 @@
 		Change Controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net
 	      </t>
 	      <t>
-		Specification Document(s): <xref target="StandardClaims"/> of this document
+		Specification Document(s): <xref target="StandardClaims"/> of this specification
 	      </t>
 	    </list>
 	  </t>
@@ -7395,7 +7407,7 @@
 		Change Controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net
 	      </t>
 	      <t>
-		Specification Document(s): <xref target="StandardClaims"/> of this document
+		Specification Document(s): <xref target="StandardClaims"/> of this specification
 	      </t>
 	    </list>
 	  </t>
@@ -7411,7 +7423,7 @@
 		Change Controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net
 	      </t>
 	      <t>
-		Specification Document(s): <xref target="StandardClaims"/> of this document
+		Specification Document(s): <xref target="StandardClaims"/> of this specification
 	      </t>
 	    </list>
 	  </t>
@@ -7427,7 +7439,7 @@
 		Change Controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net
 	      </t>
 	      <t>
-		Specification Document(s): <xref target="StandardClaims"/> of this document
+		Specification Document(s): <xref target="StandardClaims"/> of this specification
 	      </t>
 	    </list>
 	  </t>
@@ -7443,7 +7455,7 @@
 		Change Controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net
 	      </t>
 	      <t>
-		Specification Document(s): <xref target="StandardClaims"/> of this document
+		Specification Document(s): <xref target="StandardClaims"/> of this specification
 	      </t>
 	    </list>
 	  </t>
@@ -7459,7 +7471,7 @@
 		Change Controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net
 	      </t>
 	      <t>
-		Specification Document(s): <xref target="StandardClaims"/> of this document
+		Specification Document(s): <xref target="StandardClaims"/> of this specification
 	      </t>
 	    </list>
 	  </t>
@@ -7475,7 +7487,7 @@
 		Change Controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net
 	      </t>
 	      <t>
-		Specification Document(s): <xref target="StandardClaims"/> of this document
+		Specification Document(s): <xref target="StandardClaims"/> of this specification
 	      </t>
 	    </list>
 	  </t>
@@ -7491,7 +7503,7 @@
 		Change Controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net
 	      </t>
 	      <t>
-		Specification Document(s): <xref target="StandardClaims"/> of this document
+		Specification Document(s): <xref target="StandardClaims"/> of this specification
 	      </t>
 	    </list>
 	  </t>
@@ -7507,7 +7519,7 @@
 		Change Controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net
 	      </t>
 	      <t>
-		Specification Document(s): <xref target="IDToken"/> of this document
+		Specification Document(s): <xref target="IDToken"/> of this specification
 	      </t>
 	    </list>
 	  </t>
@@ -7523,7 +7535,7 @@
 		Change Controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net
 	      </t>
 	      <t>
-		Specification Document(s): <xref target="IDToken"/> of this document
+		Specification Document(s): <xref target="IDToken"/> of this specification
 	      </t>
 	    </list>
 	  </t>
@@ -7539,7 +7551,7 @@
 		Change Controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net
 	      </t>
 	      <t>
-		Specification Document(s): <xref target="IDToken"/> of this document
+		Specification Document(s): <xref target="IDToken"/> of this specification
 	      </t>
 	    </list>
 	  </t>
@@ -7555,7 +7567,7 @@
 		Change Controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net
 	      </t>
 	      <t>
-		Specification Document(s): <xref target="IDToken"/> of this document
+		Specification Document(s): <xref target="IDToken"/> of this specification
 	      </t>
 	    </list>
 	  </t>
@@ -7571,7 +7583,7 @@
 		Change Controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net
 	      </t>
 	      <t>
-		Specification Document(s): <xref target="HybridIDToken"/> of this document
+		Specification Document(s): <xref target="HybridIDToken"/> of this specification
 	      </t>
 	    </list>
 	  </t>
@@ -7587,7 +7599,7 @@
 		Change Controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net
 	      </t>
 	      <t>
-		Specification Document(s): <xref target="IDToken"/> of this document
+		Specification Document(s): <xref target="IDToken"/> of this specification
 	      </t>
 	    </list>
 	  </t>
@@ -7603,7 +7615,7 @@
 		Change Controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net
 	      </t>
 	      <t>
-		Specification Document(s): <xref target="IDToken"/> of this document
+		Specification Document(s): <xref target="IDToken"/> of this specification
 	      </t>
 	    </list>
 	  </t>
@@ -7619,7 +7631,7 @@
 		Change Controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net
 	      </t>
 	      <t>
-		Specification Document(s): <xref target="SelfIssuedResponse"/> of this document
+		Specification Document(s): <xref target="SelfIssuedResponse"/> of this specification
 	      </t>
 	    </list>
 	  </t>
@@ -7635,7 +7647,7 @@
 		Change Controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net
 	      </t>
 	      <t>
-		Specification Document(s): <xref target="AggregatedDistributedClaims"/> of this document
+		Specification Document(s): <xref target="AggregatedDistributedClaims"/> of this specification
 	      </t>
 	    </list>
 	  </t>
@@ -7651,7 +7663,7 @@
 		Change Controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net
 	      </t>
 	      <t>
-		Specification Document(s): <xref target="AggregatedDistributedClaims"/> of this document
+		Specification Document(s): <xref target="AggregatedDistributedClaims"/> of this specification
 	      </t>
 	    </list>
 	  </t>
@@ -7677,7 +7689,7 @@
 
 	    <t>Change controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net</t>
 
-	    <t>Specification document(s): <xref target="AuthorizationEndpoint"/> of this document</t>
+	    <t>Specification document(s): <xref target="AuthorizationEndpoint"/> of this specification</t>
 
 	    <t>Related information: None</t>
 	  </list>
@@ -7691,7 +7703,7 @@
 
 	      <t>Change controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net</t>
 
-	      <t>Specification document(s): <xref target="AuthorizationEndpoint"/> of this document</t>
+	      <t>Specification document(s): <xref target="AuthorizationEndpoint"/> of this specification</t>
 
 	      <t>Related information: None</t>
 	    </list>
@@ -7705,7 +7717,7 @@
 
 	      <t>Change controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net</t>
 
-	      <t>Specification document(s): <xref target="AuthorizationEndpoint"/> of this document</t>
+	      <t>Specification document(s): <xref target="AuthorizationEndpoint"/> of this specification</t>
 
 	      <t>Related information: None</t>
 	    </list>
@@ -7719,7 +7731,7 @@
 
 	      <t>Change controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net</t>
 
-	      <t>Specification document(s): <xref target="AuthorizationEndpoint"/> of this document</t>
+	      <t>Specification document(s): <xref target="AuthorizationEndpoint"/> of this specification</t>
 
 	      <t>Related information: None</t>
 	    </list>
@@ -7733,7 +7745,7 @@
 
 	      <t>Change controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net</t>
 
-	      <t>Specification document(s): <xref target="AuthorizationEndpoint"/> of this document</t>
+	      <t>Specification document(s): <xref target="AuthorizationEndpoint"/> of this specification</t>
 
 	      <t>Related information: None</t>
 	    </list>
@@ -7747,7 +7759,7 @@
 
 	      <t>Change controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net</t>
 
-	      <t>Specification document(s): <xref target="ClaimsLanguagesAndScripts"/> of this document</t>
+	      <t>Specification document(s): <xref target="ClaimsLanguagesAndScripts"/> of this specification</t>
 
 	      <t>Related information: None</t>
 	    </list>
@@ -7761,7 +7773,7 @@
 
 	      <t>Change controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net</t>
 
-	      <t>Specification document(s): <xref target="AuthorizationEndpoint"/> of this document</t>
+	      <t>Specification document(s): <xref target="AuthorizationEndpoint"/> of this specification</t>
 
 	      <t>Related information: None</t>
 	    </list>
@@ -7775,7 +7787,7 @@
 
 	      <t>Change controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net</t>
 
-	      <t>Specification document(s): <xref target="AuthorizationEndpoint"/> of this document</t>
+	      <t>Specification document(s): <xref target="AuthorizationEndpoint"/> of this specification</t>
 
 	      <t>Related information: None</t>
 	    </list>
@@ -7789,7 +7801,7 @@
 
 	      <t>Change controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net</t>
 
-	      <t>Specification document(s): <xref target="AuthorizationEndpoint"/> of this document</t>
+	      <t>Specification document(s): <xref target="AuthorizationEndpoint"/> of this specification</t>
 
 	      <t>Related information: None</t>
 	    </list>
@@ -7803,7 +7815,7 @@
 
 	      <t>Change controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net</t>
 
-	      <t>Specification document(s): <xref target="ClaimsParameter"/> of this document</t>
+	      <t>Specification document(s): <xref target="ClaimsParameter"/> of this specification</t>
 
 	      <t>Related information: None</t>
 	    </list>
@@ -7817,7 +7829,7 @@
 
 	      <t>Change controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net</t>
 
-	      <t>Specification document(s): <xref target="RegistrationParameter"/> of this document</t>
+	      <t>Specification document(s): <xref target="RegistrationParameter"/> of this specification</t>
 
 	      <t>Related information: None</t>
 	    </list>
@@ -7831,7 +7843,7 @@
 
 	      <t>Change controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net</t>
 
-	      <t>Specification document(s): <xref target="JWTRequests"/> of this document</t>
+	      <t>Specification document(s): <xref target="JWTRequests"/> of this specification</t>
 
 	      <t>Related information: None</t>
 	    </list>
@@ -7845,7 +7857,7 @@
 
 	      <t>Change controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net</t>
 
-	      <t>Specification document(s): <xref target="JWTRequests"/> of this document</t>
+	      <t>Specification document(s): <xref target="JWTRequests"/> of this specification</t>
 
 	      <t>Related information: None</t>
 	    </list>
@@ -7860,7 +7872,7 @@
 
 	      <t>Change controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net</t>
 
-	      <t>Specification document(s): <xref target="TokenResponse"/> of this document</t>
+	      <t>Specification document(s): <xref target="TokenResponse"/> of this specification</t>
 
 	      <t>Related information: None</t>
 	    </list>
@@ -7890,7 +7902,7 @@
 
 	      <t>Change controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net</t>
 
-	      <t>Specification document(s): <xref target="AuthError"/> of this document</t>
+	      <t>Specification document(s): <xref target="AuthError"/> of this specification</t>
 	    </list>
 	  </t>
 
@@ -7904,7 +7916,7 @@
 
 	      <t>Change controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net</t>
 
-	      <t>Specification document(s): <xref target="AuthError"/> of this document</t>
+	      <t>Specification document(s): <xref target="AuthError"/> of this specification</t>
 	    </list>
 	  </t>
 
@@ -7918,7 +7930,7 @@
 
 	      <t>Change controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net</t>
 
-	      <t>Specification document(s): <xref target="AuthError"/> of this document</t>
+	      <t>Specification document(s): <xref target="AuthError"/> of this specification</t>
 	    </list>
 	  </t>
 
@@ -7932,7 +7944,7 @@
 
 	      <t>Change controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net</t>
 
-	      <t>Specification document(s): <xref target="AuthError"/> of this document</t>
+	      <t>Specification document(s): <xref target="AuthError"/> of this specification</t>
 	    </list>
 	  </t>
 
@@ -7946,7 +7958,7 @@
 
 	      <t>Change controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net</t>
 
-	      <t>Specification document(s): <xref target="AuthError"/> of this document</t>
+	      <t>Specification document(s): <xref target="AuthError"/> of this specification</t>
 	    </list>
 	  </t>
 
@@ -7960,7 +7972,7 @@
 
 	      <t>Change controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net</t>
 
-	      <t>Specification document(s): <xref target="AuthError"/> of this document</t>
+	      <t>Specification document(s): <xref target="AuthError"/> of this specification</t>
 	    </list>
 	  </t>
 
@@ -7974,7 +7986,7 @@
 
 	      <t>Change controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net</t>
 
-	      <t>Specification document(s): <xref target="AuthError"/> of this document</t>
+	      <t>Specification document(s): <xref target="AuthError"/> of this specification</t>
 	    </list>
 	  </t>
 
@@ -7988,7 +8000,7 @@
 
 	      <t>Change controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net</t>
 
-	      <t>Specification document(s): <xref target="AuthError"/> of this document</t>
+	      <t>Specification document(s): <xref target="AuthError"/> of this specification</t>
 	    </list>
 	  </t>
 
@@ -8002,7 +8014,7 @@
 
 	      <t>Change controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net</t>
 
-	      <t>Specification document(s): <xref target="AuthError"/> of this document</t>
+	      <t>Specification document(s): <xref target="AuthError"/> of this specification</t>
 	    </list>
 	  </t>
 
@@ -8034,7 +8046,7 @@
 
 	      <t>Change controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net</t>
 
-	      <t>References: <xref target="SelfIssuedRequest"/> of this document</t>
+	      <t>References: <xref target="SelfIssuedRequest"/> of this specification</t>
 
 	    </list>
 	  </t>
@@ -8062,21 +8074,6 @@
   <seriesInfo name="BCP" value="14"/>
   <seriesInfo name="RFC" value="2119"/>
   <seriesInfo name="DOI" value="10.17487/RFC2119"/>
-</reference>
-
-      <!-- Reference from https://bib.ietf.org/public/rfc/bibxml/reference.RFC.4627.xml -->
-
-<reference anchor="RFC4627" target="https://www.rfc-editor.org/info/rfc4627">
-  <front>
-    <title>The application/json Media Type for JavaScript Object Notation (JSON)</title>
-    <author fullname="D. Crockford" initials="D" surname="Crockford"/>
-    <date month="July" year="2006"/>
-    <abstract>
-      <t>JavaScript Object Notation (JSON) is a lightweight, text-based, language-independent data interchange format.  It was derived from the ECMAScript Programming Language Standard.  JSON defines a small set of formatting rules for the portable representation of structured data.  This memo provides information for the Internet community.</t>
-    </abstract>
-  </front>
-  <seriesInfo name="RFC" value="4627"/>
-  <seriesInfo name="DOI" value="10.17487/RFC4627"/>
 </reference>
 
       <!-- Reference from https://bib.ietf.org/public/rfc/bibxml/reference.RFC.3339.xml -->
@@ -8255,20 +8252,21 @@
   <seriesInfo name="DOI" value="10.17487/RFC6819"/>
 </reference>
 
-      <!-- Reference from https://bib.ietf.org/public/rfc/bibxml/reference.RFC.7159.xml -->
+      <!-- Reference from https://bib.ietf.org/public/rfc/bibxml/reference.RFC.8259.xml -->
 
-<reference anchor="RFC7159" target="https://www.rfc-editor.org/info/rfc7159">
+<reference anchor="RFC8259" target="https://www.rfc-editor.org/info/rfc8259">
   <front>
     <title>The JavaScript Object Notation (JSON) Data Interchange Format</title>
-    <author fullname="T. Bray" initials="T" role="editor" surname="Bray"/>
-    <date month="March" year="2014"/>
+    <author fullname="T. Bray" initials="T." role="editor" surname="Bray"/>
+    <date month="December" year="2017"/>
     <abstract>
       <t>JavaScript Object Notation (JSON) is a lightweight, text-based, language-independent data interchange format. It was derived from the ECMAScript Programming Language Standard. JSON defines a small set of formatting rules for the portable representation of structured data.</t>
       <t>This document removes inconsistencies with other specifications of JSON, repairs specification errors, and offers experience-based interoperability guidance.</t>
     </abstract>
   </front>
-  <seriesInfo name="RFC" value="7159"/>
-  <seriesInfo name="DOI" value="10.17487/RFC7159"/>
+  <seriesInfo name="STD" value="90"/>
+  <seriesInfo name="RFC" value="8259"/>
+  <seriesInfo name="DOI" value="10.17487/RFC8259"/>
 </reference>
 
       <!-- Reference from https://bib.ietf.org/public/rfc/bibxml/reference.RFC.7230.xml -->
@@ -8318,6 +8316,23 @@
   </front>
   <seriesInfo name="RFC" value="7234"/>
   <seriesInfo name="DOI" value="10.17487/RFC7234"/>
+</reference>
+
+      <!-- Reference from https://bib.ietf.org/public/rfc/bibxml/reference.RFC.8176.xml -->
+
+<reference anchor="RFC8176" target="https://www.rfc-editor.org/info/rfc8176">
+  <front>
+    <title>Authentication Method Reference Values</title>
+    <author fullname="M. Jones" initials="M." surname="Jones"/>
+    <author fullname="P. Hunt" initials="P." surname="Hunt"/>
+    <author fullname="A. Nadalin" initials="A." surname="Nadalin"/>
+    <date month="June" year="2017"/>
+    <abstract>
+      <t>The "amr" (Authentication Methods References) claim is defined and registered in the IANA "JSON Web Token Claims" registry, but no standard Authentication Method Reference values are currently defined. This specification establishes a registry for Authentication Method Reference values and defines an initial set of Authentication Method Reference values.</t>
+    </abstract>
+  </front>
+  <seriesInfo name="RFC" value="8176"/>
+  <seriesInfo name="DOI" value="10.17487/RFC8176"/>
 </reference>
 
       <!-- Reference from https://bib.ietf.org/public/rfc/bibxml/reference.RFC.8996.xml -->
@@ -8504,10 +8519,6 @@
 	    <organization>Microsoft</organization>
 	  </author>
 
-	  <author fullname="Eric Rescorla" initials="E." surname="Rescorla">
-	    <organization>RTFM, Inc.</organization>
-	  </author>
-
 	  <author fullname="Joe Hildebrand" initials="J." surname="Hildebrand">
 	    <organization>Cisco Systems, Inc.</organization>
 	  </author>
@@ -8609,7 +8620,7 @@
 	    <organization abbrev="ISO">International Organization for Standardization</organization>
 	  </author>
 
-	  <date month="March" year="2013" />
+	  <date month="April" year="2013" />
 	</front>
 
 	<seriesInfo name="ISO/IEC" value="29115" />
@@ -8753,6 +8764,16 @@
         </front>
       </reference>
 
+      <reference anchor="IANA.AMR" target="https://www.iana.org/assignments/authentication-method-reference-values">
+        <front>
+          <title>Authentication Method Reference Values</title>
+          <author>
+            <organization>IANA</organization>
+          </author>
+	  <date/>
+        </front>
+      </reference>
+
       <reference anchor="RFC20" target="https://www.rfc-editor.org/info/rfc20">
 	<front>
 	  <title>ASCII format for Network Interchange</title>
@@ -8875,6 +8896,24 @@
   <seriesInfo name="DOI" value="10.17487/RFC7595"/>
 </reference>
 
+      <!-- Reference from https://bib.ietf.org/public/rfc/bibxml/reference.RFC.9101.xml -->
+
+<reference anchor="RFC9101" target="https://www.rfc-editor.org/info/rfc9101">
+  <front>
+    <title>The OAuth 2.0 Authorization Framework: JWT-Secured Authorization Request (JAR)</title>
+    <author fullname="N. Sakimura" initials="N." surname="Sakimura"/>
+    <author fullname="J. Bradley" initials="J." surname="Bradley"/>
+    <author fullname="M. Jones" initials="M." surname="Jones"/>
+    <date month="August" year="2021"/>
+    <abstract>
+      <t>The authorization request in OAuth 2.0 described in RFC 6749 utilizes query parameter serialization, which means that authorization request parameters are encoded in the URI of the request and sent through user agents such as web browsers. While it is easy to implement, it means that a) the communication through the user agents is not integrity protected and thus, the parameters can be tainted, b) the source of the communication is not authenticated, and c) the communication through the user agents can be monitored. Because of these weaknesses, several attacks to the protocol have now been put forward.</t>
+      <t>This document introduces the ability to send request parameters in a JSON Web Token (JWT) instead, which allows the request to be signed with JSON Web Signature (JWS) and encrypted with JSON Web Encryption (JWE) so that the integrity, source authentication, and confidentiality properties of the authorization request are attained. The request can be sent by value or by reference.</t>
+    </abstract>
+  </front>
+  <seriesInfo name="RFC" value="9101"/>
+  <seriesInfo name="DOI" value="10.17487/RFC9101"/>
+</reference>
+
       <reference anchor="OpenID.Basic" target="https://openid.net/specs/openid-connect-basic-1_0.html">
 	<front>
 	  <title>OpenID Connect Basic Client Implementer's Guide 1.0</title>
@@ -8899,7 +8938,7 @@
 	    <organization abbrev="Disney">Disney</organization>
 	  </author>
 
-	  <date day="13" month="August" year="2022" />
+	  <date day="30" month="September" year="2023" />
 	</front>
       </reference>
 
@@ -8927,7 +8966,7 @@
 	    <organization abbrev="Disney">Disney</organization>
 	  </author>
 
-	  <date day="13" month="August" year="2022" />
+	  <date day="30" month="September" year="2023" />
 	</front>
       </reference>
 
@@ -9612,7 +9651,28 @@
 	-33
         <list style="symbols">
 	  <t>
-	    TBD
+	    Fixed #2025 - Removed "Pragma: no-cache" and changed "Cache-Control: no-cache, no-store" to "Cache-Control: no-store".
+	  </t>
+	  <t>
+	    Fixed #2028: Referenced IANA Authentication Method Reference Values registry and RFC 8176 for <spanx style="verb">amr</spanx> values.
+	  </t>
+	  <t>
+	    Fixed #2029: Referenced RFC 9101 where we define Request Objects.
+	  </t>
+	  <t>
+	    Fixed #2032: Use phrase JavaScript Clients and other Browser-Based Clients.
+	  </t>
+	  <t>
+	    Fixed #2030: Corrected ISO/IEC 29115 date to April 2013.
+	  </t>
+	  <t>
+	    Fixed #2047: Clarified that address field values are JSON strings.
+	  </t>
+	  <t>
+	    Fixed #2026: Clarified description of loopback hostnames for native applications.
+	  </t>
+	  <t>
+	    Fixed #2066: Included additional Security Considerations for Custom URI Schemes on iOS.
 	  </t>
 	</list>
       </t>
