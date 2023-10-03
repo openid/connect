@@ -41,7 +41,7 @@
       </address>
     </author>
 
-    <date day="22" month="September" year="2023" />
+    <date day="30" month="September" year="2023" />
 
     <workgroup>OpenID Connect Working Group</workgroup>
 
@@ -766,7 +766,7 @@
                 Change Controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net
               </t>
               <t>
-                Specification Document(s): <xref target="Backchannel"/> of this document
+                Specification Document(s): <xref target="BCSupport"/> of this specification
               </t>
 	    </list>
 	  </t>
@@ -785,7 +785,7 @@
                 Change Controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net
               </t>
               <t>
-                Specification Document(s): <xref target="Backchannel"/> of this document
+                Specification Document(s): <xref target="BCSupport"/> of this specification
               </t>
 	    </list>
 	  </t>

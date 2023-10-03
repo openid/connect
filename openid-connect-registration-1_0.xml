@@ -50,7 +50,7 @@
       </address>
     </author>
 
-    <date day="18" month="September" year="2023" />
+    <date day="30" month="September" year="2023" />
 
     <workgroup>OpenID Connect Working Group</workgroup>
 
@@ -88,7 +88,7 @@
 	to provide the OP information about itself and
 	to obtain information needed to use it,
 	including an OAuth 2.0 Client ID.
-	This document describes how an RP
+	This specification describes how an RP
 	can register with an OP, and how registration information
 	for the RP can be retrieved.
       </t>
@@ -108,11 +108,11 @@
 	target="RFC2119">RFC 2119</xref>.</t>
 
 	<t>
-	  In the .txt version of this document,
+	  In the .txt version of this specification,
 	  values are quoted to indicate that they are to be taken literally.
 	  When using these values in protocol messages,
 	  the quotes MUST NOT be used as part of the value.
-	  In the HTML version of this document,
+	  In the HTML version of this specification,
 	  values to be taken literally are indicated by
 	  the use of <spanx style="verb">this fixed-width font</spanx>.
 	</t>
@@ -228,7 +228,7 @@
 	  <t hangText="response_types">
 	    <vspace/>
 	    OPTIONAL.
-	    JSON <xref target="RFC7159"/> array containing a list of the OAuth 2.0
+	    JSON <xref target="RFC8259"/> array containing a list of the OAuth 2.0
 	    <spanx style="verb">response_type</spanx> values that
 	    the Client is declaring that it will restrict itself to using.
 	    If omitted, the default is that the Client will use only the
@@ -308,13 +308,15 @@
 	    MUST only register URLs using the <spanx style="verb">https</spanx> scheme as
 	    <spanx style="verb">redirect_uris</spanx>;
 	    they MUST NOT use <spanx style="verb">localhost</spanx> as the hostname.
-	    Native Clients MUST only register <spanx style="verb">redirect_uris</spanx> using custom 
-	    URI schemes or URLs using the <spanx style="verb">http:</spanx> scheme with
-	    <spanx style="verb">localhost</spanx> as the hostname.
+	    Native Clients MUST only register <spanx style="verb">redirect_uris</spanx> using custom
+	    URI schemes or loopback URLs using the <spanx style="verb">http</spanx> scheme;
+	    loopback URLs use <spanx style="verb">localhost</spanx> or the IP loopback literals
+	    <spanx style="verb">127.0.0.1</spanx> or <spanx style="verb">[::1]</spanx>
+	    as the hostname.
 	    Authorization Servers MAY place additional constraints on Native Clients.
 	    Authorization Servers MAY reject Redirection URI values
 	    using the <spanx style="verb">http</spanx> scheme, other than the
-	    <spanx style="verb">localhost</spanx> case for Native Clients.
+	    loopback case for Native Clients.
 	    The Authorization Server MUST verify that all the registered 
 	    <spanx style="verb">redirect_uris</spanx> conform to these constraints.  
 	    This prevents sharing a Client ID across different types of Clients.
@@ -751,7 +753,7 @@
       The Client Registration Endpoint SHOULD support the use of
       <xref target="CORS">Cross-Origin Resource Sharing (CORS)</xref>
       and/or other methods as appropriate
-      to enable Java Script Clients to access it.
+      to enable JavaScript Clients and other Browser-Based Clients to access it.
       </t>
 
       <t>To support open Dynamic Registration, the Client
@@ -845,7 +847,7 @@
 
 	<t>
 	  A successful response SHOULD use the HTTP 201 Created status code
-	  and return a JSON document <xref target="RFC4627"/>
+	  and return a JSON document <xref target="RFC8259"/>
 	  using the <spanx style="verb">application/json</spanx> content type
 	  with the following fields and the Client Metadata parameters as
 	  top-level members of the root JSON object:
@@ -920,8 +922,7 @@
 	  <artwork><![CDATA[
   HTTP/1.1 201 Created
   Content-Type: application/json
-  Cache-Control: no-cache, no-store
-  Pragma: no-cache
+  Cache-Control: no-store
 
   {
    "client_id": "s6BhdRkqt3",
@@ -1020,8 +1021,7 @@
 	    <artwork><![CDATA[
   HTTP/1.1 400 Bad Request
   Content-Type: application/json
-  Cache-Control: no-cache, no-store
-  Pragma: no-cache
+  Cache-Control: no-store
    
   {
    "error": "invalid_redirect_uri",
@@ -1042,7 +1042,7 @@
       The Client Configuration Endpoint SHOULD support the use of
       <xref target="CORS">Cross-Origin Resource Sharing (CORS)</xref>
       and/or other methods as appropriate
-      to enable Java Script Clients to access it.
+      to enable JavaScript Clients and other Browser-Based Clients to access it.
       </t>
 
       <t>Operations on this endpoint are switched through the use of different
@@ -1129,7 +1129,7 @@
 
 	<t>
 	  A successful response SHOULD use the HTTP 200 OK status code
-	  and return a JSON document <xref target="RFC4627"/>
+	  and return a JSON document <xref target="RFC8259"/>
 	  using the <spanx style="verb">application/json</spanx> content type with
 	  the Client Metadata values as top-level members of the root JSON object.
 
@@ -1142,8 +1142,7 @@
           <artwork><![CDATA[
   HTTP/1.1 200 OK
   Content-Type: application/json
-  Cache-Control: no-cache, no-store
-  Pragma: no-cache
+  Cache-Control: no-store
 
   {
    "client_id": "s6BhdRkqt3",
@@ -1206,8 +1205,7 @@
   HTTP/1.1 401 Unauthorized
   WWW-Authenticate: Bearer error="invalid_token",
     error_description="The access token expired"
-  Cache-Control: no-cache, no-store
-  Pragma: no-cache
+  Cache-Control: no-store
 ]]></artwork>
 	  </figure>
 	</t>
@@ -1248,8 +1246,7 @@
 
   HTTP/1.1 200 OK
   Content-Type: application/json
-  Cache-Control: no-cache, no-store
-  Pragma: no-cache
+  Cache-Control: no-store
 
   [ "https://client.example.org/callback",
     "https://client.example.org/callback2",
@@ -1463,7 +1460,7 @@
 		Change Controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net
 	      </t>
 	      <t>
-		Specification Document(s): <xref target="ClientMetadata"/> of this document
+		Specification Document(s): <xref target="ClientMetadata"/> of this specification
 	      </t>
 	    </list>
 	  </t>
@@ -1479,7 +1476,7 @@
 		Change Controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net
 	      </t>
 	      <t>
-		Specification Document(s): <xref target="ClientMetadata"/> of this document
+		Specification Document(s): <xref target="ClientMetadata"/> of this specification
 	      </t>
 	    </list>
 	  </t>
@@ -1496,7 +1493,7 @@
 		Change Controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net
 	      </t>
 	      <t>
-		Specification Document(s): <xref target="ClientMetadata"/> of this document
+		Specification Document(s): <xref target="ClientMetadata"/> of this specification
 	      </t>
 	    </list>
 	  </t>
@@ -1514,7 +1511,7 @@
 		Change Controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net
 	      </t>
 	      <t>
-		Specification Document(s): <xref target="ClientMetadata"/> of this document
+		Specification Document(s): <xref target="ClientMetadata"/> of this specification
 	      </t>
 	    </list>
 	  </t>
@@ -1532,7 +1529,7 @@
 		Change Controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net
 	      </t>
 	      <t>
-		Specification Document(s): <xref target="ClientMetadata"/> of this document
+		Specification Document(s): <xref target="ClientMetadata"/> of this specification
 	      </t>
 	    </list>
 	  </t>
@@ -1550,7 +1547,7 @@
 		Change Controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net
 	      </t>
 	      <t>
-		Specification Document(s): <xref target="ClientMetadata"/> of this document
+		Specification Document(s): <xref target="ClientMetadata"/> of this specification
 	      </t>
 	    </list>
 	  </t>
@@ -1567,7 +1564,7 @@
 		Change Controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net
 	      </t>
 	      <t>
-		Specification Document(s): <xref target="ClientMetadata"/> of this document
+		Specification Document(s): <xref target="ClientMetadata"/> of this specification
 	      </t>
 	    </list>
 	  </t>
@@ -1584,7 +1581,7 @@
 		Change Controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net
 	      </t>
 	      <t>
-		Specification Document(s): <xref target="ClientMetadata"/> of this document
+		Specification Document(s): <xref target="ClientMetadata"/> of this specification
 	      </t>
 	    </list>
 	  </t>
@@ -1601,7 +1598,7 @@
 		Change Controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net
 	      </t>
 	      <t>
-		Specification Document(s): <xref target="ClientMetadata"/> of this document
+		Specification Document(s): <xref target="ClientMetadata"/> of this specification
 	      </t>
 	    </list>
 	  </t>
@@ -1619,7 +1616,7 @@
 		Change Controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net
 	      </t>
 	      <t>
-		Specification Document(s): <xref target="ClientMetadata"/> of this document
+		Specification Document(s): <xref target="ClientMetadata"/> of this specification
 	      </t>
 	    </list>
 	  </t>
@@ -1637,7 +1634,7 @@
 		Change Controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net
 	      </t>
 	      <t>
-		Specification Document(s): <xref target="ClientMetadata"/> of this document
+		Specification Document(s): <xref target="ClientMetadata"/> of this specification
 	      </t>
 	    </list>
 	  </t>
@@ -1655,7 +1652,7 @@
 		Change Controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net
 	      </t>
 	      <t>
-		Specification Document(s): <xref target="ClientMetadata"/> of this document
+		Specification Document(s): <xref target="ClientMetadata"/> of this specification
 	      </t>
 	    </list>
 	  </t>
@@ -1675,7 +1672,7 @@
 		Change Controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net
 	      </t>
 	      <t>
-		Specification Document(s): <xref target="ClientMetadata"/> of this document
+		Specification Document(s): <xref target="ClientMetadata"/> of this specification
 	      </t>
 	    </list>
 	  </t>
@@ -1691,7 +1688,7 @@
 		Change Controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net
 	      </t>
 	      <t>
-		Specification Document(s): <xref target="ClientMetadata"/> of this document
+		Specification Document(s): <xref target="ClientMetadata"/> of this specification
 	      </t>
 	    </list>
 	  </t>
@@ -1708,7 +1705,7 @@
 		Change Controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net
 	      </t>
 	      <t>
-		Specification Document(s): <xref target="ClientMetadata"/> of this document
+		Specification Document(s): <xref target="ClientMetadata"/> of this specification
 	      </t>
 	    </list>
 	  </t>
@@ -1724,7 +1721,7 @@
 		Change Controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net
 	      </t>
 	      <t>
-		Specification Document(s): <xref target="ClientMetadata"/> of this document
+		Specification Document(s): <xref target="ClientMetadata"/> of this specification
 	      </t>
 	    </list>
 	  </t>
@@ -1741,7 +1738,7 @@
 		Change Controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net
 	      </t>
 	      <t>
-		Specification Document(s): <xref target="ClientMetadata"/> of this document
+		Specification Document(s): <xref target="ClientMetadata"/> of this specification
 	      </t>
 	    </list>
 	  </t>
@@ -1758,7 +1755,7 @@
 		Change Controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net
 	      </t>
 	      <t>
-		Specification Document(s): <xref target="ClientMetadata"/> of this document
+		Specification Document(s): <xref target="ClientMetadata"/> of this specification
 	      </t>
 	    </list>
 	  </t>
@@ -1862,21 +1859,6 @@
   <seriesInfo name="DOI" value="10.17487/RFC3986"/>
 </reference>
 
-      <!-- Reference from https://bib.ietf.org/public/rfc/bibxml/reference.RFC.4627.xml -->
-
-<reference anchor="RFC4627" target="https://www.rfc-editor.org/info/rfc4627">
-  <front>
-    <title>The application/json Media Type for JavaScript Object Notation (JSON)</title>
-    <author fullname="D. Crockford" initials="D" surname="Crockford"/>
-    <date month="July" year="2006"/>
-    <abstract>
-      <t>JavaScript Object Notation (JSON) is a lightweight, text-based, language-independent data interchange format.  It was derived from the ECMAScript Programming Language Standard.  JSON defines a small set of formatting rules for the portable representation of structured data.  This memo provides information for the Internet community.</t>
-    </abstract>
-  </front>
-  <seriesInfo name="RFC" value="4627"/>
-  <seriesInfo name="DOI" value="10.17487/RFC4627"/>
-</reference>
-
       <!-- Reference from https://bib.ietf.org/public/rfc/bibxml/reference.RFC.5646.xml -->
 
 <reference anchor="RFC5646" target="https://www.rfc-editor.org/info/rfc5646">
@@ -1941,20 +1923,21 @@
   <seriesInfo name="DOI" value="10.17487/RFC6750"/>
 </reference>
 
-      <!-- Reference from https://bib.ietf.org/public/rfc/bibxml/reference.RFC.7159.xml -->
+      <!-- Reference from https://bib.ietf.org/public/rfc/bibxml/reference.RFC.8259.xml -->
 
-<reference anchor="RFC7159" target="https://www.rfc-editor.org/info/rfc7159">
+<reference anchor="RFC8259" target="https://www.rfc-editor.org/info/rfc8259">
   <front>
     <title>The JavaScript Object Notation (JSON) Data Interchange Format</title>
-    <author fullname="T. Bray" initials="T" role="editor" surname="Bray"/>
-    <date month="March" year="2014"/>
+    <author fullname="T. Bray" initials="T." role="editor" surname="Bray"/>
+    <date month="December" year="2017"/>
     <abstract>
       <t>JavaScript Object Notation (JSON) is a lightweight, text-based, language-independent data interchange format. It was derived from the ECMAScript Programming Language Standard. JSON defines a small set of formatting rules for the portable representation of structured data.</t>
       <t>This document removes inconsistencies with other specifications of JSON, repairs specification errors, and offers experience-based interoperability guidance.</t>
     </abstract>
   </front>
-  <seriesInfo name="RFC" value="7159"/>
-  <seriesInfo name="DOI" value="10.17487/RFC7159"/>
+  <seriesInfo name="STD" value="90"/>
+  <seriesInfo name="RFC" value="8259"/>
+  <seriesInfo name="DOI" value="10.17487/RFC8259"/>
 </reference>
 
       <!-- Reference from https://bib.ietf.org/public/rfc/bibxml/reference.RFC.7231.xml -->
@@ -2164,10 +2147,6 @@
 
 	  <author fullname="Michael B. Jones" initials="M.B." surname="Jones">
 	    <organization>Microsoft</organization>
-	  </author>
-
-	  <author fullname="Eric Rescorla" initials="E." surname="Rescorla">
-	    <organization>RTFM, Inc.</organization>
 	  </author>
 
 	  <author fullname="Joe Hildebrand" initials="J." surname="Hildebrand">
@@ -2416,7 +2395,13 @@
 	-38
         <list style="symbols">
 	  <t>
-	    TBD
+	    Fixed #2025 - Removed "Pragma: no-cache" and changed "Cache-Control: no-cache, no-store" to "Cache-Control: no-store".
+	  </t>
+	  <t>
+	    Fixed #2032: Use phrase JavaScript Clients and other Browser-Based Clients.
+	  </t>
+	  <t>
+	    Fixed #2026: Clarified description of loopback hostnames for native applications.
 	  </t>
 	</list>
       </t>

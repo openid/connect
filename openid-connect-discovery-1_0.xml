@@ -56,7 +56,7 @@
       </address>
     </author>
 
-    <date day="18" month="September" year="2023" />
+    <date day="30" month="September" year="2023" />
 
     <workgroup>OpenID Connect Working Group</workgroup>
 
@@ -97,7 +97,7 @@
       <t>
 	Once the OpenID Provider has been identified,
 	the configuration information for that OP
-	is retrieved from a well-known location as a JSON <xref target="RFC7159"/> document,
+	is retrieved from a well-known location as a JSON <xref target="RFC8259"/> document,
 	including its OAuth 2.0 endpoint locations.
 	This process is described in <xref target="ProviderConfig"/>.
       </t>
@@ -117,11 +117,11 @@
 	target="RFC2119">RFC 2119</xref>.</t>
 
 	<t>
-	  In the .txt version of this document,
+	  In the .txt version of this specification,
 	  values are quoted to indicate that they are to be taken literally.
 	  When using these values in protocol messages,
 	  the quotes MUST NOT be used as part of the value.
-	  In the HTML version of this document,
+	  In the HTML version of this specification,
 	  values to be taken literally are indicated by
 	  the use of <spanx style="verb">this fixed-width font</spanx>.
 	</t>
@@ -165,7 +165,7 @@
 	     Value that uniquely characterizes an Entity in a specific context.
 	    </t>
 	    <t>
-	      NOTE: this document defines various kinds of Identifiers, designed for use in different contexts.
+	      NOTE: This specification defines various kinds of Identifiers, designed for use in different contexts.
 	      Examples include URLs using the <spanx style="verb">https</spanx> scheme and e-mail addresses.
 	    </t>
 
@@ -251,7 +251,7 @@
       The WebFinger endpoint SHOULD support the use of
       <xref target="CORS">Cross-Origin Resource Sharing (CORS)</xref>
       and/or other methods as appropriate
-      to enable Java Script Clients to access it.
+      to enable JavaScript Clients and other Browser-Based Clients to access it.
       </t>
 
       <t>
@@ -644,20 +644,15 @@
 	  <t>
 	    NOTE:  It is common for sites to use e-mail addresses as local identifiers
 	    for accounts at those sites, even though the domain in the e-mail address
-	    one controlled by the site.
+	    is not one controlled by the site.
 	    For instance, the site <spanx style="verb">example.org</spanx>
 	    might have a local account named <spanx style="verb">joe@example.com</spanx>.
-	    As of the time of this writing, a discussion is ongoing among WebFinger
-	    contributors about the syntax that should be used when discovering
-	    information about such accounts with WebFinger.
-	    The current thinking seems to be that such accounts would be represented
-	    by quoting the '@' character in the userinfo component of the account
-	    identifier when constructing the <spanx style="verb">acct:</spanx> URI
-	    representing the account.
+	    This specification uses <spanx style="verb">acct:</spanx> URIs
+	    as defined by <xref target="RFC7565"/> to represent such accounts
+	    during WebFinger discovery.
 	    Such an example is
 	    <spanx style="verb">acct:joe%40example.com@example.org</spanx>.
-	    In a future version of this specification, it is possible that
-	    normalization rules will be defined allowing End-Users to input
+	    End-Users MAY input
 	    values like <spanx style="verb">joe@example.com@example.org</spanx>
 	    to initiate discovery on such accounts.
 	  </t>
@@ -675,7 +670,7 @@
 	  <t hangText="issuer">
 	    <vspace/>
 	    REQUIRED.
-	    URL using the <spanx style="verb">https</spanx> scheme with no query or fragment component that the OP asserts as its
+	    URL using the <spanx style="verb">https</spanx> scheme with no query or fragment components that the OP asserts as its
 	    Issuer Identifier.
 	    If Issuer discovery is supported (see <xref target="IssuerDiscovery"/>),
 	    this value MUST be identical to the issuer value returned by WebFinger.
@@ -1049,7 +1044,7 @@
 	SHOULD support the use of
 	<xref target="CORS">Cross-Origin Resource Sharing (CORS)</xref>
 	and/or other methods as appropriate
-	to enable Java Script Clients to access them.
+	to enable JavaScript Clients and other Browser-Based Clients to access them.
 	The use of CORS at the Authorization Endpoint is NOT RECOMMENDED
 	as it is redirected to by the client and not directly accessed.
       </t>
@@ -1086,7 +1081,7 @@
 	The <spanx style="verb">openid-configuration</spanx> endpoint SHOULD support the use of
 	<xref target="CORS">Cross-Origin Resource Sharing (CORS)</xref>
 	and/or other methods as appropriate
-	to enable Java Script Clients to access it.
+	to enable JavaScript Clients and other Browser-Based Clients to access it.
       </t>
 
       <section anchor="ProviderConfigurationRequest"
@@ -1244,7 +1239,9 @@
 	</t>
         <t>
 	  The <spanx style="verb">issuer</spanx> value returned MUST be identical to
-	  the Issuer URL that was directly used to retrieve the configuration information.
+	  the Issuer URL that was used as the prefix
+	  to <spanx style="verb">/.well-known/openid-configuration</spanx>
+	  to retrieve the configuration information.
 	  This MUST also be identical to the <spanx style="verb">iss</spanx> Claim value
 	  in ID Tokens issued from this Issuer.
 	</t>
@@ -1383,7 +1380,7 @@
 		Change controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net
 	      </t>
 	      <t>
-		Specification document: <xref target="ProviderConfig"/> of this document
+		Specification document: <xref target="ProviderConfig"/> of this specification
 	      </t>
 	      <t>
 		Related information: (none)
@@ -1417,7 +1414,7 @@
                 Change Controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net
               </t>
               <t>
-                Specification Document(s): <xref target="ProviderMetadata"/> of this document
+                Specification Document(s): <xref target="ProviderMetadata"/> of this specification
               </t>
 	    </list>
 	  </t>
@@ -1435,7 +1432,7 @@
                 Change Controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net
               </t>
               <t>
-                Specification Document(s): <xref target="ProviderMetadata"/> of this document
+                Specification Document(s): <xref target="ProviderMetadata"/> of this specification
               </t>
 	    </list>
 	  </t>
@@ -1453,7 +1450,7 @@
                 Change Controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net
               </t>
               <t>
-                Specification Document(s): <xref target="ProviderMetadata"/> of this document
+                Specification Document(s): <xref target="ProviderMetadata"/> of this specification
               </t>
 	    </list>
 	  </t>
@@ -1471,7 +1468,7 @@
                 Change Controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net
               </t>
               <t>
-                Specification Document(s): <xref target="ProviderMetadata"/> of this document
+                Specification Document(s): <xref target="ProviderMetadata"/> of this specification
               </t>
 	    </list>
 	  </t>
@@ -1489,7 +1486,7 @@
                 Change Controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net
               </t>
               <t>
-                Specification Document(s): <xref target="ProviderMetadata"/> of this document
+                Specification Document(s): <xref target="ProviderMetadata"/> of this specification
               </t>
 	    </list>
 	  </t>
@@ -1507,7 +1504,7 @@
                 Change Controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net
               </t>
               <t>
-                Specification Document(s): <xref target="ProviderMetadata"/> of this document
+                Specification Document(s): <xref target="ProviderMetadata"/> of this specification
               </t>
 	    </list>
 	  </t>
@@ -1525,7 +1522,7 @@
                 Change Controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net
               </t>
               <t>
-                Specification Document(s): <xref target="ProviderMetadata"/> of this document
+                Specification Document(s): <xref target="ProviderMetadata"/> of this specification
               </t>
 	    </list>
 	  </t>
@@ -1543,7 +1540,7 @@
                 Change Controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net
               </t>
               <t>
-                Specification Document(s): <xref target="ProviderMetadata"/> of this document
+                Specification Document(s): <xref target="ProviderMetadata"/> of this specification
               </t>
 	    </list>
 	  </t>
@@ -1561,7 +1558,7 @@
                 Change Controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net
               </t>
               <t>
-                Specification Document(s): <xref target="ProviderMetadata"/> of this document
+                Specification Document(s): <xref target="ProviderMetadata"/> of this specification
               </t>
 	    </list>
 	  </t>
@@ -1579,7 +1576,7 @@
                 Change Controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net
               </t>
               <t>
-                Specification Document(s): <xref target="ProviderMetadata"/> of this document
+                Specification Document(s): <xref target="ProviderMetadata"/> of this specification
               </t>
 	    </list>
 	  </t>
@@ -1597,7 +1594,7 @@
                 Change Controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net
               </t>
               <t>
-                Specification Document(s): <xref target="ProviderMetadata"/> of this document
+                Specification Document(s): <xref target="ProviderMetadata"/> of this specification
               </t>
 	    </list>
 	  </t>
@@ -1615,7 +1612,7 @@
                 Change Controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net
               </t>
               <t>
-                Specification Document(s): <xref target="ProviderMetadata"/> of this document
+                Specification Document(s): <xref target="ProviderMetadata"/> of this specification
               </t>
 	    </list>
 	  </t>
@@ -1633,7 +1630,7 @@
                 Change Controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net
               </t>
               <t>
-                Specification Document(s): <xref target="ProviderMetadata"/> of this document
+                Specification Document(s): <xref target="ProviderMetadata"/> of this specification
               </t>
 	    </list>
 	  </t>
@@ -1651,7 +1648,7 @@
                 Change Controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net
               </t>
               <t>
-                Specification Document(s): <xref target="ProviderMetadata"/> of this document
+                Specification Document(s): <xref target="ProviderMetadata"/> of this specification
               </t>
 	    </list>
 	  </t>
@@ -1669,7 +1666,7 @@
                 Change Controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net
               </t>
               <t>
-                Specification Document(s): <xref target="ProviderMetadata"/> of this document
+                Specification Document(s): <xref target="ProviderMetadata"/> of this specification
               </t>
 	    </list>
 	  </t>
@@ -1687,7 +1684,7 @@
                 Change Controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net
               </t>
               <t>
-                Specification Document(s): <xref target="ProviderMetadata"/> of this document
+                Specification Document(s): <xref target="ProviderMetadata"/> of this specification
               </t>
 	    </list>
 	  </t>
@@ -1705,7 +1702,7 @@
                 Change Controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net
               </t>
               <t>
-                Specification Document(s): <xref target="ProviderMetadata"/> of this document
+                Specification Document(s): <xref target="ProviderMetadata"/> of this specification
               </t>
 	    </list>
 	  </t>
@@ -1723,7 +1720,7 @@
                 Change Controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net
               </t>
               <t>
-                Specification Document(s): <xref target="ProviderMetadata"/> of this document
+                Specification Document(s): <xref target="ProviderMetadata"/> of this specification
               </t>
 	    </list>
 	  </t>
@@ -1741,7 +1738,7 @@
                 Change Controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net
               </t>
               <t>
-                Specification Document(s): <xref target="ProviderMetadata"/> of this document
+                Specification Document(s): <xref target="ProviderMetadata"/> of this specification
               </t>
 	    </list>
 	  </t>
@@ -1759,7 +1756,7 @@
                 Change Controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net
               </t>
               <t>
-                Specification Document(s): <xref target="ProviderMetadata"/> of this document
+                Specification Document(s): <xref target="ProviderMetadata"/> of this specification
               </t>
 	    </list>
 	  </t>
@@ -1905,20 +1902,21 @@
   <seriesInfo name="DOI" value="10.17487/RFC7033"/>
 </reference>
 
-      <!-- Reference from https://bib.ietf.org/public/rfc/bibxml/reference.RFC.7159.xml -->
+      <!-- Reference from https://bib.ietf.org/public/rfc/bibxml/reference.RFC.8259.xml -->
 
-<reference anchor="RFC7159" target="https://www.rfc-editor.org/info/rfc7159">
+<reference anchor="RFC8259" target="https://www.rfc-editor.org/info/rfc8259">
   <front>
     <title>The JavaScript Object Notation (JSON) Data Interchange Format</title>
-    <author fullname="T. Bray" initials="T" role="editor" surname="Bray"/>
-    <date month="March" year="2014"/>
+    <author fullname="T. Bray" initials="T." role="editor" surname="Bray"/>
+    <date month="December" year="2017"/>
     <abstract>
       <t>JavaScript Object Notation (JSON) is a lightweight, text-based, language-independent data interchange format. It was derived from the ECMAScript Programming Language Standard. JSON defines a small set of formatting rules for the portable representation of structured data.</t>
       <t>This document removes inconsistencies with other specifications of JSON, repairs specification errors, and offers experience-based interoperability guidance.</t>
     </abstract>
   </front>
-  <seriesInfo name="RFC" value="7159"/>
-  <seriesInfo name="DOI" value="10.17487/RFC7159"/>
+  <seriesInfo name="STD" value="90"/>
+  <seriesInfo name="RFC" value="8259"/>
+  <seriesInfo name="DOI" value="10.17487/RFC8259"/>
 </reference>
 
       <!-- Reference from https://bib.ietf.org/public/rfc/bibxml/reference.RFC.7565.xml -->
@@ -2088,10 +2086,6 @@
 
 	  <author fullname="Michael B. Jones" initials="M.B." surname="Jones">
 	    <organization>Microsoft</organization>
-	  </author>
-
-	  <author fullname="Eric Rescorla" initials="E." surname="Rescorla">
-	    <organization>RTFM, Inc.</organization>
 	  </author>
 
 	  <author fullname="Joe Hildebrand" initials="J." surname="Hildebrand">
@@ -2437,7 +2431,13 @@
 	-36
         <list style="symbols">
 	  <t>
-	    TBD
+	    Fixed #2027: Updated speculative language that anticipated standardization of The 'acct' URI Scheme [RFC 7565].
+	  </t>
+	  <t>
+	    Fixed #2031: Clarified sentence about issuer value.
+	  </t>
+	  <t>
+	    Fixed #2032: Use phrase JavaScript Clients and other Browser-Based Clients.
 	  </t>
 	</list>
       </t>
