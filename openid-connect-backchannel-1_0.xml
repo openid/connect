@@ -19,11 +19,11 @@
   <?rfc sortrefs="yes"?>
   <?rfc strict="yes" ?>
   <?rfc iprnotified="no" ?>
-  <?rfc private="Draft" ?>
+  <?rfc private="Final" ?>
 
   <front>
     <title abbrev="OpenID Connect Back-Channel Logout 1.0">OpenID Connect
-    Back-Channel Logout 1.0 - draft 12 incorporating errata set 1</title>
+    Back-Channel Logout 1.0 incorporating errata set 1</title>
 
     <author fullname="Michael B. Jones" initials="M.B." surname="Jones">
       <organization abbrev="Self-Issued Consulting (was at Microsoft)">Self-Issued Consulting</organization>
@@ -41,7 +41,7 @@
       </address>
     </author>
 
-    <date day="30" month="September" year="2023" />
+    <date day="15" month="December" year="2023" />
 
     <workgroup>OpenID Connect Working Group</workgroup>
 
@@ -147,7 +147,7 @@
         <t>
 	  This specification uses the terms
 	  "Authorization Server",
-	  "Client", "Client Identifier", and "Redirection URI"
+	  "Client", and "Client Identifier"
 	  defined by <xref target="RFC6749">OAuth 2.0</xref>,
 	  the term "User Agent" defined by <xref target="RFC7230">RFC 7230</xref>,
 	  the terms "Session" and "Session ID" defined by
@@ -599,7 +599,7 @@
 	  the RP MUST respond with HTTP 400 Bad Request.
 	  The response MAY include an HTTP body consisting of a JSON object with
 	  <spanx style="verb">error</spanx> and <spanx style="verb">error_description</spanx> parameters
-	  conveying the nature of the error that occured, which can assist with debugging.
+	  conveying the nature of the error that occurred, which can assist with debugging.
 	  These error response parameters are used as specified in Section 5.2 of <xref target="RFC6749">OAuth 2.0</xref>.
 	  Like in OAuth 2.0, the parameters are included in the entity-body of the HTTP response
 	  using the <spanx style="verb">application/json</spanx> media type.
@@ -969,7 +969,7 @@
 	    <organization abbrev="Disney (was at Salesforce)">Disney</organization>
 	  </author>
 
-          <date day="8" month="November" year="2014"/>
+          <date day="15" month="December" year="2023"/>
         </front>
       </reference>
 
@@ -993,7 +993,7 @@
 	    <organization abbrev="Illumila">Illumila</organization>
 	  </author>
 
-          <date day="8" month="November" year="2014"/>
+          <date day="15" month="December" year="2023"/>
 	</front>
       </reference>
 
@@ -1013,7 +1013,7 @@
 	    <organization abbrev="Self-Issued Consulting (was at Microsoft)">Self-Issued Consulting</organization>
 	  </author>
 
-          <date day="8" month="November" year="2014"/>
+          <date day="15" month="December" year="2023"/>
 	</front>
       </reference>
 
@@ -1085,37 +1085,20 @@
 	</front>
       </reference>
 
-      <reference anchor="JWT" target="https://tools.ietf.org/html/rfc7519">
-        <front>
-          <title>JSON Web Token (JWT)</title>
+      <!-- Reference from https://bib.ietf.org/public/rfc/bibxml/reference.RFC.7519.xml with change to anchor="JWT" -->
 
-	  <author fullname="Michael B. Jones" initials="M.B." surname="Jones">
-	    <organization>Microsoft</organization>
-	    <address>
-	      <email>mbj@microsoft.com</email>
-	      <uri>https://self-issued.info/</uri>
-	    </address>
-	  </author>
-
-	  <author fullname="John Bradley" initials="J." surname="Bradley">
-	    <organization abbrev="Ping Identity">Ping Identity</organization>
-	    <address>
-	      <email>ve7jtb@ve7jtb.com</email>
-	      <uri>http://www.thread-safe.com/</uri>
-	    </address>
-	  </author>
-
-	  <author fullname="Nat Sakimura" initials="N." surname="Sakimura">
-	    <organization abbrev="NRI">Nomura Research Institute</organization>
-	    <address>
-	      <email>n-sakimura@nri.co.jp</email>
-	      <uri>https://nat.sakimura.org/</uri>
-	    </address>
-	  </author>
-
+      <reference anchor="JWT" target="https://www.rfc-editor.org/info/rfc7519">
+	<front>
+	  <title>JSON Web Token (JWT)</title>
+	  <author fullname="M. Jones" initials="M." surname="Jones"/>
+	  <author fullname="J. Bradley" initials="J." surname="Bradley"/>
+	  <author fullname="N. Sakimura" initials="N." surname="Sakimura"/>
 	  <date month="May" year="2015"/>
-        </front>
-        <seriesInfo name="RFC" value="7519" />
+	  <abstract>
+	    <t>JSON Web Token (JWT) is a compact, URL-safe means of representing claims to be transferred between two parties. The claims in a JWT are encoded as a JSON object that is used as the payload of a JSON Web Signature (JWS) structure or as the plaintext of a JSON Web Encryption (JWE) structure, enabling the claims to be digitally signed or integrity protected with a Message Authentication Code (MAC) and/or encrypted.</t>
+	  </abstract>
+	</front>
+	<seriesInfo name="RFC" value="7519"/>
 	<seriesInfo name="DOI" value="10.17487/RFC7519"/>
       </reference>
 
@@ -1284,25 +1267,19 @@
   <seriesInfo name="DOI" value="10.17487/RFC8935"/>
 </reference>
 
-      <reference anchor="JWS" target="https://tools.ietf.org/html/rfc7515">
+      <!-- Reference from https://bib.ietf.org/public/rfc/bibxml/reference.RFC.7515.xml with change to anchor="JWS" -->
+
+      <reference anchor="JWS" target="https://www.rfc-editor.org/info/rfc7515">
 	<front>
 	  <title>JSON Web Signature (JWS)</title>
-
-	  <author fullname="Michael B. Jones" initials="M.B." surname="Jones">
-	    <organization abbrev="Microsoft">Microsoft</organization>
-	  </author>
-
-	  <author fullname="John Bradley" initials="J." surname="Bradley">
-	    <organization abbrev="Ping Identity">Ping Identity</organization>
-	  </author>
-
-	  <author fullname="Nat Sakimura" initials="N." surname="Sakimura">
-	    <organization abbrev="NRI">Nomura Research Institute, Ltd.</organization>
-	  </author>
-
-	  <date month="May" year="2015" />
+	  <author fullname="M. Jones" initials="M." surname="Jones"/>
+	  <author fullname="J. Bradley" initials="J." surname="Bradley"/>
+	  <author fullname="N. Sakimura" initials="N." surname="Sakimura"/>
+	  <date month="May" year="2015"/>
+	  <abstract>
+	    <t>JSON Web Signature (JWS) represents content secured with digital signatures or Message Authentication Codes (MACs) using JSON-based data structures. Cryptographic algorithms and identifiers for use with this specification are described in the separate JSON Web Algorithms (JWA) specification and an IANA registry defined by that specification. Related encryption capabilities are described in the separate JSON Web Encryption (JWE) specification.</t>
+	  </abstract>
 	</front>
-
 	<seriesInfo name="RFC" value="7515"/>
 	<seriesInfo name="DOI" value="10.17487/RFC7515"/>
       </reference>
@@ -1368,44 +1345,6 @@
       copyrights, patents, patent applications, or other proprietary rights
       that may cover technology that may be required to practice this
       specification.</t>
-    </section>
-
-    <section anchor="History" title="Document History">
-      <t>[[ To be removed from the approved errata ]]</t>
-
-      <t>
-	-12
-        <list style="symbols">
-	  <t>
-	    Updated contributor affiliations.
-	  </t>
-	</list>
-      </t>
-
-      <t>
-	-11
-        <list style="symbols">
-	  <t>
-	    Fixed #1664: Added <spanx style="verb">exp</spanx> claim to Logout Token.
-	  </t>
-	  <t>
-	    Fixed #978: Referenced previous version.
-	  </t>
-	  <t>
-	    Updated contributor affiliations.
-	  </t>
-	</list>
-      </t>
-
-      <t>
-	-10
-        <list style="symbols">
-	  <t>
-	    Final specification.
-	  </t>
-	</list>
-      </t>
-
     </section>
 
   </back>

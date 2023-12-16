@@ -24,7 +24,7 @@
 
   <front>
     <title abbrev="OpenID Connect Basic Client Guide 1.0">OpenID Connect
-    Basic Client Implementer's Guide 1.0 - draft 46</title>
+    Basic Client Implementer's Guide 1.0 - draft 47</title>
 
     <author fullname="Nat Sakimura" initials="N." surname="Sakimura">
       <organization abbrev="NAT.Consulting">NAT.Consulting</organization>
@@ -43,7 +43,7 @@
     </author>
 
     <author fullname="Michael B. Jones" initials="M.B." surname="Jones">
-      <organization abbrev="Self-Issued Consulting (was at Microsoft)">Self-Issued Consulting</organization>
+      <organization abbrev="Self-Issued Consulting">Self-Issued Consulting</organization>
       <address>
         <email>michael_b_jones@hotmail.com</email>
 	<uri>https://self-issued.info/</uri>
@@ -66,7 +66,7 @@
       </address>
     </author>
 
-    <date day="28" month="October" year="2023" />
+    <date day="15" month="December" year="2023" />
 
     <workgroup>OpenID Connect Working Group</workgroup>
 
@@ -74,7 +74,7 @@
       <t>OpenID Connect 1.0 is a simple identity layer on top of the OAuth 2.0
       protocol. It enables Clients to verify the identity of the End-User based
       on the authentication performed by an Authorization Server, as well as to
-      obtain basic profile information about the End-User in an interoperable and 
+      obtain basic profile information about the End-User in an interoperable and
       REST-like manner.</t>
 
       <t>
@@ -205,7 +205,7 @@
 	  "Authorization Endpoint", "Authorization Grant", "Authorization Server",
 	  "Client", "Client Authentication", "Client Identifier", "Client Secret",
 	  "Grant Type", "Protected Resource", "Redirection URI", "Refresh Token",
-	  "Resource Owner", "Resource Server", "Response Type", and "Token Endpoint"
+	  "Resource Server", "Response Type", and "Token Endpoint"
 	  defined by <xref target="RFC6749">OAuth 2.0</xref>,
 	  the terms "Claim Name", "Claim Value", "JSON Web Token (JWT)",
 	  and "JWT Claims Set"
@@ -259,7 +259,7 @@
 
 	    <t hangText="Issuer">
 	      <vspace/>
-	      Entity that issues a set of Claims. 
+	      Entity that issues a set of Claims.
 	    </t>
 
             <t hangText="Issuer Identifier">
@@ -276,11 +276,11 @@
               OAuth 2.0 Authorization Server that is capable of
 	      Authenticating the End-User and
               providing Claims to a Relying Party
-              about the Authentication event and the End-User. 
+              about the Authentication event and the End-User.
 	    </t>
 	    <t hangText="Pairwise Pseudonymous Identifier (PPID)">
-	      <vspace/> 
-	      Identifier that identifies the Entity to a Relying Party that cannot be correlated 
+	      <vspace/>
+	      Identifier that identifies the Entity to a Relying Party that cannot be correlated
 	      with the Entity's PPID at another Relying Party.
 	    </t>
 	    <t hangText="Personally Identifiable Information (PII)">
@@ -298,13 +298,13 @@
 	    <t hangText="Subject Identifier">
 	      <vspace/>
 	      Locally unique and never
-	      reassigned identifier within the Issuer for the End-User, 
+	      reassigned identifier within the Issuer for the End-User,
 	      which is intended to be consumed by the Client.
 	    </t>
 	    <t hangText="UserInfo Endpoint">
 	      <vspace/>
 	      Protected Resource that, when presented with an Access Token by the Client,
-	      returns authorized information about the End-User represented by the corresponding 
+	      returns authorized information about the End-User represented by the corresponding
 	      Authorization Grant.
 	    </t>
             <t hangText="Validation">
@@ -346,21 +346,21 @@
 	    <t>The OP authenticates the End-User and obtains authorization.</t>
 
 	    <t>The OP responds with an ID Token and usually an Access Token.</t>
-	    
+
 	    <t>The RP can send a request with the Access Token to the UserInfo Endpoint.</t>
 
 	    <t>The UserInfo Endpoint returns Claims about the End-User.</t>
 
 	  </list>
 	</t>
-	
+
 	<figure>
 	  <preamble>
 	    These steps are illustrated in the following diagram:
 	  </preamble>
 
 	  <artwork><![CDATA[
-+--------+                                   +--------+ 
++--------+                                   +--------+
 |        |                                   |        |
 |        |---------(1) AuthN Request-------->|        |
 |        |                                   |        |
@@ -447,18 +447,18 @@
 	  </t>
 
           <t>Clients MAY construct the request using the HTTP
-          <spanx style="verb">GET</spanx> or the HTTP 
-          <spanx style="verb">POST</spanx> method as defined in 
+          <spanx style="verb">GET</spanx> or the HTTP
+          <spanx style="verb">POST</spanx> method as defined in
           <xref target="RFC7231">RFC 7231</xref>.</t>
 
           <t>If using the HTTP <spanx style="verb">GET</spanx> method, the
           parameters are serialized using
 	  the Query String Serialization, per <xref target="QuerySerialization"/>.
 	  If using the HTTP
-          <spanx style="verb">POST</spanx> method, the request parameters are 
-          added to the HTTP request entity-body using the 
+          <spanx style="verb">POST</spanx> method, the request parameters are
+          added to the HTTP request entity-body using the
           <spanx style="verb">application/x-www-form-urlencoded</spanx> format
-          as defined by <xref target="W3C.REC-html401-19991224"/>.</t>
+          as defined by <xref target="W3C.SPSD-html401-20180327"/>.</t>
 
           <figure>
             <preamble>The following is a non-normative example of an
@@ -562,9 +562,9 @@
 		<t hangText="nonce">
 		  <vspace/>
 		  OPTIONAL.
-		  String value used to associate a Client session 
+		  String value used to associate a Client session
 		  with an ID Token, and to mitigate replay attacks.
-		  The value is passed through unmodified from the Authentication Request to the ID Token. 
+		  The value is passed through unmodified from the Authentication Request to the ID Token.
 		  Sufficient entropy MUST be present in the
 		  <spanx style="verb">nonce</spanx> values used to prevent
 		  attackers from guessing values.
@@ -647,7 +647,7 @@
 		      user interface pages.
 		      An error is returned
 		      if an End-User
-		      is not already authenticated or the Client does not have 
+		      is not already authenticated or the Client does not have
 		      pre-configured consent for the requested
 		      Claims or does not fulfill other conditions for processing the request.
 		      The error code will typically be
@@ -676,9 +676,9 @@
                     <t hangText="select_account">
 		      <vspace/>
 		      The Authorization Server SHOULD
-		      prompt the End-User to select a user account.  This enables 
+		      prompt the End-User to select a user account.  This enables
 		      an End-User who has multiple accounts at the Authorization Server
-		      to select amongst the multiple accounts that they might have 
+		      to select amongst the multiple accounts that they might have
 		      current sessions for.
 		      If it cannot obtain an account selection choice made by the End-User,
 		      it MUST return an error,
@@ -727,7 +727,7 @@
                   For instance, the value "fr-CA fr en" represents a preference
                   for French as spoken in Canada,
 		  then French (without a region designation),
-                  followed by English (without a region designation). 
+                  followed by English (without a region designation).
 		  An error SHOULD NOT result if some or all of the requested locales
 		  are not supported by the OpenID Provider.
 		</t>
@@ -735,7 +735,7 @@
 		<t hangText="claims_locales">
 		  <vspace/>
 		  OPTIONAL.
-		  End-User's preferred languages and scripts for Claims being returned, 
+		  End-User's preferred languages and scripts for Claims being returned,
 		  represented as a space-separated list of
 		  <xref target="RFC5646">BCP47</xref> language tag values,
 		  ordered by preference.
@@ -769,10 +769,10 @@
 		  OPTIONAL.
 		  Hint to the Authorization Server
 		  about the login identifier the End-User might use to log in (if necessary).
-		  This hint can be used by an RP if it first asks the End-User for their e-mail 
+		  This hint can be used by an RP if it first asks the End-User for their e-mail
 		  address (or other identifier) and then wants to pass that value as a hint
 		  to the discovered authorization service.
-		  It is RECOMMENDED that the hint value match the value used for discovery. 
+		  It is RECOMMENDED that the hint value match the value used for discovery.
 		  This value MAY also be a phone number in the format specified for the
 		  <spanx style="verb">phone_number</spanx> Claim.
 		  The use of this parameter is left to the OP's discretion.
@@ -781,9 +781,9 @@
 		<t hangText="acr_values">
 		  <vspace/>
                   OPTIONAL.
-                  Requested Authentication Context Class Reference values. 
+                  Requested Authentication Context Class Reference values.
 		  Space-separated string that specifies the <spanx style="verb">acr</spanx>
-		  values that the Authorization Server is being requested to use 
+		  values that the Authorization Server is being requested to use
 		  for processing this authentication request,
 		  with the values appearing in order of preference.
 		  The Authentication Context Class satisfied by the authentication
@@ -877,7 +877,7 @@
           <section anchor="CodeOK" title="End-User Grants Authorization">
 
             <t>If the End-User grants the access request, the
-	    Authorization Server issues a <spanx style="verb">code</spanx> and delivers 
+	    Authorization Server issues a <spanx style="verb">code</spanx> and delivers
 	    it to the Client by adding the following query parameters to the query
 	    component of the Redirection URI using the
 	    <spanx style="verb">application/x-www-form-urlencoded</spanx>
@@ -891,15 +891,15 @@
 		  REQUIRED.
 		  OAuth 2.0 Authorization Code.
 		</t>
-		
+
                 <t hangText="state">
 		  <vspace/>
 		  OAuth 2.0 state value.
-		  REQUIRED if the 
+		  REQUIRED if the
 		  <spanx style="verb">state</spanx> parameter is present in the
-		  Authorization Request. Clients MUST verify that the 
-		  <spanx style="verb">state</spanx> value is equal to the 
-		  value of <spanx style="verb">state</spanx> parameter in the 
+		  Authorization Request. Clients MUST verify that the
+		  <spanx style="verb">state</spanx> value is equal to the
+		  value of <spanx style="verb">state</spanx> parameter in the
 		  Authorization Request.
 		</t>
               </list>
@@ -924,7 +924,7 @@
             <t>
 	      If the End-User denies the authorization or the End-User authentication
 	      fails, the Authorization Server MUST return the error
-	      Authorization Response as defined in 4.1.2.1 of 
+	      Authorization Response as defined in Section 4.1.2.1 of
 	      <xref target="RFC6749">OAuth 2.0</xref>.
 	      (HTTP errors unrelated to RFC 6749 are returned to the User Agent using the
 	      appropriate HTTP status code.)
@@ -948,19 +948,19 @@
 	      presenting its Authorization Grant (in the form of
 	      an Authorization Code) to the Token Endpoint
 	      using the <spanx style="verb">grant_type</spanx> value
-	      <spanx style="verb">authorization_code</spanx>, as described in 
+	      <spanx style="verb">authorization_code</spanx>, as described in
 	      Section 4.1.3 of <xref target="RFC6749">OAuth 2.0</xref>.
 	      The Client MUST authenticate to the Token Endpoint using the HTTP Basic method,
-	      as described in 2.3.1 of OAuth 2.0.
+	      as described in Section 2.3.1 of OAuth 2.0.
 	      (This method is the one identified by using the
-	      <spanx style="verb">client_secret_basic</spanx> authentication method value
+	      <spanx style="verb">client_secret_basic</spanx> Client Authentication method value
 	      in <xref target="OpenID.Discovery">OpenID Connect Discovery 1.0</xref>).
 	    </t>
 	    <t>
 	      The Client sends the parameters to the Token Endpoint
 	      using the HTTP <spanx style="verb">POST</spanx> method and the
 	      Form Serialization, per <xref target="FormSerialization"/>,
-	      as described in Section 4.1.3 of 
+	      as described in Section 4.1.3 of
 	      <xref target="RFC6749">OAuth 2.0</xref>.
 	    </t>
 	    <t>
@@ -1083,7 +1083,7 @@
 	      <vspace/>
 	      REQUIRED.
 	      Subject Identifier.  Locally unique and never
-	      reassigned identifier within the Issuer for the End-User, 
+	      reassigned identifier within the Issuer for the End-User,
 	      which is intended to be consumed by the Client,
 	      e.g., <spanx style="verb">24400320</spanx>
 	      or <spanx style="verb">AItOawmwtWwcT0k51BayewNvutrJUqsvl6qs7A4</spanx>.
@@ -1142,8 +1142,8 @@
 	    <t hangText="nonce">
 	      <vspace/>
 	      OPTIONAL.
-	      String value used to associate a Client session 
-	      with an ID Token, and to mitigate replay attacks. 
+	      String value used to associate a Client session
+	      with an ID Token, and to mitigate replay attacks.
 	      The value is passed through unmodified from the Authentication Request to the ID Token.
 	      The Client MUST verify that
 	      the <spanx style="verb">nonce</spanx> Claim Value is equal to
@@ -1158,7 +1158,7 @@
 
 	    <t hangText="at_hash">
 	      <vspace/>
-	      OPTIONAL. 
+	      OPTIONAL.
 	      Access Token hash value.
 	      This is OPTIONAL when the ID Token is issued from the Token Endpoint,
 	      which is the case for this subset of OpenID Connect; nonetheless,
@@ -1189,8 +1189,8 @@
 	      For historic reasons, the value "0" is used to indicate that
 	      there is no confidence that the same person is actually there.
 	      Authentications with
-	      level 0 SHOULD NOT be used to authorize access to any resource of any 
-	      monetary value.  
+	      level 0 SHOULD NOT be used to authorize access to any resource of any
+	      monetary value.
 	      An absolute URI or an <xref target="RFC6711">RFC 6711</xref>
 	      registered name
 	      SHOULD be used as the <spanx style="verb">acr</spanx> value;
@@ -1254,7 +1254,7 @@
   }
 ]]></artwork>
 	</figure>
-        
+
 	<section anchor="IDTokenValidation" title="ID Token Validation">
 
 	  <t>
@@ -1264,9 +1264,9 @@
 	  </t>
 
 	  <t>The Client MUST validate the ID Token in the Token Response.  To do this,
-	  the Client can split the ID Token at the 
-	  period (".") characters, take the second segment, and base64url decode it to 
-	  obtain a JSON object containing the ID Token Claims, which MUST be validated 
+	  the Client can split the ID Token at the
+	  period (".") characters, take the second segment, and base64url decode it to
+	  obtain a JSON object containing the ID Token Claims, which MUST be validated
 	  as follows:</t>
 
 	  <t>
@@ -1275,7 +1275,7 @@
 	      <t>
 		The Issuer Identifier for the OpenID Provider
 		(which is typically obtained during Discovery)
-		MUST exactly match the value of the 
+		MUST exactly match the value of the
 		<spanx style="verb">iss</spanx> (issuer) Claim.
 	      </t>
 	      <t>
@@ -1344,7 +1344,7 @@
 	    The UserInfo Endpoint is an <xref target="RFC6749">OAuth 2.0</xref>
 	    Protected Resource that complies with the <xref
 	    target="RFC6750">OAuth 2.0 Bearer Token Usage</xref> specification.
-	    The request SHOULD use the 
+	    The request SHOULD use the
 	    HTTP <spanx style="verb">GET</spanx> method and
 	    the Access Token SHOULD be sent using the
 	    <spanx style="verb">Authorization</spanx> header field.
@@ -1406,10 +1406,10 @@
       </section>
 
       <section anchor="Scopes" title="Scope Values">
-        <t>OpenID Connect Clients use <spanx style="verb">scope</spanx> values as defined in 3.3 of 
+        <t>OpenID Connect Clients use <spanx style="verb">scope</spanx> values as defined in Section 3.3 of
         <xref target="RFC6749">OAuth 2.0</xref> to specify what
         access privileges are being requested for Access Tokens. The scopes associated
-        with Access Tokens determine what resources will be available when they are 
+        with Access Tokens determine what resources will be available when they are
         used to access OAuth 2.0 protected endpoints. For OpenID Connect, scopes
 	can be used to request that specific sets of information
 	be made available as Claim Values.
@@ -1417,7 +1417,7 @@
 	<t>
 	  OpenID Connect allows additional scope values to be defined and used.
 	  Scope values used that are not understood by an implementation SHOULD be ignored.
-	</t>        
+	</t>
         <t>
 	  Claims requested by the following scopes are treated by Authorization Servers
 	  as Voluntary Claims.
@@ -1436,7 +1436,7 @@
 
             <t hangText="profile">
 	      <vspace/>
-	      OPTIONAL. This scope value 
+	      OPTIONAL. This scope value
 	      requests access to the End-User's default profile Claims,
 	      which are:
 
@@ -1578,16 +1578,16 @@
 	  style="verb">nickname</spanx> value of <spanx style="verb">Mike</spanx>
 	  might be returned alongside a <spanx style="verb">given_name</spanx>
 	  value of <spanx style="verb">Michael</spanx>.</c>
-	  
+
 	  <c>preferred_username</c>
 	  <c>string</c>
 	  <c>Shorthand name by which the End-User wishes to be referred to at the RP, such as
-	  <spanx style="verb">janedoe</spanx> or <spanx style="verb">j.doe</spanx>. 
-	  This value MAY be any valid JSON string including 
-	  special characters such as <spanx style="verb">@</spanx>, 
+	  <spanx style="verb">janedoe</spanx> or <spanx style="verb">j.doe</spanx>.
+	  This value MAY be any valid JSON string including
+	  special characters such as <spanx style="verb">@</spanx>,
 	  <spanx style="verb">/</spanx>, or whitespace.
 	  The RP MUST NOT rely upon this value being unique,
-	  as discussed in <xref target="ClaimStability"></xref>.
+	  as discussed in <xref target="ClaimStability"/>.
 	  </c>
 
 	  <c>profile</c>
@@ -1625,7 +1625,7 @@
 	    Its value MUST conform to the <xref target="RFC5322">RFC 5322</xref>
 	    addr-spec syntax.
 	    The RP MUST NOT rely upon this value being unique,
-	    as discussed in <xref target="ClaimStability"></xref>.
+	    as discussed in <xref target="ClaimStability"/>.
 	  </c>
 
 	  <c>email_verified</c>
@@ -1650,12 +1650,12 @@
 
 	  <c>birthdate</c>
 	  <c>string</c>
-	  <c>End-User's birthday, represented as an 
-	  <xref target="ISO8601-2004">ISO 8601:2004</xref> <spanx style="verb">YYYY-MM-DD</spanx> 
-	  format. The year MAY be <spanx style="verb">0000</spanx>, indicating that it is omitted. 
-	  To represent only the year, <spanx style="verb">YYYY</spanx> format is allowed. Note that 
+	  <c>End-User's birthday, represented as an
+	  <xref target="ISO8601-1">ISO 8601-1</xref> <spanx style="verb">YYYY-MM-DD</spanx>
+	  format. The year MAY be <spanx style="verb">0000</spanx>, indicating that it is omitted.
+	  To represent only the year, <spanx style="verb">YYYY</spanx> format is allowed. Note that
 	  depending on the underlying platform's date related function, providing just year can
-	  result in varying month and day, so the implementers need to take this factor into account 
+	  result in varying month and day, so the implementers need to take this factor into account
 	  to correctly process the dates. </c>
 
 	  <c>zoneinfo</c>
@@ -1669,7 +1669,7 @@
 	  <c>string</c>
 	  <c>End-User's locale, represented as a
 	  <xref target="RFC5646">BCP47</xref> language tag.
-	  This is typically an <xref target="ISO639-1">ISO 639-1 Alpha-2</xref>
+	  This is typically an <xref target="ISO639">ISO 639 Alpha-2</xref>
 	  language code in
 	  lowercase and an <xref target="ISO3166-1">ISO 3166-1 Alpha-2</xref>
 	  country code in uppercase, separated by a dash. For example,
@@ -1763,10 +1763,10 @@
 
 	<section anchor="AddressClaim" title="Address Claim">
 	  <t>
-	    The Address Claim represents a physical mailing address. 
+	    The Address Claim represents a physical mailing address.
 	    Implementations MAY return only a subset of the
 	    fields of an <spanx style="verb">address</spanx>, depending upon
-	    the information available and the End-User's privacy 
+	    the information available and the End-User's privacy
 	    preferences. For
 	    example, the <spanx style="verb">country</spanx> and <spanx
 	    style="verb">region</spanx> might be returned without returning
@@ -1790,8 +1790,8 @@
 	    <list style="hanging">
 	      <t hangText="formatted">
 		<vspace/>
-		Full mailing address, 
-		formatted for display or use on a mailing label. 
+		Full mailing address,
+		formatted for display or use on a mailing label.
 		This field MAY contain multiple lines, separated by newlines.
 		Newlines can be represented either as
 		a carriage return/line feed pair ("\r\n") or as
@@ -1800,9 +1800,9 @@
 
 	      <t hangText="street_address">
 		<vspace/>
-		Full street address component, 
-		which MAY include house number, street name, 
-		Post Office Box, and multi-line extended street 
+		Full street address component,
+		which MAY include house number, street name,
+		Post Office Box, and multi-line extended street
 		address information.
 		This field MAY contain multiple lines, separated by newlines.
 		Newlines can be represented either as
@@ -1817,13 +1817,13 @@
 
 	      <t hangText="region">
 		<vspace/>
-		State, province, 
+		State, province,
 		prefecture, or region component.
 	      </t>
 
 	      <t hangText="postal_code">
 		<vspace/>
-		Zip code or 
+		Zip code or
 		postal code component.
 	      </t>
 
@@ -1903,7 +1903,7 @@
 	    can rely upon as a stable identifier for the End-User,
 	    since the <spanx style="verb">sub</spanx>
 	    Claim MUST be locally unique and never reassigned within the Issuer
-	    for a particular End-User, as described in <xref target="IDToken"></xref>.
+	    for a particular End-User, as described in <xref target="IDToken"/>.
 	    Therefore, the only guaranteed unique identifier for a given End-User is the
 	    combination of the <spanx style="verb">iss</spanx> Claim
 	    and the <spanx style="verb">sub</spanx> Claim.
@@ -1913,8 +1913,8 @@
 	    stability over time or uniqueness across users, and Issuers are permitted to
 	    apply local restrictions and policies. For instance, an Issuer MAY re-use an
 	    <spanx style="verb">email</spanx> Claim Value across different
-	    End-Users at different points in time, and the claimed 
-	    <spanx style="verb">email</spanx> address for a given End-User MAY change 
+	    End-Users at different points in time, and the claimed
+	    <spanx style="verb">email</spanx> address for a given End-User MAY change
 	    over time.
 	    Therefore, other Claims such as <spanx style="verb">email</spanx>,
 	    <spanx style="verb">phone_number</spanx>, and
@@ -1943,7 +1943,7 @@
 	Serialization, the Client constructs the string by adding the
 	parameters and values to the query component using the <spanx
 	style="verb">application/x-www-form-urlencoded</spanx> format as
-	defined by <xref target="W3C.REC-html401-19991224"/>.
+	defined by <xref target="W3C.SPSD-html401-20180327"/>.
 	Query String Serialization is typically used in
 	HTTP <spanx style="verb">GET</spanx> requests.
 	</t>
@@ -1966,10 +1966,10 @@
 
       <section anchor="FormSerialization" title="Form Serialization">
 
-	<t>Parameters and their values are Form Serialized by adding the 
+	<t>Parameters and their values are Form Serialized by adding the
 	parameter names and values to the entity body of the HTTP request using
 	the <spanx style="verb">application/x-www-form-urlencoded</spanx> format
-	as defined by <xref target="W3C.REC-html401-19991224"/>.
+	as defined by <xref target="W3C.SPSD-html401-20180327"/>.
 	Form Serialization is typically used in HTTP <spanx style="verb">POST</spanx> requests.</t>
 
 	<figure>
@@ -2066,7 +2066,7 @@
 	<t>
 	  Implementations MUST support TLS.
 	  Which version(s) ought to be implemented will vary over
-	  time, and depend on the widespread deployment and known
+	  time and depend on the widespread deployment and known
 	  security vulnerabilities at the time of implementation.
 	  Implementations SHOULD follow the guidance in
 	  BCP 195 <xref target="RFC8996"/> <xref target="RFC9325"/>,
@@ -2110,7 +2110,7 @@
       </section>
 
       <section anchor="Correlation" title="Correlation">
-	<t>To protect the End-User from a possible correlation among Clients, the
+	<t>To protect the End-User from possible correlation among Clients, the
 	use of a Pairwise Pseudonymous Identifier (PPID) as the
 	<spanx style="verb">sub</spanx> (subject) SHOULD be considered.</t>
       </section>
@@ -2465,45 +2465,36 @@
   <seriesInfo name="DOI" value="10.17487/RFC9325"/>
 </reference>
 
-      <!-- Reference from https://bib.ietf.org/public/rfc/bibxml4/reference.W3C.REC-html401-19991224.xml" modified to anchor="W3C.REC-html401-19991224" -->
+      <!-- Reference from https://bib.ietf.org/public/rfc/bibxml4/reference.W3C.SPSD-html401-20180327.xml -->
 
-<reference anchor="W3C.REC-html401-19991224" target="https://www.w3.org/TR/1999/REC-html401-19991224/">
+<reference anchor="W3C.SPSD-html401-20180327" target="https://www.w3.org/TR/2018/SPSD-html401-20180327/">
   <front>
     <title>HTML 4.01 Specification</title>
     <author fullname="Arnaud Le Hors" role="editor"/>
     <author fullname="Dave Raggett" role="editor"/>
     <author fullname="Ian Jacobs" role="editor"/>
-    <date day="24" month="December" year="1999"/>
+    <date day="27" month="March" year="2018"/>
   </front>
-  <seriesInfo name="W3C REC" value="REC-html401-19991224"/>
-  <seriesInfo name="W3C" value="REC-html401-19991224"/>
+  <seriesInfo name="W3C REC" value="SPSD-html401-20180327"/>
+  <seriesInfo name="W3C" value="SPSD-html401-20180327"/>
 </reference>
 
-      <reference anchor="USA15" target="http://www.unicode.org/reports/tr15/">
+      <reference anchor="USA15" target="https://www.unicode.org/reports/tr15/">
 	<front>
 	  <title>Unicode Normalization Forms</title>
 
-	  <author fullname="Mark Davis" initials="M." surname="Davis">
-	    <address>
-	      <email>markdavis@google.com</email>
-	    </address>
-	  </author>
-
 	  <author fullname="Ken Whistler" initials="K." surname="Whistler">
-	    <address>
-	      <email>ken@unicode.org</email>
-	    </address>
 	  </author>
 
-	  <date day="01" month="06" year="2015" />
+	  <date day="12" month="August" year="2023" />
 	</front>
 
 	<seriesInfo name="Unicode Standard Annex" value="15" />
       </reference>
 
-      <reference anchor="ISO29115" target="http://www.iso.org/iso/iso_catalogue/catalogue_tc/catalogue_detail.htm?csnumber=45138">
+      <reference anchor="ISO29115" target="https://www.iso.org/standard/45138.html">
         <front>
-          <title>ISO/IEC 29115:2013 --
+          <title>ISO/IEC 29115:2013.
           Information technology - Security techniques - Entity authentication
           assurance framework</title>
 
@@ -2514,52 +2505,50 @@
           <date month="April" year="2013" />
         </front>
 
-	<seriesInfo name="ISO/IEC" value="29115" />
+	<seriesInfo name="ISO/IEC" value="29115:2013" />
       </reference>
 
-      <reference anchor="ISO639-1" target="http://www.iso.org/iso/home/store/catalogue_tc/catalogue_detail.htm?csnumber=22109">
+      <reference anchor="ISO639" target="https://www.iso.org/standard/74575.html">
 	<front>
-	  <title>ISO 639-1:2002. Codes for the representation of names of
-	  languages -- Part 1: Alpha-2 code</title>
+	  <title>ISO 639:2023. Code for individual languages and language groups</title>
 
 	  <author fullname="International Organization for Standardization">
 	    <organization abbrev="ISO">International Organization for
 	    Standardization</organization>
 	  </author>
 
-	  <date year="2002" />
+	  <date month="November" year="2023" />
 	</front>
       </reference>
 
-      <reference anchor="ISO3166-1" target="http://www.w3.org/WAI/ER/IG/ert/iso639.htm">
+      <reference anchor="ISO3166-1" target="https://www.iso.org/standard/72482.html">
 	<front>
-	  <title>ISO 3166-1:1997. Codes for the representation of names of
-	  countries and their subdivisions -- Part 1: Country codes</title>
+	  <title>ISO 3166-1:2020. Codes for the representation of names of
+	  countries and their subdivisions - Part 1: Country codes</title>
 
 	  <author fullname="International Organization for Standardization">
 	    <organization abbrev="ISO">International Organization for
 	    Standardization</organization>
 	  </author>
 
-	  <date year="1997" />
+	  <date month="August" year="2020" />
 	</front>
       </reference>
 
-      <reference anchor="ISO8601-2004" target="http://www.iso.org/iso/catalogue_detail?csnumber=40874">
+      <reference anchor="ISO8601-1" target="https://www.iso.org/standard/81801.html">
 	<front>
-	  <title>ISO 8601:2004. Data elements and interchange formats - Information interchange -
-	  Representation of dates and times</title>
+	  <title>ISO 8601-1:2019/Amd 1:2022. Date and time - Representations for information interchange - Part 1: Basic rules</title>
 
 	  <author fullname="International Organization for Standardization">
 	    <organization abbrev="ISO">International Organization for
 	    Standardization</organization>
 	  </author>
 
-	  <date year="2004" />
+	  <date month="October" year="2022" />
 	</front>
       </reference>
 
-      <reference anchor="E.164" target="http://www.itu.int/rec/T-REC-E.164-201011-I/en">
+      <reference anchor="E.164" target="https://www.itu.int/rec/T-REC-E.164-201011-I/en">
         <front>
           <title>E.164: The international public telecommunication numbering plan</title>
 
@@ -2605,7 +2594,7 @@
 	    <organization abbrev="Disney (was at Salesforce)">Disney</organization>
 	  </author>
 
-          <date day="8" month="November" year="2014"/>
+          <date day="15" month="December" year="2023"/>
         </front>
       </reference>
 
@@ -2629,7 +2618,7 @@
             <organization abbrev="Illumila">Illumila</organization>
           </author>
 
-          <date day="8" month="November" year="2014"/>
+          <date day="15" month="December" year="2023"/>
         </front>
       </reference>
 
@@ -2649,52 +2638,40 @@
             <organization abbrev="Self-Issued Consulting (was at Microsoft)">Self-Issued Consulting</organization>
           </author>
 
-          <date day="8" month="November" year="2014"/>
+          <date day="15" month="December" year="2023"/>
         </front>
       </reference>
 
-      <reference anchor="JWT" target="https://tools.ietf.org/html/rfc7519">
-        <front>
-          <title>JSON Web Token (JWT)</title>
+      <!-- Reference from https://bib.ietf.org/public/rfc/bibxml/reference.RFC.7519.xml with change to anchor="JWT" -->
 
-          <author fullname="Michael B. Jones" initials="M.B." surname="Jones">
-            <organization abbrev="Microsoft">Microsoft</organization>
-          </author>
-
-          <author fullname="John Bradley" initials="J." surname="Bradley">
-            <organization abbrev="Ping Identity">Ping Identity</organization>
-          </author>
-
-          <author fullname="Nat Sakimura" initials="N." surname="Sakimura">
-            <organization abbrev="NRI">Nomura Research Institute, Ltd.</organization>
-          </author>
-
-          <date month="May" year="2015"/>
-        </front>
-
+      <reference anchor="JWT" target="https://www.rfc-editor.org/info/rfc7519">
+	<front>
+	  <title>JSON Web Token (JWT)</title>
+	  <author fullname="M. Jones" initials="M." surname="Jones"/>
+	  <author fullname="J. Bradley" initials="J." surname="Bradley"/>
+	  <author fullname="N. Sakimura" initials="N." surname="Sakimura"/>
+	  <date month="May" year="2015"/>
+	  <abstract>
+	    <t>JSON Web Token (JWT) is a compact, URL-safe means of representing claims to be transferred between two parties. The claims in a JWT are encoded as a JSON object that is used as the payload of a JSON Web Signature (JWS) structure or as the plaintext of a JSON Web Encryption (JWE) structure, enabling the claims to be digitally signed or integrity protected with a Message Authentication Code (MAC) and/or encrypted.</t>
+	  </abstract>
+	</front>
 	<seriesInfo name="RFC" value="7519"/>
 	<seriesInfo name="DOI" value="10.17487/RFC7519"/>
       </reference>
 
-      <reference anchor="JWS" target="https://tools.ietf.org/html/rfc7515">
-        <front>
-          <title>JSON Web Signature (JWS)</title>
+      <!-- Reference from https://bib.ietf.org/public/rfc/bibxml/reference.RFC.7515.xml with change to anchor="JWS" -->
 
-          <author fullname="Michael B. Jones" initials="M.B." surname="Jones">
-            <organization abbrev="Microsoft">Microsoft</organization>
-          </author>
-
-          <author fullname="John Bradley" initials="J." surname="Bradley">
-            <organization abbrev="Ping Identity">Ping Identity</organization>
-          </author>
-
-          <author fullname="Nat Sakimura" initials="N." surname="Sakimura">
-            <organization abbrev="NRI">Nomura Research Institute, Ltd.</organization>
-          </author>
-
-          <date month="May" year="2015" />
-        </front>
-
+      <reference anchor="JWS" target="https://www.rfc-editor.org/info/rfc7515">
+	<front>
+	  <title>JSON Web Signature (JWS)</title>
+	  <author fullname="M. Jones" initials="M." surname="Jones"/>
+	  <author fullname="J. Bradley" initials="J." surname="Bradley"/>
+	  <author fullname="N. Sakimura" initials="N." surname="Sakimura"/>
+	  <date month="May" year="2015"/>
+	  <abstract>
+	    <t>JSON Web Signature (JWS) represents content secured with digital signatures or Message Authentication Codes (MACs) using JSON-based data structures. Cryptographic algorithms and identifiers for use with this specification are described in the separate JSON Web Algorithms (JWA) specification and an IANA registry defined by that specification. Related encryption capabilities are described in the separate JSON Web Encryption (JWE) specification.</t>
+	  </abstract>
+	</front>
 	<seriesInfo name="RFC" value="7515"/>
 	<seriesInfo name="DOI" value="10.17487/RFC7515"/>
       </reference>
@@ -2775,7 +2752,7 @@
             <organization abbrev="Disney">Disney</organization>
           </author>
 
-	  <date day="28" month="October" year="2023" />
+	  <date day="15" month="December" year="2023" />
         </front>
       </reference>
 
@@ -2784,7 +2761,7 @@
     <section anchor="Acknowledgements" title="Acknowledgements">
       <t>
 	The OpenID Community would like to thank the following people for
-	their contributions to this document:
+	their contributions to this specification:
       </t>
       <t>
         <list style="empty">
@@ -2819,47 +2796,56 @@
     <section anchor="Notices" title="Notices">
       <t>Copyright (c) 2023 The OpenID Foundation.</t>
       <t>
-	The OpenID Foundation (OIDF) grants to any Contributor, developer, 
-	implementer, or other interested party a non-exclusive, royalty free, 
-	worldwide copyright license to reproduce, prepare derivative works from, 
-	distribute, perform and display, this Implementers Draft or 
-	Final Specification solely for the purposes of (i) developing 
-	specifications, and (ii) implementing Implementers Drafts and 
-	Final Specifications based on such documents, provided that attribution 
-	be made to the OIDF as the source of the material, but that such attribution 
+	The OpenID Foundation (OIDF) grants to any Contributor, developer,
+	implementer, or other interested party a non-exclusive, royalty free,
+	worldwide copyright license to reproduce, prepare derivative works from,
+	distribute, perform and display, this Implementers Draft or
+	Final Specification solely for the purposes of (i) developing
+	specifications, and (ii) implementing Implementers Drafts and
+	Final Specifications based on such documents, provided that attribution
+	be made to the OIDF as the source of the material, but that such attribution
 	does not indicate an endorsement by the OIDF.
       </t>
       <t>
-	The technology described in this specification was 
-	made available from contributions from various sources, 
-	including members of the OpenID Foundation and others.  
-	Although the OpenID Foundation has taken steps to help ensure 
-	that the technology is available for distribution, it takes 
-	no position regarding the validity or scope of any intellectual 
-	property or other rights that might be claimed to pertain to 
-	the implementation or use of the technology described in 
-	this specification or the extent to which any license under 
-	such rights might or might not be available; neither does it 
-	represent that it has made any independent effort to identify 
-	any such rights.  The OpenID Foundation and the contributors 
-	to this specification make no (and hereby expressly disclaim any) 
-	warranties (express, implied, or otherwise), including implied 
-	warranties of merchantability, non-infringement, fitness for 
-	a particular purpose, or title, related to this specification, 
-	and the entire risk as to implementing this specification is 
-	assumed by the implementer.  The OpenID Intellectual 
-	Property Rights policy requires contributors to offer 
-	a patent promise not to assert certain patent claims against 
-	other contributors and against implementers.  The OpenID Foundation invites 
-	any interested party to bring to its attention any copyrights, 
-	patents, patent applications, or other proprietary rights 
-	that may cover technology that may be required to practice 
+	The technology described in this specification was
+	made available from contributions from various sources,
+	including members of the OpenID Foundation and others.
+	Although the OpenID Foundation has taken steps to help ensure
+	that the technology is available for distribution, it takes
+	no position regarding the validity or scope of any intellectual
+	property or other rights that might be claimed to pertain to
+	the implementation or use of the technology described in
+	this specification or the extent to which any license under
+	such rights might or might not be available; neither does it
+	represent that it has made any independent effort to identify
+	any such rights.  The OpenID Foundation and the contributors
+	to this specification make no (and hereby expressly disclaim any)
+	warranties (express, implied, or otherwise), including implied
+	warranties of merchantability, non-infringement, fitness for
+	a particular purpose, or title, related to this specification,
+	and the entire risk as to implementing this specification is
+	assumed by the implementer.  The OpenID Intellectual
+	Property Rights policy requires contributors to offer
+	a patent promise not to assert certain patent claims against
+	other contributors and against implementers.  The OpenID Foundation invites
+	any interested party to bring to its attention any copyrights,
+	patents, patent applications, or other proprietary rights
+	that may cover technology that may be required to practice
 	this specification.
       </t>
     </section>
 
     <section anchor="History" title="Document History">
       <t>[[ To be removed from the final document ]]</t>
+
+      <t>
+	-47
+        <list style="symbols">
+	  <t>
+	    Reference errata correction drafts approved in December 2023.
+	  </t>
+	</list>
+      </t>
 
       <t>
 	-46
@@ -3327,7 +3313,7 @@
 	    Fixed #655 - Specify UTF-8 as encoding scheme whenever necessary.
 	  </t>
       </list></t>
-	   
+
       <t>-22
         <list style="symbols">
 	  <t>
@@ -3413,7 +3399,7 @@
       <t>Enumerated claims requested by the "profile" scope value</t>
       <t>Added text about implicit flow to Abstract</t>
       </list></t>
-      
+
       <t>-15<list style="symbols">
 	  <t>Removed definition and usage for assertion and claim object</t>
 	  <t>email scope allows access to the 'verified' claim</t>
@@ -3434,7 +3420,7 @@
 	  <t>Changed Security Considerations to refer to corresponding section in Standard</t>
 	  <t>Check ID Endpoint uses ID Token as Access Token according to Bearer Token spec</t>
       <t>Update John Bradley email and affiliation for Implementer's Draft</t>
-	  <t>Removed invalid_id_token error codes</t>
+	  <t>Removed invalid_id_token error code</t>
 	  <t>Replace queryString with postBody variable in example JS</t>
         </list></t>
 
