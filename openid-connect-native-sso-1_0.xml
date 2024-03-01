@@ -538,19 +538,19 @@
 
 				  <t hangText="native_sso_support">
 					  <vspace/>
-					  OPTIONAL. A boolean value of <spanx style="verb">True</spanx> identifying that the AS
+					  OPTIONAL. A boolean value of <spanx style="verb">true</spanx> identifying that the AS
 					  supports this OpenID Connect specification.
 				  </t>
 			  </list>
 		  </t>
 		  <t>
-			  This metadata element is OPTIONAL in the context of the OpenID Provider
+			  This metadata parameter is OPTIONAL in the context of the OpenID Provider
 			  not supporting the Native SSO for Mobile Apps specification. If omitted,
-			  the Relying Party should assume that this specification is not
-			  supported. The OpenID Provider MAY provide this metadata element even
+			  the Relying Party SHOULD assume that this specification is not
+			  supported. The OpenID Provider MAY provide this metadata parameter even
 			  if it doesn't support the Native SSO for Mobile Apps specification by
-			  including the <spanx style="verb">native_sso_support</spanx> element with a
-			  value of <spanx style="verb">False</spanx>.
+			  including the <spanx style="verb">native_sso_support</spanx> parameter with a
+			  value of <spanx style="verb">false</spanx>.
 		  </t>
 	  </section>
 
@@ -741,6 +741,7 @@
 			<t>Naveen CM</t>
             <t>Nov Matake</t>
 			<t>Vivek Shankar</t>
+			<t>Vladimir Dzhuvinov</t>
         </list>
       </t>
     </section>
