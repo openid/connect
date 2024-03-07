@@ -23,7 +23,7 @@
 
   <front>
     <title abbrev="Mobile App Native SSO">OpenID Connect
-    Native SSO for Mobile Apps 1.0 - draft 05</title>
+    Native SSO for Mobile Apps 1.0 - draft 06</title>
 
     <author fullname="George F. Fletcher" initials="G.F.F." surname="Fletcher">
       <organization abbrev="Capital One">Capital One</organization>
@@ -32,7 +32,7 @@
       </address>
     </author>
 
-    <date day="3" month="November" year="2022" />
+    <date day="26" month="February" year="2024" />
 
     <workgroup>OpenID Connect Working Group</workgroup>
 
@@ -73,6 +73,12 @@
 		  signed by the same vendor certs can share information via the system
 		  "keychain" (Account Manager on Android).
       </t>
+		<t>
+			The purpose of this specification is to provide a single-sign-on (SSO)
+			mechanism across mobile applications installed on the same device
+			that addresses the risks highlighted above and that provides
+			an equivalent SSO solution to that provided if using a web browser.
+		</t>
       <t>
 		  This document specifies a new scope, extends the token endpoint and
 		  profiles the <xref target="RFC8693">OAuth2 Token
@@ -421,8 +427,12 @@
 						  is out of scope for this specification.</t>
 					  <t>Verify the id_token for integrity protection by validating the
 					     signature of the id_token JWT.</t>
-					  <t>Verify that the binding between the id_token and the device_secret
-						  (as defined in the extension to the /token response) is valid.</t>
+					  <t>Verify the binding between the id_token and the device_secret
+						  by validating the <spanx style="verb">ds_hash</spanx> value obtained
+						  from the <spanx style="verb">id_token</spanx> matches the
+						  <spanx style="verb">device_secret</spanx> provided in the
+						  <spanx style="verb">actor_token</spanx> parameter.
+					  </t>
 					  <t>Verify that the session id in the id_token (sid claim) is still
 						  valid. If the session is no longer valid, the AS MUST return an
 						  error of invalid_grant. Note that in the case of a refresh_tokens
@@ -519,6 +529,30 @@
 		  </section>
 	  </section>
 
+	  <section anchor="discovery" title="Discovery Metadata">
+		  <t>
+			  This specification extends the OpenID Connect Discovery Metadata
+			  <xref target="OpenID.Discovery">Section 3</xref> and defines the following:
+
+			  <list style="hanging">
+
+				  <t hangText="native_sso_support">
+					  <vspace/>
+					  OPTIONAL. A boolean value of <spanx style="verb">true</spanx> identifying that the AS
+					  supports this OpenID Connect specification.
+				  </t>
+			  </list>
+		  </t>
+		  <t>
+			  This metadata parameter is OPTIONAL in the context of the OpenID Provider
+			  not supporting the Native SSO for Mobile Apps specification. If omitted,
+			  the Relying Party SHOULD assume that this specification is not
+			  supported. The OpenID Provider MAY provide this metadata parameter even
+			  if it doesn't support the Native SSO for Mobile Apps specification by
+			  including the <spanx style="verb">native_sso_support</spanx> parameter with a
+			  value of <spanx style="verb">false</spanx>.
+		  </t>
+	  </section>
 
     <section anchor="Security" title="Security Considerations">
       <section anchor="dsp" title="Device Secret Protection">
@@ -530,22 +564,97 @@
 		  </section>
 		<section anchor="cds" title="Cross-Device SSO">
 			<t>
-			If it is possible to move correctly bound <spanx style="verb">device_secret</spanx>
-			and <spanx style="verb">id_token</spanx> to a separate device, that device can obtain
-			the user's authentication state on the new device. An implementation of this
-			specification SHOULD use best efforts to bind the device_secret to the device instance.
+				If it is possible to move correctly bound <spanx style="verb">device_secret</spanx>
+				and <spanx style="verb">id_token</spanx> to a separate device, that device can obtain
+				the user's authentication state on the new device. An implementation of this
+				specification SHOULD use best efforts to bind the device_secret to the device instance
+				to prevent exfiltration of the <spanx style="verb">device_secret</spanx> and
+				<spanx style="verb">id_token</spanx> from the device.
 			</t>
-			</section>
+		</section>
         <section anchor="idt" title="id_token usage">
 			<t>
 			Use of the id_token in this specification takes some liberties with id_token validation.
 			For instance, the <spanx style="verb">aud</spanx> claim normally identifies the client
 			receiving the id_token and not the authorization server that issued the id_token.
-			Additionally, the id_token may have expired at the time of use designated by the specification.
+			Additionally, the id_token may have expired at the time of use designated by this specification.
+			</t>
+		</section>
+		<section anchor="sso" title="User Identity across SSO events">
+			<t>
+				This specification does not ensure that the user (human) who logs into mobile app 1
+				is the same user who is SSO'd into mobile app 2. This is equivalent to web based
+				SSO where once the browser instance is logged in, the SSO event to a new endpoint
+				assumes the user identity is the same. For this specification, if the destination
+				mobile app requires a user identity check due to risk or some other reason, how that
+				mobile app verifies the user is out of scope for this specification.
 			</t>
 		</section>
     </section>
 
+	  <section anchor="IANA" title="IANA Considerations">
+
+		  <section anchor="OAuthParams" title="OAuth Parameters Registry">
+
+			  <t>
+				  This specification registers the following parameter in the IANA
+				  "OAuth Parameters" registry <xref target="IANA.OAuth.Parameters"/>
+				  established by <xref target="RFC6749">RFC 6749</xref>.
+			  </t>
+
+			  <section anchor='ParametersContents' title='Registry Contents'>
+				  <t> <?rfc subcompact="yes"?>
+					  <list style="symbols">
+						  <t>Parameter name: <spanx style="verb">device_secret</spanx></t>
+
+						  <t>Parameter usage location: Authorization Response,
+							  Access Token Request, Access Token Response</t>
+
+						  <t>Change controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net</t>
+
+						  <t>Specification document(s): <xref target="TokenReq"/> of this document</t>
+
+						  <t>Related information: None</t>
+					  </list>
+				  </t>
+
+			  </section>
+			  <?rfc subcompact="no"?>
+		  </section>
+
+		  <section anchor="ASMetadataRegistry" title="OAuth Authorization Server Metadata Registry">
+			  <t>
+				  This specification registers the following metadata name in the
+				  IANA "OAuth Authorization Server Metadata" registry <xref target="IANA.OAuth.Parameters"/>
+				  established by <xref target="RFC8414"/>.
+			  </t>
+
+			  <section anchor='MetadataContents' title='Registry Contents'>
+				  <t>
+					  <?rfc subcompact="yes"?>
+					  <list style='symbols'>
+						  <t>
+							  Metadata Name: <spanx style="verb">native_sso_supported</spanx>
+						  </t>
+						  <t>
+							  Metadata Description:
+							  A boolean value of True identifying that the OpenID Provider
+							  supports this specification.
+						  </t>
+						  <t>
+							  Change Controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net
+						  </t>
+						  <t>
+							  Specification Document(s): <xref target="discovery"/> of this document
+						  </t>
+					  </list>
+				  </t>
+			  </section>
+			  <?rfc subcompact="no"?>
+
+		  </section>
+
+	  </section>
   </middle>
 
   <back>
@@ -554,6 +663,7 @@
 		<?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.6749"?>
         <?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.7230"?>
 		<?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.8252"?>
+		<?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.8414"?>
 		<?rfc include="http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.8693"?>
 
       <reference anchor="OpenID.Core" target="http://openid.net/specs/openid-connect-core-1_0.html">
@@ -584,6 +694,28 @@
         </front>
       </reference>
 
+		<reference anchor="OpenID.Discovery">
+			<front>
+				<title>OpenID Connect Discovery 1.0</title>
+				<author fullname="Nat Sakimura" initials="N." surname="Sakimura">
+					<organization abbrev="NRI">Nomura Research Institute, Ltd.</organization>
+				</author>
+				<author fullname="John Bradley" initials="J." surname="Bradley">
+					<organization abbrev="Ping Identity">Ping Identity</organization>
+				</author>
+				<author fullname="Michael B. Jones" initials="M.B." surname="Jones">
+					<organization abbrev="Microsoft">Microsoft</organization>
+				</author>
+				<author fullname="Edmund Jay" initials="E." surname="Jay">
+					<organization abbrev="Illumila">Illumila</organization>
+				</author>
+
+				<date day="8" month="November" year="2014"/>
+			</front>
+
+			<format target="http://openid.net/specs/openid-connect-discovery-1_0.html" type="HTML" />
+		</reference>
+
       <reference anchor="IANA.OAuth.Parameters" target="http://www.iana.org/assignments/oauth-parameters">
         <front>
           <title>OAuth Parameters</title>
@@ -608,6 +740,8 @@
 			<t>Nat Sakimura</t>
 			<t>Naveen CM</t>
             <t>Nov Matake</t>
+			<t>Vivek Shankar</t>
+			<t>Vladimir Dzhuvinov</t>
         </list>
       </t>
     </section>
@@ -632,7 +766,11 @@
 			Draft-05 - Updated the draft version and tweaked some language based on updates from
 			Naveen CM.
 		</t>
-        </list>
+		<t>
+			Draft-06 - Updated the draft version and tweaked some language based on updates from
+			Vivek Shankar.
+		</t>
+	  </list>
       </t>
     </section>
   </back>
