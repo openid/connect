@@ -755,38 +755,119 @@
       </t>
     </section>
 
+    <section anchor="Notices" title="Notices">
+      <t>Copyright (c) 2024 The OpenID Foundation.</t>
+      <t>
+	The OpenID Foundation (OIDF) grants to any Contributor, developer,
+	implementer, or other interested party a non-exclusive, royalty free,
+	worldwide copyright license to reproduce, prepare derivative works from,
+	distribute, perform and display, this Implementers Draft or
+	Final Specification solely for the purposes of (i) developing
+	specifications, and (ii) implementing Implementers Drafts and
+	Final Specifications based on such documents, provided that attribution
+	be made to the OIDF as the source of the material, but that such attribution
+	does not indicate an endorsement by the OIDF.
+      </t>
+      <t>
+	The technology described in this specification was
+	made available from contributions from various sources,
+	including members of the OpenID Foundation and others.
+	Although the OpenID Foundation has taken steps to help ensure
+	that the technology is available for distribution, it takes
+	no position regarding the validity or scope of any intellectual
+	property or other rights that might be claimed to pertain to
+	the implementation or use of the technology described in
+	this specification or the extent to which any license under
+	such rights might or might not be available; neither does it
+	represent that it has made any independent effort to identify
+	any such rights.  The OpenID Foundation and the contributors
+	to this specification make no (and hereby expressly disclaim any)
+	warranties (express, implied, or otherwise), including implied
+	warranties of merchantability, non-infringement, fitness for
+	a particular purpose, or title, related to this specification,
+	and the entire risk as to implementing this specification is
+	assumed by the implementer.  The OpenID Intellectual
+	Property Rights policy requires contributors to offer
+	a patent promise not to assert certain patent claims against
+	other contributors and against implementers.  The OpenID Foundation invites
+	any interested party to bring to its attention any copyrights,
+	patents, patent applications, or other proprietary rights
+	that may cover technology that may be required to practice
+	this specification.
+      </t>
+    </section>
+
     <section anchor="History" title="Document History">
       <t>[[ To be removed from the final specification ]]</t>
+
+		<t>
+			-07
+			<list style="symbols">
+				<t>
+					Updated the draft version and tweaked some language based on updates from
+					Vladimir Dzhuvinov. Added clarity around the use of the device_sso scope value, fixed
+					a typo and added clarity for how the OP signales the app that user interaction is
+					required.
+				</t>
+			</list>
+		</t>      <t>
+	-06
+	<list style="symbols">
+	  <t>
+	    Updated the draft version and tweaked some language based on updates from
+	    Vivek Shankar.
+	  </t>
+	  <t>
+	    Added Notices section.
+	  </t>
+	</list>
+      </t>
+
+      <t>
+	-05
+	<list style="symbols">
+	  <t>
+	    Updated the draft version and tweaked some language based on updates from
+	    Naveen CM.
+	  </t>
+	</list>
+      </t>
+
+      <t>
+	-04
+	<list style="symbols">
+	  <t>
+	    Normative change to verify the id_token plus other edits based on feedback
+	    from Joseph Heenan.
+	  </t>
+	  <t>
+	    Also updated Security Considerations section and general cleanup.
+	  </t>
+	</list>
+      </t>
+
+      <t>
+	-03
+	<list style="symbols">
+	  <t>
+	    Applied updates from the community.
+	  </t>
+	  <t>
+	    Removed non-relevant IANA claims section.
+	  </t>
+	</list>
+      </t>
 
       <t>
 	-00
 	<list style="symbols">
-          <t>
+	  <t>
 	    Initial Draft.
 	  </t>
-      <t>
-      Draft-03 - Applied updates from the community. Removed non-relevant IANA claims section.
+
+	</list>
       </t>
-		<t>
-			Draft-04 - Normative change to verify the id_token plus other edits based on feedback
-			from Joseph Heenan. Also updated Security Considerations section and general cleanup.
-		</t>
-		<t>
-			Draft-05 - Updated the draft version and tweaked some language based on updates from
-			Naveen CM.
-		</t>
-		<t>
-			Draft-06 - Updated the draft version and tweaked some language based on updates from
-			Vivek Shankar.
-		</t>
-		<t>
-			Draft-07 - Updated the draft version and tweaked some language based on updates from
-			Vladimir Dzhuvinov. Added clarity around the use of the device_sso scope value, fixed
-			a typo and added clarity for how the OP signales the app that user interaction is
-			required.
-		</t>
-	  </list>
-      </t>
+
     </section>
   </back>
 </rfc>
