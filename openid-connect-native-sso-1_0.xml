@@ -453,7 +453,7 @@
 						  in the optional scope parameter) do NOT require explicit user
 						  consent. If any requested scopes require explicit user consent
 						  the AS SHOULD fail the request and return an error of
-						  invalid_scope.</t>
+						  <spanx style="verb">interaction_required</spanx>.</t>
 				  </list>
 			  </t>
 			  <t>Based on the AS definition of the device_secret, the AS may perform
