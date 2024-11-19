@@ -23,7 +23,7 @@
 
   <front>
     <title abbrev="Mobile App Native SSO">OpenID Connect
-    Native SSO for Mobile Apps 1.0 - draft 06</title>
+    Native SSO for Mobile Apps 1.0 - draft 07</title>
 
     <author fullname="George F. Fletcher" initials="G.F.F." surname="Fletcher">
       <organization abbrev="Capital One">Capital One</organization>
@@ -32,7 +32,7 @@
       </address>
     </author>
 
-    <date day="8" month="March" year="2024" />
+    <date day="26" month="August" year="2024" />
 
     <workgroup>OpenID Connect Working Group</workgroup>
 
@@ -377,7 +377,9 @@
 					  </t>
 					  <t hangText="scope">
 						  <vspace/>
-						  OPTIONAL. The scopes required by the requesting native application.
+						  OPTIONAL. The scopes required by the requesting native application. When present,
+						  it MUST include the <spanx style="verb">openid</spanx> scope value as one of the
+						  provided values.
 					  </t>
 					  <t hangText="requested_token_type">
 						  <vspace/>
@@ -451,7 +453,7 @@
 						  in the optional scope parameter) do NOT require explicit user
 						  consent. If any requested scopes require explicit user consent
 						  the AS SHOULD fail the request and return an error of
-						  invalid_scope.</t>
+						  <spanx style="verb">interaction_required</spanx>.</t>
 				  </list>
 			  </t>
 			  <t>Based on the AS definition of the device_secret, the AS may perform
@@ -508,6 +510,13 @@
 					  </t>
 				  </list>
 			  </t>
+			  <t>
+				  In the case that the AS requires the user to interact with the AS directly, for example to
+				  obtain the user's consent for a particular requested scope value, the AS MUST return the
+				  OpenID Connect defined error of <spanx style="verb">interaction_required</spanx>. This
+				  instructs the client to start an authorization request with the AS via the standard web
+				  based flows, as described in section <xref target="AuthZReq"/>.
+			  </t>
 			  <t>In the case of any errors, the AS MUST return a valid OAuth2 Error response
 				  as described in Section 2.2.2 of the Token Exchange spec.</t>
         <t>The following is a non-normative example</t>
@@ -536,7 +545,7 @@
 
 			  <list style="hanging">
 
-				  <t hangText="native_sso_support">
+				  <t hangText="native_sso_supported">
 					  <vspace/>
 					  OPTIONAL. A boolean value of <spanx style="verb">true</spanx> identifying that the AS
 					  supports this OpenID Connect specification.
@@ -791,7 +800,17 @@
     <section anchor="History" title="Document History">
       <t>[[ To be removed from the final specification ]]</t>
 
-      <t>
+		<t>
+			-07
+			<list style="symbols">
+				<t>
+					Updated the draft version and tweaked some language based on updates from
+					Vladimir Dzhuvinov. Added clarity around the use of the device_sso scope value, fixed
+					a typo and added clarity for how the OP signales the app that user interaction is
+					required.
+				</t>
+			</list>
+		</t>      <t>
 	-06
 	<list style="symbols">
 	  <t>
@@ -845,6 +864,7 @@
 	  <t>
 	    Initial Draft.
 	  </t>
+
 	</list>
       </t>
 
