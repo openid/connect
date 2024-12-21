@@ -23,7 +23,7 @@
   <?rfc private="Final" ?>
 
   <front>
-    <title abbrev="OpenID Connect Core 1.0">OpenID Connect Core 1.0 incorporating errata set 2</title>
+    <title abbrev="OpenID Connect Core 1.0">OpenID Connect Core 1.0 - draft 36 incorporating errata set 3</title>
 
     <author fullname="Nat Sakimura" initials="N." surname="Sakimura">
       <organization abbrev="NAT.Consulting (was at NRI)">NAT.Consulting</organization>
@@ -65,7 +65,7 @@
       </address>
     </author>
 
-    <date day="15" month="December" year="2023" />
+    <date day="21" month="December" year="2024" />
 
     <workgroup>OpenID Connect Working Group</workgroup>
 
@@ -4571,8 +4571,9 @@
 	  and <spanx style="verb">aud</spanx> (audience) as members.
 	  The <spanx style="verb">iss</spanx> value SHOULD be the Client ID of the RP,
 	  unless it was signed by a different party than the RP.
-	  The <spanx style="verb">aud</spanx> value SHOULD be or include
-	  the OP's Issuer Identifier URL.
+	  The <spanx style="verb">aud</spanx> value MUST be
+	  the OP's Issuer Identifier.
+	  It MUST be passed as a string and not a single-element array.
 	</t>
 	<t>
 	  The Request Object MAY also be encrypted using <xref target="JWE">JWE</xref>
@@ -5663,11 +5664,11 @@
 		REQUIRED.
 		Audience.
 		The <spanx style="verb">aud</spanx> (audience) Claim.
-		Value that identifies the Authorization Server as an intended audience.
-		The Authorization Server MUST verify that it is an intended audience
+		Value that identifies the Authorization Server as the intended audience.
+		The Authorization Server MUST verify that it is the sole audience
 		for the token.
-		The Audience SHOULD be the URL of the
-		Authorization Server's Token Endpoint.
+		The Audience value MUST be the OP's Issuer Identifier
+		passed as a string, and not a single-element array.
 	      </t>
 
 	      <t hangText="jti">
@@ -5742,11 +5743,11 @@
 		REQUIRED.
 		Audience.
 		The <spanx style="verb">aud</spanx> (audience) Claim.
-		Value that identifies the Authorization Server as an intended audience.
-		The Authorization Server MUST verify that it is an intended audience
+		Value that identifies the Authorization Server as the intended audience.
+		The Authorization Server MUST verify that it is the sole audience
 		for the token.
-		The Audience SHOULD be the URL of the
-		Authorization Server's Token Endpoint.
+		The Audience value MUST be the OP's Issuer Identifier
+		passed as a string, and not a single-element array.
 	      </t>
 
 	      <t hangText="jti">
@@ -8541,6 +8542,8 @@
 	<seriesInfo name="DOI" value="10.17487/RFC7518"/>
       </reference>
 
+      <!-- TBD Update the following reference to rfc7523bis when it is ready -->
+
       <!-- Reference from https://bib.ietf.org/public/rfc/bibxml/reference.RFC.7523.xml with change to anchor="OAuth.JWT" -->
 
       <reference anchor="OAuth.JWT" target="https://www.rfc-editor.org/info/rfc7523">
@@ -9510,7 +9513,7 @@
     </section>
 
     <section anchor="Notices" title="Notices">
-      <t>Copyright (c) 2023 The OpenID Foundation.</t>
+      <t>Copyright (c) 2024 The OpenID Foundation.</t>
       <t>
 	The OpenID Foundation (OIDF) grants to any Contributor, developer,
 	implementer, or other interested party a non-exclusive, royalty free,
@@ -9549,6 +9552,31 @@
 	that may cover technology that may be required to practice
 	this specification.
       </t>
+    </section>
+
+    <section anchor="History" title="Document History">
+      <t>[[ To be removed from the approved specification incorporating errata corrections ]]</t>
+
+      <t>
+	-36
+        <list style="symbols">
+	  <t>
+	    Use the OP's Issuer Identifier as the sole audience of
+	    <spanx style="verb">private_key_jwt</spanx> and
+	    <spanx style="verb">client_secret_jwt</spanx> tokens.
+	  </t>
+	</list>
+      </t>
+
+      <t>
+	-35
+        <list style="symbols">
+	  <t>
+	    Final specification incorporating errata set 2.
+	  </t>
+	</list>
+      </t>
+
     </section>
 
   </back>
