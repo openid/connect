@@ -32,7 +32,7 @@
       </address>
     </author>
 
-    <date day="26" month="August" year="2024" />
+    <date day="31" month="December" year="2024" />
 
     <workgroup>OpenID Connect Working Group</workgroup>
 
@@ -46,7 +46,8 @@
       <t>
 		  This document describes a mechanism that allows a mobile
 		  app to share the identity/authentication obtained by a different mobile
-		  app where both apps are written by the same vendor.
+		  app where both apps are written by the same vendor and installed on the
+		  same physical device.
       </t>
     </abstract>
   </front>
@@ -82,7 +83,7 @@
       <t>
 		  This document specifies a new scope, extends the token endpoint and
 		  profiles the <xref target="RFC8693">OAuth2 Token
-		  Exchange</xref> spec allowing mobile apps to share identity (SSO)
+		  Exchange</xref> specification allowing mobile apps to share identity (SSO)
 		  between apps produced and signed by the same vendor (i.e. signed with
 		  the same vendor certificate).
       </t>
@@ -181,7 +182,7 @@
 			<spanx style="verb">device_secret</spanx> to be returned when
 			the code is exchanged for tokens.</t>
 		<t>After step 8, Native App #1 stores the device_secret and id_token
-		   in the protected device storage accessible only to Native App #2.</t>
+		   in the shared device storage accessible only to Native App #2.</t>
 		<t>Native App #2 uses the stored data from the shared device storage
 		   to obtain tokens for the user thus enabling the app to access
 		   the user's resources (i.e. SSO)</t>
@@ -228,7 +229,7 @@
 				  returned in addition to the other tokens identified as part of the
 				  authorization request.</t>
 			  <t>The new scope value is defined as <spanx style="verb">device_sso</spanx>.
-				  When this scope is present on the authorization request, when the
+				  When this scope is present on the authorization request, and the
 				  code is exchanged for tokens, a new device_secret will be returned.</t>
 		  </section>
 		  <section anchor="DeviceSecret" title="Device Secret">
@@ -252,10 +253,14 @@
 				  is out of scope for this specification.</t>
 		  </section>
 		  <section anchor="TokenReq" title="Token Request">
-			  <t>During a normal user authentication via the system browser, after
-				  the mobile app receives the code and state response from the
-				  Authorization Server, this spec defines the following additional
-				  parameters to the /token endpoint for the authorization_code grant_type.
+			  <t>The native app interacts with the token endpoint in order to retrieve the
+				  <spanx style="verb">device_secret</spanx> and other tokens. This
+			      specification applies to the <spanx style="verb">authorization_code</spanx>
+			      and <spanx style="verb">refresh_token</spanx> grant types. Support for other
+			      grant types is out of scope for this specification.</t>
+			  <t>This specification defines the following additional
+				  parameters to the /token endpoint for the <spanx style="verb">authorization_code</spanx>
+				  and <spanx style="verb">refresh_token</spanx> grant types.
 				  <list style="hanging">
 
 					  <t hangText="device_secret">
@@ -263,20 +268,45 @@
 						  OPTIONAL. This token SHOULD be provided if the client requested
 						  the <spanx style="verb">device_sso</spanx> scope and the client
 						  already has a <spanx style="verb">device_secret</spanx>
-						  available. If no <spanx style="verb">device_secret</spanx> is
-						  specified and the refresh_token contains the
-						  <spanx style="verb">device_sso</spanx> scope, a new
-						  <spanx style="verb">device_secret</spanx> will be generated.
+						  available.
 					  </t>
-
 				  </list>
+			  </t>
+			  <t>
+				  In the case of the <spanx style="verb">authorization_code</spanx> grant, the
+				  standard process of associating the scopes from the authorization request with
+				  the <spanx style="verb">authorization_code</spanx> applies. If
+				  <spanx style="verb">device_sso</spanx> is included in the set of requested scopes
+				  the Authorization Service MUST return the <spanx style="verb">device_secret</spanx>.
+			  </t>
+			  <t>
+				  In the case of the <spanx style="verb">refresh_token</spanx> grant, the Authorization
+				  Server must determine from the optional <spanx style="verb">scope</spanx> parameter or
+				  the scopes originally associated with the refresh token if the
+				  <spanx style="verb">device_sso</spanx> scope is part of the request. If so, the
+				  Authorization Server MUST return the <spanx style="verb">device_secret</spanx>.
 			  </t>
 		  </section>
 		  <section anchor="TokenRsp" title="Token Response">
-			  <t>When the authorization server receives the
-				  <spanx style="verb">device_secret</spanx> value it MUST
-				  process the authorization_code grant type per the OpenID Connect spec with the
-				  following additions applying to the id_token.
+			  <t>
+				  In processing the Token Request, the Authorization Server must determine whether
+				  to include a <spanx style="verb">device_secret</spanx> in the response. If a
+				  <spanx style="verb">device_secret</spanx> is provided as part of the token request,
+				  and the <spanx style="verb">device_secret</spanx> is invalid, then the AS must
+				  process the request as if no <spanx style="verb">device_secret</spanx> was specified.
+				  Additionally, in the response from the token endpoint, the <spanx style="verb">device_secret</spanx>
+				  and the <spanx style="verb">id_token</spanx> MUST both be issued or neither issued.
+			  </t>
+			  <t>
+				  The following sections describe additional claims for the <spanx style="verb">id_token</spanx>
+				  and when processing specific grant types.
+			  </t>
+			  <section anchor="idclaims" title="ID Token Claims">
+			  <t>
+				  This specification defines additional requirements for the <spanx style="verb">id_token</spanx> issued
+			      in conjunction with the <spanx style="verb">device_secret</spanx>. These requirements create a
+			      strong binding between the <spanx style="verb">id_token</spanx> representing the logged in
+			      user and the <spanx style="verb">device_secret</spanx> representing the user's device and session.
 				  <list style="numbers">
 					  <t>Add a <spanx style="verb">ds_hash</spanx> claim to the id_token to represent a function of
 						  the device_secret.
@@ -310,19 +340,36 @@
 				  </list>
 			  </t>
 			  <t>Note that the implementation of this spec and the specification of the
-				  ds_hash and sid value MUST NOT leak any data that would provide a
+				  <spanx style="verb">ds_hash</spanx> and <spanx style="verb">sid</spanx>
+				  value MUST NOT leak any data that would provide a
 				  security advantage to an attacker who gains access to the id_token.</t>
-			  <t>When the authorization server receives the device_secret it must
-				  validate the token. If the token is invalid it must be discarded and
-				  the request processed as if no device_secret was specified.</t>
-			  <t>If the authorization request included the device_sso scope then the
-				  authorization server MUST return a device_secret in the response.
-				  The device_secret is returned in the device_token claim of the
-				  returned JSON data.</t>
-			  <t>If no devices_secret is specified, then the AS MUST generate the
-				  token. If a device_secret is specified and is valid, the AS MAY
-				  update the device_secret as necessary. Regardless a device_secret
-                  must be returned in the response.</t>
+			  </section>
+			  <section anchor="AuthCode" title="Authorization Code Grant">
+				  <t>
+					  If the authorization request includes the <spanx style="verb">device_sso</spanx>
+					  scope, then the Authorization Server MUST issue a <spanx style="verb">device_secret</spanx>
+					  and an <spanx style="verb">id_token</spanx> with the additional claims
+					  defined above.
+				  </t>
+			  </section>
+			  <section anchor="Refresh" title="Refresh Token Grant">
+				  <t>
+					  The Authorization Server MUST issue a <spanx style="verb">device_secret</spanx> if
+					  the scope parameter or default scopes include a scope of
+					  <spanx style="verb">device_sso</spanx> and no existing
+					  or valid <spanx style="verb">device_secret</spanx> is provided.
+				  </t>
+				  <t>
+					  If an existing <spanx style="verb">device_secret</spanx> is provided as part of the
+					  token request and is still valid, the Authorization Server MAY return a new
+					  <spanx style="verb">device_secret</spanx> but doing so is not RECOMMENDED.
+				  </t>
+				  <t>
+					  If the Authorization Server issues a new <spanx style="verb">device_secret</spanx> as
+					  part of the token response, then the AS MUST also issue an updated
+					  <spanx style="verb">id_token</spanx> with the required claims.
+				  </t>
+			  </section>
 		  </section>
     </section>
 
@@ -334,13 +381,23 @@
 			  the same vendor as the first mobile app and both apps signed by the
 			  same developer certificate.</t>
 		  <section anchor="TXProfile" title="OAuth2 Token Exchange Profile">
-			  <t>The client authenticates using its registered token endpoint
-          client authentication method. This could range from HTTP
-          Basic Authentication, to OpenID Connect defined private_key_jwt. The AS must
-          be able to obtain the client_id of the requesting mobile app
-          (mobile app #2) from the client authentication method.
-        </t>
-			  <t>This profile defines the use of the following token exchange parameters.
+			  <t>
+				  The Authorization Server requires the <spanx style="verb">client_id</spanx> of
+				  the requesting OAuth client. The <spanx style="verb">client_id</spanx> value can be
+				  obtained from the parameter defined by <xref target="RFC6749">OAuth 2.0</xref> or via
+				  client authentication methods that identify the <spanx style="verb">client_id</spanx>.
+				  Confidential clients MUST use client authentication with this profile.
+			  </t>
+			  <t><xref target="RFC6749">OAuth 2.0</xref> defines:
+				  <list style="hanging">
+					  <t hangText="client_id">
+						  <vspace/>
+						  OPTIONAL. The client_id value of the requesting OAuth client. This parameter
+						  is REQUIRED if the client is a <spanx style="verb">public</spanx> client.
+					  </t>
+				  </list>
+			  </t>
+			  <t>Additionally this profile defines the use of the following token exchange parameters.
 				  <list style="hanging">
 					  <t hangText="grant_type">
 						  <vspace/>
@@ -368,12 +425,12 @@
 						  REQUIRED. This value defines the actor making the request which in this
 						  case is the device_secret issued to the device of the native
 						  application making the request. The device_secret MUST be presented per
-						  the definition of the urn:x-oath:params:oauth:token-type:device-secret
+						  the definition of the urn:openid:params:token-type:device-secret
 						  token identifier described below.
 					  </t>
 					  <t hangText="actor_token_type">
 						  <vspace/>
-						  REQUIRED. This value MUST be: urn:x-oath:params:oauth:token-type:device-secret
+						  REQUIRED. This value MUST be: urn:openid:params:token-type:device-secret
 					  </t>
 					  <t hangText="scope">
 						  <vspace/>
@@ -392,7 +449,7 @@
 			  </t>
 			  <t>This profile also defines the following token type identifiers.
 				  <list style="hanging">
-				  <t hangText="urn:x-oath:params:oauth:token-type:device-secret">
+				  <t hangText="urn:openid:params:token-type:device-secret">
 					  <vspace/>
 					  This token type identifier is used to describe the device_secret specified
 					  in the actor_token parameter.
@@ -408,16 +465,20 @@
 			  <figure><artwork><![CDATA[
     POST /token HTTP/1.1
     Host: as.example.com
-    Authorization: Basic ZGZhZGYyMzUyNDU0Og
     ...
-    grant_type=urn%3Aietf%3Aparams%3Aoauth%3Agrant-type%3Atoken-exchange
+    client_id=cid_235saw4r4
+    &grant_type=urn%3Aietf%3Aparams%3Aoauth%3Agrant-type%3Atoken-exchange
     &audience=https%3A%3F%3Flogin.example.net&subject_token=<id_token>
     &subject_token_type=urn%3Aietf%3Aparams%3Aoauth%3Atoken-type%3Aid-token
     &actor_token=95twdf3w4y6wvftw35634t
-    &actor_token_type=urn%3Ax-oath%3Aparams%3Aoauth%3Atoken-type%3Adevice-secret
+    &actor_token_type=urn%3Aopenid%3Aparams%3Atoken-type%3Adevice-secret
               ]]></artwork></figure>
-			  <t>The client_id in this request is sent via the HTTP Basic Authentication
-				  method using the HTTP Authorization header.</t>
+			  <t>
+				  The <spanx style="verb">client_id</spanx> in this request is sent via the
+				  <spanx style="verb">client_id</spanx> parameter. The
+				  <spanx style="verb">client_id</spanx> may also be provided via standard
+				  client authentication methods.
+			  </t>
 		  </section>
 		  <section anchor="TXRules" title="Native SSO Processing Rules">
 			  <t>When the authorization server receives a request at the token endpoint
@@ -806,11 +867,25 @@
 				<t>
 					Updated the draft version and tweaked some language based on updates from
 					Vladimir Dzhuvinov. Added clarity around the use of the device_sso scope value, fixed
-					a typo and added clarity for how the OP signales the app that user interaction is
+					a typo and added clarity for how the OP signals the app that user interaction is
 					required.
 				</t>
+				<t>
+					Changed the urn:x-oath:params:* constants to urn:openid:params:* strings.
+					This is a normative change.
+				</t>
+				<t>
+					Refactored section 3.3 and 3.4 to address feedback from issues
+					#2172, #2170, #2169, #2168. Clarifies processing of scopes and token
+					responses depending on the specific OAuth grant.
+				</t>
+				<t>
+					Made some miscellaneous editor changes.
+				</t>
 			</list>
-		</t>      <t>
+		</t>
+
+		<t>
 	-06
 	<list style="symbols">
 	  <t>
