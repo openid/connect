@@ -20,7 +20,7 @@
   <?rfc sortrefs="yes"?>
   <?rfc strict="yes" ?>
   <?rfc iprnotified="no" ?>
-  <?rfc private="Final" ?>
+  <?rfc private="Draft" ?>
 
   <front>
     <title abbrev="OpenID Connect Core 1.0">OpenID Connect Core 1.0 - draft 36 incorporating errata set 3</title>
@@ -65,7 +65,7 @@
       </address>
     </author>
 
-    <date day="20" month="January" year="2025" />
+    <date day="30" month="January" year="2025" />
 
     <workgroup>OpenID Connect Working Group</workgroup>
 
