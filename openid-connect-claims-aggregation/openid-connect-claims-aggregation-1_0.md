@@ -172,7 +172,7 @@ capitals, as shown here.
 
 {mainmatter}
 
-## Scope
+# Scope
 
 This document specifies the methods for
 
@@ -182,7 +182,7 @@ This document specifies the methods for
 * the OP to return obtained claims from CP to the RP; and 
 * the RP to verify the claims.
 
-## Normative references
+# Normative references
 The following referenced documents are indispensable for the application of this document. For dated references, only the edition cited applied. For undated references, the latest edition of the referenced document (including any amendments) applies.
 
 [BCP14] - Key words for use in RFCs to Indicate Requirement Levels
@@ -216,13 +216,13 @@ The following referenced documents are indispensable for the application of this
 [JWA]: http://tools.ietf.org/html/draft-ietf-jose-json-web-algorithms
 
 
-## Terms and definitions
+# Terms and definitions
 For the purpose of this document, the terms defined in [RFC6749], [RFC6750], [RFC7636], [OpenID Connect Core][OIDC] and the following apply.
 
 **Claim Set** – a set of claims issued by a Claims Provider
 
 
-## Symbols and abbreviated terms
+# Symbols and abbreviated terms
 
 **RP** – Relying Party
 
@@ -234,7 +234,7 @@ For the purpose of this document, the terms defined in [RFC6749], [RFC6750], [RF
 
 **TLS** - Transport Layer Security
 
-## Actors
+# Actors
 
 In this document, there are four main actors. 
 
@@ -265,7 +265,7 @@ They are topologically connected as in the following diagram.
 Figure: Relationships among actors
 
 
-### Subject (User)
+## Subject (User)
 
 Subject is the entity that grants access to the claims at CPs and the OP. 
 In this system, the Subject grants CP to provide OP the Claims for 
@@ -278,14 +278,14 @@ The Subject also allows OP to potentially store the obtained claims.
 The Subject also allows RP to make a claims request to the OP, 
 typically for the Subject to receive some services from the RP. 
 
-### RP
+## RP
 
 RP is an actor that typically provides some service to the Subject. 
 To perform the service, the RP obtains some claims about the Subject from OP. 
 The basis for the processing of the Subject's claims by the RP can be 
 performance of contract, consent, and other lawful basis. 
 
-### CP
+## CP
 
 CP, Claims Provider, is a role assumed by an OpenID Provider 
 that supports signed UserInfo response and has the OP as a client.  
@@ -297,12 +297,12 @@ The provision for the Claims Provider are as follows:
 1. It SHOULD support the registration of the OPs with extensions defined in this document. 
 1. It SHOULD support the registration of the OPs through Dynamic Registration. 
 
-#### UserInfo Endpoint
+### UserInfo Endpoint
 The UserInfo Endpoint is described in 5.3 of OpenID Connect 1.0 [OIDC] as an OAuth 2.0 Protected Resource that returns Claims about the authenticated Subject.
 
 
 
-### OP
+## OP
 
 OP is an entity that acts as an OpenID Provider to the RP. 
 Also, OP acts as a relying party to CPs. 
@@ -318,7 +318,7 @@ The provision for the OP is as follows:
 
 
 
-## Discovery Phase
+# Discovery Phase
 
 Before registering itself as an OpenID Connect Client to a CP, the OP needs to obtain 
 configuration information from the CP, 
@@ -340,7 +340,7 @@ The following optional OpenID Connect Discovery 1.0 [OpenID.Discovery] parameter
 - `claim_types_supported`. The Claims Types supported by the Claims Provider. It MUST contain the value *aggregated*.
 
 
-## Registration Phase
+# Registration Phase
 
 Before starting to make requests to a CP, the OP MUST register itself to the CP. 
 The registration SHOULD be performed 
@@ -353,7 +353,7 @@ The OP MUST register the following client parameters :
 In addition, the OP MUST NOT register `userinfo_encrypted_response_alg` value.
 
 
-## Setup Phase
+# Setup Phase
 
 In this phase, the OP obtains an access token (and optionally refresh token) 
 that is bound to the current user so that the OP can obtain the claims about the current user 
@@ -373,7 +373,7 @@ The actual act of granting MUST involve active user interaction.
 The grant that is to be obtained in this phase SHOULD be sufficiently large so that it will reduce the 
 number of times that OP needs to take the Subject to the CP to obtain additional grants. 
 
-## Delivery Phase (RP Phase)
+# Delivery Phase (RP Phase)
 
 In Delivery Phase, the claims are delivered to RP. 
 To do so, it typically goes through the following steps: 
@@ -387,14 +387,14 @@ To do so, it typically goes through the following steps:
 Claims Collection MAY be done out of sync. That is, the signed claim sets can be obtained before the RP requests. 
 
 
-### Claims Request by RP to OP
+## Claims Request by RP to OP
 
 For an RP to request claims according to this document, the RP 
 
 1. MUST use the OpenID Connect Authentication Request with extension parameters defined in this document to the OP. 
 
 
-### RP authentication and the request verification
+## RP authentication and the request verification
 
 Upon receipt of the request, the OP 
 
@@ -404,7 +404,7 @@ Upon receipt of the request, the OP
 
 NOTE: RP MUST be authenticated at one point or another before completion of the transaction. 
 
-### Subject Granting
+## Subject Granting
 
 After verifying the request, the OP 
 
@@ -413,7 +413,7 @@ After verifying the request, the OP
 1. MUST show the Subject the link to the RP provided policy_url; and 
 1. MUST obtain grant from the Subject through explicit action. 
 
-### Claims Collection
+## Claims Collection
 
 The OP collects the required claims from the relevant UserInfo Endpoint. 
 This process can be performed before the RP's request. 
@@ -421,7 +421,7 @@ This process can be performed before the RP's request.
 To minimize the information returned from the UserInfo Endpoint, the OP SHOULD downscope the access token to return only the claims requested by the RP's authorization request. This OP retrieves a downscoped access token by making a request to the CP's Token Endpoint as described in 12 of OpenID Connect 1.0 [OIDC]. The `scope` parameter value SHOULD only allow access to the claims requested by the RP at the CP.  
 
 
-#### UserInfo Endpoint Request
+### UserInfo Endpoint Request
 
 For claims collection, the OP
 
@@ -429,12 +429,12 @@ For claims collection, the OP
 
 This process will be repeated for as each Claims Providers as necessary.
 
-### Claims Delivery
+## Claims Delivery
 
 Once the necessary claim sets were collected, 
 the OP creates the Aggregated Claims response to be returned as described in 5.6.2 of OpenID Connect 1.0 [OIDC] . 
 
-### Claims Verification
+## Claims Verification
 
 For Claims Verification,  
 

@@ -1,1464 +1,1910 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html lang="en"><head><title>Draft-02: OpenID Connect Claims Aggregation Draft 02</title>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<meta name="description" content="OpenID Connect Claims Aggregation Draft 02">
-<meta name="keywords" content="security, openid, w3c verifiable credential, did, privacy">
-<meta name="generator" content="xml2rfc v1.36 (http://xml2rfc.ietf.org/)">
-<style type='text/css'><!--
-        body {
-                font-family: verdana, charcoal, helvetica, arial, sans-serif;
-                font-size: small; color: #000; background-color: #FFF;
-                margin: 2em;
-        }
-        h1, h2, h3, h4, h5, h6 {
-                font-family: helvetica, monaco, "MS Sans Serif", arial, sans-serif;
-                font-weight: bold; font-style: normal;
-        }
-        h1 { color: #900; background-color: transparent; text-align: right; }
-        h3 { color: #333; background-color: transparent; }
+<!DOCTYPE html>
+<html lang="en" class="OpenID-Draft">
+<head>
+<meta charset="utf-8">
+<meta content="Common,Latin" name="scripts">
+<meta content="initial-scale=1.0" name="viewport">
+<title>OpenID Connect Claims Aggregation Draft 03</title>
+<meta content="Nat Sakimura" name="author">
+<meta content="Edmund Jay" name="author">
+<meta content="
+       OpenID Providers within OpenID Connect assume many roles, one of these is providing End-User claims to relying parties at the consent of the End-User such as their name or date of birth. OpenID Connect defines multiple models under which claims are provided and relied upon by a relying parties, including simple, aggregated and distributed claims. This document focuses on elaborating upon the aggregated model outlined in section 5.6.2 of OpenID Connect core by defining the full life-cycle of aggregated claims and the new roles of the entities involved in an aggregated claims model. 
+       This document specifies the methods for 
+       
+         an OP acting as a client of Claims Provider (CP) to perform discovery for a Claims Provider Metadata; 
+         the OP to perform client registration to the Claims Provider; 
+         the OP to obtain claims from the Claims Provider; 
+         an RP to ask for verified claims to the OP; 
+         
+         the OP to return obtained claims from CP to the RP; and 
+         the RP to verify the claims. 
+       
+    " name="description">
+<meta content="xml2rfc 3.16.0" name="generator">
+<meta content="security" name="keyword">
+<meta content="openid" name="keyword">
+<meta content="privacy" name="keyword">
+<meta content="openid-connect-claims-aggregation-1_0" name="ietf.draft">
+<!-- Generator version information:
+  xml2rfc 3.16.0
+    Python 3.10.2
+    appdirs 1.4.4
+    ConfigArgParse 1.5.3
+    google-i18n-address 2.5.2
+    html5lib 1.1
+    intervaltree 3.1.0
+    Jinja2 3.1.2
+    lxml 4.9.2
+    MarkupSafe 2.1.2
+    pycountry 22.3.5
+    PyYAML 6.0
+    requests 2.28.2
+    setuptools 57.5.0
+    six 1.16.0
+    wcwidth 0.2.6
+-->
+<link href="./openid-connect-claims-aggregation-1_0.xml" rel="alternate" type="application/rfc+xml">
+<link href="#copyright" rel="license">
+<style type="text/css">/*
 
-        td.RFCbug {
-                font-size: x-small; text-decoration: none;
-                width: 30px; height: 30px; padding-top: 2px;
-                text-align: justify; vertical-align: middle;
-                background-color: #000;
-        }
-        td.RFCbug span.RFC {
-                font-family: monaco, charcoal, geneva, "MS Sans Serif", helvetica, verdana, sans-serif;
-                font-weight: bold; color: #666;
-        }
-        td.RFCbug span.hotText {
-                font-family: charcoal, monaco, geneva, "MS Sans Serif", helvetica, verdana, sans-serif;
-                font-weight: normal; text-align: center; color: #FFF;
-        }
+  NOTE: Changes at the bottom of this file overrides some earlier settings.
 
-        table.TOCbug { width: 30px; height: 15px; }
-        td.TOCbug {
-                text-align: center; width: 30px; height: 15px;
-                color: #FFF; background-color: #900;
-        }
-        td.TOCbug a {
-                font-family: monaco, charcoal, geneva, "MS Sans Serif", helvetica, sans-serif;
-                font-weight: bold; font-size: x-small; text-decoration: none;
-                color: #FFF; background-color: transparent;
-        }
+  Once the style has stabilized and has been adopted as an official RFC style,
+  this can be consolidated so that style settings occur only in one place, but
+  for now the contents of this file consists first of the initial CSS work as
+  provided to the RFC Formatter (xml2rfc) work, followed by itemized and
+  commented changes found necessary during the development of the v3
+  formatters.
 
-        td.header {
-                font-family: arial, helvetica, sans-serif; font-size: x-small;
-                vertical-align: top; width: 33%;
-                color: #FFF; background-color: #666;
-        }
-        td.author { font-weight: bold; font-size: x-small; margin-left: 4em; }
-        td.author-text { font-size: x-small; }
+*/
 
-        /* info code from SantaKlauss at http://www.madaboutstyle.com/tooltip2.html */
-        a.info {
-                /* This is the key. */
-                position: relative;
-                z-index: 24;
-                text-decoration: none;
-        }
-        a.info:hover {
-                z-index: 25;
-                color: #FFF; background-color: #900;
-        }
-        a.info span { display: none; }
-        a.info:hover span.info {
-                /* The span will display just on :hover state. */
-                display: block;
-                position: absolute;
-                font-size: smaller;
-                top: 2em; left: -5em; width: 15em;
-                padding: 2px; border: 1px solid #333;
-                color: #900; background-color: #EEE;
-                text-align: left;
-        }
+/* fonts */
+@import url('https://fonts.googleapis.com/css?family=Noto+Sans'); /* Sans-serif */
+@import url('https://fonts.googleapis.com/css?family=Noto+Serif'); /* Serif (print) */
+@import url('https://fonts.googleapis.com/css?family=Roboto+Mono'); /* Monospace */
 
-        a { font-weight: bold; }
-        a:link    { color: #900; background-color: transparent; }
-        a:visited { color: #633; background-color: transparent; }
-        a:active  { color: #633; background-color: transparent; }
+:root {
+  --font-sans: 'Noto Sans', Arial, Helvetica, sans-serif;
+  --font-serif: 'Noto Serif', 'Times', 'Times New Roman', serif;
+  --font-mono: 'Roboto Mono', Courier, 'Courier New', monospace;
+}
 
-        p { margin-left: 2em; margin-right: 2em; }
-        p.copyright { font-size: x-small; }
-        p.toc { font-size: small; font-weight: bold; margin-left: 3em; }
-        table.toc { margin: 0 0 0 3em; padding: 0; border: 0; vertical-align: text-top; }
-        td.toc { font-size: small; font-weight: bold; vertical-align: text-top; }
+@viewport {
+  zoom: 1.0;
+  width: extend-to-zoom;
+}
+@-ms-viewport {
+  width: extend-to-zoom;
+  zoom: 1.0;
+}
+/* general and mobile first */
+html {
+}
+body {
+  max-width: 90%;
+  margin: 1.5em auto;
+  color: #222;
+  background-color: #fff;
+  font-size: 14px;
+  font-family: var(--font-sans);
+  line-height: 1.6;
+  scroll-behavior: smooth;
+}
+.ears {
+  display: none;
+}
 
-        ol.text { margin-left: 2em; margin-right: 2em; }
-        ul.text { margin-left: 2em; margin-right: 2em; }
-        li      { margin-left: 3em; }
+/* headings */
+#title, h1, h2, h3, h4, h5, h6 {
+  margin: 1em 0 0.5em;
+  font-weight: bold;
+  line-height: 1.3;
+}
+#title {
+  clear: both;
+  border-bottom: 1px solid #ddd;
+  margin: 0 0 0.5em 0;
+  padding: 1em 0 0.5em;
+}
+.author {
+  padding-bottom: 4px;
+}
+h1 {
+  font-size: 26px;
+  margin: 1em 0;
+}
+h2 {
+  font-size: 22px;
+  margin-top: -20px;  /* provide offset for in-page anchors */
+  padding-top: 33px;
+}
+h3 {
+  font-size: 18px;
+  margin-top: -36px;  /* provide offset for in-page anchors */
+  padding-top: 42px;
+}
+h4 {
+  font-size: 16px;
+  margin-top: -36px;  /* provide offset for in-page anchors */
+  padding-top: 42px;
+}
+h5, h6 {
+  font-size: 14px;
+}
+#n-copyright-notice {
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 1em;
+  margin-bottom: 1em;
+}
+/* general structure */
+p {
+  padding: 0;
+  margin: 0 0 1em 0;
+  text-align: left;
+}
+div, span {
+  position: relative;
+}
+div {
+  margin: 0;
+}
+.alignRight.art-text {
+  background-color: #f9f9f9;
+  border: 1px solid #eee;
+  border-radius: 3px;
+  padding: 1em 1em 0;
+  margin-bottom: 1.5em;
+}
+.alignRight.art-text pre {
+  padding: 0;
+}
+.alignRight {
+  margin: 1em 0;
+}
+.alignRight > *:first-child {
+  border: none;
+  margin: 0;
+  float: right;
+  clear: both;
+}
+.alignRight > *:nth-child(2) {
+  clear: both;
+  display: block;
+  border: none;
+}
+svg {
+  display: block;
+}
+svg[font-family~="serif" i], svg [font-family~="serif" i] {
+  font-family: var(--font-serif);
+}
+svg[font-family~="sans-serif" i], svg [font-family~="sans-serif" i] {
+  font-family: var(--font-sans);
+}
+svg[font-family~="monospace" i], svg [font-family~="monospace" i] {
+  font-family: var(--font-mono);
+}
+.alignCenter.art-text {
+  background-color: #f9f9f9;
+  border: 1px solid #eee;
+  border-radius: 3px;
+  padding: 1em 1em 0;
+  margin-bottom: 1.5em;
+}
+.alignCenter.art-text pre {
+  padding: 0;
+}
+.alignCenter {
+  margin: 1em 0;
+}
+.alignCenter > *:first-child {
+  display: table;
+  border: none;
+  margin: 0 auto;
+}
 
-        /* RFC-2629 <spanx>s and <artwork>s. */
-        em     { font-style: italic; }
-        strong { font-weight: bold; }
-        dfn    { font-weight: bold; font-style: normal; }
-        cite   { font-weight: normal; font-style: normal; }
-        tt     { color: #036; }
-        tt, pre, pre dfn, pre em, pre cite, pre span {
-                font-family: "Courier New", Courier, monospace; font-size: small;
-        }
-        pre {
-                text-align: left; padding: 4px;
-                color: #000; background-color: #CCC;
-        }
-        pre dfn  { color: #900; }
-        pre em   { color: #66F; background-color: #FFC; font-weight: normal; }
-        pre .key { color: #33C; font-weight: bold; }
-        pre .id  { color: #900; }
-        pre .str { color: #000; background-color: #CFF; }
-        pre .val { color: #066; }
-        pre .rep { color: #909; }
-        pre .oth { color: #000; background-color: #FCF; }
-        pre .err { background-color: #FCC; }
+/* lists */
+ol, ul {
+  padding: 0;
+  margin: 0 0 1em 2em;
+}
+ol ol, ul ul, ol ul, ul ol {
+  margin-left: 1em;
+}
+li {
+  margin: 0 0 0.25em 0;
+}
+.ulCompact li {
+  margin: 0;
+}
+ul.empty, .ulEmpty {
+  list-style-type: none;
+}
+ul.empty li, .ulEmpty li {
+  margin-top: 0.5em;
+}
+ul.ulBare, li.ulBare {
+  margin-left: 0em !important;
+}
+ul.compact, .ulCompact,
+ol.compact, .olCompact {
+  line-height: 100%;
+  margin: 0 0 0 2em;
+}
 
-        /* RFC-2629 <texttable>s. */
-        table.all, table.full, table.headers, table.none {
-                font-size: small; text-align: center; border-width: 2px;
-                vertical-align: top; border-collapse: collapse;
-        }
-        table.all, table.full { border-style: solid; border-color: black; }
-        table.headers, table.none { border-style: none; }
-        th {
-                font-weight: bold; border-color: black;
-                border-width: 2px 2px 3px 2px;
-        }
-        table.all th, table.full th { border-style: solid; }
-        table.headers th { border-style: none none solid none; }
-        table.none th { border-style: none; }
-        table.all td {
-                border-style: solid; border-color: #333;
-                border-width: 1px 2px;
-        }
-        table.full td, table.headers td, table.none td { border-style: none; }
+/* definition lists */
+dl {
+}
+dl > dt {
+  float: left;
+  margin-right: 1em;
+}
+/* 
+dl.nohang > dt {
+  float: none;
+}
+*/
+dl > dd {
+  margin-bottom: .8em;
+  min-height: 1.3em;
+}
+dl.compact > dd, .dlCompact > dd {
+  margin-bottom: 0em;
+}
+dl > dd > dl {
+  margin-top: 0.5em;
+  margin-bottom: 0em;
+}
 
-        hr { height: 1px; }
-        hr.insert {
-                width: 80%; border-style: none; border-width: 0;
-                color: #CCC; background-color: #CCC;
-        }
---></style>
+/* links */
+a {
+  text-decoration: none;
+}
+a[href] {
+  color: #22e; /* Arlen: WCAG 2019 */
+}
+a[href]:hover {
+  background-color: #f2f2f2;
+}
+figcaption a[href],
+a[href].selfRef {
+  color: #222;
+}
+/* XXX probably not this:
+a.selfRef:hover {
+  background-color: transparent;
+  cursor: default;
+} */
+
+/* Figures */
+tt, code, pre {
+  background-color: #f9f9f9;
+  font-family: var(--font-mono);
+}
+pre {
+  border: 1px solid #eee;
+  margin: 0;
+  padding: 1em;
+}
+img {
+  max-width: 100%;
+}
+figure {
+  margin: 0;
+}
+figure blockquote {
+  margin: 0.8em 0.4em 0.4em;
+}
+figcaption {
+  font-style: italic;
+  margin: 0 0 1em 0;
+}
+@media screen {
+  pre {
+    overflow-x: auto;
+    max-width: 100%;
+    max-width: calc(100% - 22px);
+  }
+}
+
+/* aside, blockquote */
+aside, blockquote {
+  margin-left: 0;
+  padding: 1.2em 2em;
+}
+blockquote {
+  background-color: #f9f9f9;
+  color: #111; /* Arlen: WCAG 2019 */
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  margin: 1em 0;
+}
+cite {
+  display: block;
+  text-align: right;
+  font-style: italic;
+}
+
+/* tables */
+table {
+  width: 100%;
+  margin: 0 0 1em;
+  border-collapse: collapse;
+  border: 1px solid #eee;
+}
+th, td {
+  text-align: left;
+  vertical-align: top;
+  padding: 0.5em 0.75em;
+}
+th {
+  text-align: left;
+  background-color: #e9e9e9;
+}
+tr:nth-child(2n+1) > td {
+  background-color: #f5f5f5;
+}
+table caption {
+  font-style: italic;
+  margin: 0;
+  padding: 0;
+  text-align: left;
+}
+table p {
+  /* XXX to avoid bottom margin on table row signifiers. If paragraphs should
+     be allowed within tables more generally, it would be far better to select on a class. */
+  margin: 0;
+}
+
+/* pilcrow */
+a.pilcrow {
+  color: #666; /* Arlen: AHDJ 2019 */
+  text-decoration: none;
+  visibility: hidden;
+  user-select: none;
+  -ms-user-select: none;
+  -o-user-select:none;
+  -moz-user-select: none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
+@media screen {
+  aside:hover > a.pilcrow,
+  p:hover > a.pilcrow,
+  blockquote:hover > a.pilcrow,
+  div:hover > a.pilcrow,
+  li:hover > a.pilcrow,
+  pre:hover > a.pilcrow {
+    visibility: visible;
+  }
+  a.pilcrow:hover {
+    background-color: transparent;
+  }
+}
+
+/* misc */
+hr {
+  border: 0;
+  border-top: 1px solid #eee;
+}
+.bcp14 {
+  font-variant: small-caps;
+}
+
+.role {
+  font-variant: all-small-caps;
+}
+
+/* info block */
+#identifiers {
+  margin: 0;
+  font-size: 0.9em;
+}
+#identifiers dt {
+  width: 3em;
+  clear: left;
+}
+#identifiers dd {
+  float: left;
+  margin-bottom: 0;
+}
+/* Fix PDF info block run off issue */
+@media print {
+  #identifiers dd {
+    float: none;
+  }
+}
+#identifiers .authors .author {
+  display: inline-block;
+  margin-right: 1.5em;
+}
+#identifiers .authors .org {
+  font-style: italic;
+}
+
+/* The prepared/rendered info at the very bottom of the page */
+.docInfo {
+  color: #666; /* Arlen: WCAG 2019 */
+  font-size: 0.9em;
+  font-style: italic;
+  margin-top: 2em;
+}
+.docInfo .prepared {
+  float: left;
+}
+.docInfo .prepared {
+  float: right;
+}
+
+/* table of contents */
+#toc  {
+  padding: 0.75em 0 2em 0;
+  margin-bottom: 1em;
+}
+nav.toc ul {
+  margin: 0 0.5em 0 0;
+  padding: 0;
+  list-style: none;
+}
+nav.toc li {
+  line-height: 1.3em;
+  margin: 0.75em 0;
+  padding-left: 1.2em;
+  text-indent: -1.2em;
+}
+/* references */
+.references dt {
+  text-align: right;
+  font-weight: bold;
+  min-width: 7em;
+}
+.references dd {
+  margin-left: 8em;
+  overflow: auto;
+}
+
+.refInstance {
+  margin-bottom: 1.25em;
+}
+
+.references .ascii {
+  margin-bottom: 0.25em;
+}
+
+/* index */
+.index ul {
+  margin: 0 0 0 1em;
+  padding: 0;
+  list-style: none;
+}
+.index ul ul {
+  margin: 0;
+}
+.index li {
+  margin: 0;
+  text-indent: -2em;
+  padding-left: 2em;
+  padding-bottom: 5px;
+}
+.indexIndex {
+  margin: 0.5em 0 1em;
+}
+.index a {
+  font-weight: 700;
+}
+/* make the index two-column on all but the smallest screens */
+@media (min-width: 600px) {
+  .index ul {
+    -moz-column-count: 2;
+    -moz-column-gap: 20px;
+  }
+  .index ul ul {
+    -moz-column-count: 1;
+    -moz-column-gap: 0;
+  }
+}
+
+/* authors */
+address.vcard {
+  font-style: normal;
+  margin: 1em 0;
+}
+
+address.vcard .nameRole {
+  font-weight: 700;
+  margin-left: 0;
+}
+address.vcard .label {
+  font-family: var(--font-sans);
+  margin: 0.5em 0;
+}
+address.vcard .type {
+  display: none;
+}
+.alternative-contact {
+  margin: 1.5em 0 1em;
+}
+hr.addr {
+  border-top: 1px dashed;
+  margin: 0;
+  color: #ddd;
+  max-width: calc(100% - 16px);
+}
+
+/* temporary notes */
+.rfcEditorRemove::before {
+  position: absolute;
+  top: 0.2em;
+  right: 0.2em;
+  padding: 0.2em;
+  content: "The RFC Editor will remove this note";
+  color: #9e2a00; /* Arlen: WCAG 2019 */
+  background-color: #ffd; /* Arlen: WCAG 2019 */
+}
+.rfcEditorRemove {
+  position: relative;
+  padding-top: 1.8em;
+  background-color: #ffd; /* Arlen: WCAG 2019 */
+  border-radius: 3px;
+}
+.cref {
+  background-color: #ffd; /* Arlen: WCAG 2019 */
+  padding: 2px 4px;
+}
+.crefSource {
+  font-style: italic;
+}
+/* alternative layout for smaller screens */
+@media screen and (max-width: 1023px) {
+  body {
+    padding-top: 2em;
+  }
+  #title {
+    padding: 1em 0;
+  }
+  h1 {
+    font-size: 24px;
+  }
+  h2 {
+    font-size: 20px;
+    margin-top: -18px;  /* provide offset for in-page anchors */
+    padding-top: 38px;
+  }
+  #identifiers dd {
+    max-width: 60%;
+  }
+  #toc {
+    position: fixed;
+    z-index: 2;
+    top: 0;
+    right: 0;
+    padding: 0;
+    margin: 0;
+    background-color: inherit;
+    border-bottom: 1px solid #ccc;
+  }
+  #toc h2 {
+    margin: -1px 0 0 0;
+    padding: 4px 0 4px 6px;
+    padding-right: 1em;
+    min-width: 190px;
+    font-size: 1.1em;
+    text-align: right;
+    background-color: #444;
+    color: white;
+    cursor: pointer;
+  }
+  #toc h2::before { /* css hamburger */
+    float: right;
+    position: relative;
+    width: 1em;
+    height: 1px;
+    left: -164px;
+    margin: 6px 0 0 0;
+    background: white none repeat scroll 0 0;
+    box-shadow: 0 4px 0 0 white, 0 8px 0 0 white;
+    content: "";
+  }
+  #toc nav {
+    display: none;
+    padding: 0.5em 1em 1em;
+    overflow: auto;
+    height: calc(100vh - 48px);
+    border-left: 1px solid #ddd;
+  }
+}
+
+/* alternative layout for wide screens */
+@media screen and (min-width: 1024px) {
+  body {
+    max-width: 724px;
+    margin: 42px auto;
+    padding-left: 1.5em;
+    padding-right: 29em;
+  }
+  #toc {
+    position: fixed;
+    top: 42px;
+    right: 42px;
+    width: 25%;
+    margin: 0;
+    padding: 0 1em;
+    z-index: 1;
+  }
+  #toc h2 {
+    border-top: none;
+    border-bottom: 1px solid #ddd;
+    font-size: 1em;
+    font-weight: normal;
+    margin: 0;
+    padding: 0.25em 1em 1em 0;
+  }
+  #toc nav {
+    display: block;
+    height: calc(90vh - 84px);
+    bottom: 0;
+    padding: 0.5em 0 0;
+    overflow: auto;
+  }
+  img { /* future proofing */
+    max-width: 100%;
+    height: auto;
+  }
+}
+
+/* pagination */
+@media print {
+  body {
+
+    width: 100%;
+  }
+  p {
+    orphans: 3;
+    widows: 3;
+  }
+  #n-copyright-notice {
+    border-bottom: none;
+  }
+  #toc, #n-introduction {
+    page-break-before: always;
+  }
+  #toc {
+    border-top: none;
+    padding-top: 0;
+  }
+  figure, pre {
+    page-break-inside: avoid;
+  }
+  figure {
+    overflow: scroll;
+  }
+  .breakable pre {
+    break-inside: auto;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    page-break-after: avoid;
+  }
+  h2+*, h3+*, h4+*, h5+*, h6+* {
+    page-break-before: avoid;
+  }
+  pre {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    font-size: 10pt;
+  }
+  table {
+    border: 1px solid #ddd;
+  }
+  td {
+    border-top: 1px solid #ddd;
+  }
+}
+
+/* This is commented out here, as the string-set: doesn't
+   pass W3C validation currently */
+/*
+.ears thead .left {
+  string-set: ears-top-left content();
+}
+
+.ears thead .center {
+  string-set: ears-top-center content();
+}
+
+.ears thead .right {
+  string-set: ears-top-right content();
+}
+
+.ears tfoot .left {
+  string-set: ears-bottom-left content();
+}
+
+.ears tfoot .center {
+  string-set: ears-bottom-center content();
+}
+
+.ears tfoot .right {
+  string-set: ears-bottom-right content();
+}
+*/
+
+@page :first {
+  padding-top: 0;
+  @top-left {
+    content: normal;
+    border: none;
+  }
+  @top-center {
+    content: normal;
+    border: none;
+  }
+  @top-right {
+    content: normal;
+    border: none;
+  }
+}
+
+@page {
+  size: A4;
+  margin-bottom: 45mm;
+  padding-top: 20px;
+  /* The following is commented out here, but set appropriately by in code, as
+     the content depends on the document */
+  /*
+  @top-left {
+    content: 'Internet-Draft';
+    vertical-align: bottom;
+    border-bottom: solid 1px #ccc;
+  }
+  @top-left {
+    content: string(ears-top-left);
+    vertical-align: bottom;
+    border-bottom: solid 1px #ccc;
+  }
+  @top-center {
+    content: string(ears-top-center);
+    vertical-align: bottom;
+    border-bottom: solid 1px #ccc;
+  }
+  @top-right {
+    content: string(ears-top-right);
+    vertical-align: bottom;
+    border-bottom: solid 1px #ccc;
+  }
+  @bottom-left {
+    content: string(ears-bottom-left);
+    vertical-align: top;
+    border-top: solid 1px #ccc;
+  }
+  @bottom-center {
+    content: string(ears-bottom-center);
+    vertical-align: top;
+    border-top: solid 1px #ccc;
+  }
+  @bottom-right {
+      content: '[Page ' counter(page) ']';
+      vertical-align: top;
+      border-top: solid 1px #ccc;
+  }
+  */
+
+}
+
+/* Changes introduced to fix issues found during implementation */
+/* Make sure links are clickable even if overlapped by following H* */
+a {
+  z-index: 2;
+}
+/* Separate body from document info even without intervening H1 */
+section {
+  clear: both;
+}
+
+
+/* Top align author divs, to avoid names without organization dropping level with org names */
+.author {
+  vertical-align: top;
+}
+
+/* Leave room in document info to show Internet-Draft on one line */
+#identifiers dt {
+  width: 8em;
+}
+
+/* Don't waste quite as much whitespace between label and value in doc info */
+#identifiers dd {
+  margin-left: 1em;
+}
+
+/* Give floating toc a background color (needed when it's a div inside section */
+#toc {
+  background-color: white;
+}
+
+/* Make the collapsed ToC header render white on gray also when it's a link */
+@media screen and (max-width: 1023px) {
+  #toc h2 a,
+  #toc h2 a:link,
+  #toc h2 a:focus,
+  #toc h2 a:hover,
+  #toc a.toplink,
+  #toc a.toplink:hover {
+    color: white;
+    background-color: #444;
+    text-decoration: none;
+  }
+}
+
+/* Give the bottom of the ToC some whitespace */
+@media screen and (min-width: 1024px) {
+  #toc {
+    padding: 0 0 1em 1em;
+  }
+}
+
+/* Style section numbers with more space between number and title */
+.section-number {
+  padding-right: 0.5em;
+}
+
+/* prevent monospace from becoming overly large */
+tt, code, pre {
+  font-size: 95%;
+}
+
+/* Fix the height/width aspect for ascii art*/
+.sourcecode pre,
+.art-text pre {
+  line-height: 1.12;
+}
+
+
+/* Add styling for a link in the ToC that points to the top of the document */
+a.toplink {
+  float: right;
+  margin-right: 0.5em;
+}
+
+/* Fix the dl styling to match the RFC 7992 attributes */
+dl > dt,
+dl.dlParallel > dt {
+  float: left;
+  margin-right: 1em;
+}
+dl.dlNewline > dt {
+  float: none;
+}
+
+/* Provide styling for table cell text alignment */
+table td.text-left,
+table th.text-left {
+  text-align: left;
+}
+table td.text-center,
+table th.text-center {
+  text-align: center;
+}
+table td.text-right,
+table th.text-right {
+  text-align: right;
+}
+
+/* Make the alternative author contact information look less like just another
+   author, and group it closer with the primary author contact information */
+.alternative-contact {
+  margin: 0.5em 0 0.25em 0;
+}
+address .non-ascii {
+  margin: 0 0 0 2em;
+}
+
+/* With it being possible to set tables with alignment
+  left, center, and right, { width: 100%; } does not make sense */
+table {
+  width: auto;
+}
+
+/* Avoid reference text that sits in a block with very wide left margin,
+   because of a long floating dt label.*/
+.references dd {
+  overflow: visible;
+}
+
+/* Control caption placement */
+caption {
+  caption-side: bottom;
+}
+
+/* Limit the width of the author address vcard, so names in right-to-left
+   script don't end up on the other side of the page. */
+
+address.vcard {
+  max-width: 30em;
+  margin-right: auto;
+}
+
+/* For address alignment dependent on LTR or RTL scripts */
+address div.left {
+  text-align: left;
+}
+address div.right {
+  text-align: right;
+}
+
+/* Provide table alignment support.  We can't use the alignX classes above
+   since they do unwanted things with caption and other styling. */
+table.right {
+ margin-left: auto;
+ margin-right: 0;
+}
+table.center {
+ margin-left: auto;
+ margin-right: auto;
+}
+table.left {
+ margin-left: 0;
+ margin-right: auto;
+}
+
+/* Give the table caption label the same styling as the figcaption */
+caption a[href] {
+  color: #222;
+}
+
+@media print {
+  .toplink {
+    display: none;
+  }
+
+  /* avoid overwriting the top border line with the ToC header */
+  #toc {
+    padding-top: 1px;
+  }
+
+  /* Avoid page breaks inside dl and author address entries */
+  .vcard {
+    page-break-inside: avoid;
+  }
+
+}
+/* Tweak the bcp14 keyword presentation */
+.bcp14 {
+  font-variant: small-caps;
+  font-weight: bold;
+  font-size: 0.9em;
+}
+/* Tweak the invisible space above H* in order not to overlay links in text above */
+ h2 {
+  margin-top: -18px;  /* provide offset for in-page anchors */
+  padding-top: 31px;
+ }
+ h3 {
+  margin-top: -18px;  /* provide offset for in-page anchors */
+  padding-top: 24px;
+ }
+ h4 {
+  margin-top: -18px;  /* provide offset for in-page anchors */
+  padding-top: 24px;
+ }
+/* Float artwork pilcrow to the right */
+@media screen {
+  .artwork a.pilcrow {
+    display: block;
+    line-height: 0.7;
+    margin-top: 0.15em;
+  }
+}
+/* Make pilcrows on dd visible */
+@media screen {
+  dd:hover > a.pilcrow {
+    visibility: visible;
+  }
+}
+/* Make the placement of figcaption match that of a table's caption
+   by removing the figure's added bottom margin */
+.alignLeft.art-text,
+.alignCenter.art-text,
+.alignRight.art-text {
+   margin-bottom: 0;
+}
+.alignLeft,
+.alignCenter,
+.alignRight {
+  margin: 1em 0 0 0;
+}
+/* In print, the pilcrow won't show on hover, so prevent it from taking up space,
+   possibly even requiring a new line */
+@media print {
+  a.pilcrow {
+    display: none;
+  }
+}
+/* Styling for the external metadata */
+div#external-metadata {
+  background-color: #eee;
+  padding: 0.5em;
+  margin-bottom: 0.5em;
+  display: none;
+}
+div#internal-metadata {
+  padding: 0.5em;                       /* to match the external-metadata padding */
+}
+/* Styling for title RFC Number */
+h1#rfcnum {
+  clear: both;
+  margin: 0 0 -1em;
+  padding: 1em 0 0 0;
+}
+/* Make .olPercent look the same as <ol><li> */
+dl.olPercent > dd {
+  margin-bottom: 0.25em;
+  min-height: initial;
+}
+/* Give aside some styling to set it apart */
+aside {
+  border-left: 1px solid #ddd;
+  margin: 1em 0 1em 2em;
+  padding: 0.2em 2em;
+}
+aside > dl,
+aside > ol,
+aside > ul,
+aside > table,
+aside > p {
+  margin-bottom: 0.5em;
+}
+/* Additional page break settings */
+@media print {
+  figcaption, table caption {
+    page-break-before: avoid;
+  }
+}
+/* Font size adjustments for print */
+@media print {
+  body  { font-size: 10pt;      line-height: normal; max-width: 96%; }
+  h1    { font-size: 1.72em;    padding-top: 1.5em; } /* 1*1.2*1.2*1.2 */
+  h2    { font-size: 1.44em;    padding-top: 1.5em; } /* 1*1.2*1.2 */
+  h3    { font-size: 1.2em;     padding-top: 1.5em; } /* 1*1.2 */
+  h4    { font-size: 1em;       padding-top: 1.5em; }
+  h5, h6 { font-size: 1em;      margin: initial; padding: 0.5em 0 0.3em; }
+}
+/* Sourcecode margin in print, when there's no pilcrow */
+@media print {
+  .artwork,
+  .artwork > pre,
+  .sourcecode {
+    margin-bottom: 1em;
+  }
+}
+/* Avoid narrow tables forcing too narrow table captions, which may render badly */
+table {
+  min-width: 20em;
+}
+/* ol type a */
+ol.type-a { list-style-type: lower-alpha; }
+ol.type-A { list-style-type: upper-alpha; }
+ol.type-i { list-style-type: lower-roman; }
+ol.type-I { list-style-type: lower-roman; }
+/* Apply the print table and row borders in general, on request from the RPC,
+and increase the contrast between border and odd row background slightly */
+table {
+  border: 1px solid #ddd;
+}
+td {
+  border-top: 1px solid #ddd;
+}
+tr {
+  break-inside: avoid;
+}
+tr:nth-child(2n+1) > td {
+  background-color: #f8f8f8;
+}
+/* Use style rules to govern display of the TOC. */
+@media screen and (max-width: 1023px) {
+  #toc nav { display: none; }
+  #toc.active nav { display: block; }
+}
+/* Add support for keepWithNext */
+.keepWithNext {
+  break-after: avoid-page;
+  break-after: avoid-page;
+}
+/* Add support for keepWithPrevious */
+.keepWithPrevious {
+  break-before: avoid-page;
+}
+/* Change the approach to avoiding breaks inside artwork etc. */
+figure, pre, table, .artwork, .sourcecode  {
+  break-before: auto;
+  break-after: auto;
+}
+/* Avoid breaks between <dt> and <dd> */
+dl {
+  break-before: auto;
+  break-inside: auto;
+}
+dt {
+  break-before: auto;
+  break-after: avoid-page;
+}
+dd {
+  break-before: avoid-page;
+  break-after: auto;
+  orphans: 3;
+  widows: 3
+}
+span.break, dd.break {
+  margin-bottom: 0;
+  min-height: 0;
+  break-before: auto;
+  break-inside: auto;
+  break-after: auto;
+}
+/* Undo break-before ToC */
+@media print {
+  #toc {
+    break-before: auto;
+  }
+}
+/* Text in compact lists should not get extra bottom margin space,
+   since that would makes the list not compact */
+ul.compact p, .ulCompact p,
+ol.compact p, .olCompact p {
+ margin: 0;
+}
+/* But the list as a whole needs the extra space at the end */
+section ul.compact,
+section .ulCompact,
+section ol.compact,
+section .olCompact {
+  margin-bottom: 1em;                    /* same as p not within ul.compact etc. */
+}
+/* The tt and code background above interferes with for instance table cell
+   backgrounds.  Changed to something a bit more selective. */
+tt, code {
+  background-color: transparent;
+}
+p tt, p code, li tt, li code {
+  background-color: #f8f8f8;
+}
+/* Tweak the pre margin -- 0px doesn't come out well */
+pre {
+   margin-top: 0.5px;
+}
+/* Tweak the compact list text */
+ul.compact, .ulCompact,
+ol.compact, .olCompact,
+dl.compact, .dlCompact {
+  line-height: normal;
+}
+/* Don't add top margin for nested lists */
+li > ul, li > ol, li > dl,
+dd > ul, dd > ol, dd > dl,
+dl > dd > dl {
+  margin-top: initial;
+}
+/* Elements that should not be rendered on the same line as a <dt> */
+/* This should match the element list in writer.text.TextWriter.render_dl() */
+dd > div.artwork:first-child,
+dd > aside:first-child,
+dd > figure:first-child,
+dd > ol:first-child,
+dd > div.sourcecode:first-child,
+dd > table:first-child,
+dd > ul:first-child {
+  clear: left;
+}
+/* fix for weird browser behaviour when <dd/> is empty */
+dt+dd:empty::before{
+  content: "\00a0";
+}
+/* Make paragraph spacing inside <li> smaller than in body text, to fit better within the list */
+li > p {
+  margin-bottom: 0.5em
+}
+/* Don't let p margin spill out from inside list items */
+li > p:last-of-type:only-child {
+  margin-bottom: 0;
+}
+</style>
+<link href="rfc-local.css" rel="stylesheet" type="text/css">
 </head>
-<body>
-<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
-<table summary="layout" width="66%" border="0" cellpadding="0" cellspacing="0"><tr><td><table summary="layout" width="100%" border="0" cellpadding="2" cellspacing="1">
-<tr><td class="header">Draft-02</td><td class="header">N. Sakimura</td></tr>
-<tr><td class="header">&nbsp;</td><td class="header">NAT.Consulting</td></tr>
-<tr><td class="header">&nbsp;</td><td class="header">E. Jay</td></tr>
-<tr><td class="header">&nbsp;</td><td class="header">Illumila</td></tr>
-<tr><td class="header">&nbsp;</td><td class="header">T. Looker</td></tr>
-<tr><td class="header">&nbsp;</td><td class="header">MATTR Ltd</td></tr>
-<tr><td class="header">&nbsp;</td><td class="header">September 10, 2021</td></tr>
-</table></td></tr></table>
-<h1><br />OpenID Connect Claims Aggregation Draft 02</h1>
-
-<h3>Abstract</h3>
-
-<p>OpenID Providers within OpenID Connect assume many roles, one of these is providing End-User claims to relying parties at the consent of the End-User such as their name or date of birth. OpenID Connect defines multiple models under which claims are provided and relied upon by a relying parties, including simple, aggregated and distributed claims. This document focuses on elaborating upon the aggregated model outlined in section 5.6.2 of OpenID Connect core by defining the full life-cycle of aggregated claims and the new roles of the entities involved in an aggregated claims model.
-</p>
-<h3>Warning</h3>
-
-<p>This document is not an OIDF International Standard. It is distributed for review and comment. It is subject to change without notice and may not be referred to as an International Standard.
-</p>
-<p>Recipients of this draft are invited to submit, with their comments, notification of any relevant patent rights of which they are aware and to provide supporting documentation.
-</p>
-<h3>Copyright notice &amp; license</h3>
-
-<p>The OpenID Foundation (OIDF) grants to any Contributor, developer, implementer, or other interested party a non-exclusive, royalty free, worldwide copyright license to reproduce, prepare derivative works from, distribute, perform and display, this Implementers Draft or Final Specification solely for the purposes of (i) developing specifications, and (ii) implementing Implementers Drafts and Final Specifications based on such documents, provided that attribution be made to the OIDF as the source of the material, but that such attribution does not indicate an endorsement by the OIDF.
-</p>
-<p>The technology described in this specification was made available from contributions from various sources, including members of the OpenID Foundation and others. Although the OpenID Foundation has taken steps to help ensure that the technology is available for distribution, it takes no position regarding the validity or scope of any intellectual property or other rights that might be claimed to pertain to the implementation or use of the technology described in this specification or the extent to which any license under such rights might or might not be available; neither does it represent that it has made any independent effort to identify any such rights. The OpenID Foundation and the contributors to this specification make no (and hereby expressly disclaim any) warranties (express, implied, or otherwise), including implied warranties of merchantability, non-infringement, fitness for a particular purpose, or title, related to this specification, and the entire risk as to implementing this specification is assumed by the implementer. The OpenID Intellectual Property Rights policy requires contributors to offer a patent promise not to assert certain patent claims against other contributors and against implementers. The OpenID Foundation invites any interested party to bring to its attention any copyrights, patents, patent applications, or other proprietary rights that may cover technology that may be required to practice this specification.
-</p>
-<h3>Foreword</h3>
-
-<p>The OpenID Foundation (OIDF) promotes, protects and nurtures the OpenID community and technologies. As a non-profit international standardizing body, it is comprised by over 160 participating entities (workgroup participants). The work of preparing implementer drafts and final international standards is carried out through OIDF workgroups in accordance with the OpenID Process. Participants interested in a subject for which a workgroup has been established has the right to be represented in that workgroup. International organizations, governmental and non-governmental, in liaison with OIDF, also take part in the work. OIDF collaborates closely with other standardizing bodies in the related fields.
-</p>
-<h3>Introduction</h3>
-
-<p>OpenID Connect is a selective claims disclosure mechanism. When a set of claims included in its response is about
+<body class="xml2rfc">
+<script src="metadata.min.js"></script>
+<table class="ears">
+<thead><tr>
+<td class="left"></td>
+<td class="center">oidc-ca</td>
+<td class="right">May 2025</td>
+</tr></thead>
+<tfoot><tr>
+<td class="left">Sakimura &amp; Jay</td>
+<td class="center">Standards Track</td>
+<td class="right">[Page]</td>
+</tr></tfoot>
+</table>
+<div id="external-metadata" class="document-information"></div>
+<div id="internal-metadata" class="document-information">
+<dl id="identifiers">
+<dt class="label-workgroup">Workgroup:</dt>
+<dd class="workgroup">connect</dd>
+<dt class="label-published">Published:</dt>
+<dd class="published">
+<time datetime="2025-05-12" class="published">12 May 2025</time>
+    </dd>
+<dt class="label-authors">Authors:</dt>
+<dd class="authors">
+<div class="author">
+      <div class="author-name">N. Sakimura</div>
+<div class="org">NAT.Consulting</div>
+</div>
+<div class="author">
+      <div class="author-name">E. Jay</div>
+<div class="org">Illumila</div>
+</div>
+</dd>
+</dl>
+</div>
+<h1 id="title">OpenID Connect Claims Aggregation Draft 03</h1>
+<section id="section-abstract">
+      <h2 id="abstract"><a href="#abstract" class="selfRef">Abstract</a></h2>
+<p id="section-abstract-1">OpenID Providers within OpenID Connect assume many roles, one of these is providing End-User claims to relying parties at the consent of the End-User such as their name or date of birth. OpenID Connect defines multiple models under which claims are provided and relied upon by a relying parties, including simple, aggregated and distributed claims. This document focuses on elaborating upon the aggregated model outlined in section 5.6.2 of OpenID Connect core by defining the full life-cycle of aggregated claims and the new roles of the entities involved in an aggregated claims model.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
+<p id="section-abstract-2">This document specifies the methods for<a href="#section-abstract-2" class="pilcrow">¶</a></p>
+<ul class="compact">
+<li class="compact" id="section-abstract-3.1">an OP acting as a client of Claims Provider (CP) to perform discovery for a Claims Provider Metadata;<a href="#section-abstract-3.1" class="pilcrow">¶</a>
+</li>
+        <li class="compact" id="section-abstract-3.2">the OP to perform client registration to the Claims Provider;<a href="#section-abstract-3.2" class="pilcrow">¶</a>
+</li>
+        <li class="compact" id="section-abstract-3.3">the OP to obtain claims from the Claims Provider;<a href="#section-abstract-3.3" class="pilcrow">¶</a>
+</li>
+        <li class="compact" id="section-abstract-3.4">an RP to ask for verified claims to the OP;<br><a href="#section-abstract-3.4" class="pilcrow">¶</a>
+</li>
+        <li class="compact" id="section-abstract-3.5">the OP to return obtained claims from CP to the RP; and<a href="#section-abstract-3.5" class="pilcrow">¶</a>
+</li>
+        <li class="compact" id="section-abstract-3.6">the RP to verify the claims.<a href="#section-abstract-3.6" class="pilcrow">¶</a>
+</li>
+      </ul>
+</section>
+<section class="note" id="section-note.1">
+      <h2 id="name-warning">
+<a href="#name-warning" class="section-name selfRef">Warning</a>
+      </h2>
+<p id="section-note.1-1">This document is not an OIDF International Standard. It is distributed for review and comment. It is subject to change without notice and may not be referred to as an International Standard.<a href="#section-note.1-1" class="pilcrow">¶</a></p>
+<p id="section-note.1-2">Recipients of this draft are invited to submit, with their comments, notification of any relevant patent rights of which they are aware and to provide supporting documentation.<a href="#section-note.1-2" class="pilcrow">¶</a></p>
+</section>
+<section class="note" id="section-note.2">
+      <h2 id="name-notices">
+<a href="#name-notices" class="section-name selfRef">Notices</a>
+      </h2>
+<p id="section-note.2-1">Copyright (c) 2025 The OpenID Foundation.<a href="#section-note.2-1" class="pilcrow">¶</a></p>
+<p id="section-note.2-2">The OpenID Foundation (OIDF) grants to any Contributor, developer,
+implementer, or other interested party a non-exclusive, royalty free,
+worldwide copyright license to reproduce, prepare derivative works from,
+distribute, perform and display, this Implementers Draft, Final
+Specification, or Final Specification Incorporating Errata Corrections
+solely for the purposes of (i) developing specifications,
+and (ii) implementing Implementers Drafts, Final Specifications,
+and Final Specification Incorporating Errata Corrections based
+on such documents, provided that attribution be made to the OIDF as the
+source of the material, but that such attribution does not indicate an
+endorsement by the OIDF.<a href="#section-note.2-2" class="pilcrow">¶</a></p>
+<p id="section-note.2-3">The technology described in this specification was made available
+from contributions from various sources, including members of the OpenID
+Foundation and others. Although the OpenID Foundation has taken steps to
+help ensure that the technology is available for distribution, it takes
+no position regarding the validity or scope of any intellectual property
+or other rights that might be claimed to pertain to the implementation
+or use of the technology described in this specification or the extent
+to which any license under such rights might or might not be available;
+neither does it represent that it has made any independent effort to
+identify any such rights. The OpenID Foundation and the contributors to
+this specification make no (and hereby expressly disclaim any)
+warranties (express, implied, or otherwise), including implied
+warranties of merchantability, non-infringement, fitness for a
+particular purpose, or title, related to this specification, and the
+entire risk as to implementing this specification is assumed by the
+implementer. The OpenID Intellectual Property Rights policy
+(found at openid.net) requires
+contributors to offer a patent promise not to assert certain patent
+claims against other contributors and against implementers.
+OpenID invites any interested party to bring to its attention any
+copyrights, patents, patent applications, or other proprietary rights
+that may cover technology that may be required to practice this
+specification.<a href="#section-note.2-3" class="pilcrow">¶</a></p>
+</section>
+<section class="note" id="section-note.3">
+      <h2 id="name-foreword">
+<a href="#name-foreword" class="section-name selfRef">Foreword</a>
+      </h2>
+<p id="section-note.3-1">The OpenID Foundation (OIDF) promotes, protects and nurtures the OpenID community and technologies. As a non-profit international standardizing body, it is comprised by over 160 participating entities (workgroup participants). The work of preparing implementer drafts and final international standards is carried out through OIDF workgroups in accordance with the OpenID Process. Participants interested in a subject for which a workgroup has been established has the right to be represented in that workgroup. International organizations, governmental and non-governmental, in liaison with OIDF, also take part in the work. OIDF collaborates closely with other standardizing bodies in the related fields.<a href="#section-note.3-1" class="pilcrow">¶</a></p>
+</section>
+<section class="note" id="section-note.4">
+      <h2 id="name-introduction">
+<a href="#name-introduction" class="section-name selfRef">Introduction</a>
+      </h2>
+<p id="section-note.4-1">OpenID Connect is a selective claims disclosure mechanism. When a set of claims included in its response is about
 an entity authentication event, it works as an entity authentication federation mechanism, but it can deliver
-other claims selected by the subject as well.
-</p>
-<p>In the OpenID Connect specification, it is assumed that there are many sources of claims.
+other claims selected by the subject as well.<a href="#section-note.4-1" class="pilcrow">¶</a></p>
+<p id="section-note.4-2">In the OpenID Connect specification, it is assumed that there are many sources of claims.
 Each claim is associated with its authoritative source so there naturally will be many authoritative sources.
 Claim sources can be corroborative, i.e., not authoritative, as well.
 In total, there will be many Claim Set sources in OpenID Connect Framework.
-These Claim sources are called Issuing Authorities in OpenID Connect.
-Issuing-Authority (IA) is just an Identity-Agent (IdA), but it does not provide the claims about the current authentication event
-and its associated subject identifier authoritatively. Note that Issuing-Authority can act as an Identity-Agent in other transactions.
-Whether it is called IdA or IA is depending on their role in a particular transaction.
-</p>
-<p>There are four main actors in the OpenID Connect aggregated claims model.
-</p>
-<p>
-</p>
-<ol class="text">
-<li>End-User (Subject)
+These Claim sources are called Claims Providers in OpenID Connect.
+Claims Provider (CP) is just an OpenID Provider (OP) but it does not provide the claims about the current authentication event
+and its associated subject identifier authoritatively. Note that Claims Provider can act as an OpenID Provider in other transactions.
+Whether it is called OP or CP is depending on their role in a particular transaction.<a href="#section-note.4-2" class="pilcrow">¶</a></p>
+<p id="section-note.4-3">There are four main actors in the OpenID Connect aggregated claims model.<a href="#section-note.4-3" class="pilcrow">¶</a></p>
+<ol start="1" type="1" class="compact type-1" id="section-note.4-4">
+<li id="section-note.4-4.1">Subject (User)<a href="#section-note.4-4.1" class="pilcrow">¶</a>
 </li>
-<li>Issuing-Authority (IA) - Entity that is the issuer of claims about the End-User.
+        <li id="section-note.4-4.2">OpenID Provider (OP) that provides claims about the subject authentication event and provides signed claim sets obtained from other Claims Providers<a href="#section-note.4-4.2" class="pilcrow">¶</a>
 </li>
-<li>Identity-Agent (IdA) that provides claims about the subject authentication event and provides signed claim sets obtained from other Issuing Authorities
+        <li id="section-note.4-4.3">Claims Providers (CP) that provides claims<a href="#section-note.4-4.3" class="pilcrow">¶</a>
 </li>
-<li>Claims-Consumer (CC) that verifies and relies upon the provided claims.
+        <li id="section-note.4-4.4">Relying Party (RP) that verifies and consumes the provided claim sets.<a href="#section-note.4-4.4" class="pilcrow">¶</a>
 </li>
-</ol><p>
-
-</p>
-<p>An IdA can provide an CC the claims by value or by reference.
-</p>
-<p>By value is the case where an IdA collects claims and their values
-from IAs and aggregate them in one package to provide to the CC.
-This model is called Aggregated Claims Model.
-</p>
-<p>By value is the case where the IdA does not collect and provide the value
-but just provide the reference and its access information to the CC.
-This model is called Distributed Claims Model.
-</p>
-<p>In either case, there has to be strong binding between the subject
-in the claim sets provided by IAs and the subject in the ID Token provided by the IdA.
-Conceptually, it can be done through Subject value correlation or
-through the correlation of signing key materials.
-Regardless of the methods, there has to be this binding.
-Otherwise, the provided claims cannot be trusted to be linked to the authenticated subject.
-</p>
-<p>This document defines how to do this binding even in the case of ephemeral subject identifier
-in which case the <tt>sub</tt> value of the ID Token will change every time the subject visits the CC.
-This allows anonymous attribute based authentication where an CC cannot link two visits
-by the subject without using other facilities.
-</p>
-<p>By supporting the case of ephemeral subject identifier, pairwise pseudonymous identifier
-and omni-directional identifier cases are also covered.
-</p>
-<p>Another feature that this document provides is the way to avoid multiple consent screen
-per CC authorization request. If OpenID Connect Core spec is used to build Aggregated Claims Model
-naively, it may result in many consent screens per CC request.
-For example, if four IAs and one IdA is involved in the request, then, there may be five consent screens.
+      </ol>
+<p id="section-note.4-5">An OP can provide an RP the claims by value or by reference.<a href="#section-note.4-5" class="pilcrow">¶</a></p>
+<p id="section-note.4-6">By value is the case where an OP collects claims and their values
+from CPs and aggregate them in one package to provide to the RP.
+This model is called Aggregated Claims Model.<a href="#section-note.4-6" class="pilcrow">¶</a></p>
+<p id="section-note.4-7">By reference is the case where the OP does not collect and provide the value
+but just provide the reference and its access information to the RP.
+This model is called Distributed Claims Model.<a href="#section-note.4-7" class="pilcrow">¶</a></p>
+<p id="section-note.4-8">Another feature that this document provides is the way to avoid multiple consent screen
+per RP authorization request. If OpenID Connect Core spec is used to build Aggregated Claims Model
+naively, it may result in many consent screens per RP request.
+For example, if four CPs and one OP is involved in the request, then, there may be five consent screens.
 This is too onerous. This document defines a mechanism to consolidate it into one consent screen.
-This is done through one &quot;IdA User Setup Phase&quot; per IA that the IdA obtains the consent
-from the subject to obtain claims from the IA for the purpose of creating aggregated and distributed
-claims response for future CC requests in which IdA will collect a new consent from the subject.
-</p>
-<p>The mechanism used for this is to obtain an access token and a refresh token that corresponds
-to a suitably wide scope for the purpose. While the claims at the time of an CC request can be
-obtained from the UserInfo endpoint, this document defines a new endpoint called claims endpoint.
-It is almost the same as the UserInfo endpoint, but there are a few important differences:
-</p>
-<p>
-</p>
-<ol class="text">
-<li>It allows collection minimization by supporting claims parameter.
+This is done through one "OP User Setup Phase" per CP that the OP obtains the consent
+from the subject to obtain claims from the CP for the purpose of creating aggregated
+claims response for future RP requests in which OP will collect a new consent from the subject.<a href="#section-note.4-8" class="pilcrow">¶</a></p>
+<p id="section-note.4-9">The mechanism used for this is to obtain an access token and a refresh token that corresponds
+to a suitably wide scope for the purpose.<a href="#section-note.4-9" class="pilcrow">¶</a></p>
+<p id="section-note.4-10">The claims are returned from the Clams Provider's UserInfo endpoint and are always signed.<a href="#section-note.4-10" class="pilcrow">¶</a></p>
+<p id="section-note.4-11">Note: Refresh tokens are optional in this specification, but profiles and trust frameworks may require the use of
+refresh tokens.<a href="#section-note.4-11" class="pilcrow">¶</a></p>
+<p id="section-note.4-12">There are four phases defined in this document.<a href="#section-note.4-12" class="pilcrow">¶</a></p>
+<ol start="1" type="1" class="compact type-1" id="section-note.4-13">
+<li id="section-note.4-13.1">CP Discovery Phase: OP discovers CP metadata.<a href="#section-note.4-13.1" class="pilcrow">¶</a>
 </li>
-<li>It allows an identifier to correlate the claims it is returning and the ID Token the IdA provides.
+        <li id="section-note.4-13.2">OP Registration Phase: OP registers to CP as an RP.<a href="#section-note.4-13.2" class="pilcrow">¶</a>
 </li>
-<li>It includes the <tt>iss</tt> claim. (Userinfo Endpoint does not)
+        <li id="section-note.4-13.3">Setup Phase: OP obtains the access and refresh tokens from CP by the permission of the subject.<a href="#section-note.4-13.3" class="pilcrow">¶</a>
 </li>
-<li>It returns signed response.
+        <li id="section-note.4-13.4">
+          <p id="section-note.4-13.4.1">RP Phase:<a href="#section-note.4-13.4.1" class="pilcrow">¶</a></p>
+<ol start="1" type="1" class="compact type-1" id="section-note.4-13.4.2">
+<li id="section-note.4-13.4.2.1">RP makes authentication and claims request,<a href="#section-note.4-13.4.2.1" class="pilcrow">¶</a>
 </li>
-<li>It allows multiple schema types for its response. (e.g, JWT and W3C Verifiable Credentials formats)
+            <li id="section-note.4-13.4.2.2">OP fetches relevant claim sets from CPs,<a href="#section-note.4-13.4.2.2" class="pilcrow">¶</a>
 </li>
-</ol><p>
-
-</p>
-<p>Note that while Userinfo Endpoint was conceived to support multiple response types,
-e.g., support for SCIM schema,
-the exact method was not specified at the time of the publication.
-</p>
-<p>This new Claims Endpoint allows the specification of the response schema and media type,
-e.g., OIDC JWT, OIDC4IDA JWT, W3C Verifiable Claims in JWT and JSON-LD, SCIM 2.0 in JWT, etc.
-It is done so in an extensible manner (using registry tbd).
-</p>
-<p>This implies that there will be an impact to the authentication and claims request that an CC makes.
-It may optionally want to specify its preferred format for the Claim Sets to be received.
-Therefore, this document also defines a new parameter to express its preference.
-</p>
-<p>There are four phases defined in this document.
-</p>
-<p>
-</p>
-<ol class="text">
-<li>IA Discovery Phase: IdA discovers IA metadata.
+            <li id="section-note.4-13.4.2.3">OP respond to the RP<a href="#section-note.4-13.4.2.3" class="pilcrow">¶</a>
 </li>
-<li>IdA Registration Phase: IdA registers to IA as an CC.
+            <li id="section-note.4-13.4.2.4">the RP verifies the response.<a href="#section-note.4-13.4.2.4" class="pilcrow">¶</a>
 </li>
-<li>Setup Phase: IdA obtains the access and refresh tokens from IA by the permission of the subject.
+          </ol>
 </li>
-<li>CC Phase:
-
-<ol class="text">
-<li>CC makes authentication and claims request,
-</li>
-<li>IdA fetches relevant claim sets from IAs,
-</li>
-<li>IdA respond to the CC
-</li>
-<li>the CC verifies the response.
-</li>
-</ol>
-</li>
-</ol><p>
-
-</p>
-<p>Note that distributed claims model is out of scope of this document.
-</p>
-<p>Intended reader of this document is the developer and systems architect who builds attributes and claims base systems.
-</p>
-<h3>Requirements Notation and Conventions</h3>
-
-<p>The key words &quot;MUST&quot;, &quot;MUST NOT&quot;, &quot;REQUIRED&quot;, &quot;SHALL&quot;, &quot;SHALL NOT&quot;,
-&quot;SHOULD&quot;, &quot;SHOULD NOT&quot;, &quot;RECOMMENDED&quot;, &quot;NOT RECOMMENDED&quot;, &quot;MAY&quot;, and
-&quot;OPTIONAL&quot; in this document are to be interpreted as described in BCP
+      </ol>
+<p id="section-note.4-14">Intended reader of this document is the developer and systems architect who builds attributes and claims base systems.<a href="#section-note.4-14" class="pilcrow">¶</a></p>
+</section>
+<section class="note" id="section-note.5">
+      <h2 id="name-notational-conventions">
+<a href="#name-notational-conventions" class="section-name selfRef">Notational Conventions</a>
+      </h2>
+<p id="section-note.5-1">The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+"SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and
+"OPTIONAL" in this document are to be interpreted as described in BCP
 14 [RFC2119] [RFC8174] when, and only when, they appear in all
-capitals, as shown here.
-</p>
-<p>In the .txt version of this document, values are quoted to indicate that they are to be taken literally. When using these values in protocol messages, the quotes MUST NOT be used as part of the value. In the HTML version of this document, values to be taken literally are indicated by the use of this fixed-width font.
-</p>
-<p>All uses of JSON Web Signature (JWS) JWS and JSON Web Encryption (JWE) JWE data structures in this specification utilize the JWS Compact Serialization or the JWE Compact Serialization; the JWS JSON Serialization and the JWE JSON Serialization are not used.
-</p><a name="toc"></a><br /><hr />
-<h3>Table of Contents</h3>
-<p class="toc">
-<a href="#scope">1.</a>&nbsp;
-Scope<br />
-<a href="#normative-references">2.</a>&nbsp;
-Normative references<br />
-<a href="#terms-and-definitions">3.</a>&nbsp;
-Terms and definitions<br />
-<a href="#symbols-and-abbreviated-terms">4.</a>&nbsp;
-Symbols and abbreviated terms<br />
-<a href="#actors">5.</a>&nbsp;
-Actors<br />
-&nbsp;&nbsp;&nbsp;&nbsp;<a href="#subject-user">5.1.</a>&nbsp;
-Subject (User)<br />
-&nbsp;&nbsp;&nbsp;&nbsp;<a href="#claims-consumer-cc">5.2.</a>&nbsp;
-Claims-Consumer (CC)<br />
-&nbsp;&nbsp;&nbsp;&nbsp;<a href="#issuing-authority-ia">5.3.</a>&nbsp;
-Issuing-Authority (IA)<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#claims-endpoint">5.3.1.</a>&nbsp;
-Claims Endpoint<br />
-&nbsp;&nbsp;&nbsp;&nbsp;<a href="#identity-agent-ida">5.4.</a>&nbsp;
-Identity-Agent (IdA)<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#c-token">5.4.1.</a>&nbsp;
-c_token<br />
-<a href="#discovery-phase">6.</a>&nbsp;
-Discovery Phase<br />
-<a href="#registration-phase">7.</a>&nbsp;
-Registration Phase<br />
-<a href="#setup-phase">8.</a>&nbsp;
-Setup Phase<br />
-&nbsp;&nbsp;&nbsp;&nbsp;<a href="#overview">8.1.</a>&nbsp;
-Overview<br />
-&nbsp;&nbsp;&nbsp;&nbsp;<a href="#authorization-request">8.2.</a>&nbsp;
-Authorization request<br />
-&nbsp;&nbsp;&nbsp;&nbsp;<a href="#token-endpoint-response">8.3.</a>&nbsp;
-Token Endpoint Response<br />
-<a href="#delivery-phase-cc-phase">9.</a>&nbsp;
-Delivery Phase (CC Phase)<br />
-&nbsp;&nbsp;&nbsp;&nbsp;<a href="#overview-1">9.1.</a>&nbsp;
-Overview<br />
-&nbsp;&nbsp;&nbsp;&nbsp;<a href="#claims-request-by-cc-to-ida">9.2.</a>&nbsp;
-Claims Request by CC to IdA<br />
-&nbsp;&nbsp;&nbsp;&nbsp;<a href="#cc-authentication-and-the-request-verification">9.3.</a>&nbsp;
-CC authentication and the request verification<br />
-&nbsp;&nbsp;&nbsp;&nbsp;<a href="#subject-granting">9.4.</a>&nbsp;
-Subject Granting<br />
-&nbsp;&nbsp;&nbsp;&nbsp;<a href="#claims-collection">9.5.</a>&nbsp;
-Claims Collection<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#claims-endpoint-request">9.5.1.</a>&nbsp;
-Claims Endpoint Request<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#signed-claimset-request-using-a-decentralized-identifier">9.5.2.</a>&nbsp;
-Signed Claimset Request using a Decentralized Identifier<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#claims-endpoint-response">9.5.3.</a>&nbsp;
-Claims Endpoint Response<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#claimset-in-oidc-jws-format">9.5.3.1.</a>&nbsp;
-Claimset in OIDC JWS format<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#claimset-in-w3c-vc-format">9.5.3.2.</a>&nbsp;
-Claimset in W3C VC format<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#claims-endpoint-error-response">9.5.4.</a>&nbsp;
-Claims Endpoint Error Response<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#claims-endpoint-verification">9.5.5.</a>&nbsp;
-Claims Endpoint Verification<br />
-&nbsp;&nbsp;&nbsp;&nbsp;<a href="#claims-delivery">9.6.</a>&nbsp;
-Claims Delivery<br />
-&nbsp;&nbsp;&nbsp;&nbsp;<a href="#claims-verification">9.7.</a>&nbsp;
-Claims Verification<br />
-<a href="#security-considerations">10.</a>&nbsp;
-Security Considerations<br />
-<a href="#privacy-considerations">11.</a>&nbsp;
-Privacy Considerations<br />
-<a href="#references">12.</a>&nbsp;
-References<br />
-&nbsp;&nbsp;&nbsp;&nbsp;<a href="#normative-references-1">12.1.</a>&nbsp;
-Normative references<br />
-<a href="#rfc.authors">&#167;</a>&nbsp;
-Authors' Addresses<br />
-</p>
-<br clear="all" />
-
-<a name="scope"></a><br /><hr />
-<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
-<a name="rfc.section.1"></a><h3>1.&nbsp;
-Scope</h3>
-
-<p>This document specifies the methods for
-</p>
-<p>
-</p>
-<ul class="text">
-<li>an Identity-Agent acting as a client of Issuing-Authority to perform discovery for an Issuing-Authority Metadata;
+capitals, as shown here.<a href="#section-note.5-1" class="pilcrow">¶</a></p>
+</section>
+<div id="toc">
+<section id="section-toc.1">
+        <a href="#" onclick="scroll(0,0)" class="toplink">▲</a><h2 id="name-table-of-contents">
+<a href="#name-table-of-contents" class="section-name selfRef">Table of Contents</a>
+        </h2>
+<nav class="toc"><ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.1">
+            <p id="section-toc.1-1.1.1" class="keepWithNext"><a href="#section-1" class="auto internal xref">1</a>.  <a href="#name-scope" class="internal xref">Scope</a></p>
 </li>
-<li>the Identity-Agent to perform client registration to the Issuing-Authority;
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2">
+            <p id="section-toc.1-1.2.1" class="keepWithNext"><a href="#section-2" class="auto internal xref">2</a>.  <a href="#name-normative-references" class="internal xref">Normative references</a></p>
 </li>
-<li>the Identity-Agent to obtain claims from the Issuing-Authority;
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3">
+            <p id="section-toc.1-1.3.1" class="keepWithNext"><a href="#section-3" class="auto internal xref">3</a>.  <a href="#name-terms-and-definitions" class="internal xref">Terms and definitions</a></p>
 </li>
-<li>a Claims-Consumer to ask for verified claims to the Identity-Agent;<br />
-
-
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4">
+            <p id="section-toc.1-1.4.1"><a href="#section-4" class="auto internal xref">4</a>.  <a href="#name-symbols-and-abbreviated-ter" class="internal xref">Symbols and abbreviated terms</a></p>
 </li>
-<li>the Identity-Agent to return obtained claims from Issuing-Authority to the Claims-Consumer; and
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5">
+            <p id="section-toc.1-1.5.1"><a href="#section-5" class="auto internal xref">5</a>.  <a href="#name-actors" class="internal xref">Actors</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.1">
+                <p id="section-toc.1-1.5.2.1.1"><a href="#section-5.1" class="auto internal xref">5.1</a>.  <a href="#name-subject-user" class="internal xref">Subject (User)</a></p>
 </li>
-<li>the Claims-Consumer to verify the claims.
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.2">
+                <p id="section-toc.1-1.5.2.2.1"><a href="#section-5.2" class="auto internal xref">5.2</a>.  <a href="#name-rp" class="internal xref">RP</a></p>
 </li>
-</ul><p>
-
-</p>
-<a name="normative-references"></a><br /><hr />
-<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
-<a name="rfc.section.2"></a><h3>2.&nbsp;
-Normative references</h3>
-
-<p>The following referenced documents are indispensable for the application of this document. For dated references, only the edition cited applied. For undated references, the latest edition of the referenced document (including any amendments) applies.
-</p>
-<a name="terms-and-definitions"></a><br /><hr />
-<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
-<a name="rfc.section.3"></a><h3>3.&nbsp;
-Terms and definitions</h3>
-
-<p>For the purpose of this document, the terms defined in <a href='https://tools.ietf.org/html/rfc6749'>RFC6749</a>, <a href='https://tools.ietf.org/html/rfc6750'>RFC6750</a>, <a href='https://tools.ietf.org/html/rfc76360'>RFC7636</a>, <a href='https://openid.net/specs/openid-connect-core-1_0.html'>OpenID Connect Core</a> apply. In addition, following terms are defined as a shorthand for the definition text that follows.
-</p>
-<p><strong>3.1</strong><br />
-
-<strong>Issuing-Authority</strong><br />
-
-party that issues attested claims
-</p>
-<p><strong>3.2</strong><br />
-
-<strong>Claims-Consumer</strong><br />
-
-party that verifies and consumes the provided claim sets
-</p>
-<p><strong>3.3</strong><br />
-
-<strong>Identity-Agent</strong><br />
-
-party that acts as an RP to Issuing-Authorities and OP to Claims-Consumers
-</p>
-<p>Note to entry: A Digital Identity Wallet is a type of IdA.
-</p>
-<a name="symbols-and-abbreviated-terms"></a><br /><hr />
-<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
-<a name="rfc.section.4"></a><h3>4.&nbsp;
-Symbols and abbreviated terms</h3>
-
-<p><strong>IA</strong> – Issuing-Authority
-</p>
-<p><strong>IdA</strong> – Identity-Agent
-</p>
-<p><strong>CC</strong> – Claims-Consumer
-</p>
-<p><strong>DID</strong> - Decentralized Identifier
-</p>
-<p><strong>HTTP</strong> - Hyper Text Transfer Protocol
-</p>
-<p><strong>TLS</strong> - Transport Layer Security
-</p>
-<p><strong>VC</strong> - W3C Verifiable Credential
-</p>
-<p><strong>VP</strong> - W3C Verifiable Presentation
-</p>
-<p><strong>W3C</strong> - World Wide Web Consortium
-</p>
-<a name="actors"></a><br /><hr />
-<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
-<a name="rfc.section.5"></a><h3>5.&nbsp;
-Actors</h3>
-
-<p>In this document, there are four main actors.
-</p>
-<p>
-</p>
-<ol class="text">
-<li>Subject (User)
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.3">
+                <p id="section-toc.1-1.5.2.3.1"><a href="#section-5.3" class="auto internal xref">5.3</a>.  <a href="#name-cp" class="internal xref">CP</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.3.2.1">
+                    <p id="section-toc.1-1.5.2.3.2.1.1"><a href="#section-5.3.1" class="auto internal xref">5.3.1</a>.  <a href="#name-userinfo-endpoint" class="internal xref">UserInfo Endpoint</a></p>
 </li>
-<li>Issuing-Authority (IA)
+                </ul>
 </li>
-<li>Identity-Agent (IdA)
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.4">
+                <p id="section-toc.1-1.5.2.4.1"><a href="#section-5.4" class="auto internal xref">5.4</a>.  <a href="#name-op" class="internal xref">OP</a></p>
 </li>
-<li>Claims-Consumer(CC)<br />
-
-
+            </ul>
 </li>
-</ol><p>
-
-</p>
-<p>They are topologically connected as in the following diagram.
-</p><br /><hr class="insert" />
-<div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>                +---------+
-    +-----------| Subject |--------+
-    | grants    +---------+        |
-    v                |             |
-+------+             | instructs   | allows
-|  IA  |----+        |             |
-+------+    |        v             v
-   .        |    +-------+     +------+
-   .        |----|  IdA  |-----|  CC  |
-   .        |    +-------+     +------+
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6">
+            <p id="section-toc.1-1.6.1"><a href="#section-6" class="auto internal xref">6</a>.  <a href="#name-discovery-phase" class="internal xref">Discovery Phase</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7">
+            <p id="section-toc.1-1.7.1"><a href="#section-7" class="auto internal xref">7</a>.  <a href="#name-registration-phase" class="internal xref">Registration Phase</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8">
+            <p id="section-toc.1-1.8.1"><a href="#section-8" class="auto internal xref">8</a>.  <a href="#name-setup-phase" class="internal xref">Setup Phase</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9">
+            <p id="section-toc.1-1.9.1"><a href="#section-9" class="auto internal xref">9</a>.  <a href="#name-delivery-phase-rp-phase" class="internal xref">Delivery Phase (RP Phase)</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9.2.1">
+                <p id="section-toc.1-1.9.2.1.1"><a href="#section-9.1" class="auto internal xref">9.1</a>.  <a href="#name-claims-request-by-rp-to-op" class="internal xref">Claims Request by RP to OP</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9.2.2">
+                <p id="section-toc.1-1.9.2.2.1"><a href="#section-9.2" class="auto internal xref">9.2</a>.  <a href="#name-rp-authentication-and-the-r" class="internal xref">RP authentication and the request verification</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9.2.3">
+                <p id="section-toc.1-1.9.2.3.1"><a href="#section-9.3" class="auto internal xref">9.3</a>.  <a href="#name-subject-granting" class="internal xref">Subject Granting</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9.2.4">
+                <p id="section-toc.1-1.9.2.4.1"><a href="#section-9.4" class="auto internal xref">9.4</a>.  <a href="#name-claims-collection" class="internal xref">Claims Collection</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9.2.4.2.1">
+                    <p id="section-toc.1-1.9.2.4.2.1.1"><a href="#section-9.4.1" class="auto internal xref">9.4.1</a>.  <a href="#name-userinfo-endpoint-request" class="internal xref">UserInfo Endpoint Request</a></p>
+</li>
+                </ul>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9.2.5">
+                <p id="section-toc.1-1.9.2.5.1"><a href="#section-9.5" class="auto internal xref">9.5</a>.  <a href="#name-claims-delivery" class="internal xref">Claims Delivery</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9.2.6">
+                <p id="section-toc.1-1.9.2.6.1"><a href="#section-9.6" class="auto internal xref">9.6</a>.  <a href="#name-claims-verification" class="internal xref">Claims Verification</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10">
+            <p id="section-toc.1-1.10.1"><a href="#section-10" class="auto internal xref">10</a>. <a href="#name-security-considerations" class="internal xref">Security Considerations</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.11">
+            <p id="section-toc.1-1.11.1"><a href="#section-11" class="auto internal xref">11</a>. <a href="#name-privacy-considerations" class="internal xref">Privacy Considerations</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.12">
+            <p id="section-toc.1-1.12.1"><a href="#appendix-A" class="auto internal xref"></a><a href="#name-authors-addresses" class="internal xref">Authors' Addresses</a></p>
+</li>
+        </ul>
+</nav>
+</section>
+</div>
+<div id="scope">
+<section id="section-1">
+      <h2 id="name-scope">
+<a href="#section-1" class="section-number selfRef">1. </a><a href="#name-scope" class="section-name selfRef">Scope</a>
+      </h2>
+<p id="section-1-1">This document specifies the methods for<a href="#section-1-1" class="pilcrow">¶</a></p>
+<ul class="compact">
+<li class="compact" id="section-1-2.1">an OP acting as a client of Claims Provider (CP) to perform discovery for a Claims Provider Metadata;<a href="#section-1-2.1" class="pilcrow">¶</a>
+</li>
+        <li class="compact" id="section-1-2.2">the OP to perform client registration to the Claims Provider;<a href="#section-1-2.2" class="pilcrow">¶</a>
+</li>
+        <li class="compact" id="section-1-2.3">the OP to obtain claims from the Claims Provider;<a href="#section-1-2.3" class="pilcrow">¶</a>
+</li>
+        <li class="compact" id="section-1-2.4">the OP to return obtained claims from CP to the RP; and<a href="#section-1-2.4" class="pilcrow">¶</a>
+</li>
+        <li class="compact" id="section-1-2.5">the RP to verify the claims.<a href="#section-1-2.5" class="pilcrow">¶</a>
+</li>
+      </ul>
+</section>
+</div>
+<div id="normative-references">
+<section id="section-2">
+      <h2 id="name-normative-references">
+<a href="#section-2" class="section-number selfRef">2. </a><a href="#name-normative-references" class="section-name selfRef">Normative references</a>
+      </h2>
+<p id="section-2-1">The following referenced documents are indispensable for the application of this document. For dated references, only the edition cited applied. For undated references, the latest edition of the referenced document (including any amendments) applies.<a href="#section-2-1" class="pilcrow">¶</a></p>
+<p id="section-2-2"><a href="https://tools.ietf.org/html/bcp14">BCP14</a> - Key words for use in RFCs to Indicate Requirement Levels<a href="#section-2-2" class="pilcrow">¶</a></p>
+<p id="section-2-3"><a href="https://tools.ietf.org/html/rfc6749">RFC6749</a> - The OAuth 2.0 Authorization Framework<a href="#section-2-3" class="pilcrow">¶</a></p>
+<p id="section-2-4"><a href="https://tools.ietf.org/html/rfc6750">RFC6750</a> - The OAuth 2.0 Authorization Framework: Bearer Token Usage<a href="#section-2-4" class="pilcrow">¶</a></p>
+<p id="section-2-5"><a href="https://openid.net/specs/openid-connect-core-1_0.html">OIDC</a> - OpenID Connect Core 1.0 incorporating errata set 1<a href="#section-2-5" class="pilcrow">¶</a></p>
+<p id="section-2-6"><a href="https://openid.net/specs/openid-connect-discovery-1_0.html">OpenID.Discovery</a> - OpenID Connect Discovery 1.0<a href="#section-2-6" class="pilcrow">¶</a></p>
+<p id="section-2-7"><a href="http://openid.net/specs/openid-connect-registration-1_0.html">OpenID.Registration</a> - OpenID Connect Registration 1.0<a href="#section-2-7" class="pilcrow">¶</a></p>
+<p id="section-2-8"><a href="http://tools.ietf.org/html/draft-ietf-oauth-json-web-token">JWT</a> - JSON Web Token<a href="#section-2-8" class="pilcrow">¶</a></p>
+<p id="section-2-9"><a href="http://tools.ietf.org/html/draft-ietf-jose-json-web-signature">JWS</a> - JSON Web Signature<a href="#section-2-9" class="pilcrow">¶</a></p>
+<p id="section-2-10"><a href="http://tools.ietf.org/html/draft-ietf-jose-json-web-encryption">JWE</a> - JSON Web Encryption<a href="#section-2-10" class="pilcrow">¶</a></p>
+<p id="section-2-11"><a href="http://tools.ietf.org/html/draft-ietf-jose-json-web-algorithms">JWA</a> - JSON Web Algorithms<a href="#section-2-11" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="terms-and-definitions">
+<section id="section-3">
+      <h2 id="name-terms-and-definitions">
+<a href="#section-3" class="section-number selfRef">3. </a><a href="#name-terms-and-definitions" class="section-name selfRef">Terms and definitions</a>
+      </h2>
+<p id="section-3-1">For the purpose of this document, the terms defined in <a href="https://tools.ietf.org/html/rfc6749">RFC6749</a>, <a href="https://tools.ietf.org/html/rfc6750">RFC6750</a>, [RFC7636], <a href="https://openid.net/specs/openid-connect-core-1_0.html">OpenID Connect Core</a> and the following apply.<a href="#section-3-1" class="pilcrow">¶</a></p>
+<p id="section-3-2"><strong>Claim Set</strong> – a set of claims issued by a Claims Provider<a href="#section-3-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="symbols-and-abbreviated-terms">
+<section id="section-4">
+      <h2 id="name-symbols-and-abbreviated-ter">
+<a href="#section-4" class="section-number selfRef">4. </a><a href="#name-symbols-and-abbreviated-ter" class="section-name selfRef">Symbols and abbreviated terms</a>
+      </h2>
+<p id="section-4-1"><strong>RP</strong> – Relying Party<a href="#section-4-1" class="pilcrow">¶</a></p>
+<p id="section-4-2"><strong>OP</strong> – OpenID Provider<a href="#section-4-2" class="pilcrow">¶</a></p>
+<p id="section-4-3"><strong>CP</strong> – Claims Provider<a href="#section-4-3" class="pilcrow">¶</a></p>
+<p id="section-4-4"><strong>HTTP</strong> - Hyper Text Transfer Protocol<a href="#section-4-4" class="pilcrow">¶</a></p>
+<p id="section-4-5"><strong>TLS</strong> - Transport Layer Security<a href="#section-4-5" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="actors">
+<section id="section-5">
+      <h2 id="name-actors">
+<a href="#section-5" class="section-number selfRef">5. </a><a href="#name-actors" class="section-name selfRef">Actors</a>
+      </h2>
+<p id="section-5-1">In this document, there are four main actors.<a href="#section-5-1" class="pilcrow">¶</a></p>
+<ol start="1" type="1" class="compact type-1" id="section-5-2">
+<li id="section-5-2.1">Subject (User)<a href="#section-5-2.1" class="pilcrow">¶</a>
+</li>
+        <li id="section-5-2.2">CP<a href="#section-5-2.2" class="pilcrow">¶</a>
+</li>
+        <li id="section-5-2.3">OP<a href="#section-5-2.3" class="pilcrow">¶</a>
+</li>
+        <li id="section-5-2.4">RP that verifies and consumes the provided claim sets.<a href="#section-5-2.4" class="pilcrow">¶</a>
+</li>
+      </ol>
+<p id="section-5-3">They are topologically connected as in the following diagram.<a href="#section-5-3" class="pilcrow">¶</a></p>
+<p id="section-5-4">!---<a href="#section-5-4" class="pilcrow">¶</a></p>
+<span id="name-relationships-among-actors"></span><figure id="figure-1">
+        <div class="lang-ascii-art sourcecode" id="section-5-5.1">
+<pre>               +---------+
+    +----------| Subject |--------+
+    | grants   +---------+        |
+    v               |             |
++------+            | instructs   | allows
+|  CP  |----+       |             |
++------+    |       v             v
+   .        |    +------+     +------+
+   .        |----|  OP  |-----|  RP  |
+   .        |    +------+     +------+
 +------+    |
-|  IA  |----+
+|  CP  |----+
 +------+
 
-</pre></div><table border="0" cellpadding="0" cellspacing="2" align="center"><tr><td align="center"><font face="monaco, MS Sans Serif" size="1"><b>&nbsp;Relationships among actors
-&nbsp;</b></font><br /></td></tr></table><hr class="insert" />
-
-<a name="subject-user"></a><br /><hr />
-<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
-<a name="rfc.section.5.1"></a><h3>5.1.&nbsp;
-Subject (User)</h3>
-
-<p>Subject is the entity that grants access to the claims at IAs and the IdA.
-In this system, the Subject grants IA to provide IdA the Claims for
+</pre>
+</div>
+<figcaption><a href="#figure-1" class="selfRef">Figure 1</a>:
+<a href="#name-relationships-among-actors" class="selfRef">Relationships among actors</a>
+        </figcaption></figure>
+<div id="subject-user">
+<section id="section-5.1">
+        <h3 id="name-subject-user">
+<a href="#section-5.1" class="section-number selfRef">5.1. </a><a href="#name-subject-user" class="section-name selfRef">Subject (User)</a>
+        </h3>
+<p id="section-5.1-1">Subject is the entity that grants access to the claims at CPs and the OP.
+In this system, the Subject grants CP to provide OP the Claims for
 the purpose of providing those claims with other claims to potentially
-unspecified CCs under the Subject's direction.
-</p>
-<p>This request from the IdA to the IA is sent by the Subject's instruction.
-The Subject also allows IdA to potentially store the obtained claims.
-</p>
-<p>The Subject also allows CC to make a claims request to the IdA,
-typically for the Subject to receive some services from the CC.
-</p>
-<a name="claims-consumer-cc"></a><br /><hr />
-<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
-<a name="rfc.section.5.2"></a><h3>5.2.&nbsp;
-Claims-Consumer (CC)</h3>
-
-<p>CC is an actor that typically provides some service to the Subject.
-To perform the service, the CC obtains some claims about the Subject from IdA.
-The basis for the processing of the Subject's claims by the CC can be
-performance of contract, consent, and other lawful basis.
-</p>
-<a name="issuing-authority-ia"></a><br /><hr />
-<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
-<a name="rfc.section.5.3"></a><h3>5.3.&nbsp;
-Issuing-Authority (IA)</h3>
-
-<p>IA, Issuing-Authority, is a role assumed by an Identity-Agent
-that supports signed claims according to this document.<br />
-
-Specifically, it supports an extension to bind the
-authentication response that CCs received from the IdA
-to the claim sets that it provides.
-</p>
-<p>The provision for the Issuing-Authority are as follows:
-</p>
-<p>
-</p>
-<ol class="text">
-<li>It MUST implement Claims Endpoint.
+unspecified RPs under the Subject's direction.<a href="#section-5.1-1" class="pilcrow">¶</a></p>
+<p id="section-5.1-2">This request from the OP to the CP is sent by the Subject's instruction.
+The Subject also allows OP to potentially store the obtained claims.<a href="#section-5.1-2" class="pilcrow">¶</a></p>
+<p id="section-5.1-3">The Subject also allows RP to make a claims request to the OP,
+typically for the Subject to receive some services from the RP.<a href="#section-5.1-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="rp">
+<section id="section-5.2">
+        <h3 id="name-rp">
+<a href="#section-5.2" class="section-number selfRef">5.2. </a><a href="#name-rp" class="section-name selfRef">RP</a>
+        </h3>
+<p id="section-5.2-1">RP is an actor that typically provides some service to the Subject.
+To perform the service, the RP obtains some claims about the Subject from OP.
+The basis for the processing of the Subject's claims by the RP can be
+performance of contract, consent, and other lawful basis.<a href="#section-5.2-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="cp">
+<section id="section-5.3">
+        <h3 id="name-cp">
+<a href="#section-5.3" class="section-number selfRef">5.3. </a><a href="#name-cp" class="section-name selfRef">CP</a>
+        </h3>
+<p id="section-5.3-1">CP, Claims Provider, is a role assumed by an OpenID Provider
+that supports signed UserInfo response and has the OP as a client.<a href="#section-5.3-1" class="pilcrow">¶</a></p>
+<p id="section-5.3-2">The provision for the Claims Provider are as follows:<a href="#section-5.3-2" class="pilcrow">¶</a></p>
+<ol start="1" type="1" class="compact type-1" id="section-5.3-3">
+<li id="section-5.3-3.1">It MUST support signed UserInfo response.<a href="#section-5.3-3.1" class="pilcrow">¶</a>
 </li>
-<li>It MUST support the issuance of Access Tokens and Refresh Tokens for the Claims Endpoint.
+          <li id="section-5.3-3.2">It SHOULD support the Discovery Metadata extension defined by this document.<a href="#section-5.3-3.2" class="pilcrow">¶</a>
 </li>
-<li>It MUST support the Discovery Metadata extension defined by this document.
+          <li id="section-5.3-3.3">It SHOULD support the registration of the OPs with extensions defined in this document.<a href="#section-5.3-3.3" class="pilcrow">¶</a>
 </li>
-<li>It MUST support the registration of the IdAs with extensions defined in this document.
+          <li id="section-5.3-3.4">It SHOULD support the registration of the OPs through Dynamic Registration.<a href="#section-5.3-3.4" class="pilcrow">¶</a>
 </li>
-<li>It SHOULD support the registration of the IdAs through Dynamic Registration.
+        </ol>
+<div id="userinfo-endpoint">
+<section id="section-5.3.1">
+          <h4 id="name-userinfo-endpoint">
+<a href="#section-5.3.1" class="section-number selfRef">5.3.1. </a><a href="#name-userinfo-endpoint" class="section-name selfRef">UserInfo Endpoint</a>
+          </h4>
+<p id="section-5.3.1-1">The UserInfo Endpoint is described in 5.3 of OpenID Connect 1.0 <a href="https://openid.net/specs/openid-connect-core-1_0.html">OIDC</a> as an OAuth 2.0 Protected Resource that returns Claims about the authenticated Subject.<a href="#section-5.3.1-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="op">
+<section id="section-5.4">
+        <h3 id="name-op">
+<a href="#section-5.4" class="section-number selfRef">5.4. </a><a href="#name-op" class="section-name selfRef">OP</a>
+        </h3>
+<p id="section-5.4-1">OP is an entity that acts as an OpenID Provider to the RP.
+Also, OP acts as a relying party to CPs.<a href="#section-5.4-1" class="pilcrow">¶</a></p>
+<p id="section-5.4-2">The provision for the OP is as follows:<a href="#section-5.4-2" class="pilcrow">¶</a></p>
+<ol start="1" type="1" class="compact type-1" id="section-5.4-3">
+<li id="section-5.4-3.1">It MUST support OpenID Connect Aggregated Claims as an OpenID Provider.<a href="#section-5.4-3.1" class="pilcrow">¶</a>
 </li>
-</ol><p>
-
-</p>
-<a name="claims-endpoint"></a><br /><hr />
-<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
-<a name="rfc.section.5.3.1"></a><h3>5.3.1.&nbsp;
-Claims Endpoint</h3>
-
-<p>The Claims Endpoint is an OAuth 2.0 Protected Resource that returns Claims about the authenticated Subject.
-To obtain the requested Claims about the Subject,
-the IdA acting as a Client makes a request to the Claims Endpoint of the IA using an Access Token obtained through OpenID Connect Authentication.
-These Claims can be represented in variety of format as requested.
-</p>
-<p>This document defines the following request parameters for the Claims Endpoint request:
-</p>
-<p>
-</p>
-<ul class="text">
-<li><em>uid</em>  String value which identifies the end-user at the Client. The value is described in 5.3.2 of this specification. If this parameter is not supplied, the <em>uid</em> claims value MUST be supplied in the <em>claims</em> parameter.
+          <li id="section-5.4-3.2">It MUST act as an OpenID Connect relying party to CPs to fetch claims from CPs according to instructions given by the Subject.<a href="#section-5.4-3.2" class="pilcrow">¶</a>
 </li>
-<li><em>claims</em>  This parameter is used to request that specific Claims be returned. This is a JSON object with only the <em>c_token</em> top-level member defined in 5.3.2 of this specification. The <em>c_token</em> member requests that the listed individual Claims be returned from the Claims Endpoint. The requested claims MUST only be a subset of the claims bounded to the Access Token as requested in the Authentication Request's <em>scope</em>, <em>claims</em>, or <em>request</em> or <em>request_uri</em> parameters. The <em>c_token</em> member MUST contain the <em>uid</em> claim value if the <em>uid</em> request parameter is not supplied.
+          <li id="section-5.4-3.3">As an OpenID Provider, OP MUST implement mandatory to implement extensions that this document defines.<a href="#section-5.4-3.3" class="pilcrow">¶</a>
 </li>
-<li><em>aud</em>  JSON object containing a string array of client identifiers that will be added as additional <em>aud</em>  (audience) claims for the resulting JWT response from this endpoint. (Editor's NOTE: This point needs more discussion.)
+          <li id="section-5.4-3.4">It MAY store the signed claims obtained from CPs with appropriate safeguarding controls.<a href="#section-5.4-3.4" class="pilcrow">¶</a>
 </li>
-</ul><p>
-
-</p>
-<p>** Editor's NOTE ** Is there a way to specify the CCs that are registered to the IdA?
-</p>
-<p>The provision for the Claims Endpoint are as follows:
-</p>
-<p>
-</p>
-<ol class="text">
-<li>It MUST implement <tt>uid</tt>, <tt>claims</tt>, and <tt>aud</tt> as defined above.
+          <li id="section-5.4-3.5">To the authenticated Subject, it MUST provide a user interface to show what claims about the subject it stores.<a href="#section-5.4-3.5" class="pilcrow">¶</a>
 </li>
-<li>It MUST implement OIDC4IDA response encoded in JWS signed JWT as its response.
+          <li id="section-5.4-3.6">It MUST NOT provide claims to RPs without the Subject's permission.<a href="#section-5.4-3.6" class="pilcrow">¶</a>
 </li>
-<li>It SHOULD support W3C Verified Credentials in JWT or JSON-LD representation as its response.
-</li>
-<li>It MAY support other response format as advertised in the Discovery response.
-</li>
-<li>It MUST enforce TLS for request and response. See  <a href='https://openid.net/specs/openid-connect-core-1_0.html#TLSRequirements'>Section 16.17</a>  for more information on using TLS.
-</li>
-<li>It MUST support the use of the HTTP  GET  and HTTP  POST  methods defined in  <a href='https://openid.net/specs/openid-connect-core-1_0.html#RFC2616'>RFC 2616</a>  [RFC2616].
-</li>
-<li>It MUST accept Access Tokens as  <a href='https://openid.net/specs/openid-connect-core-1_0.html#RFC6750'>OAuth 2.0 Bearer Token Usage</a>  <a href='https://tools.ietf.org/html/rfc6750'>RFC6750</a>.
-</li>
-<li>It SHOULD support the use of  <a href='https://openid.net/specs/openid-connect-core-1_0.html#CORS'>Cross Origin Resource Sharing (CORS)</a>  [CORS] and or other methods as appropriate to enable JavaScript Clients to access the endpoint.
-</li>
-</ol><p>
-
-</p>
-<p>** EDITOR'S NOTE ** I guess there are other provisions. The above probably needs to be tweaked as well.
-</p>
-<a name="identity-agent-ida"></a><br /><hr />
-<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
-<a name="rfc.section.5.4"></a><h3>5.4.&nbsp;
-Identity-Agent (IdA)</h3>
-
-<p>IdA is an entity that acts as an Identity-Agent to the CC.
-Also, IdA acts as a Claims-Consumer to IAs.
-</p>
-<p>The provision for the IdA is as follows:
-</p>
-<p>
-</p>
-<ol class="text">
-<li>It MUST support OpenID Connect Aggregated Claims as an Identity-Agent.
-</li>
-<li>It MUST act as an OpenID Connect Claims-Consumer to IAs to fetch claims from IAs according to instructions given by the Subject.
-</li>
-<li>As an Identity-Agent, IdA MUST implement mandatory to implement extensions that this document defines.
-</li>
-<li>It MAY store the signed claims obtained from IAs with appropriate safeguarding controls.
-</li>
-<li>To the authenticated Subject, it MUST provide a user interface to show what claims about the subject it stores.
-</li>
-<li>It MUST NOT provide claims to CCs without the Subject's permission.
-</li>
-<li>It MUST implement <tt>c_token</tt> authentication request parameter as a mechanism to request claims to IAs.
-</li>
-</ol><p>
-
-</p>
-<p>** EDITOR'S NOTE ** I guess there are other provisions.
-</p>
-<a name="c-token"></a><br /><hr />
-<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
-<a name="rfc.section.5.4.1"></a><h3>5.4.1.&nbsp;
-c_token</h3>
-
-<p><tt>c_token</tt> Authorization Request parameter lists individual Claims
-that the IdA asks the IA to be returned from the Claims Endpoint.
-This top-level member is a JSON object with the names of the individual Claims being requested
-as the member names, and the values are defined as in 5.5.1 of OpenID Connect 1.0 <a href='https://openid.net/specs/openid-connect-core-1_0.html'>OIDC</a>.
-</p>
-<a name="discovery-phase"></a><br /><hr />
-<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
-<a name="rfc.section.6"></a><h3>6.&nbsp;
-Discovery Phase</h3>
-
-<p>Before registering itself as an OAuth Client to an IA, the IdA needs to obtain
-configuration information from the IA,
-including its Authorization Endpoint and Token Endpoint locations.
-</p>
-<p>This information is obtained via Discovery, as described in OpenID Connect Discovery 1.0 <a href='https://openid.net/specs/openid-connect-discovery-1_0.html'>OpenID.Discovery</a>, or may be obtained via other mechanisms.
-</p>
-<p>This document adds the following Identity-Agent Metadata to the OpenID Connect Discovery 1.0 <a href='https://openid.net/specs/openid-connect-discovery-1_0.html'>OpenID.Discovery</a> response:
-</p>
-<p>
-</p>
-<ul class="text">
-<li><tt>claims_endpoint</tt> <strong>Required</strong>. Claims Endpoint. URL at the Issuing-Authority that provides signed claims.
-</li>
-<li><tt>claims_signing_alg_values_supported</tt> <strong>Optional</strong>. JSON array containing a list of the  JWS <a href='http://tools.ietf.org/html/draft-ietf-jose-json-web-signature'>JWS</a> signing algorithms (alg values) JWA <a href='http://tools.ietf.org/html/draft-ietf-jose-json-web-algorithms'>JWA</a> supported by the Claims Endpoint to encode the Claims in a  JWT <a href='http://tools.ietf.org/html/draft-ietf-oauth-json-web-token'>JWT</a>. The value <em>none</em> MUST NOT be included.
-</li>
-<li><tt>claims_encryption_alg_values_supported</tt> <strong>Optional</strong>. JSON array containing a list of the  JWE <a href='http://tools.ietf.org/html/draft-ietf-jose-json-web-encryption'>JWE</a> encryption algorithms (alg values) JWA <a href='http://tools.ietf.org/html/draft-ietf-jose-json-web-algorithms'>JWA</a> supported by the Claims Endpoint to encode the Claims in a JWT <a href='http://tools.ietf.org/html/draft-ietf-oauth-json-web-token'>JWT</a>.
-</li>
-<li><tt>claims_encryption_enc_values_supported</tt> <strong>Optional</strong>. JSON array containing a list of the  JWE <a href='http://tools.ietf.org/html/draft-ietf-jose-json-web-encryption'>JWE</a> encryption algorithms (enc values) JWA <a href='http://tools.ietf.org/html/draft-ietf-jose-json-web-algorithms'>JWA</a> supported by the Claims Endpoint to encode the Claims in a JWT <a href='http://tools.ietf.org/html/draft-ietf-oauth-json-web-token'>JWT</a>.
-</li>
-</ul><p>
-
-</p>
-<p>Additionally, the following optional OpenID Connect Discovery 1.0 <a href='https://openid.net/specs/openid-connect-discovery-1_0.html'>OpenID.Discovery</a> parameters are now required in the Issuing-Authority Metadata:
-</p>
-<p>
-</p>
-<blockquote class="text"><dl>
-<dt>claim_types_supported</dt>
-<dd>
-The JSON array MUST contain the values <em>normal</em>, <em>distributed</em>, ... .
+        </ol>
+</section>
+</div>
+</section>
+</div>
+<div id="discovery-phase">
+<section id="section-6">
+      <h2 id="name-discovery-phase">
+<a href="#section-6" class="section-number selfRef">6. </a><a href="#name-discovery-phase" class="section-name selfRef">Discovery Phase</a>
+      </h2>
+<p id="section-6-1">Before registering itself as an OpenID Connect Client to a CP, the OP needs to obtain
+configuration information from the CP,
+including its Authorization Endpoint, Token Endpoint, and UserInfo Endpoint locations.<a href="#section-6-1" class="pilcrow">¶</a></p>
+<p id="section-6-2">This information is obtained via Discovery, as described in OpenID Connect Discovery 1.0 <a href="https://openid.net/specs/openid-connect-discovery-1_0.html">OpenID.Discovery</a>, or may be obtained via other mechanisms.<a href="#section-6-2" class="pilcrow">¶</a></p>
+<p id="section-6-3">The following OpenID Connect Discovery 1.0 <a href="https://openid.net/specs/openid-connect-discovery-1_0.html">OpenID.Discovery</a> parameters are required in the Claims Provider Metadata:<a href="#section-6-3" class="pilcrow">¶</a></p>
+<span class="break"></span><dl class="dlCompact dlParallel" id="section-6-4">
+        <dt id="section-6-4.1"><code>userinfo_endpoint</code></dt>
+        <dd style="margin-left: 1.5em" id="section-6-4.2">
+          <strong>Required</strong>. Claims Endpoint. URL at the Issuing-Authority that provides signed claims.<a href="#section-6-4.2" class="pilcrow">¶</a>
 </dd>
-<dt>claims_supported</dt>
-<dd>
-A JSON array containing a list of the Claim Names of the Claims that the Identity-Agent MAY be able to supply values for.
+        <dd class="break"></dd>
+<dt id="section-6-4.3"><code>userinfo_signed_response_alg</code></dt>
+        <dd style="margin-left: 1.5em" id="section-6-4.4">
+          <strong>Optional</strong>. JSON array containing a list of the  JWS <a href="http://tools.ietf.org/html/draft-ietf-jose-json-web-signature">JWS</a> signing algorithms (alg values) JWA <a href="http://tools.ietf.org/html/draft-ietf-jose-json-web-algorithms">JWA</a> supported by the UserInfo Endpoint to encode the Claims in a  JWT <a href="http://tools.ietf.org/html/draft-ietf-oauth-json-web-token">JWT</a>. The value <em>none</em> MUST NOT be included.<a href="#section-6-4.4" class="pilcrow">¶</a>
 </dd>
-<dt>claims_parameter_supported</dt>
-<dd>
-The value MUST be <em>true</em> to support the <em>claims</em> request parameter.
-</dd>
-<dt>request_parameter_supported</dt>
-<dd>
-The value MUST be <em>true</em> to support the <em>request</em> request parameter.
-</dd>
-<dt>request_uri_parameter_supported</dt>
-<dd>
-The value MUST be <em>true</em> to support the <em>request_uri</em> request parameter.
-</dd>
-<dt>claimset_supported</dt>
-<dd>
-Boolean value indicating that the Issuing-Authority supports the claimset flows.
-</dd>
-<dt>claimset_formats_supported</dt>
-<dd>
-A JSON array of strings identifying the resulting format of the claimset issued at the end of the flow.
-</dd>
-<dt>claimset_claims_supported</dt>
-<dd>
-A JSON array of strings identifying the claim names supported within an issued claimset.
-</dd>
-<dt>claimset_name</dt>
-<dd>
-A human-readable string to identify the name of the claimset offered by the provider.
-</dd>
-<dt>dids_supported</dt>
-<dd>
-Boolean value indicating that the OpenID provider supports the resolution of <a href='https://w3c.github.io/did-core/'>decentralized identifiers</a>.
-</dd>
-<dt>did_methods_supported</dt>
-<dd>
-A JSON array of strings representing <a href='https://w3c-ccg.github.io/did-method-registry/'>Decentralized Identifier Methods</a> that the OpenID provider supports resolution of.
-</dd>
-</dl></blockquote><p>
-
-</p>
-<p>If the IA supports OpenID Connect for Identity Assurance 1.0 <a href='https://openid.net/specs/openid-connect-4-identity-assurance-1_0-ID1.html'>OpenID.IDA</a>,
-the supported OpenID Connect for Identity Assurance 1.0 <a href='https://openid.net/specs/openid-connect-4-identity-assurance-1_0-ID1.html'>OpenID.IDA</a> features MUST be published
-as specified in section 7 of OpenID Connect for Identity Assurance 1.0 <a href='https://openid.net/specs/openid-connect-4-identity-assurance-1_0-ID1.html'>OpenID.IDA</a>.
-</p>
-<p>If the IA supports W3C Verifiable Credentials, the IA MUST advertise it with the following metadata:
-</p>
-<p>** Editors Note: Tobias, could you fill in here? **
-</p>
-<p>The following is a non-normative example of the relevant entries in the openid-configuration metadata for an OpenID Provider supporting the claimset issuance flow
-</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>{
-  "dids_supported": true,
-  "did_methods_supported": [
-    "did:ion:",
-    "did:elem:",
-    "did:sov:"
-  ],
-  "claimset_supported": true,
-  "claimset_endpoint": "https://server.example.com/credential",
-  "claimset_formats_supported": [
-    "w3cvc-jsonld",
-    "jwt"
-  ],
-  "claimset_claims_supported": [
-    "given_name",
-    "last_name",
-    "https://www.w3.org/2018/credentials/examples/v1/degree"
-  ],
-  "claimset_name": "University Credential"
-}
-</pre></div>
-<p>If the IA supports mDL format, the IA MUST advertise it with the following metadata:
-</p>
-<p>** Editors Note: Tony or Kristina, could you fill in here? **
-</p>
-<p>If the IA supports SCIM format, the IA MUST advertise it with the following metadata:
-</p>
-<p>** Editors Note: SCIM experts, could you fill in here? **
-</p>
-<a name="registration-phase"></a><br /><hr />
-<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
-<a name="rfc.section.7"></a><h3>7.&nbsp;
-Registration Phase</h3>
-
-<p>Before starting to make requests to an IA, the IdA MUST register itself to the IA.
+      <dd class="break"></dd>
+</dl>
+<p id="section-6-5">The following optional OpenID Connect Discovery 1.0 <a href="https://openid.net/specs/openid-connect-discovery-1_0.html">OpenID.Discovery</a> parameters are now required in the OpenID Provider Metadata:<a href="#section-6-5" class="pilcrow">¶</a></p>
+<ul class="compact">
+<li class="compact" id="section-6-6.1">
+          <code>claim_types_supported</code>. The Claims Types supported by the Claims Provider. It MUST contain the value <em>aggregated</em>.<a href="#section-6-6.1" class="pilcrow">¶</a>
+</li>
+      </ul>
+</section>
+</div>
+<div id="registration-phase">
+<section id="section-7">
+      <h2 id="name-registration-phase">
+<a href="#section-7" class="section-number selfRef">7. </a><a href="#name-registration-phase" class="section-name selfRef">Registration Phase</a>
+      </h2>
+<p id="section-7-1">Before starting to make requests to a CP, the OP MUST register itself to the CP.
 The registration SHOULD be performed
-via Dynamic Registration, as described in OpenID Connect Dynamic Client Registration 1.0.
-</p>
-<p>This document adds the following Client Metadata to the OpenID Connect Dynamic Client Registration :
-</p>
-<p><tt>claims_signed_response_alg</tt> <strong>Required</strong>. JWS <tt>alg</tt> algorithm JWA <a href='http://tools.ietf.org/html/draft-ietf-jose-json-web-algorithms'>JWA</a> REQUIRED for signing Claims Responses. The value <em>none</em> MUST NOT be used. If this is specified, the response will be JWT <a href='http://tools.ietf.org/html/draft-ietf-oauth-json-web-token'>JWT</a> serialized, and signed using JWS. The default, if omitted, is <tt>RS256</tt>.
-</p>
-<p><tt>claims_encrypted_response_alg</tt> <strong>Optional</strong>. JWE <tt>alg</tt> algorithm JWA <a href='http://tools.ietf.org/html/draft-ietf-jose-json-web-algorithms'>JWA</a> REQUIRED for encrypting Claims responses to the client. If both signing and encryption are requested, the response will be signed then encrypted, with the result being a Nested JWT, as defined in JWT <a href='http://tools.ietf.org/html/draft-ietf-oauth-json-web-token'>JWT</a>. The default, if omitted, is that no encryption is performed.
-</p>
-<p><tt>claims_encrypted_response_enc</tt> <strong>Optional</strong>. JWE <tt>enc</tt> algorithm JWA <a href='http://tools.ietf.org/html/draft-ietf-jose-json-web-algorithms'>JWA</a> REQUIRED for encrypting Claims responses. If <tt>claims_encrypted_response_enc</tt> is specified, the default for this value is <tt>A128CBC-HS256</tt>. When <tt>claims_encrypted_response_enc</tt> is included, <tt>claims_encrypted_response_alg</tt> MUST also be provided.
-</p>
-<p>Authentication requests to the Issuing-Authority's Authorization Endpoint should be signed or signed and encrypted. In order to support a more diverse set of claims, requests for claims should be made using  Request Objects which are signed or signed and encrypted by registering the appropriate values for the following Client Metadata registration parameters:
-</p>
-<p>
-</p>
-<ul class="text">
-<li><tt>request_object_signing_alg</tt>
+via Dynamic Registration, as described in OpenID Connect Dynamic Client Registration 1.0 <a href="http://openid.net/specs/openid-connect-registration-1_0.html">OpenID.Registration</a>.<a href="#section-7-1" class="pilcrow">¶</a></p>
+<p id="section-7-2">The OP MUST register the following client parameters :<a href="#section-7-2" class="pilcrow">¶</a></p>
+<ul class="compact">
+<li class="compact" id="section-7-3.1">
+          <code>userinfo_signed_response_alg</code>. Signing algorithm supported by the Claims Provider.<a href="#section-7-3.1" class="pilcrow">¶</a>
 </li>
-<li><tt>request_object_encryption_alg</tt>
+      </ul>
+<p id="section-7-4">In addition, the OP MUST NOT register <code>userinfo_encrypted_response_alg</code> value.<a href="#section-7-4" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="setup-phase">
+<section id="section-8">
+      <h2 id="name-setup-phase">
+<a href="#section-8" class="section-number selfRef">8. </a><a href="#name-setup-phase" class="section-name selfRef">Setup Phase</a>
+      </h2>
+<p id="section-8-1">In this phase, the OP obtains an access token (and optionally refresh token)
+that is bound to the current user so that the OP can obtain the claims about the current user
+from the CP subsequently without taking the user to the CP and show them the consent dialogue for every RP requests.<a href="#section-8-1" class="pilcrow">¶</a></p>
+<ol start="1" type="1" class="compact type-1" id="section-8-2">
+<li id="section-8-2.1">This has to be done at least once for each CP that a user of an OP who wishes to use the facility this document explains.<a href="#section-8-2.1" class="pilcrow">¶</a>
 </li>
-<li><tt>request_object_encryption_enc</tt>
+        <li id="section-8-2.2">To obtain the grant, the OP MUST use an OpenID Connect Authentication Request.<a href="#section-8-2.2" class="pilcrow">¶</a>
 </li>
-</ul><p>
-
-</p>
-<a name="setup-phase"></a><br /><hr />
-<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
-<a name="rfc.section.8"></a><h3>8.&nbsp;
-Setup Phase</h3>
-
-<a name="overview"></a><br /><hr />
-<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
-<a name="rfc.section.8.1"></a><h3>8.1.&nbsp;
-Overview</h3>
-
-<p>In this phase, the IdA obtains an access token (and optionally refresh token)
-that is bound to the current user so that the IdA can obtain the claims about the current user
-from the IA subsequently without taking the user to the IA and show them the consent dialogue for every CC requests.
-</p>
-<p>
-</p>
-<ol class="text">
-<li>This has to be done at least once for each IA that a user of an IdA who wishes to use the facility this document explains.
+        <li id="section-8-2.3">The Claims to be granted SHOULD be specified with the<code>scope</code> parameter and/or the <code>userinfo</code> member of the <code>claims</code> parameter.
+The CP MUST show a dialogue to the Subject explaining that the OP will be
+getting signed claims set from this CP as appropriate to provide claims to RPs as directed
+by the Subject.<a href="#section-8-2.3" class="pilcrow">¶</a>
 </li>
-<li>To obtain the grant, the IdA MUST use OpenID Connect Authentication Request.
+      </ol>
+<p id="section-8-3">The dialogue MUST provide the link to the <code>policy_url</code> provided by the OP during its registration.<a href="#section-8-3" class="pilcrow">¶</a></p>
+<p id="section-8-4">The actual act of granting MUST involve active user interaction.<a href="#section-8-4" class="pilcrow">¶</a></p>
+<p id="section-8-5">The grant that is to be obtained in this phase SHOULD be sufficiently large so that it will reduce the
+number of times that OP needs to take the Subject to the CP to obtain additional grants.<a href="#section-8-5" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="delivery-phase-rp-phase">
+<section id="section-9">
+      <h2 id="name-delivery-phase-rp-phase">
+<a href="#section-9" class="section-number selfRef">9. </a><a href="#name-delivery-phase-rp-phase" class="section-name selfRef">Delivery Phase (RP Phase)</a>
+      </h2>
+<p id="section-9-1">In Delivery Phase, the claims are delivered to RP.
+To do so, it typically goes through the following steps:<a href="#section-9-1" class="pilcrow">¶</a></p>
+<ol start="1" type="1" class="compact type-1" id="section-9-2">
+<li id="section-9-2.1">(Claims Request) An RP makes an OpenID Connect Authentication Request with extension parameters defined in this document to the OP.<a href="#section-9-2.1" class="pilcrow">¶</a>
 </li>
-</ol><p>
-
-</p>
-<p>** Editor's NOTE:** Originally, it had: The Claims to be granted MUST be specified with <tt>c_token</tt> parameter.
-</p>
-<a name="authorization-request"></a><br /><hr />
-<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
-<a name="rfc.section.8.2"></a><h3>8.2.&nbsp;
-Authorization request</h3>
-
-<p>A Signed Claim Set Request uses the OpenID and OAuth2.0 request parameters as outlined
-in section <a href='https://openid.net/specs/openid-connect-core-1_0.html#AuthRequest'>3.1.2.1</a> of
-OpenID Connect core, except for the following additional constraints.
-</p>
-<p>
-</p>
-<blockquote class="text"><dl>
-<dt>claimset_format</dt>
-<dd>
-REQUIRED. Determines the format of the signed claim set returned at the end of the flow, values supported by the IA are advertised in their openid-configuration metadata, under the <tt>claimset_formats_supported</tt> attribute.
-</dd>
-<dt>sub_jwk</dt>
-<dd>
-OPTIONAL. Used when making a Signed Claimset Request, defines the key material the IdA is requesting the claim set to be bound to the key responsible for signing the request object. The value is a JSON Object that is a valid <a href='https://tools.ietf.org/html/rfc7517'>JWK</a>.
-</dd>
-</dl></blockquote><p>
-
-</p>
-<p>** Editors Note: ** DISCUSS the following paragraph. the parameter <tt>did</tt> should be sent in the claims collection phase rather than here?
-</p>
-<p>
-</p>
-<blockquote class="text"><dl>
-<dt>did</dt>
-<dd>
-OPTIONAL. Defines the relationship between the key material the IdA is requesting the claimset to be bound to and a <a href='https://w3c.github.io/did-core/'>decentralized identifier</a>. Processing of this value requires the IA to support the resolution of <a href='https://w3c.github.io/did-core/'>decentralized identifiers</a> which is advertised in their openid-configuration metadata, under the <tt>dids_supported</tt> attribute. The value of this field MUST be a valid <a href='https://w3c.github.io/did-core/'>decentralized identifier</a>.
-</dd>
-</dl></blockquote><p>
-
-</p>
-<p>** Editors Note: ** DISCUSS the following paragraph. Normal client authentication should be a primary choice instead?
-</p>
-<p>Public private key pairs are used by a requesting IdA to establish a means of binding to the resulting signed claim set.
-An IdA making a Claims Request to an IA MUST prove control over this binding mechanism during the request,
-this is accomplished through the extended usage of a <a href='https://openid.net/specs/openid-connect-core-1_0.html#SignedRequestObject'>signed request</a> defined in OpenID Connect Core.
-</p>
-<p>The IA MUST show a dialogue to the Subject explaining that the IdA will be
-getting signed claims set from this IA as appropriate to provide claims to CCs as directed
-by the Subject.
-</p>
-<p>The dialogue MUST provide the link to the <tt>policy_url</tt> provided by the IdA during its registration.
-</p>
-<p>The actual act of granting MUST involve active user interaction.
-</p>
-<p>The grant that is to be obtained in this phase SHOULD be sufficiently large so that it will reduce the
-number of times that IdA needs to take the Subject to the IA to obtain additional grants.
-</p>
-<a name="token-endpoint-response"></a><br /><hr />
-<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
-<a name="rfc.section.8.3"></a><h3>8.3.&nbsp;
-Token Endpoint Response</h3>
-
-<p>Successful and Error Authentication Response are in the same manner
-as <a href='https://openid.net/specs/openid-connect-core-1_0.html'>OpenID Connect Core 1.0</a>
-with the <tt>code</tt> parameter always being returned with the Authorization Code Flow. ** DISCUSS **
-</p>
-<p>On Request to the Token Endpoint the <tt>grant_type</tt> value MUST be <tt>authorization_code</tt> inline with the Authorization Code Flow and the <tt>code</tt> value included as a parameter.
-</p>
-<p>The following is a non-normative example of a response from the token endpoint, whereby the <tt>access_token</tt> authorizes the Claimset Holder to request a <tt>credential</tt> from the claimset endpoint.
-</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>{
-  "access_token": "eyJhbGciOiJSUzI1NiIsInR5cCI6Ikp..sHQ",
-  "token_type": "bearer",
-  "expires_in": 86400,
-  "id_token": "eyJodHRwOi8vbWF0dHIvdGVuYW50L..3Mz"
-}
-</pre></div>
-<a name="delivery-phase-cc-phase"></a><br /><hr />
-<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
-<a name="rfc.section.9"></a><h3>9.&nbsp;
-Delivery Phase (CC Phase)</h3>
-
-<a name="overview-1"></a><br /><hr />
-<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
-<a name="rfc.section.9.1"></a><h3>9.1.&nbsp;
-Overview</h3>
-
-<p>In Delivery Phase, the claims are delivered to CC.
-To do so, it typically goes through the following steps:
-</p>
-<p>
-</p>
-<ol class="text">
-<li>(Claims Request) An CC makes an OpenID Connect Authentication Request with extension parameters defined in this document to the IdA.
+        <li id="section-9-2.2">(Request Verification) The OP verifies if the request is valid.<a href="#section-9-2.2" class="pilcrow">¶</a>
 </li>
-<li>(Request Verification) The IdA verifies if the request is valid.
+        <li id="section-9-2.3">(Subject Granting) The OP shows dialogue to the Authenticated Subject if it grants the access to the claims and obtains grant from the Subject.<a href="#section-9-2.3" class="pilcrow">¶</a>
 </li>
-<li>(Subject Granting) The IdA shows dialogue to the Authenticated Subject if it grants the access to the claims and obtains grant from the Subject.
+        <li id="section-9-2.4">(Claims Collection) The OP accesses relevant Claims Provider's UserInfo Endpoints with Access Tokens to collect signed claims<a href="#section-9-2.4" class="pilcrow">¶</a>
 </li>
-<li>(Claims Collection) The IdA accesses relevant Claims Endpoints with Access Tokens to collect signed claims.
+        <li id="section-9-2.5">(Claims Verification) The RP verifies the received response.<a href="#section-9-2.5" class="pilcrow">¶</a>
 </li>
-<li>(Claims Delivery) The IdA delivers the collected claims through ID Token, UserInfo endpoint, and/or Claims Endpoint if it supports.
+      </ol>
+<p id="section-9-3">Claims Collection MAY be done out of sync. That is, the signed claim sets can be obtained before the RP requests.<a href="#section-9-3" class="pilcrow">¶</a></p>
+<div id="claims-request-by-rp-to-op">
+<section id="section-9.1">
+        <h3 id="name-claims-request-by-rp-to-op">
+<a href="#section-9.1" class="section-number selfRef">9.1. </a><a href="#name-claims-request-by-rp-to-op" class="section-name selfRef">Claims Request by RP to OP</a>
+        </h3>
+<p id="section-9.1-1">For an RP to request claims according to this document, the RP<a href="#section-9.1-1" class="pilcrow">¶</a></p>
+<ol start="1" type="1" class="compact type-1" id="section-9.1-2">
+<li id="section-9.1-2.1">MUST use the OpenID Connect Authentication Request with extension parameters defined in this document to the OP.<a href="#section-9.1-2.1" class="pilcrow">¶</a>
 </li>
-<li>(Claims Verification) The CC verifies the received response.
+        </ol>
+</section>
+</div>
+<div id="rp-authentication-and-the-request-verification">
+<section id="section-9.2">
+        <h3 id="name-rp-authentication-and-the-r">
+<a href="#section-9.2" class="section-number selfRef">9.2. </a><a href="#name-rp-authentication-and-the-r" class="section-name selfRef">RP authentication and the request verification</a>
+        </h3>
+<p id="section-9.2-1">Upon receipt of the request, the OP<a href="#section-9.2-1" class="pilcrow">¶</a></p>
+<ol start="1" type="1" class="compact type-1" id="section-9.2-2">
+<li id="section-9.2-2.1">MUST verify that the request is not tampered and is from a valid registered RP if the request is signed; and<a href="#section-9.2-2.1" class="pilcrow">¶</a>
 </li>
-</ol><p>
-
-</p>
-<p>Claims Collection MAY be done out of sync. That is, the signed claim sets can be obtained before the CC requests.
-This is typically the case when claims are provided through the W3C Verifiable Credentials container.
-</p>
-<a name="claims-request-by-cc-to-ida"></a><br /><hr />
-<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
-<a name="rfc.section.9.2"></a><h3>9.2.&nbsp;
-Claims Request by CC to IdA</h3>
-
-<p>For an CC to request claims according to this document, the CC
-</p>
-<p>
-</p>
-<ol class="text">
-<li>MUST use the OpenID Connect Authentication Request with extension parameters defined in this document to the IdA; and
+          <li id="section-9.2-2.2">MUST at least verify that the client_id is valid and make sure
+that the authorization code that it is going to return will be bound to this client_id if the request is not signed.<a href="#section-9.2-2.2" class="pilcrow">¶</a>
 </li>
-<li>MAY use Pushed Authorization Request.
+        </ol>
+<p id="section-9.2-3">NOTE: RP MUST be authenticated at one point or another before completion of the transaction.<a href="#section-9.2-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="subject-granting">
+<section id="section-9.3">
+        <h3 id="name-subject-granting">
+<a href="#section-9.3" class="section-number selfRef">9.3. </a><a href="#name-subject-granting" class="section-name selfRef">Subject Granting</a>
+        </h3>
+<p id="section-9.3-1">After verifying the request, the OP<a href="#section-9.3-1" class="pilcrow">¶</a></p>
+<ol start="1" type="1" class="compact type-1" id="section-9.3-2">
+<li id="section-9.3-2.1">MUST authenticate the Subject if it has not yet been;<a href="#section-9.3-2.1" class="pilcrow">¶</a>
 </li>
-</ol><p>
-
-</p>
-<a name="cc-authentication-and-the-request-verification"></a><br /><hr />
-<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
-<a name="rfc.section.9.3"></a><h3>9.3.&nbsp;
-CC authentication and the request verification</h3>
-
-<p>Upon receipt of the request, the IdA
-</p>
-<p>
-</p>
-<ol class="text">
-<li>MUST verify that the request is not tampered and is from a valid registered CC if the request is signed; and
+          <li id="section-9.3-2.2">MUST show the Subject what is being requested from the RP;<a href="#section-9.3-2.2" class="pilcrow">¶</a>
 </li>
-<li>MUST at least verify that the client<em>id is valid and make sure
-that the authorization code that it is going to return will be bound to this client</em>id if the request is not signed.
+          <li id="section-9.3-2.3">MUST show the Subject the link to the RP provided policy_url; and<a href="#section-9.3-2.3" class="pilcrow">¶</a>
 </li>
-</ol><p>
-
-</p>
-<p>NOTE: CC MUST be authenticated at one point or another before completion of the transaction.
-</p>
-<a name="subject-granting"></a><br /><hr />
-<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
-<a name="rfc.section.9.4"></a><h3>9.4.&nbsp;
-Subject Granting</h3>
-
-<p>After verifying the request, the IdA
-</p>
-<p>
-</p>
-<ol class="text">
-<li>MUST authenticate the Subject if it has not yet been;
+          <li id="section-9.3-2.4">MUST obtain grant from the Subject through explicit action.<a href="#section-9.3-2.4" class="pilcrow">¶</a>
 </li>
-<li>MUST show the Subject what is being requested from the CC;
+        </ol>
+</section>
+</div>
+<div id="claims-collection">
+<section id="section-9.4">
+        <h3 id="name-claims-collection">
+<a href="#section-9.4" class="section-number selfRef">9.4. </a><a href="#name-claims-collection" class="section-name selfRef">Claims Collection</a>
+        </h3>
+<p id="section-9.4-1">The OP collects the required claims from the relevant UserInfo Endpoint.
+This process can be performed before the RP's request.<a href="#section-9.4-1" class="pilcrow">¶</a></p>
+<p id="section-9.4-2">To minimize the information returned from the UserInfo Endpoint, the OP SHOULD downscope the access token to return only the claims requested by the RP's authorization request. This OP retrieves a downscoped access token by making a request to the CP's Token Endpoint as described in 12 of OpenID Connect 1.0 <a href="https://openid.net/specs/openid-connect-core-1_0.html">OIDC</a>. The <code>scope</code> parameter value SHOULD only allow access to the claims requested by the RP at the CP.<a href="#section-9.4-2" class="pilcrow">¶</a></p>
+<div id="userinfo-endpoint-request">
+<section id="section-9.4.1">
+          <h4 id="name-userinfo-endpoint-request">
+<a href="#section-9.4.1" class="section-number selfRef">9.4.1. </a><a href="#name-userinfo-endpoint-request" class="section-name selfRef">UserInfo Endpoint Request</a>
+          </h4>
+<p id="section-9.4.1-1">For claims collection, the OP<a href="#section-9.4.1-1" class="pilcrow">¶</a></p>
+<ol start="1" type="1" class="compact type-1" id="section-9.4.1-2">
+<li id="section-9.4.1-2.1">MUST send OAuth protected resource request to the UserInfo Endpoint using previously obtained Access Token as described in 5.3.1 of OpenID Connect 1.0 <a href="https://openid.net/specs/openid-connect-core-1_0.html">OIDC</a>;<a href="#section-9.4.1-2.1" class="pilcrow">¶</a>
 </li>
-<li>MUST show the Subject the link to the CC provided policy_url; and
+          </ol>
+<p id="section-9.4.1-3">This process will be repeated for as each Claims Providers as necessary.<a href="#section-9.4.1-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="claims-delivery">
+<section id="section-9.5">
+        <h3 id="name-claims-delivery">
+<a href="#section-9.5" class="section-number selfRef">9.5. </a><a href="#name-claims-delivery" class="section-name selfRef">Claims Delivery</a>
+        </h3>
+<p id="section-9.5-1">Once the necessary claim sets were collected,
+the OP creates the Aggregated Claims response to be returned as described in 5.6.2 of OpenID Connect 1.0 <a href="https://openid.net/specs/openid-connect-core-1_0.html">OIDC</a> .<a href="#section-9.5-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="claims-verification">
+<section id="section-9.6">
+        <h3 id="name-claims-verification">
+<a href="#section-9.6" class="section-number selfRef">9.6. </a><a href="#name-claims-verification" class="section-name selfRef">Claims Verification</a>
+        </h3>
+<p id="section-9.6-1">For Claims Verification,<a href="#section-9.6-1" class="pilcrow">¶</a></p>
+<ol start="1" type="1" class="compact type-1" id="section-9.6-2">
+<li id="section-9.6-2.1">the RP MUST verify the signature of the Aggregate Claim according to  <a href="http://tools.ietf.org/html/draft-ietf-jose-json-web-signature">JWS</a> using the algorithm specified in the JWT  <em>alg</em>  Header Parameter the keys provided by the Issuer of the Aggregate Claim for the signature verification;<a href="#section-9.6-2.1" class="pilcrow">¶</a>
 </li>
-<li>MUST obtain grant from the Subject through explicit action.
+          <li id="section-9.6-2.2">the RP MUST extract the signed claims from JWT and other relevant members and verify according to their verification rule;<a href="#section-9.6-2.2" class="pilcrow">¶</a>
 </li>
-</ol><p>
-
-</p>
-<a name="claims-collection"></a><br /><hr />
-<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
-<a name="rfc.section.9.5"></a><h3>9.5.&nbsp;
-Claims Collection</h3>
-
-<p>The IdA collects the required claims from relevant Claims Endpoints.
-This process can be performed before the CC's request,
-in which case IdA stores the obtained signed claim set for a later day use.
-</p>
-<p>The Claims Endpoint is an OAuth 2.0 Protected Resource that when called,
-returns Claims about the authenticated Subject in the form of a signed claim set.
-To obtain a claim set on behalf of the Subject, the IdA makes a request to the Claims Endpoint using
-an Access Token obtained through OpenID Connect Authentication stated above.
-</p>
-<p>Communication with the Credential Endpoint MUST utilize TLS. See Section TBD for more information on using TLS.
-</p>
-<p>The Claims Endpoint MUST support the use of HTTP POST methods defined in RFC 2616 [RFC2616].
-</p>
-<p>The Claims Endpoint SHOULD support the use of Cross Origin Resource Sharing (CORS) [CORS] and or other methods as appropriate to enable JavaScript Clients to access the endpoint.
-</p>
-<p>The Claims Endpoint MUST support either MTLS or DPOP.
-</p>
-<a name="claims-endpoint-request"></a><br /><hr />
-<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
-<a name="rfc.section.9.5.1"></a><h3>9.5.1.&nbsp;
-Claims Endpoint Request</h3>
-
-<p>For claims collection, the IdA
-</p>
-<p>
-</p>
-<ol class="text">
-<li>MUST send OAuth protected resource request to the Claims Endpoint using previously obtained Access Token;
+          <li id="section-9.6-2.3">the RP MUST verify that issuers of the signed claims in the aggregated claims are the ones it trusts;<a href="#section-9.6-2.3" class="pilcrow">¶</a>
 </li>
-<li>MUST send <tt>claims</tt> parameter to minimize the collected claims to what is necessary;
+          <li id="section-9.6-2.4">the RP MUST verify that the <em>aud</em> (audience) Claim is that of the OP's Issuer Identifier;<a href="#section-9.6-2.4" class="pilcrow">¶</a>
 </li>
-<li>MUST send <tt>uid</tt> parameter if binding between the claim set and the response to the CC is sought; and
+          <li id="section-9.6-2.5">The RP MUST reject the response if any of the verification above fails.<a href="#section-9.6-2.5" class="pilcrow">¶</a>
 </li>
-<li>SHOULD send <tt>aud</tt> parameter.
-</li>
-</ol><p>
-
-</p>
-<p>Additionally,
-</p>
-<p>
-</p>
-<ol class="text">
-<li>The OAuth protected resource request SHOULD be protected by MTLS.
-</li>
-<li>It is RECOMMENDED that the request use the HTTP POST method, and the Access Token be sent using the Authorization header field.
-</li>
-</ol><p>
-
-</p>
-<p>The following is a non-normative example of a Claims Endpoint Request:
-</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>      POST /claims HTTP/1.1
-      HTTP/1.1
-      Host: server.example.com
-      Authorization: Bearer SlAV32hkKG
-      claims={"uid":"id8837395937","email":{"essential":true},"email_verified":{"essential":true}}&amp;aud={["client1234"]}
-</pre></div>
-<p>** Editor's Note ** An alternative way.
-</p>
-<p>A non-normative example of a Signed Credential request.
-</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>      POST /claims HTTP/1.1
-      Host: https://issuer.example.com
-      Authorization: Bearer &lt;access-token&gt;
-      Content-Type: application/json
-{
-  "request": &lt;signed-jwt-request-obj&gt;
-}
-</pre></div>
-<p>where the decoded payload of the request parameter is as follows:
-</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>{
-  "aud": "https://issuer.example.com",
-  "iss": "https://wallet.example.com",
-  "sub": "urn:uuid:dc000c79-6aa3-45f2-9527-43747d5962a5",
-  "sub_jwk" : {
-    "crv":"secp256k1",
-    "kid":"YkDpvGNsch2lFBf6p8u3",
-    "kty":"EC",
-    "x":"7KEKZa5xJPh7WVqHJyUpb2MgEe3nA8Rk7eUlXsmBl-M",
-    "y":"3zIgl_ml4RhapyEm5J7lvU-4f5jiBvZr4KgxUjEhl9o"
-  },
-  "claimset_format": "w3cvc-jwt",
-  "nonce": "43747d5962a5",
-  "iat": 1591069056,
-  "exp": 1591069556
-}
-</pre></div>
-<p>The process will be repeated to as many Claims Endpoints as necessary.
-</p>
-<a name="signed-claimset-request-using-a-decentralized-identifier"></a><br /><hr />
-<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
-<a name="rfc.section.9.5.2"></a><h3>9.5.2.&nbsp;
-Signed Claimset Request using a Decentralized Identifier</h3>
-
-<p><strong>Usage of Decentralized Identifiers</strong>
-</p>
-<p>TODO improve this section
-</p>
-<p><a href='https://w3c.github.io/did-core/'>Decentralized identifiers</a> are a resolvable identifier to a set of statements about the <a href='https://w3c.github.io/did-core/#dfn-did-subjects'>did subject</a> including a set of cryptographic material (e.g. public keys). Using this cryptographic material, a <a href='https://w3c.github.io/did-core/'>decentralized identifier</a> can be used as an authenticatable identifier in a claimset, rather than using a public key directly.
-</p>
-<p>An IdA submitting a signed Claim Set Request can request,
-that the resulting claim set be bound to the IdA through the usage of <a href='https://w3c.github.io/did-core/'>decentralized identifiers</a> by using the <tt>did</tt> field.
-</p>
-<p>An IdA prior to submitting a claim set request SHOULD validate that the IA supports the resolution of decentralized identifiers
-by retrieving their openid-configuration metadata to check if an attribute of <tt>dids_supported</tt> has a value of <tt>true</tt>.
-</p>
-<p>The IdA SHOULD also validate that the IA supports the <a href='https://w3c-ccg.github.io/did-method-registry/'>did method</a>
-to be used in the request by retrieving their openid-configuration metadata to check if an attribute of <tt>did_methods_supported</tt> contains the required did method.
-</p>
-<p>An IA processing a claim set request featuring a <a href='https://w3c.github.io/did-core/'>decentralized identifier</a> MUST follow the following additional steps to validate the request.
-</p>
-<p>
-</p>
-<ol class="text">
-<li>Validate the value in the <tt>did</tt> field is a valid <a href='https://w3c.github.io/did-core/'>decentralized identifier</a>.
-</li>
-<li>Resolve the <tt>did</tt> value to a <a href='https://w3c.github.io/did-core/#dfn-did-documents'>did document</a>.
-</li>
-<li>Validate that the key in the <tt>sub_jwk</tt> field of the request is referenced in the <a href='https://w3c.github.io/did-core/#authentication'>authentication</a> section of the <a href='https://w3c.github.io/did-core/#dfn-did-documents'>DID Document</a>.
-</li>
-</ol><p>
-
-</p>
-<p>If any of the steps fail then the IA MUST respond to the request with the Error Response parameter,
-<a href='https://openid.net/specs/openid-connect-core-1_0.html#AuthError'>section 3.1.2.6.</a> with Error code: <tt>invalid_did</tt>.
-</p>
-<p>The following is a non-normative example of requesting the issuance of a claimset that uses a decentralized identifier.
-</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>{
-  "response_type": "code",
-  "client_id": "IAicV0pt9co5nn9D1tUKDCoPQq8BFlGH",
-  "sub_jwk" : {
-    "crv":"secp256k1",
-    "kid":"YkDpvGNsch2lFBf6p8u3",
-    "kty":"EC",
-    "x":"7KEKZa5xJPh7WVqHJyUpb2MgEe3nA8Rk7eUlXsmBl-M",
-    "y":"3zIgl_ml4RhapyEm5J7lvU-4f5jiBvZr4KgxUjEhl9o"
-  },
-  "did": "did:example:1234",
-  "redirect_uri": "https://Client.example.com/callback",
-  "claimset_format": "w3cvc-jsonld"
-}
-</pre></div>
-<a name="claims-endpoint-response"></a><br /><hr />
-<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
-<a name="rfc.section.9.5.3"></a><h3>9.5.3.&nbsp;
-Claims Endpoint Response</h3>
-
-<p>Upon receipt of the request, the Claims Endpoint Response is returned in the top level member of the
-JSON payload named <tt>claimset</tt>,
-of which the format is indicated by another top level member<tt>format</tt>.
-</p>
-<p>format : REQUIRED. The proof format the claimset was returned in. For example <tt>oidc-jws</tt> or <tt>w3cvc-jsonld</tt> or <tt>w3cvc-jwt</tt>.
-claimset : REQUIRED. A cryptographically verifiable proof in the defined proof <tt>format</tt>. Most commonly a Linked Data Proof or a JWS.
-</p>
-<p>The following is a non-normative example:
-</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>{
-  "format": "w3cvc-jsonld",
-  "claimset": &lt;claimset&gt;
-}
-</pre></div>
-<a name="claimset-in-oidc-jws-format"></a><br /><hr />
-<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
-<a name="rfc.section.9.5.3.1"></a><h3>9.5.3.1.&nbsp;
-Claimset in OIDC JWS format</h3>
-
-<p>If the claimset is provided as oidc-jws, the claimset
-</p>
-<p>
-</p>
-<ol class="text">
-<li>MUST be signed or signed and encrypted;
-</li>
-<li>MUST NOT contain other claims than asked;
-</li>
-<li>MAY omit claims if not appropriate or available in which case the claim name MUST be omitted;
-</li>
-<li>MUST provide correct content-type of the HTTP response; and
-</li>
-<li>MUST contain <tt>aud</tt> claim with is value a subset of what was in the request;
-</li>
-<li>MUST contain iss that is set as the IA's Issuer Identifier URL;
-</li>
-<li>MUST contain <em>op_iss</em> claim whose value is the IdA's issuer identifier URL registered to the IA;
-</li>
-<li>MUST contain <em>sub</em> claim that is set to the <em>uid</em> claim value if it was in the request;
-</li>
-</ol><p>
-
-</p>
-<p>NOTE: the combination of <em>op_iss</em> and <em>sub</em> is used to correlated to the IdA response to the CC later.
-</p>
-<p>The following is a non-normative example of such:
-</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>  To be provided.
-
-</pre></div>
-<a name="claimset-in-w3c-vc-format"></a><br /><hr />
-<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
-<a name="rfc.section.9.5.3.2"></a><h3>9.5.3.2.&nbsp;
-Claimset in W3C VC format</h3>
-
-<p>Formats of the <tt>claimset</tt> can vary, examples include JSON-LD or JWT based Credentials,
-the IA SHOULD make their supported claimset formats available at their openid-configuration metadata endpoint.
-</p>
-<p>The following is a non-normative example of a claim set issued as a <a href='https://www.w3.org/TR/vc-data-model/'>W3C Verifiable Credential 1.0</a> compliant format in JSON-LD.
-</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>{
-  "@context": [
-    "https://www.w3.org/2018/credentials/v1",
-    "https://www.w3.org/2018/credentials/examples/v1"
-  ],
-  "id": "http://example.gov/credentials/3732",
-  "type": ["VerifiableCredential", "UniversityDegreeCredential"],
-  "issuer": "did:key:z6MkjRagNiMu91DduvCvgEsqLZDVzrJzFrwahc4tXLt9DoHd",
-  "issuanceDate": "2020-03-10T04:24:12.164Z",
-  "credentialSubject": {
-    "id": "urn:uuid:dc000c79-6aa3-45f2-9527-43747d5962a5",
-    "jwk": {
-      "crv":"secp256k1",
-      "kid":"YkDpvGNsch2lFBf6p8u3",
-      "kty":"EC",
-      "x":"7KEKZa5xJPh7WVqHJyUpb2MgEe3nA8Rk7eUlXsmBl-M",
-      "y":"3zIgl_ml4RhapyEm5J7lvU-4f5jiBvZr4KgxUjEhl9o"
-    },
-    "givenName": "John",
-    "familyName": "Doe",
-    "degree": {
-      "type": "BachelorDegree",
-      "name": "Bachelor of Science and Arts"
-    }
-  },
-  "proof": {
-    "type": "Ed25519Signature2018",
-    "created": "2020-04-10T21:35:35Z",
-    "verificationMethod": "did:key:z6MkjRagNiMu91DduvCvgEsqLZDVzrJzFrwahc4tXLt9DoHd#z6MkjRagNiMu91DduvCvgEsqLZDVzrJzFrwahc4tXLt9DoHd",
-    "proofPurpose": "assertionMethod",
-    "jws": "eyJhbGciOiJFZERTQSIsImI2NCI6ZmFsc2UsImNyaXQiOlsiYjY0Il19..l9d0YHjcFAH2H4dB9xlWFZQLUpixVCWJk0eOt4CXQe1NXKWZwmhmn9OQp6YxX0a2LffegtYESTCJEoGVXLqWAA"
-  }
-}
-</pre></div>
-<p>The following is a non-normative example of a claims endpoint response for the request shown above.
-</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>{
-  "format": "w3cvc-jsonld",
-  "credential": {
-    "@context": [
-      "https://www.w3.org/2018/credentials/v1",
-      "https://www.w3.org/2018/credentials/examples/v1"
-    ],
-    "id": "http://example.gov/credentials/3732",
-    "type": ["VerifiableCredential", "UniversityDegreeCredential"],
-    "issuer": "https://issuer.edu",
-    "issuanceDate": "2020-03-10T04:24:12.164Z",
-    "credentialSubject": {
-      "id": "did:example:1234",
-      "degree": {
-        "type": "BachelorDegree",
-        "name": "Bachelor of Science and Arts"
-      }
-    },
-    "proof": {
-      "type": "Ed25519Signature2018",
-      "created": "2020-04-10T21:35:35Z",
-      "verificationMethod": "https://issuer.edu/keys/1",
-      "proofPurpose": "assertionMethod",
-      "jws": "eyJhbGciOiJFZERTQSIsImI2NCI6ZmFsc2UsImNyaXQiOlsiYjY0Il19..l9d0YHjcFAH2H4dB9xlWFZQLUpixVCWJk0eOt4CXQe1NXKWZwmhmn9OQp6YxX0a2LffegtYESTCJEoGVXLqWAA"
-    }
-  }
-}
-</pre></div>
-<p>The following is a non-normative example of a Claim Set issued as a <a href='https://tools.ietf.org/html/rfc7519'>JWT</a>
-</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>ewogICJhbGciOiAiRVMyNTYiLAogICJ0eXAiOiAiSldUIgp9.ewogICJpc3MiOiAiaXNzdWVyIjogImh0dHBzOi8vaXNzdWVyLmVkdSIsCiAgInN1YiI6ICJkaWQ6ZXhhbXBsZToxMjM0NTYiLAogICJpYXQiOiAxNTkxMDY5MDU2LAogICJleHAiOiAxNTkxMDY5NTU2LAogICJodHRwczovL3d3dy53My5vcmcvMjAxOC9jcmVkZW50aWFscy9leGFtcGxlcy92MS9kZWdyZWUiOiB7CiAgICAgImh0dHBzOi8vd3d3LnczLm9yZy8yMDE4L2NyZWRlbnRpYWxzL2V4YW1wbGVzL3YxL3R5cGUiOiAiQmFjaGVsb3JEZWdyZWUiLAogICAgICJodHRwczovL3d3dy53My5vcmcvMjAxOC9jcmVkZW50aWFscy9leGFtcGxlcy92MS9uYW1lIjogIkJhY2hlbG9yIG9mIFNjaWVuY2UgYW5kIEFydHMiCiAgfQp9.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
-</pre></div>
-<p>And the decoded Claim Set of the JWT
-</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>{
-  "iss": "https://issuer.example.com",
-  "sub": "urn:uuid:dc000c79-6aa3-45f2-9527-43747d5962a5",
-  "sub_jwk" : {
-    "crv":"secp256k1",
-    "kid":"YkDpvGNsch2lFBf6p8u3",
-    "kty":"EC",
-    "x":"7KEKZa5xJPh7WVqHJyUpb2MgEe3nA8Rk7eUlXsmBl-M",
-    "y":"3zIgl_ml4RhapyEm5J7lvU-4f5jiBvZr4KgxUjEhl9o"
-  },
-  "iat": 1591069056,
-  "exp": 1591069556,
-  "https://www.w3.org/2018/credentials/examples/v1/degree": {
-    "https://www.w3.org/2018/credentials/examples/v1/type": "BachelorDegree",
-    "https://www.w3.org/2018/credentials/examples/v1/name": "Bachelor of Science and Arts"
-  }
-}
-</pre></div>
-<a name="claims-endpoint-error-response"></a><br /><hr />
-<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
-<a name="rfc.section.9.5.4"></a><h3>9.5.4.&nbsp;
-Claims Endpoint Error Response</h3>
-
-<p>When an error condition occurs, the Claims Endpoint returns an Error Response as defined in Section 3 of  <a href='https://openid.net/specs/openid-connect-core-1_0.html#RFC6750'>OAuth 2.0 Bearer Token Usage</a>  <a href='https://tools.ietf.org/html/rfc6750'>RFC6750</a>. (HTTP errors unrelated to RFC 6750 are returned to the User Agent using the appropriate HTTP status code.)
-</p>
-<p>The following is a non-normative example of a Claims Endpoint Error Response:
-</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>    HTTP/1.1 401 Unauthorized
-      WWW-Authenticate: error="invalid_token",
-        error_description="The Access Token expired"
-</pre></div>
-<a name="claims-endpoint-verification"></a><br /><hr />
-<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
-<a name="rfc.section.9.5.5"></a><h3>9.5.5.&nbsp;
-Claims Endpoint Verification</h3>
-
-<p>Upon receipt of the response, the IdA
-</p>
-<p>
-</p>
-<ol class="text">
-<li>MUST verify ...
-</li>
-</ol><p>
-
-</p>
-<a name="claims-delivery"></a><br /><hr />
-<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
-<a name="rfc.section.9.6"></a><h3>9.6.&nbsp;
-Claims Delivery</h3>
-
-<p>Once the necessary claim sets were collected,
-the IdA creates the Aggregated Claims response to be returned.
-</p>
-<p>The response can be returned as ID Token or Userinfo Response ( or Claims Endpoint Response).
-</p>
-<p>The aggregated claims response is constructed as follows:
-</p>
-<p>
-</p>
-<ol class="text">
-<li>The overall container format complies to what is described in 5.6.2 of OpenID Connect 1.0 <a href='https://openid.net/specs/openid-connect-core-1_0.html'>OIDC</a>.
-</li>
-<li>If the claim set was obtained as JWT, then it MUST be stored in the corresponding &quot;JWT&quot; member of the aggregated claims.
-</li>
-<li>If the claim set was obtained as W3C Verifiable Credential, then it MUST be stored in the corresponding &quot;verifiable_presentations&quot; member of the aggregated claims.
-</li>
-<li>If the claim set was obtained in other format, then ...
-</li>
-</ol><p>
-
-</p>
-<a name="claims-verification"></a><br /><hr />
-<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
-<a name="rfc.section.9.7"></a><h3>9.7.&nbsp;
-Claims Verification</h3>
-
-<p>For Claims Verification,
-</p>
-<p>
-</p>
-<ol class="text">
-<li>the CC MUST verify the signature of the Aggregate Claim according to  <a href='http://tools.ietf.org/html/draft-ietf-jose-json-web-signature'>JWS</a> using the algorithm specified in the JWT  <em>alg</em>  Header Parameter the keys provided by the Issuer of the Aggregate Claim for the signature verification;
-</li>
-<li>the CC MUST extract the signed claims from JWT and other relevant members and verify according to their verification rule;
-</li>
-<li>the CC MUST verify that issuers of the signed claims in the aggregated claims are the ones it trusts;
-</li>
-<li>the CC MUST verify that <tt>op_iss</tt> and <tt>uid</tt> values in the signed claims match the <tt>iss</tt> and <tt>sub</tt> value of the response;
-</li>
-<li>the CC MUST verify that the  aud  (audience) Claim contains its  client_id  value registered at the Issuer identified by the  iss  (issuer) Claim as an audience;
-</li>
-<li>The CC MUST verify that the aud claim does not contain claim values not trusted by the CC; and
-</li>
-<li>The CC MUST reject the response if any of the verification above fails.
-</li>
-</ol><p>
-
-</p>
-<a name="security-considerations"></a><br /><hr />
-<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
-<a name="rfc.section.10"></a><h3>10.&nbsp;
-Security Considerations</h3>
-
-<p>TBD
-</p>
-<a name="privacy-considerations"></a><br /><hr />
-<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
-<a name="rfc.section.11"></a><h3>11.&nbsp;
-Privacy Considerations</h3>
-
-<p>TBD
-</p>
-<a name="references"></a><br /><hr />
-<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
-<a name="rfc.section.12"></a><h3>12.&nbsp;
-References</h3>
-
-<a name="normative-references-1"></a><br /><hr />
-<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
-<a name="rfc.section.12.1"></a><h3>12.1.&nbsp;
-Normative references</h3>
-
-<p>The following referenced documents are indispensable for the application of this document. For dated references, only the edition cited applied. For undated references, the latest edition of the referenced document (including any amendments) applies.
-</p>
-<p><a href='https://tools.ietf.org/html/bcp14'>BCP14</a> - Key words for use in RFCs to Indicate Requirement Levels
-</p>
-<p><a href='https://tools.ietf.org/html/rfc6749'>RFC6749</a> - The OAuth 2.0 Authorization Framework
-</p>
-<p><a href='https://tools.ietf.org/html/rfc6750'>RFC6750</a> - The OAuth 2.0 Authorization Framework: Bearer Token Usage
-</p>
-<p><a href='https://tools.ietf.org/html/rfc76360'>RFC7636</a> - # Proof Key for Code Exchange by OAuth Public Clients
-</p>
-<p><a href='https://tools.ietf.org/html/bcp212'>BCP212</a> - OAuth 2.0 for Native Apps
-</p>
-<p><a href='https://tools.ietf.org/html/rfc6819'>RFC6819</a> - OAuth 2.0 Threat Model and Security Considerations
-</p>
-<p><a href='https://tools.ietf.org/html/bcp195'>BCP195</a> - Recommendations for Secure Use of Transport Layer Security (TLS) and Datagram Transport Layer Security (DTLS)
-</p>
-<p><a href='https://openid.net/specs/openid-connect-core-1_0.html'>OIDC</a> - OpenID Connect Core 1.0 incorporating errata set 1
-</p>
-<p><a href='https://openid.net/specs/openid-connect-discovery-1_0.html'>OpenID.Discovery</a> - OpenID Connect Discovery 1.0
-</p>
-<p><a href='http://openid.net/specs/openid-connect-registration-1_0.html'>OpenID.Registration</a> - OpenID Connect Registration 1.0
-</p>
-<p><a href='https://openid.net/specs/openid-connect-4-identity-assurance-1_0-ID1.html'>OpenID.IDA</a> - OpenID Connect for Identity Assurance 1.0
-</p>
-<p><a href='https://tools.ietf.org/html/draft-ietf-oauth-mtls'>MTLS</a> - OAuth 2.0 Mutual TLS Client Authentication and Certificate Bound Access Tokens
-</p>
-<p><a href='http://tools.ietf.org/html/draft-ietf-oauth-json-web-token'>JWT</a> - JSON Web Token
-</p>
-<p><a href='http://tools.ietf.org/html/draft-ietf-jose-json-web-signature'>JWS</a> - JSON Web Signature
-</p>
-<p><a href='http://tools.ietf.org/html/draft-ietf-jose-json-web-encryption'>JWE</a> - JSON Web Encryption
-</p>
-<p><a href='http://tools.ietf.org/html/draft-ietf-jose-json-web-algorithms'>JWA</a> - JSON Web Algorithms
-</p>
-<a name="rfc.authors"></a><br /><hr />
-<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
-<h3>Authors' Addresses</h3>
-<table width="99%" border="0" cellpadding="0" cellspacing="0">
-<tr><td class="author-text">&nbsp;</td>
-<td class="author-text">Nat Sakimura</td></tr>
-<tr><td class="author-text">&nbsp;</td>
-<td class="author-text">NAT.Consulting</td></tr>
-<tr><td class="author" align="right">Email:&nbsp;</td>
-<td class="author-text"><a href="mailto:nat@nat.consulting">nat@nat.consulting</a></td></tr>
-<tr cellpadding="3"><td>&nbsp;</td><td>&nbsp;</td></tr>
-<tr><td class="author-text">&nbsp;</td>
-<td class="author-text">Edmund Jay</td></tr>
-<tr><td class="author-text">&nbsp;</td>
-<td class="author-text">Illumila</td></tr>
-<tr><td class="author" align="right">Email:&nbsp;</td>
-<td class="author-text"><a href="mailto:ejay@illumi.la">ejay@illumi.la</a></td></tr>
-<tr cellpadding="3"><td>&nbsp;</td><td>&nbsp;</td></tr>
-<tr><td class="author-text">&nbsp;</td>
-<td class="author-text">Tobias Looker</td></tr>
-<tr><td class="author-text">&nbsp;</td>
-<td class="author-text">MATTR Ltd</td></tr>
-<tr><td class="author" align="right">Email:&nbsp;</td>
-<td class="author-text"><a href="mailto:tobias.looker@mattr.global">tobias.looker@mattr.global</a></td></tr>
-</table>
-</body></html>
+        </ol>
+</section>
+</div>
+</section>
+</div>
+<div id="security-considerations">
+<section id="section-10">
+      <h2 id="name-security-considerations">
+<a href="#section-10" class="section-number selfRef">10. </a><a href="#name-security-considerations" class="section-name selfRef">Security Considerations</a>
+      </h2>
+<p id="section-10-1">The security considerations of OpenID Connect 1.0 <a href="https://openid.net/specs/openid-connect-core-1_0.html">OIDC</a> and OpenID Connect Dynamic Client Registration 1.0 <a href="http://openid.net/specs/openid-connect-registration-1_0.html">OpenID.Registration</a> apply.<a href="#section-10-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="privacy-considerations">
+<section id="section-11">
+      <h2 id="name-privacy-considerations">
+<a href="#section-11" class="section-number selfRef">11. </a><a href="#name-privacy-considerations" class="section-name selfRef">Privacy Considerations</a>
+      </h2>
+<p id="section-11-1">Unless ephemeral identifiers are used at CPs, colluding RPs CAN correlate the subject using the <code>sub</code> value in the JWT included in the aggregated claim.<a href="#section-11-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="authors-addresses">
+<section id="appendix-A">
+      <h2 id="name-authors-addresses">
+<a href="#name-authors-addresses" class="section-name selfRef">Authors' Addresses</a>
+      </h2>
+<address class="vcard">
+        <div dir="auto" class="left"><span class="fn nameRole">Nat Sakimura</span></div>
+<div dir="auto" class="left"><span class="org">NAT.Consulting</span></div>
+<div class="email">
+<span>Email:</span>
+<a href="mailto:nat@nat.consulting" class="email">nat@nat.consulting</a>
+</div>
+</address>
+<address class="vcard">
+        <div dir="auto" class="left"><span class="fn nameRole">Edmund Jay</span></div>
+<div dir="auto" class="left"><span class="org">Illumila</span></div>
+<div class="email">
+<span>Email:</span>
+<a href="mailto:ejay@illumi.la" class="email">ejay@illumi.la</a>
+</div>
+</address>
+</section>
+</div>
+<script>const toc = document.getElementById("toc");
+toc.querySelector("h2").addEventListener("click", e => {
+  toc.classList.toggle("active");
+});
+toc.querySelector("nav").addEventListener("click", e => {
+  toc.classList.remove("active");
+});
+</script>
+</body>
+</html>
