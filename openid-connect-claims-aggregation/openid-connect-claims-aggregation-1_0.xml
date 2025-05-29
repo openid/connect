@@ -406,6 +406,61 @@ the OP creates the Aggregated Claims response to be returned as described in 5.6
 
 <back>
 
+<section anchor="acknowledgements"><name>Acknowledgements</name>
+<t>We would like to thank the following people for their valuable feedback and contributions that helped to evolve this specification.</t>
+<t>[[TBD]]</t>
+</section>
+
+<section anchor="document-history"><name>Document History</name>
+<t>[[ To be removed from the final specification ]]</t>
+<t>-03</t>
+
+<ul spacing="compact">
+<li><t>Simplified claims aggregation</t>
+
+<ul spacing="compact">
+<li>Rollback changes introduced in version 02</li>
+</ul></li>
+<li>Removed Claims Endpoint and related metadata and registration options</li>
+<li>Reuses Userinfo endpoint at Claims Provider to return aggregation claims</li>
+<li>Removed c_token in claims object</li>
+</ul>
+<t>-02</t>
+
+<ul spacing="compact">
+<li><t>defined new names for actors</t>
+
+<ul spacing="compact">
+<li>OpenID Provider (OP) -&gt; Identity Wallet (IW)</li>
+<li>Claims Provider (CP) -&gt; Issuing Authority (IA)</li>
+<li>Relying Party (RP) -&gt; Claims Consumer (CC)</li>
+</ul></li>
+<li><t>Claims endpoint response formats allows multiple schema types (W3C VC, JWT)</t>
+
+<ul spacing="compact">
+<li>Added 'claimset_format', 'sub_jwk', 'did' to authorization request parameters</li>
+<li>Added 'format' to claims endpoint response</li>
+</ul></li>
+<li><t>Added new requirements for claims endpoint</t>
+
+<ul spacing="compact">
+<li>MTLS or DPOP for sender constrain tokens</li>
+<li>Support OID4IDA claims</li>
+<li>Support W3C VC response format</li>
+</ul></li>
+<li>Support for DIDs in request/response</li>
+</ul>
+<t>-01</t>
+
+<ul spacing="compact">
+<li>initial revision</li>
+<li>defined claims endpoint &amp; discovery metadata</li>
+<li>defined registration of claims endpoint response signature and encryption algs</li>
+<li>defined c_token in claims object to request claims from claims endpoint</li>
+<li></li>
+</ul>
+</section>
+
 </back>
 
 </rfc>

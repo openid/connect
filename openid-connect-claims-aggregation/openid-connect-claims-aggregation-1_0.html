@@ -1231,7 +1231,7 @@ li > p:last-of-type:only-child {
 <dd class="workgroup">connect</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2025-05-12" class="published">12 May 2025</time>
+<time datetime="2025-05-29" class="published">29 May 2025</time>
     </dd>
 <dt class="label-authors">Authors:</dt>
 <dd class="authors">
@@ -1483,7 +1483,13 @@ capitals, as shown here.<a href="#section-note.5-1" class="pilcrow">¶</a></p>
             <p id="section-toc.1-1.11.1"><a href="#section-11" class="auto internal xref">11</a>. <a href="#name-privacy-considerations" class="internal xref">Privacy Considerations</a></p>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.12">
-            <p id="section-toc.1-1.12.1"><a href="#appendix-A" class="auto internal xref"></a><a href="#name-authors-addresses" class="internal xref">Authors' Addresses</a></p>
+            <p id="section-toc.1-1.12.1"><a href="#appendix-A" class="auto internal xref">Appendix A</a>.  <a href="#name-acknowledgements" class="internal xref">Acknowledgements</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.13">
+            <p id="section-toc.1-1.13.1"><a href="#appendix-B" class="auto internal xref">Appendix B</a>.  <a href="#name-document-history" class="internal xref">Document History</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.14">
+            <p id="section-toc.1-1.14.1"><a href="#appendix-C" class="auto internal xref"></a><a href="#name-authors-addresses" class="internal xref">Authors' Addresses</a></p>
 </li>
         </ul>
 </nav>
@@ -1875,8 +1881,89 @@ the OP creates the Aggregated Claims response to be returned as described in 5.6
 <p id="section-11-1">Unless ephemeral identifiers are used at CPs, colluding RPs CAN correlate the subject using the <code>sub</code> value in the JWT included in the aggregated claim.<a href="#section-11-1" class="pilcrow">¶</a></p>
 </section>
 </div>
-<div id="authors-addresses">
+<div id="acknowledgements">
 <section id="appendix-A">
+      <h2 id="name-acknowledgements">
+<a href="#appendix-A" class="section-number selfRef">Appendix A. </a><a href="#name-acknowledgements" class="section-name selfRef">Acknowledgements</a>
+      </h2>
+<p id="appendix-A-1">We would like to thank the following people for their valuable feedback and contributions that helped to evolve this specification.<a href="#appendix-A-1" class="pilcrow">¶</a></p>
+<p id="appendix-A-2">[[TBD]]<a href="#appendix-A-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="document-history">
+<section id="appendix-B">
+      <h2 id="name-document-history">
+<a href="#appendix-B" class="section-number selfRef">Appendix B. </a><a href="#name-document-history" class="section-name selfRef">Document History</a>
+      </h2>
+<p id="appendix-B-1">[[ To be removed from the final specification ]]<a href="#appendix-B-1" class="pilcrow">¶</a></p>
+<p id="appendix-B-2">-03<a href="#appendix-B-2" class="pilcrow">¶</a></p>
+<ul class="compact">
+<li class="compact" id="appendix-B-3.1">
+          <p id="appendix-B-3.1.1">Simplified claims aggregation<a href="#appendix-B-3.1.1" class="pilcrow">¶</a></p>
+<ul class="compact">
+<li class="compact" id="appendix-B-3.1.2.1">Rollback changes introduced in version 02<a href="#appendix-B-3.1.2.1" class="pilcrow">¶</a>
+</li>
+          </ul>
+</li>
+        <li class="compact" id="appendix-B-3.2">Removed Claims Endpoint and related metadata and registration options<a href="#appendix-B-3.2" class="pilcrow">¶</a>
+</li>
+        <li class="compact" id="appendix-B-3.3">Reuses Userinfo endpoint at Claims Provider to return aggregation claims<a href="#appendix-B-3.3" class="pilcrow">¶</a>
+</li>
+        <li class="compact" id="appendix-B-3.4">Removed c_token in claims object<a href="#appendix-B-3.4" class="pilcrow">¶</a>
+</li>
+      </ul>
+<p id="appendix-B-4">-02<a href="#appendix-B-4" class="pilcrow">¶</a></p>
+<ul class="compact">
+<li class="compact" id="appendix-B-5.1">
+          <p id="appendix-B-5.1.1">defined new names for actors<a href="#appendix-B-5.1.1" class="pilcrow">¶</a></p>
+<ul class="compact">
+<li class="compact" id="appendix-B-5.1.2.1">OpenID Provider (OP) -&gt; Identity Wallet (IW)<a href="#appendix-B-5.1.2.1" class="pilcrow">¶</a>
+</li>
+            <li class="compact" id="appendix-B-5.1.2.2">Claims Provider (CP) -&gt; Issuing Authority (IA)<a href="#appendix-B-5.1.2.2" class="pilcrow">¶</a>
+</li>
+            <li class="compact" id="appendix-B-5.1.2.3">Relying Party (RP) -&gt; Claims Consumer (CC)<a href="#appendix-B-5.1.2.3" class="pilcrow">¶</a>
+</li>
+          </ul>
+</li>
+        <li class="compact" id="appendix-B-5.2">
+          <p id="appendix-B-5.2.1">Claims endpoint response formats allows multiple schema types (W3C VC, JWT)<a href="#appendix-B-5.2.1" class="pilcrow">¶</a></p>
+<ul class="compact">
+<li class="compact" id="appendix-B-5.2.2.1">Added 'claimset_format', 'sub_jwk', 'did' to authorization request parameters<a href="#appendix-B-5.2.2.1" class="pilcrow">¶</a>
+</li>
+            <li class="compact" id="appendix-B-5.2.2.2">Added 'format' to claims endpoint response<a href="#appendix-B-5.2.2.2" class="pilcrow">¶</a>
+</li>
+          </ul>
+</li>
+        <li class="compact" id="appendix-B-5.3">
+          <p id="appendix-B-5.3.1">Added new requirements for claims endpoint<a href="#appendix-B-5.3.1" class="pilcrow">¶</a></p>
+<ul class="compact">
+<li class="compact" id="appendix-B-5.3.2.1">MTLS or DPOP for sender constrain tokens<a href="#appendix-B-5.3.2.1" class="pilcrow">¶</a>
+</li>
+            <li class="compact" id="appendix-B-5.3.2.2">Support OID4IDA claims<a href="#appendix-B-5.3.2.2" class="pilcrow">¶</a>
+</li>
+            <li class="compact" id="appendix-B-5.3.2.3">Support W3C VC response format<a href="#appendix-B-5.3.2.3" class="pilcrow">¶</a>
+</li>
+          </ul>
+</li>
+        <li class="compact" id="appendix-B-5.4">Support for DIDs in request/response<a href="#appendix-B-5.4" class="pilcrow">¶</a>
+</li>
+      </ul>
+<p id="appendix-B-6">-01<a href="#appendix-B-6" class="pilcrow">¶</a></p>
+<ul class="compact">
+<li class="compact" id="appendix-B-7.1">initial revision<a href="#appendix-B-7.1" class="pilcrow">¶</a>
+</li>
+        <li class="compact" id="appendix-B-7.2">defined claims endpoint &amp; discovery metadata<a href="#appendix-B-7.2" class="pilcrow">¶</a>
+</li>
+        <li class="compact" id="appendix-B-7.3">defined registration of claims endpoint response signature and encryption algs<a href="#appendix-B-7.3" class="pilcrow">¶</a>
+</li>
+        <li class="compact" id="appendix-B-7.4">defined c_token in claims object to request claims from claims endpoint<a href="#appendix-B-7.4" class="pilcrow">¶</a>
+</li>
+        <li class="compact" id="appendix-B-7.5">
+      </ul>
+</section>
+</div>
+<div id="authors-addresses">
+<section id="appendix-C">
       <h2 id="name-authors-addresses">
 <a href="#name-authors-addresses" class="section-name selfRef">Authors' Addresses</a>
       </h2>

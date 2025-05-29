@@ -452,4 +452,46 @@ The security considerations of OpenID Connect 1.0 [OIDC] and OpenID Connect Dyna
 
 Unless ephemeral identifiers are used at CPs, colluding RPs CAN correlate the subject using the `sub` value in the JWT included in the aggregated claim.
 
+
 {backmatter}
+
+# Acknowledgements
+
+We would like to thank the following people for their valuable feedback and contributions that helped to evolve this specification.
+
+[[TBD]]
+
+# Document History
+
+[[ To be removed from the final specification ]]
+
+-03
+
+* Simplified claims aggregation 
+  * Rollback changes introduced in version 02
+* Removed Claims Endpoint and related metadata and registration options
+* Reuses Userinfo endpoint at Claims Provider to return aggregation claims
+* Removed c_token in claims object
+
+-02
+
+* defined new names for actors 
+  * OpenID Provider (OP) -> Identity Wallet (IW)
+  * Claims Provider (CP) -> Issuing Authority (IA)
+  * Relying Party (RP) -> Claims Consumer (CC)
+* Claims endpoint response formats allows multiple schema types (W3C VC, JWT)
+  * Added 'claimset_format', 'sub_jwk', 'did' to authorization request parameters
+  * Added 'format' to claims endpoint response
+* Added new requirements for claims endpoint
+  * MTLS or DPOP for sender constrain tokens
+  * Support OID4IDA claims
+  * Support W3C VC response format
+* Support for DIDs in request/response
+
+-01
+
+* initial revision
+* defined claims endpoint & discovery metadata
+* defined registration of claims endpoint response signature and encryption algs
+* defined c_token in claims object to request claims from claims endpoint
+* 
