@@ -560,7 +560,7 @@
 	    See <xref target="RFC3339">RFC 3339</xref>
 	    for details regarding date/times in general and UTC in
 	    particular.
-	    NOTE:  The ID Token expiration time is unrelated the lifetime of
+	    NOTE:  The ID Token expiration time is unrelated to the lifetime of
 	    the authenticated session between the RP and the OP.
 	  </t>
 
