@@ -714,7 +714,7 @@
 	Similar to <xref target="JSONSerialization"/>,
 	omitted Claims, absent Claims, or Claims with no value SHOULD be
 	entirely omitted from the JWT Claims Set and not represented by
-	JSON <spanx style="verb">null</spanx> value.
+	e.g. a JSON <spanx style="verb">null</spanx> value.
       </t>
 
       <figure>
@@ -6299,7 +6299,7 @@
 	  Boolean values are represented as JSON booleans.
 	  Omitted parameters, absent parameters, or parameters with no value SHOULD be
 	  entirely omitted from the object and not represented by
-	  JSON <spanx style="verb">null</spanx> value.
+	  e.g. a JSON <spanx style="verb">null</spanx> value.
 	  A parameter MAY have a JSON object or a JSON array as its value.
 	</t>
 
