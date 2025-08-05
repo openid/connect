@@ -6297,7 +6297,7 @@
 	  values are represented as JSON strings.
 	  Numerical values are represented as JSON numbers.
 	  Boolean values are represented as JSON booleans.
-	  Omitted parameters, abstent parameters, or parameters with no value SHOULD be
+	  Omitted parameters, absent parameters, or parameters with no value SHOULD be
 	  entirely omitted from the object and not represented by
 	  JSON <spanx style="verb">null</spanx> value.
 	  A parameter MAY have a JSON object or a JSON array as its value.
