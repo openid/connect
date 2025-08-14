@@ -1049,11 +1049,10 @@
 	as it is redirected to by the client and not directly accessed.
       </t>
       <t>
-	Additional OpenID Provider Metadata parameters MAY also be used.
-	Some are defined by other specifications,
-	such as
-	<xref target="OpenID.Session">OpenID Connect Session Management 1.0</xref>.
-      </t>
+	Additional metadata parameters such as ones registered in the
+	IANA "OAuth Authorization Server Metadata" registry <xref target="IANA.OAuth.Parameters"/>
+	established by <xref target="RFC8414"/>.
+	MAY also be used.
 
     </section>
 
@@ -2264,34 +2263,6 @@
   <seriesInfo name="DOI" value="10.17487/RFC8414"/>
 </reference>
 
-      <reference anchor="OpenID.Session" target="https://openid.net/specs/openid-connect-session-1_0.html">
-        <front>
-          <title>OpenID Connect Session Management 1.0</title>
-
-	  <author fullname="Breno de Medeiros" initials="B." surname="de Medeiros">
-	    <organization>Google</organization>
-	  </author>
-
-	  <author fullname="Naveen Agarwal" initials="N." surname="Agarwal">
-	    <organization>Microsoft</organization>
-	  </author>
-
-	  <author fullname="Nat Sakimura" initials="N." surname="Sakimura">
-	    <organization abbrev="NAT.Consulting">NAT.Consulting</organization>
-	  </author>
-
-	  <author fullname="John Bradley" initials="J." surname="Bradley">
-	    <organization abbrev="Yubico">Yubico</organization>
-	  </author>
-
-	  <author fullname="Michael B. Jones" initials="M.B." surname="Jones">
-	    <organization abbrev="Microsoft">Microsoft</organization>
-	  </author>
-
-          <date day="12" month="September" year="2022" />
-        </front>
-      </reference>
-
       <reference anchor="XRI_Syntax_2.0" target="https://www.oasis-open.org/committees/download.php/15377/xri-syntax-V2.0-cs.pdf">
         <front>
           <title>Extensible Resource Identifier (XRI) Syntax V2.0</title>
@@ -2352,6 +2323,7 @@
 	  <t>Justin Richer (justin@bspk.io), Bespoke Engineering (was at MITRE)</t>
 	  <t>Nat Sakimura (nat@nat.consulting), NAT.Consulting (was at NRI)</t>
 	  <t>Owen Shepherd (owen.shepherd@e43.eu), independent</t>
+	  <t>Filip Skokan (panva.ip@gmail.com), Okta</t>
 	  <t>Andreas &Aring;kre Solberg (Andreas.Solberg@sikt.no), Sikt (was at UNINET)</t>
 	  <t>Kick Willemse (k.willemse@evidos.nl), Evidos B.V.</t>
 	</list>
