@@ -419,7 +419,7 @@
     // Here, the session_state is calculated in this particular way,
     // but it is entirely up to the OP how to do it under the
     // requirements defined in this specification.
-    var ss = CryptoJS.SHA256(client_id + ' ' + e.origin + ' ' +
+    var ss = sha256(client_id + ' ' + e.origin + ' ' +
       opuas + ' ' + salt) + "." + salt;
 
     var stat = '';
