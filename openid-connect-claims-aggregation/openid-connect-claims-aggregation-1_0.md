@@ -378,7 +378,7 @@ After verifying the request, the OP
 The OP collects the required claims from the relevant UserInfo Endpoint. 
 This process can be performed before the RP's request. 
 
-To minimize the information returned from the UserInfo Endpoint, the OP SHOULD downscope the access token to return only the claims requested by the RP's authorization request. This OP retrieves a downscoped access token by making a request to the CP's Token Endpoint as described in 12 of OpenID Connect 1.0 [OIDC]. The `scope` parameter value SHOULD only allow access to the claims requested by the RP at the CP.  
+To minimize the information returned from the UserInfo Endpoint, the OP SHOULD downscope the access token to return only the claims requested by the RP's authorization request. This OP retrieves a downscoped access token by making a request to the CP's Token Endpoint using `scope` parameter as described in section 12 of OpenID Connect 1.0 [OIDC]. The `scope` parameter value SHOULD only allow access to the claims requested by the RP at the CP.  
 
 
 ### UserInfo Endpoint Request
