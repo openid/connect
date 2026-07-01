@@ -20,17 +20,17 @@
   <?rfc sortrefs="yes"?>
   <?rfc strict="yes" ?>
   <?rfc iprnotified="no" ?>
-  <?rfc private="Draft" ?>
+  <?rfc private="Final" ?>
 
   <front>
-    <title abbrev="OpenID Connect Prompt Create">Initiating User Registration via OpenID Connect 1.0 - draft 06</title>
+    <title abbrev="OpenID Connect Prompt Create">Initiating User Registration via OpenID Connect 1.0</title>
 
     <author fullname="George Fletcher" initials="GFF" surname="Fletcher">
       <organization>Capital One</organization>
       <address><email>gffletch@aol.com</email></address>
     </author>
 
-    <date day="3" month="October" year="2022" />
+    <date day="2" month="December" year="2022" />
 
     <workgroup>OpenID Connect Working Group</workgroup>
 
@@ -140,8 +140,8 @@
       <t>
         If the OpenID Provider receives a prompt value that it does not support (not declared in the
         <spanx style="verb">prompt_values_supported</spanx> metadata field) the OP SHOULD respond with
-        an HTTP 400 (Bad Request) status code and an error value of <spanx style="verb">invalid_request</spanx>.
-        It is RECOMMENDED that the OP return an error_description value identifying the invalid parameter value.
+        an HTTP 400 (Bad Request) status code and an <spanx style="verb">error</spanx> value of <spanx style="verb">invalid_request</spanx>.
+        It is RECOMMENDED that the OP return an <spanx style="verb">error_description</spanx> value identifying the invalid parameter value.
       </t>
 
       <t>
@@ -329,67 +329,6 @@
 	patents, patent applications, or other proprietary rights
 	that may cover technology that may be required to practice
 	this specification.
-      </t>
-    </section>
-
-    <section anchor="History" title="Document History">
-      <t>
-        -06 - 2022-09-27
-        <list style="symbols">
-          <t>
-            Address feedback from Andrii Deinega (issues 1644, 1647).
-          </t>
-        </list>
-      </t>
-
-      <t>
-        -05 - 2022-09-20
-        <list style="symbols">
-          <t>
-            Non-normative editorial changes and cleanup.
-          </t>
-        </list>
-      </t>
-
-      <t>
-	-04 - 2020-11-04
-        <list style="symbols">
-	  <t>
-	    Incorporated feedback from issued filed in bitbucket.
-      Also removed the 'implicit' flow example.
-      Updated text regarding what the OP should do if it does
-      not support a requested prompt value.
-	  </t>
-	</list>
-      </t>
-
-      <t>
-	-03
-        <list style="symbols">
-	  <t>
-	    Added OpenID Foundation copyright notice.
-	  </t>
-	</list>
-      </t>
-
-      <t>
-	2019-10-02
-        <list style="symbols">
-          <t>
-            Incorporated feedback from the working group. Add text around prompt=create
-            being more than a hint but an expectation of an action to be performed.
-          </t>
-        </list>
-      </t>
-
-      <t>
-	2019-02-01
-        <list style="symbols">
-          <t>
-            Removed "MUST" normative text and replacec with concept that
-            prompt=create is more of a hint to the OpenID Provider.
-          </t>
-        </list>
       </t>
     </section>
 

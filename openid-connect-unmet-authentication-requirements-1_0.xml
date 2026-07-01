@@ -20,7 +20,7 @@
   <?rfc sortrefs="yes"?>
   <?rfc strict="yes" ?>
   <?rfc iprnotified="no" ?>
-
+  <?rfc private="Final" ?>
 
   <front>
     <title abbrev="OpenID Connect Core Unmet Authentication Requirements 1.0">OpenID 
@@ -33,7 +33,7 @@
       </address>
     </author>
 
-    <date day="11" month="June" year="2019" />
+    <date day="17" month="November" year="2022" />
 
     <workgroup>OpenID Connect Working Group</workgroup>
 
@@ -194,7 +194,7 @@
     </section>
 
     <section anchor="Notices" title="Notices">
-      <t>Copyright (c) 2019 The OpenID Foundation.</t>
+      <t>Copyright (c) 2022 The OpenID Foundation.</t>
       <t>
 	The OpenID Foundation (OIDF) grants to any Contributor, developer, 
 	implementer, or other interested party a non-exclusive, royalty free, 
@@ -233,38 +233,6 @@
 	that may cover technology that may be required to practice 
 	this specification.
       </t>
-    </section>
-
-    <section anchor="History" title="Document History">
-      <t>[[ To be removed from the approved specification ]]</t>
-      
-      <t>
-	-01
-        <list style="symbols">
-	  <t>
-	    incorporated review feedback of Mike Jones
-	  </t>
-	</list>
-      </t>
-
-      <t>
-	-00
-        <list style="symbols">
-	  <t>
-	    changed error name to unmet_authentication_requirements
-	  </t>
-	</list>
-      </t>
-      
-      <t>
-	first version
-        <list style="symbols">
-	  <t>
-	    first version, individual draft
-	  </t>
-	</list>
-      </t>
-
     </section>
 
   </back>
