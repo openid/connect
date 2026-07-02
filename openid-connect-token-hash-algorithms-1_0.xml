@@ -262,7 +262,7 @@
       <t>
 	Given the <spanx style="verb">access_token</spanx> value
 	<spanx style="verb">YmJiZTAwYmYtMzgyOC00NzhkLTkyOTItNjJjNDM3MGYzOWIy9sFhvH8K_x8UIHj1osisS57f5DduL</spanx>,
-	the following table contains the resulting
+	<xref target="ExampleHashValues"/> contains the resulting
 	<spanx style="verb">at_hash</spanx> values for the hash algorithms
 	listed in <xref target="HashAlgorithmTable"/>.
       </t>
