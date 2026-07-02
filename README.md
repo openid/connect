@@ -37,7 +37,7 @@ The full list of OpenID Connect Working Group specifications is at https://openi
 
 ## 🛠 Contributing & Issue Tracking
 
-Historically migrated from Bitbucket, this GitHub repository handles active issue triage and community enhancements for the suite of OpenID Connect specifications.
+This repository was migrated from https://bitbucket.org/openid/connect in June 2026.
 
 ### Filing Issues
 If you find a bug, inconsistency, or ambiguity in any of the active specification drafts or finalized specs:
