@@ -11,7 +11,7 @@ The full list of OpenID Connect working group repositories is at https://openid.
 
 These specifications are in this repository:
 
-* **OpenID Connect Core** – Defines the core OpenID Connect functionality: authentication built on top of OAuth 2.0
+* [**OpenID Connect Core**](https://openid.net/specs/openid-connect-core-1_0.html) – Defines the core OpenID Connect functionality: authentication built on top of OAuth 2.0
   and the use of claims to communicate information about the End-User.
 * **OpenID Connect Discovery** – Defines how clients dynamically discover information about OpenID Providers.
 * **OpenID Connect Dynamic Client Registration** – Defines how clients dynamically register with OpenID Providers.
