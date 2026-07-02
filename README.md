@@ -46,7 +46,7 @@ If you find a bug, inconsistency, or ambiguity in any of the active specificatio
 3. Provide explicit references to the section or line number of the spec you are referring to.
 
 ### Intellectual Property (IP) Notice
-Contributions to this repository are subject to the **OpenID Foundation Intellectual Property Policy**. To contribute text, pull requests, or major revisions, you must be a member of the OpenID Foundation and have signed the **Contribution Agreement**.
+Contributions to this repository are subject to the [**OpenID Foundation Intellectual Property Policy**](https://openid.net/ipr). To contribute text, pull requests, or major revisions, you must be a member of the OpenID Foundation and have signed the **Contribution Agreement**.
 
 * Learn more about joining the working group at https://openid.net/wg/connect/.
 
