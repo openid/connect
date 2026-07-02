@@ -49,13 +49,3 @@ If you find a bug, inconsistency, or ambiguity in any of the active specificatio
 Contributions to this repository are subject to the [**OpenID Foundation Intellectual Property Policy**](https://openid.net/ipr). To contribute text, pull requests, or major revisions, you must be a member of the OpenID Foundation and have signed the **Contribution Agreement**.
 
 * Learn more about participating in the working group at https://openid.net/wg/connect/.
-
----
-
-## 👥 Getting Involved
-
-The Connect Working Group is open to new participants. You can engage with the community through the following channels:
-
-* **Mailing List:** Join the discussion on the [OpenID Specs AB/Connect Mailing List](https://lists.openid.net/mailman/listinfo/openid-specs-ab).
-* **Working Group Calls:** The WG hosts regular conference calls to review issues and pull requests. Meeting schedules and agendas are posted on the mailing list.
-* **Website:** Visit the [OpenID Connect WG Home Page](https://openid.net/wg/connect/) for charter details and progress updates.
