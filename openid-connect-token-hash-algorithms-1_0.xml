@@ -1,0 +1,618 @@
+<?xml version="1.0" encoding="US-ASCII"?>
+<?xml-stylesheet type='text/xsl' href='http://xml2rfc.tools.ietf.org/authoring/rfc2629.xslt' ?>
+<!DOCTYPE rfc PUBLIC "-//IETF//DTD RFC 2629//EN"
+"http://xml2rfc.tools.ietf.org/authoring/rfc2629.dtd">
+<!--
+  NOTE:  This XML file is input used to produce the authoritative copy of an
+  OpenID Foundation specification.  The authoritative copy is the HTML output.
+  This XML source file is not authoritative.  The statement ipr="none" is
+  present only to satisfy the document compilation tool and is not indicative
+  of the IPR status of this specification.  The IPR for this specification is
+  described in the "Notices" section.  This is a public OpenID Foundation
+  document and not a private document, as the private="..." declaration could
+  be taken to indicate.
+-->
+<rfc category="std" docName="openid-connect-token-hash-algorithms-1_0" ipr="none">
+
+  <?rfc toc="yes" ?>
+  <?rfc tocdepth="5" ?>
+  <?rfc symrefs="yes" ?>
+  <?rfc sortrefs="yes"?>
+  <?rfc strict="yes" ?>
+  <?rfc iprnotified="no" ?>
+  <?rfc private="Draft" ?>
+
+  <front>
+    <title abbrev="OpenID Connect Token Hash Algorithms 1.0">OpenID Connect
+    Token Hash Algorithm Implementer's Guide 1.0 - draft 00</title>
+
+    <author fullname="Filip Skokan" initials="F." surname="Skokan">
+      <organization>Okta</organization>
+      <address>
+	<email>panva.ip@gmail.com</email>
+      </address>
+    </author>
+
+    <date day="18" month="June" year="2026" />
+
+    <workgroup>OpenID Connect Working Group</workgroup>
+
+    <abstract>
+      <t>
+	This OpenID Connect Token Hash Algorithm Implementer's Guide 1.0
+	identifies the hash algorithms to use when calculating OpenID Connect
+	ID Token hash claims, such as <spanx style="verb">at_hash</spanx> and
+	<spanx style="verb">c_hash</spanx>, Financial-grade API
+	<spanx style="verb">s_hash</spanx>, and profile-defined token hash
+	claims, for JWS algorithms whose hash function is not completely
+	determined by the algorithm identifier in
+	<xref target="JWA">JSON Web Algorithms (JWA)</xref>.
+      </t>
+      <t>
+	This guide records implementation guidance for existing and registered
+	JWS algorithm identifiers.  It is intended to remain open for maintenance
+	and is not intended to advance to Final Specification status.
+      </t>
+    </abstract>
+  </front>
+
+  <middle>
+    <section anchor="Introduction" title="Introduction">
+      <t>
+	<xref target="OpenID.Core">OpenID Connect Core 1.0</xref> defines
+	ID Token hash claims such as <spanx style="verb">at_hash</spanx>
+	and <spanx style="verb">c_hash</spanx> as the base64url encoding of
+	the left-most half of the hash of the ASCII representation of the
+	value being bound to the ID Token.  Core says that the hash algorithm
+	is the hash algorithm specified in <xref target="JWA">JWA</xref> for
+	the <spanx style="verb">alg</spanx> Header Parameter of the ID
+	Token's JOSE Header.
+      </t>
+      <t>
+	Other OpenID specifications use the same construction.
+	<xref target="OpenID.FAPI.Advanced">Financial-grade API Security
+	Profile 1.0 - Part 2: Advanced</xref> defines
+	<spanx style="verb">s_hash</spanx> for the
+	<spanx style="verb">state</spanx> value.
+	<xref target="OpenID.CIBA">OpenID Connect CIBA Core 1.0</xref> uses
+	<spanx style="verb">at_hash</spanx> in Push mode and applies the same
+	method to Refresh Token hash values using the
+	<spanx style="verb">urn:openid:params:jwt:claim:rt_hash</spanx>
+	claim.
+      </t>
+      <t>
+	That rule is clear for algorithms such as
+	<spanx style="verb">RS256</spanx>, <spanx style="verb">ES384</spanx>,
+	and <spanx style="verb">HS512</spanx>, because their registered
+	algorithm identifiers specify the hash algorithm directly.  It is
+	ambiguous for polymorphic algorithms such as
+	<spanx style="verb">EdDSA</spanx>, because the hash algorithm depends
+	on the EdDSA parameter set of the key used to validate the ID Token.
+	Fully-specified algorithm identifiers, such as
+	<spanx style="verb">Ed25519</spanx> and
+	<spanx style="verb">Ed448</spanx>, remove this ambiguity.
+      </t>
+      <t>
+	This guide clarifies the hash algorithm selection for current JWS
+	algorithms used with OpenID Connect ID Tokens.  It does not define
+	new JWS algorithms, new ID Token claims, or new ID Token validation
+	procedures.
+      </t>
+
+      <section anchor="rnc" title="Requirements Notation and Conventions">
+	<t>
+	  The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+	  "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY",
+	  and "OPTIONAL" in this document are to be interpreted as described
+	  in <xref target="RFC2119">RFC 2119</xref>.
+	</t>
+	<t>
+	  In the .txt version of this specification, values are quoted to
+	  indicate that they are to be taken literally.  When using these
+	  values in protocol messages, the quotes MUST NOT be used as part of
+	  the value.  In the HTML version of this specification, values to be
+	  taken literally are indicated by the use of
+	  <spanx style="verb">this fixed-width font</spanx>.
+	</t>
+      </section>
+
+      <section anchor="Terminology" title="Terminology">
+	<t>
+	  This specification uses the terms defined by
+	  <xref target="OpenID.Core">OpenID Connect Core 1.0</xref>,
+	  <xref target="JWT">JSON Web Token (JWT)</xref>, and
+	  <xref target="JWS">JSON Web Signature (JWS)</xref>.
+	</t>
+      </section>
+    </section>
+
+    <section anchor="HashClaimCalculation" title="Hash Claim Calculation">
+      <t>
+	To calculate an ID Token hash claim, such as
+	<spanx style="verb">at_hash</spanx>,
+	<spanx style="verb">c_hash</spanx>,
+	<spanx style="verb">s_hash</spanx>,
+	<spanx style="verb">urn:openid:params:jwt:claim:rt_hash</spanx>, or
+	any other OpenID Connect claim that uses the same construction,
+	implementations MUST:
+	<list style="numbers">
+	  <t>
+	    Select the digest function and, when applicable,
+	    its output length using <xref target="HashAlgorithmTable"/>.
+	  </t>
+	  <t>
+	    Apply the digest function to the octets of the ASCII representation
+	    of the value being bound to the ID Token.
+	  </t>
+	  <t>
+	    Take the left-most half of the resulting digest output.
+	  </t>
+	  <t>
+	    Base64url-encode that left-most half without padding.
+	  </t>
+	</list>
+      </t>
+      <t>
+	For extendable-output functions, the "resulting digest output" is the
+	fixed-length output identified in <xref target="HashAlgorithmTable"/>.
+	For instance,
+	<spanx style="verb">SHAKE256</spanx> with 114 bytes of output produces
+	a 114-byte digest output, whose left-most half is 57 bytes.
+      </t>
+      <t>
+	When <spanx style="verb">EdDSA</spanx> is used, implementations MUST
+	determine the EdDSA parameter set from the key used to validate the
+	ID Token signature, such as the JWK <spanx style="verb">crv</spanx>
+	value, and then use the corresponding entry in
+	<xref target="HashAlgorithmTable"/>.  The
+	<spanx style="verb">EdDSA</spanx> algorithm identifier is deprecated
+	by <xref target="RFC9864"/>, and new deployments SHOULD use the
+	fully-specified <spanx style="verb">Ed25519</spanx> and
+	<spanx style="verb">Ed448</spanx> algorithm identifiers instead.
+      </t>
+      <t>
+	The algorithm identifiers in <xref target="HashAlgorithmTable"/> are
+	defined by <xref target="JWA"/>, <xref target="RFC8037"/>,
+	<xref target="RFC8812"/>, <xref target="RFC9864"/>,
+	<xref target="RFC9964"/>, and
+	<xref target="I-D.ietf-cose-sphincs-plus"/>.  The EdDSA parameter sets
+	are defined by <xref target="RFC8032"/>.  The ML-DSA algorithms use the
+	signing procedure defined by <xref target="FIPS204"/>.  The SLH-DSA
+	algorithms use parameter sets defined by <xref target="FIPS205"/>.
+	The listed SLH-DSA rows are included to track current JOSE algorithm
+	identifier registrations; this guide records a recommended resolution
+	but leaves final selection of their hash claim digest functions and
+	output lengths to the Working Group.
+      </t>
+      <t>
+	The SLH-DSA recommendation intentionally uses the public hash or
+	extendable-output function family named by the JWS algorithm, rather
+	than the SLH-DSA <spanx style="verb">H_msg</spanx> construction.
+	<xref target="FIPS205"/> defines <spanx style="verb">H_msg</spanx>
+	for SHA2 Category 1 parameter sets using
+	<spanx style="verb">MGF1-SHA-256</spanx> over values that include
+	signature randomness and public-key material.  Those inputs are not
+	part of the OpenID Connect hash claim construction.
+      </t>
+
+      <texttable anchor="HashAlgorithmTable" title="Hash Algorithms for ID Token Hash Claims">
+	<ttcol align="left">alg value</ttcol>
+	<ttcol align="left">Key condition</ttcol>
+	<ttcol align="left">Claim digest function</ttcol>
+	<ttcol align="left">XOF output bytes</ttcol>
+
+	<c><spanx style="verb">PS256</spanx>, <spanx style="verb">RS256</spanx>, <spanx style="verb">ES256</spanx>, <spanx style="verb">ES256K</spanx>, <spanx style="verb">HS256</spanx></c>
+	<c></c>
+	<c><spanx style="verb">SHA-256</spanx></c>
+	<c></c>
+
+	<c><spanx style="verb">PS384</spanx>, <spanx style="verb">RS384</spanx>, <spanx style="verb">ES384</spanx>, <spanx style="verb">HS384</spanx></c>
+	<c></c>
+	<c><spanx style="verb">SHA-384</spanx></c>
+	<c></c>
+
+	<c><spanx style="verb">PS512</spanx>, <spanx style="verb">RS512</spanx>, <spanx style="verb">ES512</spanx>, <spanx style="verb">HS512</spanx></c>
+	<c></c>
+	<c><spanx style="verb">SHA-512</spanx></c>
+	<c></c>
+
+	<c><spanx style="verb">EdDSA</spanx></c>
+	<c><spanx style="verb">Ed25519</spanx> parameter set, such as JWK <spanx style="verb">crv</spanx> value <spanx style="verb">Ed25519</spanx></c>
+	<c><spanx style="verb">SHA-512</spanx></c>
+	<c></c>
+
+	<c><spanx style="verb">Ed25519</spanx></c>
+	<c></c>
+	<c><spanx style="verb">SHA-512</spanx></c>
+	<c></c>
+
+	<c><spanx style="verb">EdDSA</spanx></c>
+	<c><spanx style="verb">Ed448</spanx> parameter set, such as JWK <spanx style="verb">crv</spanx> value <spanx style="verb">Ed448</spanx></c>
+	<c><spanx style="verb">SHAKE256</spanx></c>
+	<c>114</c>
+
+	<c><spanx style="verb">Ed448</spanx></c>
+	<c></c>
+	<c><spanx style="verb">SHAKE256</spanx></c>
+	<c>114</c>
+
+	<c><spanx style="verb">ML-DSA-44</spanx>, <spanx style="verb">ML-DSA-65</spanx>, <spanx style="verb">ML-DSA-87</spanx></c>
+	<c></c>
+	<c><spanx style="verb">SHAKE256</spanx></c>
+	<c>64</c>
+
+	<c><spanx style="verb">SLH-DSA-SHA2-128s</spanx></c>
+	<c></c>
+	<c>To be determined by the OpenID Connect Working Group; RECOMMENDED: <spanx style="verb">SHA-256</spanx></c>
+	<c></c>
+
+	<c><spanx style="verb">SLH-DSA-SHAKE-128s</spanx></c>
+	<c></c>
+	<c>To be determined by the OpenID Connect Working Group; RECOMMENDED: <spanx style="verb">SHAKE256</spanx></c>
+	<c>To be determined; RECOMMENDED: 64</c>
+
+	<c><spanx style="verb">none</spanx></c>
+	<c></c>
+	<c>No hash algorithm is defined</c>
+	<c></c>
+      </texttable>
+    </section>
+
+    <section anchor="Examples" title="Examples">
+      <t>
+	Given the <spanx style="verb">access_token</spanx> value
+	<spanx style="verb">YmJiZTAwYmYtMzgyOC00NzhkLTkyOTItNjJjNDM3MGYzOWIy9sFhvH8K_x8UIHj1osisS57f5DduL</spanx>,
+	<xref target="ExampleHashValues"/> contains the resulting
+	<spanx style="verb">at_hash</spanx> values for the hash algorithms
+	listed in <xref target="HashAlgorithmTable"/>.
+      </t>
+      <t>
+	Every value in the <spanx style="verb">alg value</spanx> column is a
+	literal JOSE <spanx style="verb">alg</spanx> identifier.  Conditions
+	that are not <spanx style="verb">alg</spanx> identifiers, such as an
+	EdDSA key parameter set, are shown in the separate Key condition column.
+	For algorithms whose claim digest function is still to be determined
+	but has a recommendation, the examples use the recommended value.
+      </t>
+
+      <texttable anchor="ExampleHashValues" title="Example at_hash Values">
+	<ttcol align="left">alg value</ttcol>
+	<ttcol align="left">Key condition</ttcol>
+	<ttcol align="left">Claim digest function</ttcol>
+	<ttcol align="left">at_hash</ttcol>
+
+	<c><spanx style="verb">PS256</spanx>, <spanx style="verb">RS256</spanx>, <spanx style="verb">ES256</spanx>, <spanx style="verb">ES256K</spanx>, <spanx style="verb">HS256</spanx></c>
+	<c></c>
+	<c><spanx style="verb">SHA-256</spanx></c>
+	<c><spanx style="verb">xsZZrUssMXjL3FBlzoSh2g</spanx></c>
+
+	<c><spanx style="verb">PS384</spanx>, <spanx style="verb">RS384</spanx>, <spanx style="verb">ES384</spanx>, <spanx style="verb">HS384</spanx></c>
+	<c></c>
+	<c><spanx style="verb">SHA-384</spanx></c>
+	<c><spanx style="verb">adt46pcdiB-l6eTNifgoVM-5AIJAxq84</spanx></c>
+
+	<c><spanx style="verb">PS512</spanx>, <spanx style="verb">RS512</spanx>, <spanx style="verb">ES512</spanx>, <spanx style="verb">HS512</spanx></c>
+	<c></c>
+	<c><spanx style="verb">SHA-512</spanx></c>
+	<c><spanx style="verb">p2LHG4H-8pYDc0hyVOo3iIHvZJUqe9tbj3jESOuXbkY</spanx></c>
+
+	<c><spanx style="verb">EdDSA</spanx></c>
+	<c>JWK <spanx style="verb">crv</spanx> value <spanx style="verb">Ed25519</spanx></c>
+	<c><spanx style="verb">SHA-512</spanx></c>
+	<c><spanx style="verb">p2LHG4H-8pYDc0hyVOo3iIHvZJUqe9tbj3jESOuXbkY</spanx></c>
+
+	<c><spanx style="verb">Ed25519</spanx></c>
+	<c></c>
+	<c><spanx style="verb">SHA-512</spanx></c>
+	<c><spanx style="verb">p2LHG4H-8pYDc0hyVOo3iIHvZJUqe9tbj3jESOuXbkY</spanx></c>
+
+	<c><spanx style="verb">EdDSA</spanx></c>
+	<c>JWK <spanx style="verb">crv</spanx> value <spanx style="verb">Ed448</spanx></c>
+	<c><spanx style="verb">SHAKE256</spanx>, 114 bytes</c>
+	<c><spanx style="verb">sB_U72jyb0WgtX8TsVoqJnm6CD295W9gfSDRxkilB3LAL7REi9JYutRW_s1yE4lD8cOfMZf83gi4</spanx></c>
+
+	<c><spanx style="verb">Ed448</spanx></c>
+	<c></c>
+	<c><spanx style="verb">SHAKE256</spanx>, 114 bytes</c>
+	<c><spanx style="verb">sB_U72jyb0WgtX8TsVoqJnm6CD295W9gfSDRxkilB3LAL7REi9JYutRW_s1yE4lD8cOfMZf83gi4</spanx></c>
+
+	<c><spanx style="verb">ML-DSA-44</spanx>, <spanx style="verb">ML-DSA-65</spanx>, <spanx style="verb">ML-DSA-87</spanx></c>
+	<c></c>
+	<c><spanx style="verb">SHAKE256</spanx>, 64 bytes</c>
+	<c><spanx style="verb">sB_U72jyb0WgtX8TsVoqJnm6CD295W9gfSDRxkilB3I</spanx></c>
+
+	<c><spanx style="verb">SLH-DSA-SHA2-128s</spanx></c>
+	<c></c>
+	<c>RECOMMENDED: <spanx style="verb">SHA-256</spanx></c>
+	<c><spanx style="verb">xsZZrUssMXjL3FBlzoSh2g</spanx></c>
+
+	<c><spanx style="verb">SLH-DSA-SHAKE-128s</spanx></c>
+	<c></c>
+	<c>RECOMMENDED: <spanx style="verb">SHAKE256</spanx>, 64 bytes</c>
+	<c><spanx style="verb">sB_U72jyb0WgtX8TsVoqJnm6CD295W9gfSDRxkilB3I</spanx></c>
+      </texttable>
+
+      <t>
+	The same procedure applies to other ID Token hash claims by replacing
+	the input value with the ASCII representation of the value being bound
+	to the ID Token.
+      </t>
+    </section>
+
+    <section anchor="Security" title="Security Considerations">
+      <t>
+	This guide does not change the security properties of the ID Token hash
+	claims defined by OpenID Connect Core.  It clarifies which hash or
+	extendable-output function to use so that OpenID Providers and Relying
+	Parties produce the same values.
+      </t>
+      <t>
+	For extendable-output functions, implementations MUST use the output
+	length specified in <xref target="HashAlgorithmTable"/> before taking
+	the left-most half of the output.  Using a different output length will
+	produce different hash claim values.
+      </t>
+      <t>
+	For JWS algorithms whose row in <xref target="HashAlgorithmTable"/>
+	marks the claim digest function as to be determined, the listed
+	recommendation is provisional implementation guidance rather than a
+	final Working Group decision.  Implementations using a different rule
+	will produce different hash claim values.
+      </t>
+      <t>
+	For <spanx style="verb">EdDSA</spanx>, implementations MUST NOT infer
+	the hash algorithm from the <spanx style="verb">alg</spanx> Header
+	Parameter alone.  They need the EdDSA parameter set of the key used to
+	validate the ID Token signature.
+      </t>
+    </section>
+
+    <section anchor="Acknowledgements" title="Acknowledgements">
+      <t>
+	The OpenID Connect Working Group discussed the
+	<spanx style="verb">EdDSA</spanx> hash claim ambiguity in GitHub issue
+	openid/connect#1124 and earlier Bitbucket issue 1125.  The contributors
+	to that discussion include Michael B. Jones, Vladimir Dzhuvinov,
+	Nat Sakimura, Tim Moehlmann, Tangui, and Filip Skokan.
+      </t>
+    </section>
+  </middle>
+
+  <back>
+    <references title="Normative References">
+      <reference anchor="OpenID.Core" target="https://openid.net/specs/openid-connect-core-1_0.html">
+	<front>
+	  <title>OpenID Connect Core 1.0</title>
+	  <author fullname="Nat Sakimura" initials="N." surname="Sakimura"/>
+	  <author fullname="John Bradley" initials="J." surname="Bradley"/>
+	  <author fullname="Michael B. Jones" initials="M.B." surname="Jones"/>
+	  <author fullname="Breno de Medeiros" initials="B." surname="de Medeiros"/>
+	  <author fullname="Chuck Mortimore" initials="C." surname="Mortimore"/>
+	  <date day="15" month="December" year="2023"/>
+	</front>
+      </reference>
+
+      <reference anchor="OpenID.FAPI.Advanced" target="https://openid.net/specs/openid-financial-api-part-2-1_0.html">
+	<front>
+	  <title>Financial-grade API Security Profile 1.0 - Part 2: Advanced</title>
+	  <author fullname="Nat Sakimura" initials="N." surname="Sakimura"/>
+	  <author fullname="John Bradley" initials="J." surname="Bradley"/>
+	  <author fullname="Edmund Jay" initials="E." surname="Jay"/>
+	  <date day="12" month="March" year="2021"/>
+	</front>
+      </reference>
+
+      <reference anchor="OpenID.CIBA" target="https://openid.net/specs/openid-client-initiated-backchannel-authentication-core-1_0.html">
+	<front>
+	  <title>OpenID Connect Client-Initiated Backchannel Authentication Flow - Core 1.0</title>
+	  <author fullname="Gonzalo Fernandez Rodriguez" initials="G." surname="Fernandez Rodriguez"/>
+	  <author fullname="Florian Walter" initials="F." surname="Walter"/>
+	  <author fullname="Axel Nennker" initials="A." surname="Nennker"/>
+	  <author fullname="Dave Tonge" initials="D." surname="Tonge"/>
+	  <author fullname="Brian Campbell" initials="B." surname="Campbell"/>
+	  <date day="1" month="September" year="2021"/>
+	</front>
+      </reference>
+
+      <reference anchor="RFC2119" target="https://www.rfc-editor.org/info/rfc2119">
+	<front>
+	  <title>Key words for use in RFCs to Indicate Requirement Levels</title>
+	  <author fullname="S. Bradner" initials="S." surname="Bradner"/>
+	  <date month="March" year="1997"/>
+	</front>
+	<seriesInfo name="BCP" value="14"/>
+	<seriesInfo name="RFC" value="2119"/>
+	<seriesInfo name="DOI" value="10.17487/RFC2119"/>
+      </reference>
+
+      <reference anchor="JWT" target="https://www.rfc-editor.org/info/rfc7519">
+	<front>
+	  <title>JSON Web Token (JWT)</title>
+	  <author fullname="M. Jones" initials="M." surname="Jones"/>
+	  <author fullname="J. Bradley" initials="J." surname="Bradley"/>
+	  <author fullname="N. Sakimura" initials="N." surname="Sakimura"/>
+	  <date month="May" year="2015"/>
+	</front>
+	<seriesInfo name="RFC" value="7519"/>
+	<seriesInfo name="DOI" value="10.17487/RFC7519"/>
+      </reference>
+
+      <reference anchor="JWS" target="https://www.rfc-editor.org/info/rfc7515">
+	<front>
+	  <title>JSON Web Signature (JWS)</title>
+	  <author fullname="M. Jones" initials="M." surname="Jones"/>
+	  <author fullname="J. Bradley" initials="J." surname="Bradley"/>
+	  <author fullname="N. Sakimura" initials="N." surname="Sakimura"/>
+	  <date month="May" year="2015"/>
+	</front>
+	<seriesInfo name="RFC" value="7515"/>
+	<seriesInfo name="DOI" value="10.17487/RFC7515"/>
+      </reference>
+
+      <reference anchor="JWA" target="https://www.rfc-editor.org/info/rfc7518">
+	<front>
+	  <title>JSON Web Algorithms (JWA)</title>
+	  <author fullname="M. Jones" initials="M." surname="Jones"/>
+	  <date month="May" year="2015"/>
+	</front>
+	<seriesInfo name="RFC" value="7518"/>
+	<seriesInfo name="DOI" value="10.17487/RFC7518"/>
+      </reference>
+
+      <reference anchor="RFC8032" target="https://www.rfc-editor.org/info/rfc8032">
+	<front>
+	  <title>Edwards-Curve Digital Signature Algorithm (EdDSA)</title>
+	  <author fullname="S. Josefsson" initials="S." surname="Josefsson"/>
+	  <author fullname="I. Liusvaara" initials="I." surname="Liusvaara"/>
+	  <date month="January" year="2017"/>
+	</front>
+	<seriesInfo name="RFC" value="8032"/>
+	<seriesInfo name="DOI" value="10.17487/RFC8032"/>
+      </reference>
+
+      <reference anchor="RFC8037" target="https://www.rfc-editor.org/info/rfc8037">
+	<front>
+	  <title>CFRG Elliptic Curve Diffie-Hellman (ECDH) and Signatures in JSON Object Signing and Encryption (JOSE)</title>
+	  <author fullname="I. Liusvaara" initials="I." surname="Liusvaara"/>
+	  <date month="January" year="2017"/>
+	</front>
+	<seriesInfo name="RFC" value="8037"/>
+	<seriesInfo name="DOI" value="10.17487/RFC8037"/>
+      </reference>
+
+      <reference anchor="RFC8812" target="https://www.rfc-editor.org/info/rfc8812">
+	<front>
+	  <title>CBOR Object Signing and Encryption (COSE) and JSON Object Signing and Encryption (JOSE) Registrations for Web Authentication (WebAuthn) Algorithms</title>
+	  <author fullname="M. Jones" initials="M." surname="Jones"/>
+	  <date month="August" year="2020"/>
+	</front>
+	<seriesInfo name="RFC" value="8812"/>
+	<seriesInfo name="DOI" value="10.17487/RFC8812"/>
+      </reference>
+
+      <reference anchor="RFC9864" target="https://www.rfc-editor.org/info/rfc9864">
+	<front>
+	  <title>Fully-Specified Algorithms for JSON Object Signing and Encryption (JOSE) and CBOR Object Signing and Encryption (COSE)</title>
+	  <author fullname="M. Jones" initials="M." surname="Jones"/>
+	  <author fullname="O. Steele" initials="O." surname="Steele"/>
+	  <date month="October" year="2025"/>
+	</front>
+	<seriesInfo name="RFC" value="9864"/>
+	<seriesInfo name="DOI" value="10.17487/RFC9864"/>
+      </reference>
+
+      <reference anchor="RFC9964" target="https://www.rfc-editor.org/info/rfc9964">
+	<front>
+	  <title>ML-DSA for JSON Object Signing and Encryption (JOSE) and CBOR Object Signing and Encryption (COSE)</title>
+	  <author fullname="M. Prorock" initials="M." surname="Prorock"/>
+	  <author fullname="O. Steele" initials="O." surname="Steele"/>
+	  <date month="May" year="2026"/>
+	</front>
+	<seriesInfo name="RFC" value="9964"/>
+	<seriesInfo name="DOI" value="10.17487/RFC9964"/>
+      </reference>
+
+      <reference anchor="I-D.ietf-cose-sphincs-plus" target="https://cose-wg.github.io/draft-ietf-cose-sphincs-plus/draft-ietf-cose-sphincs-plus.html">
+	<front>
+	  <title>SLH-DSA for JOSE and COSE</title>
+	  <author fullname="M. Prorock" initials="M." surname="Prorock"/>
+	  <author fullname="O. Steele" initials="O." surname="Steele"/>
+	  <author fullname="H. Tschofenig" initials="H." surname="Tschofenig"/>
+	  <date day="15" month="May" year="2026"/>
+	</front>
+	<seriesInfo name="Internet-Draft" value="draft-ietf-cose-sphincs-plus-latest"/>
+      </reference>
+
+      <reference anchor="FIPS204" target="https://doi.org/10.6028/NIST.FIPS.204">
+	<front>
+	  <title>Module-Lattice-Based Digital Signature Standard</title>
+	  <author>
+	    <organization>National Institute of Standards and Technology</organization>
+	  </author>
+	  <date month="August" year="2024"/>
+	</front>
+	<seriesInfo name="FIPS" value="204"/>
+	<seriesInfo name="DOI" value="10.6028/NIST.FIPS.204"/>
+      </reference>
+
+      <reference anchor="FIPS205" target="https://doi.org/10.6028/NIST.FIPS.205">
+	<front>
+	  <title>Stateless Hash-Based Digital Signature Standard</title>
+	  <author>
+	    <organization>National Institute of Standards and Technology</organization>
+	  </author>
+	  <date month="August" year="2024"/>
+	</front>
+	<seriesInfo name="FIPS" value="205"/>
+	<seriesInfo name="DOI" value="10.6028/NIST.FIPS.205"/>
+      </reference>
+    </references>
+
+    <section anchor="Notices" title="Notices">
+      <t>Copyright (c) 2026 The OpenID Foundation.</t>
+      <t>
+	The OpenID Foundation (OIDF) grants to any Contributor, developer,
+	implementer, or other interested party a non-exclusive, royalty free,
+	worldwide copyright license to reproduce, prepare derivative works from,
+	distribute, perform and display, this Implementers Draft or
+	Final Specification solely for the purposes of (i) developing
+	specifications, and (ii) implementing Implementers Drafts and
+	Final Specifications based on such documents, provided that attribution
+	be made to the OIDF as the source of the material, but that such
+	attribution does not indicate an endorsement by the OIDF.
+      </t>
+      <t>
+	The technology described in this specification was made available from
+	contributions from various sources, including members of the OpenID
+	Foundation and others.  Although the OpenID Foundation has taken steps
+	to help ensure that the technology is available for distribution, it
+	takes no position regarding the validity or scope of any intellectual
+	property or other rights that might be claimed to pertain to the
+	implementation or use of the technology described in this specification
+	or the extent to which any license under such rights might or might not
+	be available; neither does it represent that it has made any independent
+	effort to identify any such rights.  The OpenID Foundation and the
+	contributors to this specification make no (and hereby expressly
+	disclaim any) warranties (express, implied, or otherwise), including
+	implied warranties of merchantability, non-infringement, fitness for a
+	particular purpose, or title, related to this specification, and the
+	entire risk as to implementing this specification is assumed by the
+	implementer.  The OpenID Intellectual Property Rights policy requires
+	contributors to offer a patent promise not to assert certain patent
+	claims against other contributors and against implementers.  The OpenID
+	Foundation invites any interested party to bring to its attention any
+	copyrights, patents, patent applications, or other proprietary rights
+	that may cover technology that may be required to practice this
+	specification.
+      </t>
+    </section>
+
+    <section anchor="History" title="Document History">
+      <t>[[ To be removed from the final document ]]</t>
+
+      <t>
+	-00
+	<list style="symbols">
+	  <t>
+	    Initial Implementer's Guide defining the hash algorithms to use for
+	    OpenID Connect ID Token hash claims with EdDSA, fully-specified
+	    EdDSA, and ML-DSA JWS algorithms, and tracking SLH-DSA JWS
+	    algorithm identifiers pending Working Group consensus on hash claim
+	    digest functions, with recommended SLH-DSA digest functions for
+	    discussion.
+	  </t>
+	  <t>
+	    Included Financial-grade API
+	    <spanx style="verb">s_hash</spanx> and OpenID Connect CIBA
+	    profile hash claims in the stated scope.
+	  </t>
+	  <t>
+	    Split table columns so literal <spanx style="verb">alg</spanx>
+	    identifiers, key conditions, digest functions, and output lengths
+	    are clearly distinguishable.
+	  </t>
+	</list>
+      </t>
+    </section>
+  </back>
+</rfc>
