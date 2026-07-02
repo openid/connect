@@ -25,11 +25,6 @@ These specifications are in this repository:
   between the OP and RPs being logged out.
 * **OpenID Connect Core Error Code unmet_authentication_requirements** – Defines the unmet_authentication_requirements
   authentication response error code.
-* **OpenID Connect Relying Party Metadata Choices 1.0** – this specification extends the OpenID Connect Dynamic Client
-Registration 1.0 specification to enable RPs to express a set of supported values for some RP metadata parameters,
-rather than just single values.
-* **OpenID Federation 1.1** – Protocol-independent functionality enabling parties within a federation to establish trust
-with one another.
 * **OAuth 2.0 Multiple Response Types** – Defines several specific new OAuth 2.0 response types.
 * **OAuth 2.0 Form Post Response Mode** – Defines how to return OAuth 2.0 Authorization Response parameters (including
 OpenID Connect Authentication Response parameters) using HTML form values that are auto-submitted by the User-Agent
