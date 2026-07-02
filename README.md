@@ -1,4 +1,4 @@
-# OpenID Connect Working Group Repository
+# OpenID Connect Repository
 
 This is the [**OpenID Connect Working Group (AB/Connect WG)**](https://openid.net/wg/connect/) repository for the original [**OpenID Connect 1.0**](https://openid.net/connect) specifications.
 It is used  tracking issues, discussing enhancements, and maintaining the specifications that
