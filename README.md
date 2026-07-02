@@ -31,7 +31,7 @@ OpenID Connect Authentication Response parameters) using HTML form values that a
 using HTTP POST.
 * [**Initiating User Registration via OpenID Connect**](https://openid.net/specs/openid-connect-prompt-create-1_0.html) – Defines the prompt=create authentication request parameter.
 
-The full list of OpenID Connect Working Group specifications is at https://openid.net/wg/connect/specifications/.
+The full list of OpenID Connect Working Group specifications is available at https://openid.net/wg/connect/specifications/.
 
 ---
 
