@@ -712,10 +712,9 @@
 
       <t>
 	Similar to <xref target="UserInfoResponse"/>,
-	omitted Claims and Claims with no value SHOULD be
-	entirely omitted from the JWT Claims Set;
-	they SHOULD NOT be present, e.g.,
-	with JSON <spanx style="verb">null</spanx> or empty string values.
+	if a Claim is not returned, that Claim Name SHOULD be
+	omitted from the JWT Claims Set;
+	it SHOULD NOT be present with a null or empty string value.
       </t>
 
       <figure>
@@ -6298,10 +6297,9 @@
 	  values are represented as JSON strings.
 	  Numerical values are represented as JSON numbers.
 	  Boolean values are represented as JSON booleans.
-	  Omitted parameters and parameters with no value SHOULD be
-	  entirely omitted from the object;
-	  they SHOULD NOT be present, e.g.,
-	  with JSON <spanx style="verb">null</spanx> or empty string values.
+	  If a parameter is not used or has no value, that parameter SHOULD be
+	  omitted from the object;
+	  it SHOULD NOT be present with a null or empty string value.
 	  A parameter MAY have a JSON object or a JSON array as its value.
 	</t>
 
