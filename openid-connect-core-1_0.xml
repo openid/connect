@@ -23,7 +23,7 @@
   <?rfc private="Draft" ?>
 
   <front>
-    <title abbrev="OpenID Connect Core 1.0">OpenID Connect Core 1.0 - draft 36 incorporating errata set 3</title>
+    <title abbrev="OpenID Connect Core 1.0">OpenID Connect Core 1.0 - draft 37 incorporating errata set 3</title>
 
     <author fullname="Nat Sakimura" initials="N." surname="Sakimura">
       <organization abbrev="NAT.Consulting (was at NRI)">NAT.Consulting</organization>
@@ -65,7 +65,7 @@
       </address>
     </author>
 
-    <date day="30" month="January" year="2025" />
+    <date day="24" month="November" year="2026" />
 
     <workgroup>OpenID Connect Working Group</workgroup>
 
@@ -711,10 +711,10 @@
       </t>
 
       <t>
-	Similar to <xref target="JSONSerialization"/>,
-	omitted Claims and Claims with no value SHOULD be
-	entirely omitted from the JWT Claims Set and not represented by
-	e.g. a JSON <spanx style="verb">null</spanx> value.
+	Similar to <xref target="UserInfoResponse"/>,
+	if a Claim is not returned, that Claim Name SHOULD be
+	omitted from the JWT Claims Set;
+	it SHOULD NOT be present with a null or empty string value.
       </t>
 
       <figure>
@@ -6297,9 +6297,9 @@
 	  values are represented as JSON strings.
 	  Numerical values are represented as JSON numbers.
 	  Boolean values are represented as JSON booleans.
-	  Omitted parameters and parameters with no value SHOULD be
-	  entirely omitted from the object and not represented by
-	  e.g. a JSON <spanx style="verb">null</spanx> value.
+	  If a parameter is not used or has no value, that parameter SHOULD be
+	  omitted from the object;
+	  it SHOULD NOT be present with a null or empty string value.
 	  A parameter MAY have a JSON object or a JSON array as its value.
 	</t>
 
@@ -9521,7 +9521,7 @@
     </section>
 
     <section anchor="Notices" title="Notices">
-      <t>Copyright (c) 2025 The OpenID Foundation.</t>
+      <t>Copyright (c) 2026 The OpenID Foundation.</t>
       <t>
 	The OpenID Foundation (OIDF) grants to any Contributor, developer,
 	implementer, or other interested party a non-exclusive, royalty free,
@@ -9564,6 +9564,15 @@
 
     <section anchor="History" title="Document History">
       <t>[[ To be removed from the approved specification incorporating errata corrections ]]</t>
+
+      <t>
+	-37
+        <list style="symbols">
+	  <t>
+	    Omitted claims and parameters should not be represented as null or empty string values.
+	  </t>
+	</list>
+      </t>
 
       <t>
 	-36
